@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  /* 필요한 커스텀 컬러를 설정합니다. 아래는 orange 예시입니다 */
+  --color-tainoi-50: #fff9eb;
+  --color-tainoi-100: #ffeec6;
+  --color-tainoi-200: #ffdb88;
+  --color-tainoi-300: #ffc757; /* main orange */
+  --color-tainoi-400: #ffab20;
+  --color-tainoi-500: #f98707;
+}
+
+/* 필요한 폰트 가져오는 곳입니다. 아래는 예시입니다 */
+@font-face {
+  font-family: 'KCC-Ganpan';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/KCC-Ganpan.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
