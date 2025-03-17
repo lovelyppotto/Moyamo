@@ -35,7 +35,7 @@ function Home() {
               </div>
               {/* 오른쪽 태그 장식 */}
               <div className="bg-indigo-500 w-2 lg:w-3"></div>
-              <div className="bg-indigo-500 w-12 h-6 md:w-14 md:h-7 lg:w-16 lg:h-8 rounded-r-lg"></div>
+              <div className="bg-indigo-500 w-10 h-6 md:w-14 md:h-7 lg:w-16 lg:h-8 rounded-r-lg"></div>
             </div>
           </div>
         </div>
