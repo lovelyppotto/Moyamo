@@ -5,6 +5,7 @@ import Dictionary from './pages/dict/Dictionary';
 import Quiz from './pages/quiz/Quiz';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 
 function App() {
   return <RouterProvider router={router} />;
