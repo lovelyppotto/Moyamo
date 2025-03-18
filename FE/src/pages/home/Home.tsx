@@ -81,7 +81,7 @@ function Home() {
             >
               <div className="relative mb-18 md:mb-20 lg:mb-25">
                 {/* 책 이미지 */}
-                <img src="/images/dict.png" alt="DictionaryIcon" />
+                <img src="/images/dict.png" alt="DictionaryIcon" className='drop-shadow-basic' />
               </div>
             </div>
             <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Dictionary</p>
@@ -94,14 +94,14 @@ function Home() {
             <div 
             className="flex items-center justify-center relative
             w-50 h-20 md:w-80 md:h-30 lg:w-95 lg:h-40 
-            bg-lavender-rose-300 rounded-full"
+            bg-lavender-rose-300 rounded-full drop-shadow-basic"
             >
               <div 
                 className="relative 
                 ml-5 w-40 mb-20 md:w-62 md:mb-23 lg:w-72 lg:mb-25"
               >
                 {/* 퀴즈 이미지 */}
-                <img src="/images/quiz.png" alt="DictionaryIcon" />
+                <img src="/images/quiz.png" alt="DictionaryIcon" className='drop-shadow-basic' />
               </div>
             </div>
             <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Quiz</p>
