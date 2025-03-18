@@ -66,22 +66,25 @@ function Home() {
         </p>
 
         {/* 버튼 영역 */}
-        <div className="flex justify-center items-center mt-20 space-x-8">
+        <div 
+          className="flex justify-center items-center space-x-8
+          mt-15 md:mt-18 lg:mt-20 "
+        >
           <button 
             onClick={handleDictionaryClick}
             className="flex flex-col items-center bg-transparent border-none cursor-pointer"
           >
             <div 
             className="flex items-center justify-center relative
-            w-50 h-20 md:w-80 md:h-30 lg:w-90 lg:h-40 
-            bg-inch-worm-500 rounded-full"
+            w-50 h-20 md:w-80 md:h-30 lg:w-95 lg:h-40 
+            bg-inch-worm-500 rounded-full drop-shadow-basic"
             >
-              <div className="w-48 h-40 relative">
-                {/* 책 이미지 - 간단한 구현 */}
-        
+              <div className="relative mb-18 md:mb-20 lg:mb-25">
+                {/* 책 이미지 */}
+                <img src="/images/dict.png" alt="DictionaryIcon" />
               </div>
             </div>
-            <span className="mt-4 text-2xl font-bold">Dictionary</span>
+            <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Dictionary</p>
           </button>
           
           <button 
@@ -90,15 +93,18 @@ function Home() {
           >
             <div 
             className="flex items-center justify-center relative
-            w-50 h-20 md:w-80 md:h-30 lg:w-90 lg:h-40 
+            w-50 h-20 md:w-80 md:h-30 lg:w-95 lg:h-40 
             bg-lavender-rose-300 rounded-full"
             >
-              <div className="w-48 h-40 relative">
-                {/* 퀴즈 노트 및 필기구 이미지 */}
-                
+              <div 
+                className="relative 
+                ml-5 w-40 mb-20 md:w-62 md:mb-23 lg:w-72 lg:mb-25"
+              >
+                {/* 퀴즈 이미지 */}
+                <img src="/images/quiz.png" alt="DictionaryIcon" />
               </div>
             </div>
-            <span className="mt-4 text-2xl font-bold">Quiz</span>
+            <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Quiz</p>
           </button>
         </div>
       </div>

@@ -74,17 +74,15 @@
   --color-lavender-rose-500: #f63ea6;
   --color-lavender-rose-600: #e61c84;
   --color-lavender-rose-700: #c90d68;
+
+
+  /* drop shadow */
+  --drop-shadow-basic: 0 3px 2px rgba(0, 0, 0, 0.25);
+  --drop-shadow-nation: 0 2px 3px rgba(0, 0, 0, 0.25);
+
 }
 
-/* 필요한 폰트 가져오는 곳입니다. 아래는 예시입니다 */
-@font-face {
-  font-family: 'KCC-Ganpan';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/KCC-Ganpan.woff2')
-    format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
-
+/* 폰트 */
 /* 던파 비트비트체 2 */
 @font-face {
   font-family: 'DNFBitBitv2';
@@ -99,6 +97,14 @@
   src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff')
     format('woff');
   font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumSquareRound';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRoundB.woff')
+    format('woff');
+  font-weight: bold;
   font-style: normal;
 }
 
