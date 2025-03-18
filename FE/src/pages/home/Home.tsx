@@ -7,7 +7,9 @@ function Home() {
       backgroundSize: '100% 100%',
     }}
   >
-    Hello World
+    <span>Unlock the world</span>
+    <span>Unlock the world</span>
+    <span>Unlock the world</span>
   </div>
   );
 }
