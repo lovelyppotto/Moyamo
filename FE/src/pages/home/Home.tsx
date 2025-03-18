@@ -14,10 +14,12 @@ function Home() {
       >
         <div className="flex flex-col item-center font-[DNFBitBitv2] text-center">
           {/* 첫 번째 줄 */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl mb-4">Unlock the world</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl mb-2 md:mb-3 lg:mb-4">
+            Unlock the world
+          </h1>
 
           {/* 두 번째 줄 */}
-          <div className="flex items-center justify-center mb-4 w-full">
+          <div className="flex items-center justify-center mb-2 md:mb-3 lg:mb-4 w-full">
             <h1 className="text-4xl md:text-5xl lg:text-6xl">through</h1>
             <img
               src="/images/icons/puzzle.png"
@@ -28,18 +30,24 @@ function Home() {
           </div>
 
           {/* 세 번째 줄 */}
-          <div className="flex justify-center w-full mb-3 md:mb-5 lg:mb-7">
+          <div className="flex justify-center w-full mb-3 md:mb-4 lg:mb-5">
             <div className="relative inline-flex">
-              <div className="flex bg-blue-300/60 px-6 pt-1 pb-3 lg:pt-2 lg:pb-4 rounded-l-lg">
+              <div
+                className="flex bg-blue-300/60 rounded-l-lg
+                px-6 pt-1 pb-2 md:pt-2 md:pb-3 lg:pt-3 lg:pb-4"
+              >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl">gestures</h1>
               </div>
               {/* 오른쪽 태그 장식 */}
               <div className="bg-indigo-500 w-2 lg:w-3"></div>
-              <div className="bg-indigo-500 w-12 h-6 md:w-14 md:h-7 lg:w-16 lg:h-8 rounded-r-lg"></div>
+              <div
+                className="bg-indigo-500 rounded-r-lg 
+                w-12 h-6 md:w-14 md:h-7 lg:w-16 lg:h-8"
+              ></div>
             </div>
           </div>
         </div>
-        <p className="text-lg md:text-xl mt-2 text-center font-[NanumSquareRound]">
+        <p className="text-lg md:text-xl lg:text-2xl mt-2 text-center font-[NanumSquareRound]">
           의미있는 제스처를 통해 세상을 열어보세요
         </p>
       </div>
