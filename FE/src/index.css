@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* 필요한 커스텀 컬러를 설정합니다. 아래는 orange 예시입니다 */
@@ -13,7 +13,34 @@
 /* 필요한 폰트 가져오는 곳입니다. 아래는 예시입니다 */
 @font-face {
   font-family: 'KCC-Ganpan';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/KCC-Ganpan.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/KCC-Ganpan.woff2')
+    format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 던파 비트비트체 2 */
+@font-face {
+  font-family: 'DNFBitBitv2';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf') format('opentype');
+}
+
+/* 나눔스퀘어라운드 */
+@font-face {
+  font-family: 'NanumSquareRound';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 갈무리11 */
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/Galmuri11.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/Galmuri11.woff') format('woff'),
+       url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/Galmuri11.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
