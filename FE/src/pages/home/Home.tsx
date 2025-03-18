@@ -53,11 +53,13 @@ function Home() {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl">gestures</h1>
               </div>
               {/* 오른쪽 태그 장식 */}
-              <div className="bg-indigo-500 w-2 lg:w-3"></div>
-              <div
-                className="bg-indigo-500 rounded-r-lg 
-                w-10 h-5 md:w-14 md:h-7 lg:w-16 lg:h-8"
-              ></div>
+              <div className='flex'>
+                <div className="bg-indigo-500 w-2 lg:w-3"></div>
+                <div
+                  className="bg-indigo-500 rounded-r-lg mr-2
+                  w-10 h-5 md:w-14 md:h-7 lg:w-16 lg:h-8"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
@@ -68,11 +70,11 @@ function Home() {
         {/* 버튼 영역 */}
         <div 
           className="flex justify-center items-center space-x-8
-          mt-15 md:mt-18 lg:mt-20 "
+          mt-18 md:mt-20 lg:mt-22 "
         >
           <button 
             onClick={handleDictionaryClick}
-            className="flex flex-col items-center bg-transparent border-none cursor-pointer"
+            className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
           >
             <div 
             className="flex items-center justify-center relative
@@ -84,27 +86,38 @@ function Home() {
                 <img src="/images/dict.png" alt="DictionaryIcon" className='drop-shadow-basic' />
               </div>
             </div>
-            <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Dictionary</p>
+            <p 
+              className="font-extrabold font-[NanumSquareRound]
+              mt-2 md:mt-3 lg:mt-4
+              text-xl md:text-2xl lg:text-3xl "
+            >
+              Dictionary
+            </p>
           </button>
           
           <button 
             onClick={handleQuizClick}
-            className="flex flex-col items-center bg-transparent border-none cursor-pointer"
+            className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
           >
             <div 
             className="flex items-center justify-center relative
-            w-50 h-20 md:w-80 md:h-30 lg:w-95 lg:h-40 
+            w-50 h-20 md:w-80 md:h-30 lg:w-95 lg:h-40  
             bg-lavender-rose-300 rounded-full drop-shadow-basic"
             >
               <div 
                 className="relative 
-                ml-5 w-40 mb-20 md:w-62 md:mb-23 lg:w-72 lg:mb-25"
+                ml-5 w-40 mb-20 md:w-62 md:mb-21 lg:w-72 lg:mb-25"
               >
                 {/* 퀴즈 이미지 */}
                 <img src="/images/quiz.png" alt="DictionaryIcon" className='drop-shadow-basic' />
               </div>
             </div>
-            <p className="mt-4 text-2xl font-extrabold font-[NanumSquareRound]">Quiz</p>
+            <p 
+              className="font-extrabold font-[NanumSquareRound]
+              mt-2 md:mt-3 lg:mt-4
+              text-xl md:text-2xl lg:text-3xl "
+            >
+                Quiz</p>
           </button>
         </div>
       </div>
