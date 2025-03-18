@@ -1,8 +1,8 @@
 import Layout from './components/Layout';
-import Home from './pages/Home';
-import Result from './pages/Result';
-import Dictionary from './pages/Dictionary';
-import Quiz from './pages/Quiz';
+import Home from './pages/home/Home';
+import Result from './pages/result/Result';
+import Dictionary from './pages/dict/Dictionary';
+import Quiz from './pages/quiz/Quiz';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 const router = createBrowserRouter([
