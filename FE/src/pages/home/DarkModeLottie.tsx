@@ -1,3 +1,4 @@
+// 다크모드 토글버튼
 import { useState, useRef, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import darkModeAnimation from '@/assets/lottie/darkMode.json';
@@ -10,8 +11,8 @@ interface DarkModeLottieProps {
 }
 
 function DarkModeLottie({
-  width = 50,
-  height = 50,
+  width = 60,
+  height = 60,
   initialDarkMode = false,
   onToggle
 }: DarkModeLottieProps) {

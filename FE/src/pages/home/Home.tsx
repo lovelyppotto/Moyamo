@@ -117,7 +117,7 @@ function Home() {
             </div>
             <p
               className="font-extrabold font-[NanumSquareRound]
-              mt-2 md:mt-3 lg:mt-4
+              mt-2 md:mt-2 lg:mt-3
               text-lg md:text-xl lg:text-2xl "
             >
               Quiz

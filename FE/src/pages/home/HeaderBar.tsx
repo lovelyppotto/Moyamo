@@ -1,45 +1,66 @@
-import { Search, Camera, ChevronDown } from 'lucide-react';
+import { Camera, ChevronDown } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import DarkModeLottie from './DarkModeLottie';
 
 function HeaderBar() {
   return (
-    <div className="w-full flex justify-center dark:bg-gray-900 py-4 px-6">
-      <div className="w-[80%] bg-white dark:bg-gray-900 py-1 px-6 rounded-xl shadow-sm">
+    <div className="w-full flex justify-center dark:bg-gray-900 mt-11 py-4 px-6">
+      <div className="w-[75%] bg-white dark:bg-gray-900 py-1 px-6 rounded-xl shadow-sm">
         <div className="flex items-center">
           {/* 로고 */}
           {/* <div className="font-bold text-2xl mr-6">MoyaMo</div> */}
 
           {/* 검색 카테고리 선택 */}
           <div className="flex items-center flex-1">
-            <Search size={16} className="mx-1" />
-            <div className="bg-blue-100 dark:bg-blue-900 rounded-md p-1 flex items-center">
-              <ChevronDown size={16} className="mx-1" />
-              <span className="mx-1">전체</span>
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass} 
+              size="lg" 
+              className="mr-3"
+            />
+            <div 
+              className="flex items-center justify-between
+                min-w-[90px] md:min-w-[110px] lg:min-w-[140px] 
+                w-auto whitespace-nowrap
+                bg-kr-300 dark:bg-blue-900 rounded-md p-1 px-2"
+            >
+              <ChevronDown size={18} className="flex-shrink-0 ml-1 md:ml-2" />
+              <div className="flex-1 flex items-center justify-center">
+                <span 
+                  className="text-xs md:text-sm lg:text-base
+                    font-[NanumSquareRound] font-extrabold"
+                >
+                  이탈리아
+                </span>
+              </div>
+              {/* 오른쪽 여백을 위한 빈 공간 */}
+              {/* <div className="w-[18px]"></div> */}
             </div>
 
             {/* 검색창 */}
-            <div className="flex-1 relative ml-2">
-              <input
-                className="w-full h-10 pl-4 pr-12 border-b focus:outline-none"
-                placeholder="검색어를 입력하세요"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <Camera className="w-5 h-5 text-gray-500" />
+            <div className="flex items-center w-full ml-2 mr-2">
+              <div className="relative flex-1 min-w-[70%]">
+                <input
+                  className="w-full h-10 px-2 border-b border-gray-400 focus:outline-none font-[NanumSquareRound]"
+                  placeholder="검색어를 입력하세요"
+                />
+              </div>
+              <div className="ml-3 flex items-center justify-center">
+                <Camera className="w-6 h-6 text-gray-500 cursor-pointer" />
               </div>
             </div>
           </div>
 
-          {/* 다크모드 토글과 언어 선택 */}
+          {/* 다크모드 토글 및 언어 선택 */}
           <div className="flex items-center ml-6">
-            {/* 다크모드 들어갈자리 */}
-            <DarkModeLottie width={60} height={60} />
+            <DarkModeLottie/>
 
-            <div className="flex items-center ml-4">
-              <span className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center overflow-hidden mr-1">
+            <div className="flex items-center">
+              <span className="w-6 h-6 mr-2 bg-red-500 rounded-full flex items-center justify-center overflow-hidden">
                 <span className="text-white font-bold text-xs">KR</span>
               </span>
-              <span>KOR</span>
-              <ChevronDown size={16} className="ml-1" />
+              <span className="font-[NanumSquareRound] font-extrabold">KOR</span>
+              <ChevronDown size={18} className="ml-1" />
             </div>
           </div>
         </div>
