@@ -3,7 +3,7 @@ import DarkModeLottie from './DarkModeLottie';
 
 function HeaderBar() {
   return (
-    <div className="w-[80%] bg-white dark:bg-gray-900 py-4 px-6 rounded-xl shadow-sm">
+    <div className="w-[80%] bg-white dark:bg-gray-900 py-2 px-6 rounded-xl shadow-sm">
       <div className="flex items-center">
         {/* 로고 */}
         {/* <div className="font-bold text-2xl mr-6">MoyaMo</div> */}
