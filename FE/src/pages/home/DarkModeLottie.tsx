@@ -17,45 +17,61 @@ function DarkModeLottie({
 }: DarkModeLottieProps) {
   const [isDark, setIsDark] = useState(initialDarkMode);
   const lottieRef = useRef<any>(null);
+  const isInitializedRef = useRef(false);
 
-  // 컴포넌트 마운트 시 초기 설정
+  // 애니메이션 최적화를 위한 설정
+  const lottieOptions = {
+    animationData: darkModeAnimation,
+    loop: false,
+    autoplay: false,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+      // 렌더링 성능 최적화
+      progressiveLoad: false,
+      hideOnTransparent: true
+    }
+  };
+
+  // 컴포넌트 마운트 시 단 한번만 실행
   useEffect(() => {
-    // 약간의 지연 후 초기 상태 설정
-    const timer = setTimeout(() => {
-      if (lottieRef.current) {
+    if (lottieRef.current && !isInitializedRef.current) {
+      try {
         if (isDark) {
-          // 다크모드면 마지막 프레임으로 이동
-          const durationInFrames = Math.round(lottieRef.current.getDuration(true) * 30); // 30fps 가정
+          // 다크모드면 마지막 프레임으로 즉시 이동
+          const durationInFrames = Math.round(lottieRef.current.getDuration(true) * 30);
           lottieRef.current.goToAndStop(durationInFrames, true);
         } else {
           // 라이트모드면 첫 프레임으로 이동
           lottieRef.current.goToAndStop(0, true);
         }
+        isInitializedRef.current = true;
+      } catch (error) {
+        console.error("초기화 오류:", error);
       }
-    }, 100);
+    }
+  }, [lottieRef.current, isDark]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  // 클릭 처리
+  // 클릭 처리 - 즉시 응답
   const handleClick = () => {
     if (!lottieRef.current) return;
 
     try {
+      const newDarkMode = !isDark;
+      
+      // 애니메이션 속도 증가 (기본 1)
+      lottieRef.current.setSpeed(1.5);
+      
       if (isDark) {
         // 다크모드 -> 라이트모드 (역방향)
-        console.log("역방향 재생 시작 (다크->라이트)");
         lottieRef.current.setDirection(-1);
         lottieRef.current.play();
       } else {
         // 라이트모드 -> 다크모드 (정방향)
-        console.log("정방향 재생 시작 (라이트->다크)");
         lottieRef.current.setDirection(1);
         lottieRef.current.play();
       }
 
-      // 상태 업데이트
-      const newDarkMode = !isDark;
+      // 상태 즉시 업데이트
       setIsDark(newDarkMode);
       
       if (onToggle) {
@@ -72,22 +88,26 @@ function DarkModeLottie({
         width, 
         height, 
         cursor: 'pointer',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        willChange: 'transform', // 성능 최적화
+        transform: 'translateZ(0)' // 하드웨어 가속
       }}
       onClick={handleClick}
     >
       <Lottie
         lottieRef={lottieRef}
-        animationData={darkModeAnimation}
-        loop={false}
-        autoplay={false}
+        {...lottieOptions}
         style={{ 
           width: '100%', 
           height: '100%',
-          display: 'block' // 중요: 인라인 요소의 여백 문제 방지
-        }}
-        onComplete={() => {
-          console.log("애니메이션 완료됨, 현재 상태:", isDark ? "다크모드" : "라이트모드");
+          display: 'block',
+          position: 'absolute',
+          top: 0,
+          left: 0
         }}
       />
     </div>
