@@ -60,7 +60,7 @@ function TranslationDropdown() {
         <img
           src={translationLanguages[selectedLanguage].flagUrl}
           alt={`${selectedLanguage} 국기`}
-          className="w-6 h-6 mr-2 drop-shadow-basic rounded-full object-cover"
+          className="w-6 h-6 mr-2 drop-shadow-nation rounded-full object-cover"
         />
         <img src="" alt="" />
         <span className="font-[NanumSquareRound] font-extrabold">{selectedLanguage}</span>
