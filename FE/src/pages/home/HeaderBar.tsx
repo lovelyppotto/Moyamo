@@ -3,13 +3,8 @@ import { Camera, ChevronDown } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import DarkModeLottie from './DarkModeLottie';
+import CountryDropdown from './CountryDropdown';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 function HeaderBar() {
   const [selectedCountry, setSelectedCountry] = useState('전체');
@@ -20,7 +15,7 @@ function HeaderBar() {
     <div className="relative w-full">
       <div
         className="absolute
-        left-[16%] top-[35px] md:left-[14.5%] md:top-[20px] lg:left-[14%] lg:top-[15px]"
+        left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"
       >
         <img
           src="./images/logo.png"
@@ -34,39 +29,11 @@ function HeaderBar() {
             {/* 검색 카테고리 선택 */}
             <div className="flex items-center flex-1">
               <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" className="mr-3" />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div
-                    className="flex items-center justify-between
-                    min-w-[90px] md:min-w-[110px] lg:min-w-[130px] 
-                    w-auto whitespace-nowrap
-                    bg-kr-300 dark:bg-blue-900 rounded-md p-1 px-2
-                    cursor-pointer"
-                  >
-                    <ChevronDown size={18} className="flex-shrink-0 ml-1 md:ml-2" />
-                    <div className="flex-1 flex items-center justify-center">
-                      <span
-                        className="text-xs md:text-sm lg:text-base
-                        font-[NanumSquareRound] font-extrabold"
-                      >
-                        {selectedCountry}
-                      </span>
-                    </div>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[130px]">
-                  {countries.map((c) => (
-                    <DropdownMenuItem
-                      key={c}
-                      className="font-[NanumSquareRound] cursor-pointer"
-                      onClick={() => setSelectedCountry(c)}
-                    >
-                      {c}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
+              <CountryDropdown 
+                selectedCountry={selectedCountry}
+                setSelectedCountry={setSelectedCountry}
+                countries={countries}
+              />
               {/* 검색창 */}
               <div className="flex items-center w-full ml-2 mr-2">
                 <div className="relative flex-1 min-w-[70%]">
