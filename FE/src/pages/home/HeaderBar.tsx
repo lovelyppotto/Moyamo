@@ -56,7 +56,7 @@ function TranslationDropdown() {
       onSelect={handleLanguageSelect}
       label="번역 언어"
     >
-      <div className="flex items-center">
+      <div className="flex items-center cursor-pointer">
         <img
           src={translationLanguages[selectedLanguage].flagUrl}
           alt={`${selectedLanguage} 국기`}
