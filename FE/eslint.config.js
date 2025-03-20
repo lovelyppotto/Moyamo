@@ -28,7 +28,7 @@ export default [
     'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ),
 
   // 추가 설정
@@ -68,8 +68,8 @@ export default [
       'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
       // 'react/jsx-props-no-spreading': 'off',
       // 'react/require-default-props': 'off',
-      "import/no-unresolved": "off",
-      "import/extensions": "off",
+      'import/no-unresolved': 'off',
+      'import/extensions': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error'],
       'no-shadow': 'off',
