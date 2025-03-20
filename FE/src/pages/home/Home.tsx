@@ -90,7 +90,7 @@ function Home() {
               </div>
             </div>
             <p
-              className="font-extrabold font-[NanumSquareRound]
+              className="font-[NanumSquareRoundEB]
               mt-2 md:mt-2 lg:mt-3
               text-lg md:text-xl lg:text-2xl "
             >
@@ -116,7 +116,7 @@ function Home() {
               </div>
             </div>
             <p
-              className="font-extrabold font-[NanumSquareRound]
+              className="font-[NanumSquareRoundEB]
               mt-2 md:mt-2 lg:mt-3
               text-lg md:text-xl lg:text-2xl "
             >

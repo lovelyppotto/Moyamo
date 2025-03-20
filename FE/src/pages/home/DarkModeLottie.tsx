@@ -20,7 +20,7 @@ function DarkModeLottie({
   const lottieRef = useRef<any>(null);
   const isInitializedRef = useRef(false);
 
-  // 애니메이션 최적화를 위한 설정
+  // 애니메이션 최적화 위한 설정
   const lottieOptions = {
     animationData: darkModeAnimation,
     loop: false,
