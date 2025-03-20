@@ -66,7 +66,7 @@ function Home() {
             </div>
           </div>
         </div>
-        <p className="text-md md:text-lg lg:text-xl mt-2 text-center font-[NanumSquareRound]">
+        <p className="text-md md:text-lg lg:text-xl text-center font-[NanumSquareRoundB]">
           의미있는 제스처를 통해 세상을 열어보세요
         </p>
 
@@ -81,7 +81,7 @@ function Home() {
           >
             <div
               className="flex items-center justify-center relative
-            w-48 h-22 md:w-63 md:h-28 lg:w-75 lg:h-32 
+            w-48 h-22 md:w-63 md:h-28 lg:w-78 lg:h-32 
             bg-inch-worm-500 rounded-full drop-shadow-basic"
             >
               <div className="relative mb-16 md:mb-20 lg:mb-25">
@@ -104,7 +104,7 @@ function Home() {
           >
             <div
               className="flex items-center justify-center relative
-            w-48 h-22 md:w-63 md:h-28 lg:w-75 lg:h-32 
+            w-48 h-22 md:w-63 md:h-28 lg:w-78 lg:h-32 
             bg-lavender-rose-300 rounded-full drop-shadow-basic"
             >
               <div
