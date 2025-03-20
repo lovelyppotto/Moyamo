@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
@@ -13,11 +12,7 @@ interface CountryDropdownProps {
   countries: string[];
 }
 
-function CountryDropdownProps({
-  selectedCountry,
-  setSelectedCountry,
-  countries,
-}: CountryDropdownProps) {
+function CountryDropdown({ selectedCountry, setSelectedCountry, countries }: CountryDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,7 +21,7 @@ function CountryDropdownProps({
                     min-w-[90px] md:min-w-[110px] lg:min-w-[130px] 
                     w-auto whitespace-nowrap
                     bg-kr-300 dark:bg-blue-900 rounded-md p-1 px-2
-                    cursor-pointer"
+                    cursor-pointer relative"
         >
           <ChevronDown size={18} className="flex-shrink-0 ml-1 md:ml-2" />
           <div className="flex-1 flex items-center justify-center">
@@ -39,11 +34,19 @@ function CountryDropdownProps({
           </div>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[130px]">
+      <DropdownMenuContent
+        className="block text-center
+          mt-1 p-0
+          min-w-[90px] md:min-w-[110px] lg:min-w-[130px]
+          bg-white border-none drop-shadow-basic"
+      >
         {countries.map((c) => (
           <DropdownMenuItem
             key={c}
-            className="font-[NanumSquareRound] cursor-pointer"
+            className="rounded-none 
+              justify-center text-center  
+              font-[NanumSquareRound] text-md cursor-pointer
+              hover:bg-kr-100"
             onClick={() => setSelectedCountry(c)}
           >
             {c}
@@ -54,4 +57,4 @@ function CountryDropdownProps({
   );
 }
 
-export default CountryDropdownProps;
+export default CountryDropdown;
