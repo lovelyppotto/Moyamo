@@ -26,7 +26,7 @@ function DictCountrySelector({
 }: CountrySelectorProps) {
   // 국기 이미지 경로 생성 함수
   const getFlagPath = (countryCode: string) => {
-    return `flag/${countryCode}.png`;
+    return `/flag/${countryCode}.png`;
   };
 
   // 국가 코드를 Country 객체로 변환
