@@ -102,6 +102,14 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'NanumSquareRound';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRoundB.woff')
+    format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
 /* 갈무리11 */
 @font-face {
   font-family: 'Galmuri11';

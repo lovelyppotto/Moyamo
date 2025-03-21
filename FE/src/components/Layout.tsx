@@ -10,7 +10,7 @@ function Layout() {
   const isQuizPage = location.pathname === '/quiz.';
 
   return (
-    <div className="relative flex flex-col">
+    <div className="relative flex flex-col bg-[#f5f5f5]">
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
       {(isDictPage || isResultPage) && (
         <button className="absolute top-4 left-4 z-10">
