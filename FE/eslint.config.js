@@ -26,7 +26,7 @@ export default [
     'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ),
 
   // 추가 설정
@@ -63,7 +63,7 @@ export default [
       ],
       'react/react-in-jsx-scope': 'off',
       'import/prefer-default-export': 'off',
-      'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],
+      'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
       'react/jsx-props-no-spreading': 'off',
       'react/require-default-props': 'off',
       'no-unused-vars': 'off',

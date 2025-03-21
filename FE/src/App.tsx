@@ -1,9 +1,13 @@
-import Layout from './components/Layout';
-import Home from './pages/home/Home';
-import Result from './pages/result/Result';
-import Dictionary from './pages/dict/Dictionary';
-import Quiz from './pages/quiz/Quiz';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import Layout from './components/Layout';
+import Dictionary from './pages/dict/Dictionary';
+import Home from './pages/home/Home';
+import AiQuiz from './pages/quiz/ai_quzi/AiQuzi';
+import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
+import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
+import Quiz from './pages/quiz/Quiz';
+import Result from './pages/result/Result';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +33,21 @@ const router = createBrowserRouter([
         // 퀴즈
         path: 'quiz',
         element: <Quiz />,
+      },
+      {
+        // meaning 퀴즈(페이지 확인용)
+        path: 'meaningquiz',
+        element: <MeaningQuiz />,
+      },
+      {
+        // gesture 퀴즈(페이지 확인용)
+        path: 'gesturequiz',
+        element: <GestureQuiz />,
+      },
+      {
+        // ai 퀴즈(페이지 확인용)
+        path: 'aiquiz',
+        element: <AiQuiz />,
       },
     ],
   },

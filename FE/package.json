@@ -11,9 +11,11 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mediapipe/tasks-vision": "0.10.22-rc.20250304",
+    "@radix-ui/react-progress": "^1.1.2",
     "@tailwindcss/vite": "^4.0.13",
     "@tensorflow/tfjs": "^4.22.0",
     "class-variance-authority": "^0.7.1",
@@ -58,8 +60,7 @@
     "typescript-eslint": "^8.26.1",
     "vite": "^6.2.0"
   },
-  
-    "lint-staged": {
+  "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
