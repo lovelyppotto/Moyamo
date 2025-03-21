@@ -1,4 +1,5 @@
 // 다크모드 토글버튼
+// 추후 persist 옵션에 따라 로티 애니메이션 시작점 변경예정
 import { useRef, useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 import darkModeAnimation from '@/assets/lottie/darkMode.json';
