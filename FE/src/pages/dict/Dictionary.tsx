@@ -5,6 +5,7 @@ import IconButton from '@/components/IconButton';
 import gestureExampleImg from './gesture_example.png';
 import DictCountrySelector from './DictCountrySelector';
 import { DictListCarousel, Gesture } from './DictListCarousel';
+import DictMainImage from './MainGestureImage';
 
 type Country = {
   code: string;
@@ -27,7 +28,7 @@ function Dictionary() {
   });
 
   // 국가 목록
-  const countries: Country[] = [
+  const countryOptions: Country[] = [
     { code: 'us', name: '미국' },
     { code: 'kr', name: '한국' },
     { code: 'cn', name: '중국' },
@@ -107,12 +108,41 @@ function Dictionary() {
   };
 
   return (
-    <div className="h-screen p-4 font-[NanumSquareRound]">
-      <div className="flex justify-between ">
+    <div className="h-screen flex flex-col p-4 font-[NanumSquareRound]">
+      <div className="flex justify-center align-center gap-6 max-w-6xl mx-auto my-4">
         {/* 메인 이미지 */}
-        <div></div>
+        <div className="w-3/4 my-4">
+          {currentGesture && (
+            <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
+          )}
+        </div>
         {/* 국가 선택 드롭다운, 아이콘 버튼 */}
-        <div></div>
+        <div className="w-1/4 flex flex-col my-4">
+          {/* 국가 선택 드롭다운 */}
+          <DictCountrySelector
+            selectedCountry={selectedCountry}
+            onSelectCountry={handleSelectCountry}
+            countryOptions={countryOptions}
+          />
+          {/* 아이콘 버튼 */}
+          <div className="flex flex-col space-y-4 mt-6">
+            <IconButton
+              icon={faHands}
+              tooltipText="제스처 연습"
+              onClick={handleGestureButtonClick}
+            />
+            <IconButton
+              icon={faMagnifyingGlassPlus}
+              tooltipText="자세히 보기"
+              onClick={handleDetailButtonClick}
+            />
+            <IconButton
+              icon={faRectangleList}
+              tooltipText="나라별 비교 가이드"
+              onClick={handleGuideButtonClick}
+            />
+          </div>
+        </div>
       </div>
       {/* 캐러셀 */}
       <div className="mt-6">

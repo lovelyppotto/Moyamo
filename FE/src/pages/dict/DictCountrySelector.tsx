@@ -42,7 +42,7 @@ function DictCountrySelector({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-3 w-full px-4 py-2 bg-white rounded-xl border border-gray-400 shadow-sm focus:outline-none">
+      <DropdownMenuTrigger className="flex items-center gap-3 w-[180px] px-4 py-2 bg-white rounded-xl border border-gray-400 shadow-sm focus:outline-none">
         <div className="flex items-center gap-2">
           <img
             src={getFlagPath(selectedCountry.code)}
