@@ -1,14 +1,13 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { faArrowLeft, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
+import { Outlet, useLocation } from 'react-router-dom';
 
 function Layout() {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isResultPage = location.pathname === '/result';
   const isDictPage = location.pathname === '/dictionary';
-  const isQuizPage = location.pathname === '/quiz';
+  const isQuizPage = location.pathname === '/quiz.';
 
   return (
     <div className="relative flex flex-col bg-[#f5f5f5]">
