@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Camera, ChevronDown } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import DarkModeLottie from './DarkModeLottie';
 import BaseDropdown from './BaseDropdown';
+import { useTheme } from '@/components/theme-provider';
 
 // 번역 국가/언어 정보 인터페이스
 interface TranslationLanguage {
@@ -72,8 +73,10 @@ function TranslationDropdown() {
 
 // 메인 HeaderBar 컴포넌트
 function HeaderBar() {
+  const { theme } = useTheme();
   const [searchCountry, setSearchCountry] = useState('전체');
   const countries = ['전체', '한국', '미국', '중국', '일본', '이탈리아'];
+  const logoSrc = theme === 'dark' ? './images/logo-dark.png' : './images/logo.png';
 
   return (
     <div className="relative w-full">
@@ -82,12 +85,12 @@ function HeaderBar() {
         left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"
       >
         <img
-          src="./images/logo.png"
+          src={logoSrc}
           alt="MoyamoLogo"
           className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 "
         />
       </div>
-      <div className="w-full flex justify-center mt-11 mb-15 py-4 px-6">
+      <div className="w-full flex justify-center mt-11 mb-10 py-4 px-6">
         <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
           <div className="flex items-center">
             {/* 검색 카테고리 선택 */}
