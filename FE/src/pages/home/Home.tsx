@@ -29,6 +29,7 @@ function Home() {
       <HeaderBar />
 
       {/* 국가별 관광지 사진 영역 - 6각형 레이아웃 */}
+      {/* 각 border 채도 낮출 예정 */}
       <div className="absolute w-full h-full pointer-events-none">
         {/* 한국 (왼쪽 상단) */}
         <div className="absolute top-[20%] left-[10%]">
