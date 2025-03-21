@@ -2,7 +2,13 @@ import * as Progress from '@radix-ui/react-progress';
 import { useState, useEffect } from 'react';
 import '../../index.css';
 
-function QuizProgress({ value = 0, buttonPressed = false, className = '' }) {
+interface QuizProgressProps {
+  value?: number;
+  buttonPressed?: boolean;
+  className?: string;
+}
+
+function QuizProgress({ value = 0, buttonPressed = false, className = '' }: QuizProgressProps) {
   const [progress, setProgress] = useState(value);
   // 버튼을 누르면 25%씩 증가//settimeout은 한번만 실행됨. setInterval으로 변경.
   useEffect(() => {
