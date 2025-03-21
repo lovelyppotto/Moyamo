@@ -4,7 +4,7 @@ import Result from './pages/result/Result';
 import Dictionary from './pages/dict/Dictionary';
 import Quiz from './pages/quiz/Quiz';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
+import { ThemeProvider } from '@/components/theme-provider';
 
 const router = createBrowserRouter([
   {
@@ -35,9 +35,13 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <div>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </div>
+  );
 }
-
 export default App;

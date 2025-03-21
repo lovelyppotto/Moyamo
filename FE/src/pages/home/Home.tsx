@@ -30,14 +30,18 @@ function Home() {
         {/* 한국 (왼쪽 상단) */}
         <div className="absolute top-[20%] left-[10%]">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src="/images/attractions/korea.png" 
                 alt="Korea"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 px-5 py-2 rounded-full text-white font-bold bg-blue-500">
+            <div 
+              className="absolute bottom-13 -right-5
+              transform translate-x-1/4 translate-y-1/4 px-4 
+              rounded-full border-2 border-white
+              text-white font-bold bg-blue-500">
               Korea
             </div>
           </div>
@@ -46,14 +50,18 @@ function Home() {
         {/* 미국 (오른쪽 상단) */}
         <div className="absolute top-[20%] right-[10%]">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg -scale-x-100">
               <img 
                 src="/images/attractions/usa.jpg" 
                 alt="USA"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-0 left-0 transform -translate-x-1/4 translate-y-1/4 px-5 py-2 rounded-full text-white font-bold bg-us-600">
+            <div className="absolute bottom-13 -left-3 
+              transform -translate-x-1/4 translate-y-1/4 px-4
+              rounded-full text-white border-2 border-white
+              font-bold bg-us-600"
+            >
               USA
             </div>
           </div>
@@ -62,15 +70,19 @@ function Home() {
         {/* 일본 (왼쪽 중간) */}
         <div className="absolute top-1/2 left-[20%] transform -translate-y-1/2">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src="/images/attractions/japan.jpg" 
                 alt="Japan"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-2 right-0 transform translate-x-1/2 translate-y-1/2 px-5 py-2 rounded-full text-white font-bold bg-yellow-400">
-
+            <div 
+              className="absolute bottom-14 right-33 
+              transform translate-x-1/2 translate-y-1/2 px-4 
+              rounded-full text-white border-2 border-white
+              font-bold bg-jp-500"
+              >
               Japan
             </div>
           </div>
@@ -79,30 +91,39 @@ function Home() {
         {/* 커뮤니케이션 (오른쪽 중간) */}
         <div className="absolute top-1/2 right-[20%] transform -translate-y-1/2">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src="/images/attractions/communication.jpg" 
                 alt="Communication"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-5 py-2 rounded-full text-black font-bold bg-white border-2 border-black">
+            <div 
+              className="absolute bottom-11 left-33
+              transform -translate-x-1/2 px-4 
+              rounded-full text-black border-2 border-black
+              font-bold bg-white"
+            >
               Communication
             </div>
           </div>
         </div>
 
-        {/* 일본 (왼쪽 하단) */}
+        {/* 이탈리아 (왼쪽 하단) */}
         <div className="absolute bottom-[20%] left-[10%]">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src="/images/attractions/italy.webp" 
                 alt="Italy"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-2 right-0 transform translate-x-1/2 translate-y-1/2 px-5 py-2 rounded-full text-white font-bold bg-italy-600">
+            <div 
+              className="absolute bottom-14 right-0 
+              transform translate-x-1/2 translate-y-1/2 px-4
+              rounded-full bg-italy-600 border-2 border-white
+              text-white font-bold">
               Italy
             </div>
           </div>
@@ -111,110 +132,26 @@ function Home() {
         {/* 중국 (오른쪽 하단) */}
         <div className="absolute bottom-[20%] right-[10%]">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src="/images/attractions/china.jpg" 
                 alt="China"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-2 left-0 transform -translate-x-1/2 translate-y-1/2 px-5 py-2 rounded-full text-white font-bold bg-cn-600">
+            <div 
+              className="absolute bottom-14 left-0 
+              transform -translate-x-1/2 translate-y-1/2 px-4 
+              rounded-full bg-cn-600 border-2 border-white
+              text-white font-bold"
+            >
               China
             </div>
           </div>
         </div>
 
         {/* 점선 연결선 */}
-        {/* 한국 -> 제스처 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="15%" 
-            y1="15%" 
-            x2="20%" 
-            y2="50%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 제스처 -> 일본 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="20%" 
-            y1="50%" 
-            x2="15%" 
-            y2="85%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 한국 -> 미국 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="15%" 
-            y1="15%" 
-            x2="85%" 
-            y2="15%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 미국 -> 커뮤니케이션 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="85%" 
-            y1="15%" 
-            x2="80%" 
-            y2="50%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 커뮤니케이션 -> 중국 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="80%" 
-            y1="50%" 
-            x2="85%" 
-            y2="85%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 일본 -> 중국 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="15%" 
-            y1="85%" 
-            x2="85%" 
-            y2="85%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
-
-        {/* 제스처 -> 커뮤니케이션 */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-          <line 
-            x1="20%" 
-            y1="50%" 
-            x2="80%" 
-            y2="50%" 
-            stroke="#888888" 
-            strokeWidth="2" 
-            strokeDasharray="5,5"
-          />
-        </svg>
+        
       </div>
 
 
