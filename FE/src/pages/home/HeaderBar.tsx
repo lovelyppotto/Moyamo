@@ -56,7 +56,7 @@ function TranslationDropdown() {
       onSelect={handleLanguageSelect}
       label="번역 언어"
     >
-      <div className="flex items-center cursor-pointer">
+      <div className="flex items-center cursor-pointer dark:text-d-txt-50">
         <img
           src={translationLanguages[selectedLanguage].flagUrl}
           alt={`${selectedLanguage} 국기`}
@@ -87,8 +87,8 @@ function HeaderBar() {
           className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 "
         />
       </div>
-      <div className="w-full flex justify-center dark:bg-gray-900 mt-11 mb-5 py-4 px-6">
-        <div className="w-[75%] bg-white dark:bg-gray-900 py-1 px-6 rounded-xl shadow-sm">
+      <div className="w-full flex justify-center mt-11 mb-15 py-4 px-6">
+        <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
           <div className="flex items-center">
             {/* 검색 카테고리 선택 */}
             <div className="flex items-center flex-1">
@@ -104,12 +104,16 @@ function HeaderBar() {
               <div className="flex items-center w-full ml-2 mr-2">
                 <div className="relative flex-1 min-w-[70%]">
                   <input
-                    className="w-full h-10 px-2 border-b border-gray-400 focus:outline-none font-[NanumSquareRound]"
+                    className="w-full h-10 px-2 
+                    border-b border-gray-400 focus:outline-none
+                    dark:border-d-txt-50/80
+                    dark:text-d-txt-50/90
+                    font-[NanumSquareRound]"
                     placeholder="검색어를 입력하세요"
                   />
                 </div>
                 <div className="ml-3 flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-gray-500 cursor-pointer" />
+                  <Camera className="w-6 h-6 cursor-pointer" />
                 </div>
               </div>
             </div>

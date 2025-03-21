@@ -1,5 +1,5 @@
 // 다크모드 토글버튼
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Lottie from 'lottie-react';
 import darkModeAnimation from '@/assets/lottie/darkMode.json';
 import { useTheme } from '@/components/theme-provider';
@@ -16,62 +16,59 @@ function DarkModeLottie({
   // shadcn/ui의 테마 시스템 사용
   const { theme, setTheme } = useTheme();
   const lottieRef = useRef<any>(null);
-  const isInitializedRef = useRef(false);
-
-  // 애니메이션 최적화 위한 설정
-  const lottieOptions = {
-    animationData: darkModeAnimation,
-    loop: false,
-    autoplay: false,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-      // 렌더링 성능 최적화
-      progressiveLoad: false,
-      hideOnTransparent: true,
-    },
-  };
-
-  // 컴포넌트 마운트 시 단 한번만 실행
+  const [initialized, setInitialized] = useState(false);
+  
+  // 현재 테마에 따라 애니메이션 초기 상태 설정
   useEffect(() => {
-    if (lottieRef.current && !isInitializedRef.current) {
-      try {
-        if (theme === 'dark') {
-          // 다크모드면 마지막 프레임으로 즉시 이동
-          const durationInFrames = Math.round(lottieRef.current.getDuration(true) * 30);
-          lottieRef.current.goToAndStop(durationInFrames, true);
-        } else {
-          // 라이트모드면 첫 프레임으로 이동
-          lottieRef.current.goToAndStop(0, true);
-        }
-        isInitializedRef.current = true;
-      } catch (error) {
-        console.error('초기화 오류:', error);
+    if (lottieRef.current) {
+      if (theme === 'dark') {
+        // 다크모드일 때 최종 프레임으로 설정
+        const totalFrames = lottieRef.current.totalFrames - 1;
+        lottieRef.current.goToAndStop(totalFrames, true);
+      } else {
+        // 라이트모드일 때 첫 프레임으로 설정
+        lottieRef.current.goToAndStop(0, true);
       }
+      setInitialized(true);
     }
   }, [lottieRef.current, theme]);
 
-  // 클릭 처리 - 즉시 응답
+  // 클릭 핸들러(최적화 필요)
   const handleClick = () => {
-    if (!lottieRef.current) return;
-
+    if (!lottieRef.current || !initialized) return;
+    
     try {
-      const newTheme = theme === 'dark' ? 'light' : 'dark';
-
-      // 애니메이션 속도 증가 (기본 1)
+      // 다음 테마 결정
+      const nextTheme = theme === 'dark' ? 'light' : 'dark';
+      
+      // 애니메이션 속도 설정
       lottieRef.current.setSpeed(1.5);
-
+      
       if (theme === 'dark') {
-        // 다크모드 -> 라이트모드 (역방향)
+        // 다크 -> 라이트 (역방향 재생)
         lottieRef.current.setDirection(-1);
         lottieRef.current.play();
+        
+        // 애니메이션 시간 계산 (약간의 여유)
+        const animDuration = lottieRef.current.getDuration() * 1000 / 1.7;
+        
+        // 애니메이션 후 테마 변경
+        setTimeout(() => {
+          setTheme(nextTheme);
+        }, animDuration * 0.55); // 약간 일찍 변경하여 부드러운 전환
       } else {
-        // 라이트모드 -> 다크모드 (정방향)
+        // 라이트 -> 다크 (정방향 재생)
         lottieRef.current.setDirection(1);
         lottieRef.current.play();
+        
+        // 애니메이션 시간 계산
+        const animDuration = lottieRef.current.getDuration() * 1000 / 1.5;
+        
+        // 애니메이션 후 테마 변경
+        setTimeout(() => {
+          setTheme(nextTheme);
+        }, animDuration * 0.55);
       }
-
-      // shadcn/ui 테마 변경
-      setTheme(newTheme);
     } catch (error) {
       console.error('애니메이션 제어 오류:', error);
     }
@@ -88,14 +85,14 @@ function DarkModeLottie({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        willChange: 'transform', // 성능 최적화
-        transform: 'translateZ(0)', // 하드웨어 가속
       }}
       onClick={handleClick}
     >
       <Lottie
         lottieRef={lottieRef}
-        {...lottieOptions}
+        animationData={darkModeAnimation}
+        loop={false}
+        autoplay={false}
         style={{
           width: '100%',
           height: '100%',

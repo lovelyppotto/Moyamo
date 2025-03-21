@@ -29,7 +29,8 @@ function BaseDropdown({
       className={`flex items-center justify-between
                 min-w-[90px] md:min-w-[110px] lg:min-w-[130px] 
                 w-auto whitespace-nowrap
-                bg-kr-300 dark:bg-blue-900 rounded-md p-1 px-2
+                bg-kr-300 rounded-md p-1 px-2
+                dark:bg-kr-200 dark:text-black
                 cursor-pointer relative
                 ${className}`}
     >
@@ -63,7 +64,7 @@ function BaseDropdown({
               justify-center text-center  
               font-[NanumSquareRound] text-sm
               cursor-pointer
-              hover:bg-kr-100"
+              hover:bg-kr-100 hover:dark:bg-kr-200"
             onClick={() => onSelect(opt)}
           >
             {opt}

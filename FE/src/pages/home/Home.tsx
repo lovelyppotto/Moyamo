@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import HeaderBar from './HeaderBar';
+import { useTheme } from '@/components/theme-provider';
 
 function Home() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const handleDictionaryClick = () => {
     // Dictionary로 이동
@@ -16,10 +18,11 @@ function Home() {
 
   return (
     <div
-      className="min-h-screen w-full flex flex-col"
+      className="h-screen overflow-hidden w-full flex flex-col"
       style={{
-        backgroundImage: 'url(/images/background.webp)',
-        backgroundSize: '100% 100%',
+        backgroundImage:
+          theme === 'dark' ? 'url(/images/background-dark.webp)' : 'url(/images/background.webp)',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
@@ -31,17 +34,18 @@ function Home() {
         <div className="absolute top-[20%] left-[10%]">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src="/images/attractions/korea.png" 
+              <img
+                src="/images/attractions/korea.png"
                 alt="Korea"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div 
+            <div
               className="absolute bottom-13 -right-5
               transform translate-x-1/4 translate-y-1/4 px-4 
               rounded-full border-2 border-white
-              text-white font-bold bg-blue-500">
+              text-white font-bold bg-blue-500"
+            >
               Korea
             </div>
           </div>
@@ -51,13 +55,14 @@ function Home() {
         <div className="absolute top-[20%] right-[10%]">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg -scale-x-100">
-              <img 
-                src="/images/attractions/usa.jpg" 
+              <img
+                src="/images/attractions/usa.jpg"
                 alt="USA"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-13 -left-3 
+            <div
+              className="absolute bottom-13 -left-3 
               transform -translate-x-1/4 translate-y-1/4 px-4
               rounded-full text-white border-2 border-white
               font-bold bg-us-600"
@@ -71,18 +76,18 @@ function Home() {
         <div className="absolute top-1/2 left-[20%] transform -translate-y-1/2">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src="/images/attractions/japan.jpg" 
+              <img
+                src="/images/attractions/japan.jpg"
                 alt="Japan"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div 
+            <div
               className="absolute bottom-14 right-33 
               transform translate-x-1/2 translate-y-1/2 px-4 
               rounded-full text-white border-2 border-white
               font-bold bg-jp-500"
-              >
+            >
               Japan
             </div>
           </div>
@@ -92,13 +97,13 @@ function Home() {
         <div className="absolute top-1/2 right-[20%] transform -translate-y-1/2">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src="/images/attractions/communication.jpg" 
+              <img
+                src="/images/attractions/communication.jpg"
                 alt="Communication"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div 
+            <div
               className="absolute bottom-11 left-33
               transform -translate-x-1/2 px-4 
               rounded-full text-black border-2 border-black
@@ -113,17 +118,18 @@ function Home() {
         <div className="absolute bottom-[20%] left-[10%]">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src="/images/attractions/italy.webp" 
+              <img
+                src="/images/attractions/italy.webp"
                 alt="Italy"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div 
+            <div
               className="absolute bottom-14 right-0 
               transform translate-x-1/2 translate-y-1/2 px-4
               rounded-full bg-italy-600 border-2 border-white
-              text-white font-bold">
+              text-white font-bold"
+            >
               Italy
             </div>
           </div>
@@ -133,13 +139,13 @@ function Home() {
         <div className="absolute bottom-[20%] right-[10%]">
           <div className="relative">
             <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src="/images/attractions/china.jpg" 
+              <img
+                src="/images/attractions/china.jpg"
                 alt="China"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div 
+            <div
               className="absolute bottom-14 left-0 
               transform -translate-x-1/2 translate-y-1/2 px-4 
               rounded-full bg-cn-600 border-2 border-white
@@ -151,40 +157,40 @@ function Home() {
         </div>
 
         {/* 점선 연결선 */}
-        
       </div>
-
-
 
       <div
         className="flex-grow flex flex-col justify-center
-      px-16"
+      px-16 dark:text-d-txt-50"
       >
-        <div className="flex flex-col item-center font-[DNFBitBitv2] text-center">
+        <div
+          className="flex flex-col item-center font-[DNFBitBitv2] 
+          text-3xl text-center "
+        >
           {/* 첫 번째 줄 */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl mb-1 md:mb-2 lg:mb-3">
+          <h1 className="md:text-4xl lg:text-5xl mb-1 md:mb-2 lg:mb-3">
             Unlock the world
           </h1>
 
           {/* 두 번째 줄 */}
           <div className="flex items-center justify-center mb-1 md:mb-2 lg:mb-3 w-full">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl">through</h1>
+            <h1 className="md:text-4xl lg:text-5xl">through</h1>
             <img
               src="/images/icons/puzzle.png"
               alt="pixel-puzzle"
               className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-1 sm:mx-2"
             />
-            <h1 className="text-3xl md:text-4xl lg:text-5xl">meaningful</h1>
+            <h1 className="dark:text-d-txt-50 md:text-4xl lg:text-5xl">meaningful</h1>
           </div>
 
           {/* 세 번째 줄 */}
           <div className="flex justify-center w-full mb-3 md:mb-4 lg:mb-5">
             <div className="relative inline-flex">
               <div
-                className="flex bg-blue-300/60 rounded-l-lg
+                className="flex bg-blue-300/60 dark:bg-blue-200 rounded-l-lg
                 px-5 pt-1 pb-2 md:pt-2 md:pb-3 lg:pt-3 lg:pb-4"
               >
-                <h1 className="text-3xl md:text-4xl lg:text-5xl">gestures</h1>
+                <h1 className="dark:text-black md:text-4xl lg:text-5xl">gestures</h1>
               </div>
               {/* 오른쪽 태그 장식 */}
               <div className="flex">
@@ -197,14 +203,17 @@ function Home() {
             </div>
           </div>
         </div>
-        <p className="text-md md:text-lg lg:text-xl text-center font-[NanumSquareRoundB]">
+        <p 
+          className="text-md md:text-lg lg:text-xl
+          text-center font-[NanumSquareRoundB]"
+        >
           의미있는 제스처를 통해 세상을 열어보세요
         </p>
 
         {/* 버튼 영역 */}
         <div
           className="flex justify-center items-center space-x-8
-          mt-20 md:mt-22 lg:mt-24 "
+          mt-15 md:mt-17 lg:mt-20 "
         >
           <button
             onClick={handleDictionaryClick}
@@ -212,8 +221,9 @@ function Home() {
           >
             <div
               className="flex items-center justify-center relative
-              w-48 h-22 md:w-63 md:h-28 lg:w-78 lg:h-32 
-              bg-inch-worm-500 rounded-full drop-shadow-basic"
+              w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
+              bg-inch-worm-500 dark:bg-inch-worm-450
+              rounded-full drop-shadow-basic"
             >
               <div className="relative mb-14 md:mb-16 lg:mb-20">
                 {/* 책 이미지 */}
@@ -222,7 +232,7 @@ function Home() {
             </div>
             <p
               className="font-[NanumSquareRoundEB]
-              mt-2 md:mt-2 lg:mt-3
+              mt-2 md:mt-2 lg:mt-2
               text-lg md:text-xl lg:text-2xl "
             >
               Dictionary
@@ -235,12 +245,13 @@ function Home() {
           >
             <div
               className="flex items-center justify-center relative
-            w-48 h-22 md:w-63 md:h-28 lg:w-78 lg:h-32 
-            bg-lavender-rose-300 rounded-full drop-shadow-basic"
+            w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
+            bg-lavender-rose-300 dark:bg-lavender-rose-250
+            rounded-full drop-shadow-basic"
             >
               <div
                 className="relative 
-                ml-5 w-41 mb-18 md:w-54 md:mb-20 lg:w-60 lg:mb-25"
+                ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
               >
                 {/* 퀴즈 이미지 */}
                 <img src="/images/quiz.png" alt="DictionaryIcon" className="drop-shadow-basic" />
@@ -248,7 +259,7 @@ function Home() {
             </div>
             <p
               className="font-[NanumSquareRoundEB]
-              mt-2 md:mt-2 lg:mt-3
+              mt-2 md:mt-2 lg:mt-2
               text-lg md:text-xl lg:text-2xl "
             >
               Quiz
