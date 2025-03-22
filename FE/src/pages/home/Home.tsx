@@ -293,7 +293,9 @@ function Home() {
             </DialogTrigger>
             <DialogContent
               className="py-10 px-10 drop-shadow-basic
-                bg-white border-none font-[NanumSquareRound]"
+                bg-white border-none font-[NanumSquareRound]
+                dark:bg-gray-800 dark:text-d-txt-50
+                "
               style={{ maxWidth: '530px', width: '90vw' }} // shadcn이 강제하는 고정 너비로 인해 인라인 스타일로 작성
             >
               <DialogHeader>
@@ -308,13 +310,13 @@ function Home() {
               </DialogHeader>
               <div className='flex justify-end gap-4 mt-2'> {/* 버튼 오른쪽 정렬 */}
                 <Button 
-                  className="bg-slate-200"
+                  className="bg-slate-200 dark:bg-slate-600"
                   onClick={() => handleQuizClick(false)}
                 >
                   제외하기
                 </Button>
                 <Button
-                  className="bg-kr-500 text-white"
+                  className="bg-kr-500 dark:bg-kr-450 text-white"
                   onClick={() => handleQuizClick(true)}
                 >
                   포함하기</Button>
