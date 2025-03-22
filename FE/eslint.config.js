@@ -19,6 +19,8 @@ export default [
 
   // 레거시 설정
   ...compat.extends(
+    'airbnb',
+    'airbnb-typescript',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
@@ -62,10 +64,12 @@ export default [
         },
       ],
       'react/react-in-jsx-scope': 'off',
-      'import/prefer-default-export': 'off',
+      // 'import/prefer-default-export': 'off',
       'react/function-component-definition': [2, { namedComponents: 'function-declaration' }],
-      'react/jsx-props-no-spreading': 'off',
-      'react/require-default-props': 'off',
+      // 'react/jsx-props-no-spreading': 'off',
+      // 'react/require-default-props': 'off',
+      'import/no-unresolved': 'off',
+      'import/extensions': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error'],
       'no-shadow': 'off',
