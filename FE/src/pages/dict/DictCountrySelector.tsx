@@ -16,7 +16,7 @@ type Country = {
 type CountrySelectorProps = {
   selectedCountry: Country;
   onSelectCountry: (country: Country) => void;
-  countryOptions: Country[]; // 이름을 일치시킴
+  countryOptions: Country[];
 };
 
 function DictCountrySelector({

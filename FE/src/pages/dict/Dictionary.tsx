@@ -108,10 +108,10 @@ function Dictionary() {
   };
 
   return (
-    <div className="h-screen flex flex-col font-[NanumSquareRound]">
-      <div className="flex flex-1 justify-center p-4 items-start mt-10">
+    <div className="min-h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-6">
+      <div className="flex flex-1 justify-center items-start py-6">
         {/* 메인 이미지 */}
-        <div className="flex-grow flex items-center justify-center pr-6 max-h-[calc(100vh-150px)]">
+        <div className="flex-grow flex items-center justify-center pr-6 max-h-[calc(100vh-250px)]">
           {currentGesture && (
             <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
           )}
@@ -145,7 +145,7 @@ function Dictionary() {
         </div>
       </div>
       {/* 캐러셀 */}
-      <div className="mt-auto pb-3">
+      <div className="mt-auto py-6">
         <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
       </div>
     </div>

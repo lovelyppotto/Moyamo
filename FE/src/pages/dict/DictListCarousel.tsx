@@ -17,9 +17,7 @@ interface CardContentProps {
 // 카드 컴포넌트
 const Card = ({ children, className = '' }: CardProps) => {
   return (
-    <div
-      className={`rounded-lg border border-gray-300 bg-white text-card-foreground shadow-sm ${className}`}
-    >
+    <div className={`rounded-lg border border-gray-300 bg-white shadow-sm ${className}`}>
       {children}
     </div>
   );
@@ -46,15 +44,19 @@ interface DictListCarouselProps {
 export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCarouselProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
+  // 왼쪽으로 스크롤
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -280, behavior: 'smooth' });
+      const scrollAmount = window.innerWidth >= 1024 ? -280 : -220;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
+  // 오른쪽으로 스크롤
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 280, behavior: 'smooth' });
+      const scrollAmount = window.innerWidth >= 1024 ? 280 : 220;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
@@ -66,18 +68,17 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
   };
 
   return (
-    <div className="relative w-full mx-auto px-4">
+    <div className="relative w-full mx-auto px-8 font-[NanumSquareRound] ">
       {/* 캐러셀 컨테이너 */}
       <div className="flex items-center">
         {/* 이전 버튼 */}
         <button
           onClick={scrollLeft}
-          className="absolute left-4 z-10 flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-md"
+          className="absolute left-4 z-10 flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600"
         >
-          <FontAwesomeIcon icon={faChevronLeft} className="text-gray-600" />
+          <FontAwesomeIcon icon={faChevronLeft} />
         </button>
 
-        {/* 캐러셀 내용 */}
         <div
           ref={scrollRef}
           className="flex overflow-x-auto snap-x scrollbar-hide w-full px-10"
@@ -87,27 +88,28 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
             WebkitOverflowScrolling: 'touch',
           }}
         >
+          {/* 카드 관련 */}
           {gestures.map((gesture) => (
             <div
               key={gesture.id}
-              className="flex-shrink-0 w-[250px] snap-start px-2 items-center"
+              className="flex-shrink-0 sm:w-[33%] md:w-[33%] lg:w-[27%] xl:w-[27%] snap-start px-2 items-center"
               onClick={() => handleGestureClick(gesture.id)}
             >
-              <Card className="cursor-pointer hover:border-blue-400 transition-colors h-[140px]">
-                <CardContent className="flex flex-row items-center p-3 h-full">
-                  <div className="w-1/3 h-full flex items-center justify-center overflow-hidden">
+              <Card className="flex flex-col cursor-pointer hover:border-blue-400 transition-colors h-full">
+                <CardContent className="flex flex-col items-center p-3 flex-grow">
+                  <div className="flex items-center justify-center w-full flex-grow">
                     <img
                       src={gesture.image}
                       alt={gesture.title}
-                      className="object-contain h-20 w-20"
+                      className="object-contain h-22 w-20"
                     />
                   </div>
-                  <div className="w-2/3 pl-3 flex items-center">
-                    <span className="text-md text-center font-[NanumSquareRound] font-bold">
-                      {gesture.title}
-                    </span>
-                  </div>
                 </CardContent>
+                <div className="w-full bg-gray-200 p-[14px]">
+                  <span className="text-md text-center text-gray-700 font-medium block">
+                    {gesture.title}
+                  </span>
+                </div>
               </Card>
             </div>
           ))}
@@ -116,9 +118,9 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
         {/* 다음 버튼 */}
         <button
           onClick={scrollRight}
-          className="absolute right-4 z-10 flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-md"
+          className="absolute right-4 z-10 flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full shadow-xl text-gray-600"
         >
-          <FontAwesomeIcon icon={faChevronRight} className="text-gray-600" />
+          <FontAwesomeIcon icon={faChevronRight} />
         </button>
       </div>
     </div>
