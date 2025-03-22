@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import DictionaryButton from './HomeButtons';
 
 
 function Home() {
@@ -238,30 +239,8 @@ function Home() {
           className="flex justify-center items-center space-x-8
           mt-15 md:mt-17 lg:mt-20 "
         >
-          <button
-            onClick={handleDictionaryClick}
-            className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
-          >
-            <div
-              className="flex items-center justify-center relative
-              w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
-              bg-inch-worm-500 dark:bg-inch-worm-450
-              rounded-full drop-shadow-basic"
-            >
-              <div className="relative mb-14 md:mb-16 lg:mb-20">
-                {/* 책 이미지 */}
-                <img src="/images/dict.png" alt="DictionaryIcon" className="drop-shadow-basic" />
-              </div>
-            </div>
-            <p
-              className="font-[NanumSquareRoundEB]
-              mt-2 md:mt-2 lg:mt-2
-              text-lg md:text-xl lg:text-2xl "
-            >
-              Dictionary
-            </p>
-          </button>
-
+          <DictionaryButton />
+            
           {/* 퀴즈 모드 안내 */}
           <Dialog>
             <DialogTrigger asChild>
@@ -290,39 +269,39 @@ function Home() {
                   Quiz
                 </p>
               </button>
-            </DialogTrigger>
-            <DialogContent
-              className="py-10 px-10 drop-shadow-basic
-                bg-white border-none font-[NanumSquareRound]
-                dark:bg-gray-800 dark:text-d-txt-50
-                "
-              style={{ maxWidth: '530px', width: '90vw' }} // shadcn이 강제하는 고정 너비로 인해 인라인 스타일로 작성
-            >
-              <DialogHeader>
-                <DialogTitle className="mb-2 text-3xl font-[NanumSquareRoundEB]"> 
-                  <FontAwesomeIcon icon={faSquareCheck} className='mr-2' />
-                  제스처 퀴즈 모드 선택
-                </DialogTitle>
-                <DialogDescription className="text-lg">
-                  <p>카메라를 활용하는 퀴즈 유형을 포함하시겠습니까?</p>
-                  <p>모든 데이터는 제스처 분석에만 이용되며 저장되지 않습니다.</p>
-                </DialogDescription>
-              </DialogHeader>
-              <div className='flex justify-end gap-4 mt-2'> {/* 버튼 오른쪽 정렬 */}
-                <Button 
-                  className="bg-slate-200 dark:bg-slate-600"
-                  onClick={() => handleQuizClick(false)}
-                >
-                  제외하기
-                </Button>
-                <Button
-                  className="bg-kr-500 dark:bg-kr-450 text-white"
-                  onClick={() => handleQuizClick(true)}
-                >
-                  포함하기</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          </DialogTrigger>
+          <DialogContent
+            className="py-10 px-10 drop-shadow-basic
+              bg-white border-none font-[NanumSquareRound]
+              dark:bg-gray-800 dark:text-d-txt-50
+              "
+            style={{ maxWidth: '530px', width: '90vw' }} // shadcn이 강제하는 고정 너비로 인해 인라인 스타일로 작성
+          >
+            <DialogHeader>
+              <DialogTitle className="mb-2 text-3xl font-[NanumSquareRoundEB]"> 
+                <FontAwesomeIcon icon={faSquareCheck} className='mr-2' />
+                제스처 퀴즈 모드 선택
+              </DialogTitle>
+              <DialogDescription className="text-lg">
+                <p>카메라를 활용하는 퀴즈 유형을 포함하시겠습니까?</p>
+                <p>모든 데이터는 제스처 분석에만 이용되며 저장되지 않습니다.</p>
+              </DialogDescription>
+            </DialogHeader>
+            <div className='flex justify-end gap-4 mt-2'> {/* 버튼 오른쪽 정렬 */}
+              <Button 
+                className="bg-slate-200 dark:bg-slate-600"
+                onClick={() => handleQuizClick(false)}
+              >
+                제외하기
+              </Button>
+              <Button
+                className="bg-kr-500 dark:bg-kr-450 text-white"
+                onClick={() => handleQuizClick(true)}
+              >
+                포함하기</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
         </div>
       </div>
     </div>
