@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Camera, ChevronDown } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -74,22 +75,28 @@ function TranslationDropdown() {
 // 메인 HeaderBar 컴포넌트
 function HeaderBar() {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const [searchCountry, setSearchCountry] = useState('전체');
   const countries = ['전체', '한국', '미국', '중국', '일본', '이탈리아'];
   const logoSrc = theme === 'dark' ? './images/logo-dark.png' : './images/logo.png';
 
+  const handleLogoClick = () => {
+    navigate('/');
+  }
+
   return (
     <div className="relative w-full">
-      <div
-        className="absolute
+      <button
+        className="absolute cursor-pointer
         left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"
       >
-        <img
-          src={logoSrc}
-          alt="MoyamoLogo"
-          className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 "
-        />
-      </div>
+          <img
+            src={logoSrc}
+            alt="MoyamoLogo"
+            className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 "
+            onClick={handleLogoClick}
+          />
+      </button>
       <div className="w-full flex justify-center mt-11 mb-10 py-4 px-6">
         <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
           <div className="flex items-center">

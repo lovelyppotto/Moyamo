@@ -9,6 +9,9 @@ function Layout() {
   const isDictPage = location.pathname === '/dictionary';
   const isQuizPage = location.pathname === '/quiz.';
 
+  // 패딩 적용하지 않는 페이지
+  const noPaddingPage = isHomePage || isResultPage;
+
   return (
     <div className="relative flex flex-col bg-[#f5f5f5]">
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
@@ -24,7 +27,7 @@ function Layout() {
         </button>
       )}
       {/* 메인 컨텐츠 - 홈에는 적용X */}
-      <main className={`w-full ${isHomePage ? '' : 'px-6 md:px-8 lg:px-12'}`}>
+      <main className={`w-full ${noPaddingPage ? '' : 'px-6 md:px-8 lg:px-12'}`}>
         <Outlet />
       </main>
     </div>
