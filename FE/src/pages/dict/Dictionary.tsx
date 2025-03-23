@@ -110,16 +110,16 @@ function Dictionary() {
   };
 
   return (
-    <div className="h-screen flex flex-col font-[NanumSquareRound]">
-      <div className="flex flex-1 justify-center p-4 items-start mt-10">
+    <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+      <div className="flex flex-1 justify-center items-start py-6">
         {/* 메인 이미지 */}
-        <div className="flex-grow flex items-center justify-center pr-6 max-h-[calc(100vh-150px)]">
+        <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
           {currentGesture && (
             <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
           )}
         </div>
         {/* 국가 선택 드롭다운, 아이콘 버튼 */}
-        <div className="w-auto flex flex-col space-y-8">
+        <div className="w-auto flex flex-col space-y-10">
           {/* 국가 선택 드롭다운 */}
           <DictCountrySelector
             selectedCountry={selectedCountry}
@@ -127,7 +127,7 @@ function Dictionary() {
             countryOptions={countryOptions}
           />
           {/* 아이콘 버튼 */}
-          <div className="flex flex-col space-y-8">
+          <div className="flex flex-col space-y-10">
             <IconButton
               icon={faHands}
               tooltipText="제스처 연습"
@@ -147,7 +147,7 @@ function Dictionary() {
         </div>
       </div>
       {/* 캐러셀 */}
-      <div className="mt-auto pb-3">
+      <div className="mt-auto py-6">
         <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
       </div>
     </div>
