@@ -1,33 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import HeaderBar from './HeaderBar';
 import { useTheme } from '@/components/theme-provider';
-import DictionaryButton from './buttons/HomeButtons';
-import QuizButton from './QuizButton';
+import DictionaryButton from './buttons/DictButton';
+import QuizButton from './buttons/QuizButton';
 
 
 function Home() {
-  const navigate = useNavigate();
   const { theme } = useTheme();
-
-  const handleDictionaryClick = () => {
-    // Dictionary로 이동
-    navigate('/dictionary');
-  };
-
-  const handleQuizClick = (useCamera: boolean) => {
-    // useCamera 값에 따라 다른 URL로 이동
-    if (useCamera !== undefined) {
-      // 다이얼로그에서 선택한 경우
-      if (useCamera) {
-        navigate('/quiz?useCamera=true');
-      } else {
-        navigate('/quiz?useCamera=false');
-      }
-    } else {
-      // 기존 동작 유지
-      navigate('/quiz');
-    }
-  };
 
   return (
     <div
@@ -230,8 +208,6 @@ function Home() {
           mt-15 md:mt-17 lg:mt-20 "
         >
           <DictionaryButton />
-            
-          {/* 퀴즈 모드 안내 */}
           <QuizButton />
         </div>
       </div>
