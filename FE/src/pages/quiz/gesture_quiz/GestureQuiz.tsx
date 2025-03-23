@@ -19,13 +19,13 @@ function GestureQuiz() {
           {/* 진행 바, 퀴즈박스 */}
           {/* progress바를 seekbar로 교체하기!!! */}
           {/* 마진 탑(margin-top)을 뷰포트 높이(viewport height)의 5%로 설정 */}
-          <div className='h-screen flex flex-col mt-[10vh] mx-[10vh]'>
+          <div className='h-screen flex flex-col mt-[5vh] xl:mt-[10vh] mx-[2vh] xl:mx-[10vh]'>
             <Progress/>
             <div className='flex justify-between items-center mt-[3vh]'>
-              <h1 className='text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]'>Q.이 손 동작이 의미하는 것은 무엇일까요?</h1>
+              <h1 className='sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]'>Q.이 손 동작이 의미하는 것은 무엇일까요?</h1>
               <button className='flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200'>
-                <p className='text-xl 2xl:text-2xl font-[NanumSquareRoundB]'>Skip</p>
-                <FontAwesomeIcon icon={faArrowRight} className='m-3'/>
+                <p className='sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]'>Skip</p>
+                <FontAwesomeIcon icon={faArrowRight} className='m-3 sm:text-xs md:text-xl'/>
               </button>
             </div>
             <div className="flex justify-center w-full h-2/5 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
@@ -36,20 +36,20 @@ function GestureQuiz() {
              {/* 퀴즈 내용 백앤드에서 받아와서 보여지도록 하기 */}
              {/* 폰트어썸 유료 결제하면 icon circle_1이걸로 바꾸기! */}
             <div className='flex justify-around mt-[3vh]'>
-              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
+              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
                 <p className='mr-5'>①</p>
                 <p>사랑해</p>
               </button>
-              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
+              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
                 <p className='mr-5'>②</p>
                 <p>미안해</p>
               </button>
             </div>
             <div className='flex justify-around mt-[3vh]'>
-            <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
+            <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
                 <p className='mr-5'>③</p>
                 <p>승리</p>
-              </button>              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
+              </button>              <button className=' flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB]'>
                 <p className='mr-5'>④</p>
                 <p>약속</p>
               </button>

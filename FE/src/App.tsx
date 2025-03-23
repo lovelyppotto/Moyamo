@@ -4,10 +4,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
-import AiQuiz from './pages/quiz/ai_quzi/AiQuzi';
+import AiQuiz from './pages/quiz/ai_quiz/AiQuiz';
 import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
-import Quiz from './pages/quiz/Quiz';
+import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
 
 const router = createBrowserRouter([
