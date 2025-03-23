@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         // 검색 결과
-        path: 'result',
+        path: 'search',
         element: <Result />,
       },
       {

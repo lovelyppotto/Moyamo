@@ -27,7 +27,7 @@ export const searchResultMock: ResultMockData[] =[
         meaning: "손가락으로 만드는 V자 모양의 제스처. '승리'를 뜻하며 사진을 찍을 때 많이 사용한다."
       },
     ],
-    gestureImg:  '/images/gesures/victory.png',
+    gestureImg:  '/images/gestures/victory.png',
   },
   {
     gestureId: 2,
@@ -39,7 +39,7 @@ export const searchResultMock: ResultMockData[] =[
         meaning: "중지와 검지를 꼬는 제스처. 악과 불운이 사라진다는 미신에서 시작되었으며 'Good Luck'의 의미를 가진다."
       },
     ],
-    gestureImg:  '/images/gesures/cross-finger.png',
+    gestureImg:  '/images/gestures/cross-finger.png',
   },
   {
     gestureId: 3,
@@ -51,7 +51,7 @@ export const searchResultMock: ResultMockData[] =[
         meaning: "검지로 자신의 얼굴(보통 코)을 가리키며 제스처를 취한 '본인'을 뜻한다."
       },
     ],
-    gestureImg:  '/images/gesures/me.png',
+    gestureImg:  '/images/gestures/me.png',
   },
   {
     gestureId: 4,
@@ -63,7 +63,7 @@ export const searchResultMock: ResultMockData[] =[
         meaning: "엄지와 검지를 이용해 하트를 만든다."
       },
     ],
-    gestureImg:  '/images/gesures/finger-heart.png',
+    gestureImg:  '/images/gestures/finger-heart.png',
   },
 ]
   

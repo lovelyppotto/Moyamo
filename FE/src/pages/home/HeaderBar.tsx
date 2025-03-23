@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, ChevronDown } from 'lucide-react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '@/components/theme-provider';
+import { ChevronDown } from 'lucide-react';
 import DarkModeLottie from './DarkModeLottie';
 import BaseDropdown from './BaseDropdown';
-import { useTheme } from '@/components/theme-provider';
+import GestureSearchInput from '../result/GestureSearch';
+import { ResultMockData } from '../result/resultMock';
+
 
 // 번역 국가/언어 정보 인터페이스
 interface TranslationLanguage {
@@ -76,13 +77,18 @@ function TranslationDropdown() {
 function HeaderBar() {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const [searchCountry, setSearchCountry] = useState('전체');
-  const countries = ['전체', '한국', '미국', '중국', '일본', '이탈리아'];
+  const [searchResults, setSearchResults] = useState<ResultMockData[]>([]);
   const logoSrc = theme === 'dark' ? './images/logo-dark.png' : './images/logo.png';
 
   const handleLogoClick = () => {
     navigate('/');
   }
+
+  const handleSearch = (results: ResultMockData[]) => {
+    setSearchResults(results);
+    // 검색 결과를 상위 컴포넌트나 상태 관리 라이브러리에 저장할지 추후 선택
+    console.log('검색 결과:', results);
+  };
 
   return (
     <div className="relative w-full">
@@ -101,32 +107,9 @@ function HeaderBar() {
       <div className="w-full flex justify-center mt-11 mb-10 py-4 px-6">
         <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
           <div className="flex items-center">
-            {/* 검색 카테고리 선택 */}
-            <div className="flex items-center flex-1">
-              <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" className="mr-3" />
-              <BaseDropdown
-                selected={searchCountry}
-                options={countries}
-                label="검색 국가"
-                onSelect={setSearchCountry}
-              />
-
-              {/* 검색창 */}
-              <div className="flex items-center w-full ml-2 mr-2">
-                <div className="relative flex-1 min-w-[70%]">
-                  <input
-                    className="w-full h-10 px-2 
-                    border-b border-gray-400 focus:outline-none
-                    dark:border-d-txt-50/80
-                    dark:text-d-txt-50/90
-                    font-[NanumSquareRound]"
-                    placeholder="검색어를 입력하세요"
-                  />
-                </div>
-                <div className="ml-3 flex items-center justify-center">
-                  <Camera className="w-6 h-6 cursor-pointer" />
-                </div>
-              </div>
+            {/* 검색 인풋 컴포넌트 */}
+            <div className="flex-1">
+              <GestureSearchInput onSearch={handleSearch} />
             </div>
 
             {/* 다크모드 토글 및 언어 선택 */}
