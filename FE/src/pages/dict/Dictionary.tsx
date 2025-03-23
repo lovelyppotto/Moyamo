@@ -1,13 +1,12 @@
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 import DictCountrySelector from './DictCountrySelector';
 import { DictListCarousel, Gesture } from './DictListCarousel';
 import gestureExampleImg from './gesture_example.png';
 import DictMainImage from './MainGestureImage';
-
 import IconButton from '@/components/IconButton';
+import DictHeader from './DictHeader';
 
 type Country = {
   code: string;
