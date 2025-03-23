@@ -1,20 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import HeaderBar from './HeaderBar';
 import { useTheme } from '@/components/theme-provider';
+import DictionaryButton from './buttons/DictButton';
+import QuizButton from './buttons/QuizButton';
+
 
 function Home() {
-  const navigate = useNavigate();
   const { theme } = useTheme();
-
-  const handleDictionaryClick = () => {
-    // Dictionary로 이동
-    navigate('/dictionary');
-  };
-
-  const handleQuizClick = () => {
-    // Quiz로 이동
-    navigate('/quiz');
-  };
 
   return (
     <div
@@ -216,56 +207,8 @@ function Home() {
           className="flex justify-center items-center space-x-8
           mt-15 md:mt-17 lg:mt-20 "
         >
-          <button
-            onClick={handleDictionaryClick}
-            className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
-          >
-            <div
-              className="flex items-center justify-center relative
-              w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
-              bg-inch-worm-500 dark:bg-inch-worm-450
-              rounded-full drop-shadow-basic"
-            >
-              <div className="relative mb-14 md:mb-16 lg:mb-20">
-                {/* 책 이미지 */}
-                <img src="/images/dict.png" alt="DictionaryIcon" className="drop-shadow-basic" />
-              </div>
-            </div>
-            <p
-              className="font-[NanumSquareRoundEB]
-              mt-2 md:mt-2 lg:mt-2
-              text-lg md:text-xl lg:text-2xl "
-            >
-              Dictionary
-            </p>
-          </button>
-
-          <button
-            onClick={handleQuizClick}
-            className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
-          >
-            <div
-              className="flex items-center justify-center relative
-            w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
-            bg-lavender-rose-300 dark:bg-lavender-rose-250
-            rounded-full drop-shadow-basic"
-            >
-              <div
-                className="relative 
-                ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
-              >
-                {/* 퀴즈 이미지 */}
-                <img src="/images/quiz.png" alt="DictionaryIcon" className="drop-shadow-basic" />
-              </div>
-            </div>
-            <p
-              className="font-[NanumSquareRoundEB]
-              mt-2 md:mt-2 lg:mt-2
-              text-lg md:text-xl lg:text-2xl "
-            >
-              Quiz
-            </p>
-          </button>
+          <DictionaryButton />
+          <QuizButton />
         </div>
       </div>
     </div>

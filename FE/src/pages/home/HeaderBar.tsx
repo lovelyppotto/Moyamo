@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Camera, ChevronDown } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -64,7 +64,7 @@ function TranslationDropdown() {
           className="w-6 h-6 mr-2 drop-shadow-nation rounded-full object-cover"
         />
         <img src="" alt="" />
-        <span className="font-[NanumSquareRound] font-extrabold">{selectedLanguage}</span>
+        <span className="font-[NanumSquareRoundB] text-lg">{selectedLanguage}</span>
         <ChevronDown size={18} className="ml-1" />
       </div>
     </BaseDropdown>

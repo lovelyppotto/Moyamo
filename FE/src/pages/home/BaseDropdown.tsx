@@ -21,7 +21,6 @@ function BaseDropdown({
   options,
   children,
   className = '',
-  label = '',
   onSelect,
 }: BaseDropdownProps) {
   const defaultTrigger = (
