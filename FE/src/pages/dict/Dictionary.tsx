@@ -110,7 +110,7 @@ function Dictionary() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-6">
+    <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
       <div className="flex flex-1 justify-center items-start py-6">
         {/* 메인 이미지 */}
         <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
