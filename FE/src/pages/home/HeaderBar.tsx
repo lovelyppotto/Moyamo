@@ -93,8 +93,9 @@ function HeaderBar() {
           <img
             src={logoSrc}
             alt="MoyamoLogo"
-            className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 "
+            className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 user-select-none"
             onClick={handleLogoClick}
+            draggable="false" // 드래그 방지
           />
       </button>
       <div className="w-full flex justify-center mt-11 mb-10 py-4 px-6">
