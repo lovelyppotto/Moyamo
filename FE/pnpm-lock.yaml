@@ -50,6 +50,9 @@ importers:
       '@types/react-lottie':
         specifier: ^1.2.10
         version: 1.2.10
+      '@types/react-webcam':
+        specifier: ^3.0.0
+        version: 3.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -104,6 +107,9 @@ importers:
       react-router-dom:
         specifier: ^7.3.0
         version: 7.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-webcam:
+        specifier: ^7.2.0
+        version: 7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       recharts:
         specifier: ^2.15.1
         version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1424,6 +1430,10 @@ packages:
 
   '@types/react-lottie@1.2.10':
     resolution: {integrity: sha512-rCd1p3US4ELKJlqwVnP0h5b24zt5p9OCvKUoNpYExLqwbFZMWEiJ6EGLMmH7nmq5V7KomBIbWO2X/XRFsL0vCA==}
+
+  '@types/react-webcam@3.0.0':
+    resolution: {integrity: sha512-iX4G+V0HEvZhfMuk5qUp4ZJUpV6M9ZW4mxjmDxmXrIN1fDSUajX4wtGYX+9yh6KShFlEXOjGyOc24j7wJagG6w==}
+    deprecated: This is a stub types definition. react-webcam provides its own type definitions, so you do not need this installed.
 
   '@types/react@19.0.10':
     resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
@@ -2993,6 +3003,12 @@ packages:
     peerDependencies:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
+
+  react-webcam@7.2.0:
+    resolution: {integrity: sha512-xkrzYPqa1ag2DP+2Q/kLKBmCIfEx49bVdgCCCcZf88oF+0NPEbkwYk3/s/C7Zy0mhM8k+hpdNkBLzxg8H0aWcg==}
+    peerDependencies:
+      react: '>=16.2.0'
+      react-dom: '>=16.2.0'
 
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
@@ -4656,6 +4672,13 @@ snapshots:
   '@types/react-lottie@1.2.10':
     dependencies:
       '@types/react': 19.0.10
+
+  '@types/react-webcam@3.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      react-webcam: 7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@types/react@19.0.10':
     dependencies:
@@ -6347,6 +6370,11 @@ snapshots:
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  react-webcam@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
