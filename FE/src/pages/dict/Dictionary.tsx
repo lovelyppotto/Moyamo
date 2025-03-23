@@ -6,7 +6,7 @@ import { DictListCarousel, Gesture } from './DictListCarousel';
 import gestureExampleImg from './gesture_example.png';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
-import DictHeader from './DictHeader';
+import CompareGuide from './CompareGuide';
 
 type Country = {
   code: string;
@@ -110,6 +110,7 @@ function Dictionary() {
 
   return (
     <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+      <CompareGuide />
       <div className="flex flex-1 justify-center items-start py-6">
         {/* 메인 이미지 */}
         <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
