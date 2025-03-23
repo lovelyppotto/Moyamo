@@ -7,7 +7,7 @@ import Home from './pages/home/Home';
 import AiQuiz from './pages/quiz/ai_quiz/AiQuiz';
 import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
-import Quiz from './pages/quiz/Quiz';
+import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
 
 const router = createBrowserRouter([

@@ -9,7 +9,7 @@ function AiQuiz() {
   const webcamRef = useRef<Webcam>(null);
   return (
     <div>
-        <div className='flex flex-col h-screen overflow-hidden w-full'>
+        <div className='flex flex-col h-screen overflow-hidden w-full '>
           {/* 초시계: 디자인 더 이쁜 시계로 바꾸기! */}
           <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-10">
             <div className="flex justfy-center items-conter">
@@ -22,13 +22,13 @@ function AiQuiz() {
           {/* 진행 바, 문제와 스킵버튼 */}
           {/* progress바를 seekbar로 교체하기!!! */}
           {/* 마진 탑(margin-top)을 뷰포트 높이(viewport height)의 5%로 설정 */}
-          <div className='h-screen flex flex-col mt-[10vh] mx-[10vh]'>
+          <div className='h-screen flex flex-col mt-[5vh] md:mt-[10vh] mx-[1vh] md:mx-[2vh] xl:mx-[10vh]'>
             <Progress/>
             <div className='flex-col mt-[3vh] h-2/3 flex items-center'>
               <div className='flex justify-between items-center mb-[2vh]'>
-                <h1 className='text-2xl lg:text-3xl 2xl:text-3xl font-[NanumSquareRoundB] mr-[18vh]'>Q.화면에 '사랑해'라는 의미의 제스처를 해주세요.</h1>
+                <h1 className='text-xs md:text-2xl lg:text-3xl 2xl:text-3xl font-[NanumSquareRoundB] mr-[2vh] md:mr-[5vh] xl:mr-[18vh]'>Q.화면에 '사랑해'라는 의미의 제스처를 해주세요.</h1>
                 <button className='flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200'>
-                  <p className='text-xl 2xl:text-2xl font-[NanumSquareRoundB]'>Skip</p>
+                  <p className='text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]'>Skip</p>
                   <FontAwesomeIcon icon={faArrowRight} className='m-3'/>
                 </button>
               </div>
@@ -54,7 +54,7 @@ function AiQuiz() {
                     <div className="absolute top-[45vh] w-[50vh] h-[20vh] rounded-t-[50%] border-t-2 border-l-2 border-r-2 border-dashed border-white"></div>
                     
                     {/* 안내 텍스트 */}
-                    <p className="absolute top-[7vh] text-center text-lg font-[NanumSquareRoundB] text-white">
+                    <p className="absolute top-[7vh] text-center text-sm md:text-lg font-[NanumSquareRoundB] text-white">
                       얼굴과 상체를 가이드라인 안에 맞춰주세요
                     </p>
                   </div>
