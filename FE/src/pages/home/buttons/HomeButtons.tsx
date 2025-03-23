@@ -8,7 +8,12 @@ import {
   DialogTrigger,
   DialogClose
 } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
+
+type ButtonType = 'Dict' | 'Quiz';
+
+interface Button {
+  type: ButtonType;
+}
 
 // 국가 타입 
 interface Country {
@@ -111,7 +116,7 @@ function DictionaryButton() {
           </DialogHeader>
         </div>
         
-        <div className="flex flex-col space-y-3 px-2 mb-3">
+        <div className="flex flex-col px-2 mb-3">
           {countries.map((country) => (
             <DialogClose asChild key={country.id}>
               <button

@@ -1,18 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import HeaderBar from './HeaderBar';
 import { useTheme } from '@/components/theme-provider';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquareCheck } from '@fortawesome/free-solid-svg-icons'; 
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import DictionaryButton from './HomeButtons';
+import DictionaryButton from './buttons/HomeButtons';
+import QuizButton from './QuizButton';
 
 
 function Home() {
@@ -242,66 +232,7 @@ function Home() {
           <DictionaryButton />
             
           {/* 퀴즈 모드 안내 */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <button
-                className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
-              >
-                <div
-                  className="flex items-center justify-center relative
-                  w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
-                  bg-lavender-rose-300 dark:bg-lavender-rose-250
-                  rounded-full drop-shadow-basic"
-                >
-                  <div
-                    className="relative 
-                    ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
-                  >
-                    {/* 퀴즈 이미지 */}
-                    <img src="/images/quiz.png" alt="DictionaryIcon" className="drop-shadow-basic" />
-                  </div>
-                </div>
-                <p
-                  className="font-[NanumSquareRoundEB]
-                  mt-2 md:mt-2 lg:mt-2
-                  text-lg md:text-xl lg:text-2xl"
-                >
-                  Quiz
-                </p>
-              </button>
-          </DialogTrigger>
-          <DialogContent
-            className="py-10 px-10 drop-shadow-basic
-              bg-white border-none font-[NanumSquareRound]
-              dark:bg-gray-800 dark:text-d-txt-50
-              "
-            style={{ maxWidth: '530px', width: '90vw' }} // shadcn이 강제하는 고정 너비로 인해 인라인 스타일로 작성
-          >
-            <DialogHeader>
-              <DialogTitle className="mb-2 text-3xl font-[NanumSquareRoundEB]"> 
-                <FontAwesomeIcon icon={faSquareCheck} className='mr-2' />
-                제스처 퀴즈 모드 선택
-              </DialogTitle>
-              <DialogDescription className="text-lg">
-                <p>카메라를 활용하는 퀴즈 유형을 포함하시겠습니까?</p>
-                <p>모든 데이터는 제스처 분석에만 이용되며 저장되지 않습니다.</p>
-              </DialogDescription>
-            </DialogHeader>
-            <div className='flex justify-end gap-4 mt-2'> {/* 버튼 오른쪽 정렬 */}
-              <Button 
-                className="bg-slate-200 dark:bg-slate-600"
-                onClick={() => handleQuizClick(false)}
-              >
-                제외하기
-              </Button>
-              <Button
-                className="bg-kr-500 dark:bg-kr-450 text-white"
-                onClick={() => handleQuizClick(true)}
-              >
-                포함하기</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+          <QuizButton />
         </div>
       </div>
     </div>
