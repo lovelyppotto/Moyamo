@@ -1,36 +1,29 @@
-import '../../index.css';
-import { faDoorOpen } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import '@/index.css';
 
 function Quiz() {
   return (
     <>
-      {/* 레이아웃에서 배경화면 넣어주면 가져오기(헤더때문에 잠시 레이앙웃 제거함) */}
-      {/* 헤더부분 */}
-      <div className="pb-1 flex justify-between py-3 ">
-        <button>
-          <FontAwesomeIcon icon={faDoorOpen} />
-        </button>
-        {/* icon을 volume-xmark로 바꾸기 */}
-        {/* 함수: 누를 때마다 볼륨 상태 바뀌도록! */}
-        <button>
-          <FontAwesomeIcon icon={faDoorOpen} />
-        </button>
-      </div>
-      <div className="py-30">
+    {/* w-full h-full을 쓰면 스크롤이 생김!! 전체적으로 설정한 마진값 때문인 것 같음 */}
+     <div 
+     className='flex flex-col h-screen overflow-hidden w-full bg-[#313131]'>
+      <div className=" flex flex-col justify-center items-center h-3/4">
         {/* 중간 텍스트 부분 / 일단 마진값 */}
-        <div className="flex justify-between items-center pb-3 font-['DNFBitBitv2'] mx-20">
-          <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/5 h-1/5" />
-          <div className="text-4xl md:text-5xl xl:text-6xl">GESTURE QUIZ</div>
-          <img src="/images/quiz_img2.png" alt="quiz-img" className="w-1/5 h-1/5" />
+        <div className="flex flex-col items-center align-center font-['DNFBitBitv2'] mb-30">
+          <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/2 h-auto " />
+          <div className="text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz">GESTURE QUIZ</div>
+          {/* <img src="/images/quiz_img2.png" alt="quiz-img" className="w-1/5 h-1/5" /> */}
         </div>
+
+
         {/* 마지막 버튼 부분 */}
-        <div className="flex justify-center pt-5">
+        <div className="flex justify-center">
           {/* tailwind.config.js에 커스텀 그림자 정의해야 함 */}
-          <button className="text-2xl xl:text-4xl font-['DNFBitBitv2'] shadow-xl p-3 rounded-xl flex justify-center items-center algin-center bg-gray-50">
-            start
+          <button className="text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-200 px-5 py-3 rounded-xl flex justify-center items-center algin-center bg-[var(--color-lavender-rose-300)] drop-shadow-quiz">
+            <p className='drop-shadow-basic'>start</p>
           </button>
         </div>
+      
+      </div>
       </div>
     </>
   );
