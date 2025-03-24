@@ -7,6 +7,7 @@ import gestureExampleImg from './gesture_example.png';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import CompareGuide from './CompareGuide';
+import { useNavigate } from 'react-router-dom';
 
 type Country = {
   code: string;
@@ -19,6 +20,8 @@ type CountryGestures = {
 };
 
 function Dictionary() {
+  const navigate = useNavigate();
+
   // 제스처 선택 상태
   const [selectedGesture, setSelectedGesture] = useState<string>('victory');
 
@@ -97,13 +100,22 @@ function Dictionary() {
     }
   };
 
-  // 버튼 클릭 핸들러
-  const handleGestureButtonClick = () => {
-    console.log('제스처 연습 버튼 클릭');
+  // 제스처 연습으로 이동
+  const handlePracticeButtonClick = () => {
+    navigate('/dictionary/practice', {
+      state: {
+        country: selectedCountry,
+        gesture: currentGesture,
+      },
+    });
   };
+
+  // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
-    console.log('디테일 버튼 클릭');
+    navigate('/dictionary/detail');
   };
+
+  // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
     console.log('비교 가이드 버튼 클릭');
   };
@@ -119,7 +131,7 @@ function Dictionary() {
           )}
         </div>
         {/* 국가 선택 드롭다운, 아이콘 버튼 */}
-        <div className="w-auto flex flex-col space-y-10">
+        <div className="w-auto flex flex-col space-y-10 cursor-pointer">
           {/* 국가 선택 드롭다운 */}
           <DictCountrySelector
             selectedCountry={selectedCountry}
@@ -131,7 +143,7 @@ function Dictionary() {
             <IconButton
               icon={faHands}
               tooltipText="제스처 연습"
-              onClick={handleGestureButtonClick}
+              onClick={handlePracticeButtonClick}
             />
             <IconButton
               icon={faMagnifyingGlassPlus}

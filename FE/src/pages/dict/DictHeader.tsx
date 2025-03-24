@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 // Dictionary.tsx에서 정의된 타입 사용
 type Country = {
@@ -21,27 +22,37 @@ function DictHeader({ title, country, showCompareGuide = false, className }: Hea
     return `/images/flags/${country.code}.png`;
   };
 
+  // 뒤로가기
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   return (
     <header
-      className={`w-full px-4 py-3 flex justify-center items-center relative bg-white rounded-lg shadow-sm ${className || ''}`}
+      className={`w-full h-[60px] mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic ${className || ''}`}
     >
+      <div>
+        <button className="cursor-pointer" onClick={handleGoBack}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+      </div>
       <div className="flex justify-center items-center flex-1">
         {/* 국기 있을 때 */}
         {country && (
           <img
             src={getFlagPath(country)}
             alt={`${country.name} flag`}
-            className="w-[65px] h-[48px] mr-4 object-cover shadow-[0_5px_10px_-3px_rgba(0,0,0,0.25),0_2px_2px_-2px_rgba(0,0,0,0.3)]"
+            className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
           />
         )}
-        <h1 className="text-[40px] font-bold text-center">{title}</h1>
+        <h1 className="text-[32px] font-[NanumSquareRoundEB] text-center">{title}</h1>
       </div>
 
       {/* 비교 가이드 버튼 있을 때 */}
       {showCompareGuide && (
-        <button className="absolute flex items-center right-4 px-3 py-2 text-[18px] bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors rounded-lg">
+        <button className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors rounded-lg">
           <FontAwesomeIcon icon={faRectangleList} className="mr-1.5" />
-          <span>나라별 비교 가이드</span>
+          <span className="font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
     </header>

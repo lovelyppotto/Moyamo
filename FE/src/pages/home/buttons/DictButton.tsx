@@ -36,7 +36,7 @@ function DictionaryButton() {
           >
             <div className="relative mb-14 md:mb-16 lg:mb-20">
               {/* 책 이미지 */}
-              <img src="/images/dict.png" alt="DictionaryIcon" className="drop-shadow-basic" />
+              <img src="/images/dict.png" alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
             </div>
           </div>
           <p

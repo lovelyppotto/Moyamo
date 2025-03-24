@@ -1,15 +1,16 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/components/theme-provider';
-
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
-import AiQuiz from './pages/quiz/ai_quzi/AiQuzi';
+import AiQuiz from './pages/quiz/ai_quiz/AiQuiz';
 import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
-import Quiz from './pages/quiz/Quiz';
+import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
 import CompareGuide from './pages/dict/CompareGuide';
+import GestureDetail from './pages/dict/GestureDetail';
+import GesturePractice from './pages/dict/GesturePractice';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         // 검색 결과
-        path: 'result',
+        path: 'search',
         element: <Result />,
       },
       {
@@ -39,6 +40,16 @@ const router = createBrowserRouter([
           {
             path: 'guide',
             element: <CompareGuide />,
+          },
+          // 제스처 상세 페이지
+          {
+            path: 'detail',
+            element: <GestureDetail />,
+          },
+          // 제스처 연습 페이지
+          {
+            path: 'practice',
+            element: <GesturePractice />,
           },
         ],
       },
@@ -68,7 +79,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
       </ThemeProvider>
