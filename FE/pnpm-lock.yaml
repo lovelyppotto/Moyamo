@@ -50,6 +50,9 @@ importers:
       '@types/react-lottie':
         specifier: ^1.2.10
         version: 1.2.10
+      '@types/react-webcam':
+        specifier: ^3.0.0
+        version: 3.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -81,8 +84,8 @@ importers:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       pnpm:
-        specifier: ^10.6.2
-        version: 10.6.2
+        specifier: ^10.6.5
+        version: 10.6.5
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -104,6 +107,9 @@ importers:
       react-router-dom:
         specifier: ^7.3.0
         version: 7.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-webcam:
+        specifier: ^7.2.0
+        version: 7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       recharts:
         specifier: ^2.15.1
         version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -113,6 +119,9 @@ importers:
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
+      tailwind-text-stroke:
+        specifier: ^1.0.0
+        version: 1.0.0(tailwindcss@4.0.13)
       tailwindcss:
         specifier: ^4.0.13
         version: 4.0.13
@@ -1421,6 +1430,10 @@ packages:
 
   '@types/react-lottie@1.2.10':
     resolution: {integrity: sha512-rCd1p3US4ELKJlqwVnP0h5b24zt5p9OCvKUoNpYExLqwbFZMWEiJ6EGLMmH7nmq5V7KomBIbWO2X/XRFsL0vCA==}
+
+  '@types/react-webcam@3.0.0':
+    resolution: {integrity: sha512-iX4G+V0HEvZhfMuk5qUp4ZJUpV6M9ZW4mxjmDxmXrIN1fDSUajX4wtGYX+9yh6KShFlEXOjGyOc24j7wJagG6w==}
+    deprecated: This is a stub types definition. react-webcam provides its own type definitions, so you do not need this installed.
 
   '@types/react@19.0.10':
     resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
@@ -2848,8 +2861,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  pnpm@10.6.2:
-    resolution: {integrity: sha512-R4cHFr6hVytT3zSthke0KWK8eQziv0Viug9kMjfXMCo9ao7O+eS9/AHSOvGWmqkEhdTOuwuWOPpe8drvZW9sGw==}
+  pnpm@10.6.5:
+    resolution: {integrity: sha512-zfko/KIIMs1Z7FOCZJK33CXcUk1DcLa0rb9lgD0y76psHIgUfArk6NV5psnuxxV1e1DU+jXuoXnYaOraTtBDrw==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -2990,6 +3003,12 @@ packages:
     peerDependencies:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
+
+  react-webcam@7.2.0:
+    resolution: {integrity: sha512-xkrzYPqa1ag2DP+2Q/kLKBmCIfEx49bVdgCCCcZf88oF+0NPEbkwYk3/s/C7Zy0mhM8k+hpdNkBLzxg8H0aWcg==}
+    peerDependencies:
+      react: '>=16.2.0'
+      react-dom: '>=16.2.0'
 
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
@@ -3236,6 +3255,11 @@ packages:
 
   tailwind-merge@3.0.2:
     resolution: {integrity: sha512-l7z+OYZ7mu3DTqrL88RiKrKIqO3NcpEO8V/Od04bNpvk0kiIFndGEoqfuzvj4yuhRkHKjRkII2z+KS2HfPcSxw==}
+
+  tailwind-text-stroke@1.0.0:
+    resolution: {integrity: sha512-ZD96Y7km5AXsdBX8mndXLWHHAfF8jHr+MuXv9ewi+boFuOvgzJSjr+KAMeqc1GZT/YFR01x3inDacO/JEXgWAA==}
+    peerDependencies:
+      tailwindcss: '>=3.4.0'
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -4648,6 +4672,13 @@ snapshots:
   '@types/react-lottie@1.2.10':
     dependencies:
       '@types/react': 19.0.10
+
+  '@types/react-webcam@3.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      react-webcam: 7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@types/react@19.0.10':
     dependencies:
@@ -6211,7 +6242,7 @@ snapshots:
 
   pidtree@0.6.0: {}
 
-  pnpm@10.6.2: {}
+  pnpm@10.6.5: {}
 
   possible-typed-array-names@1.1.0: {}
 
@@ -6339,6 +6370,11 @@ snapshots:
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  react-webcam@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -6649,6 +6685,10 @@ snapshots:
       tslib: 2.8.1
 
   tailwind-merge@3.0.2: {}
+
+  tailwind-text-stroke@1.0.0(tailwindcss@4.0.13):
+    dependencies:
+      tailwindcss: 4.0.13
 
   tailwindcss-animate@1.0.7(tailwindcss@4.0.13):
     dependencies:
