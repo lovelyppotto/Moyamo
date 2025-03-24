@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/components/theme-provider';
-
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
@@ -9,7 +8,7 @@ import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
 import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
-
+import GestureDetail from './pages/dict/GestureDetail';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -28,7 +27,19 @@ const router = createBrowserRouter([
       {
         // 딕셔너리
         path: 'dictionary',
-        element: <Dictionary />,
+        children: [
+          // 딕셔너리 메인
+          {
+            index: true,
+            element: <Dictionary />,
+          },
+          // 제스처 상세 페이지
+          {
+            path: 'detail',
+            element: <GestureDetail />,
+          },
+          // 나라별 비교 가이드
+        ],
       },
       {
         // 퀴즈
