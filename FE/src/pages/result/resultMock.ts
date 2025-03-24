@@ -65,5 +65,41 @@ export const searchResultMock: ResultMockData[] =[
     ],
     gestureImg:  '/images/gestures/finger-heart.png',
   },
+  {
+    gestureId: 5,
+    gestureName: "하트",
+    meanings: [
+      {
+        countryId: 2,
+        countryName: "미국",
+        meaning: "엄지와 검지를 이용해 하트를 만든다."
+      },
+    ],
+    gestureImg:  '/images/gestures/finger-heart.png',
+  },
+  {
+    gestureId: 6,
+    gestureName: "하트",
+    meanings: [
+      {
+        countryId: 3,
+        countryName: "일본",
+        meaning: "엄지와 검지를 이용해 하트를 만든다."
+      },
+    ],
+    gestureImg:  '/images/gestures/finger-heart.png',
+  },
+  {
+    gestureId: 6,
+    gestureName: "하트",
+    meanings: [
+      {
+        countryId: 4,
+        countryName: "중국",
+        meaning: "엄지와 검지를 이용해 하트를 만든다."
+      },
+    ],
+    gestureImg:  '/images/gestures/finger-heart.png',
+  },
 ]
   
