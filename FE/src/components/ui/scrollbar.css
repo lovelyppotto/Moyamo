@@ -2,7 +2,7 @@
   overflow: auto;
 }
 .customScrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 .customScrollbar::-webkit-scrollbar-thumb {

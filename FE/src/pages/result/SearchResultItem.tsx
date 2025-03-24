@@ -16,10 +16,10 @@ interface SearchResultItemProps {
   onClick: (gestureId: number) => void;
 }
 
-const SearchResultItem: React.FC<SearchResultItemProps> = ({ result, onClick }) => {
+function SearchResultItem({ result, onClick }: SearchResultItemProps) {
   return (
     <div 
-      className="cursor-pointer"
+      className="cursor-pointer my-2"
       onClick={() => onClick(result.gestureId)}
     >
       <div className="flex items-center">

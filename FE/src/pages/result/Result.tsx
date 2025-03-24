@@ -80,7 +80,7 @@ function Result() {
       <HeaderBar />
 
       {/* 타이틀 영역 - 고정 부분 */}
-      <div className="flex items-center justify-center mx-auto w-[40%] py-4">
+      <div className="flex items-center justify-center mx-auto w-[30%] py-2 pb-5">
         <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
         <h2 className="text-2xl font-[DNFBitBitv2] dark:text-d-txt-50 px-4">RESULTS</h2>
         <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
@@ -89,17 +89,15 @@ function Result() {
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex justify-center">
         <div
-          className="customScrollbar kr max-w-5xl w-full mx-auto rounded-xl"
+          className="customScrollbar kr max-w-5xl w-full h-full mx-auto rounded-xl"
           style={{
-            height: 'calc(100vh - 180px)',
+            maxHeight: 'calc(100vh - 250px)', // height 대신 maxHeight 사용
             overflowY: 'auto',
-            // 스크롤바가 나타나도록 강제하는 스타일 추가
-            overflow: 'auto',
-            // 디버깅을 위한 스타일
-            border: '1px solid #eee',
           }}
         >
-          <SearchResultsList results={searchResults} onResultClick={handleGestureClick} />
+          <div>
+            <SearchResultsList results={searchResults} onResultClick={handleGestureClick} />
+          </div>
         </div>
       </div>
     </div>
