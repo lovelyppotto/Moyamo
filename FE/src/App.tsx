@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         // 검색 결과
-        path: 'result',
+        path: 'search',
         element: <Result />,
       },
       {
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
       </ThemeProvider>

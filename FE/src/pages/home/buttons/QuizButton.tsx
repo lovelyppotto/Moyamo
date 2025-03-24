@@ -68,7 +68,7 @@ function QuizButton() {
               className="relative 
               ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
             >
-              <img src="/images/quiz.png" alt="QuizIcon" className="drop-shadow-basic" />
+              <img src="/images/quiz.png" alt="QuizIcon" className="drop-shadow-basic" draggable="false"/>
             </div>
           </div>
           <p
