@@ -1,10 +1,8 @@
 // src/components/result/Result.tsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderBar from "../home/HeaderBar";
 import { useTheme } from '@/components/theme-provider';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { searchResultMock, ResultMockData } from './resultMock';
 
 // 국가 ID 매핑
@@ -56,7 +54,7 @@ function Result() {
       setSearchResults([]);
       return;
     }
-    const countryId = countryIdMap[country];
+    // const countryId = countryIdMap[country];
     let results = searchResultMock.filter((item) => {
       // 제스처 이름으로 검색
       const nameMatch = item.gestureName.includes(query);
@@ -100,24 +98,23 @@ function Result() {
       
       {/* 검색 결과 컨텐츠 */}
       <div className="container mx-auto px-4 overflow-auto flex-1">
-        <div className="rounded-xl p-6 backdrop-blur-sm">
-          {searchCountry !== '전체' && (
+        <div className="max-w-5xl mx-auto rounded-xlbackdrop-blur-sm">
+          {/* {searchCountry !== '전체' && (
             <div className="mb-6">
               <p className="text-lg dark:text-d-txt-50/80">
                 "{searchCountry}" 국가로 필터링됨
               </p>
             </div>
           )}
-          
-          {/* result 문구 양옆에 점선 넣는걸로 변경 */}
-          <h2 
-            className="mb-6 text-center border-b border-dashed pb-4 
-              text-2xl font-[DNFBitBitv2]
-              dark:text-d-txt-50
-              "
-            >
-            RESULTS
-          </h2>
+           */}
+          {/* result 문구 양옆 점선 */}
+          <div className="flex items-center justify-center mx-auto w-[40%] mb-6">
+            <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
+            <h2 className="text-2xl font-[DNFBitBitv2] dark:text-d-txt-50 px-4">
+              RESULTS
+            </h2>
+            <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
+          </div>
           
           {searchResults.length === 0 ? (
             <div className="text-center py-12">
@@ -130,35 +127,54 @@ function Result() {
               {searchResults.map((result) => (
                 <div 
                   key={result.gestureId}
-                  className="bg-white dark:bg-white/15 p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                  className="cursor-pointer"
                   onClick={() => handleGestureClick(result.gestureId)}
                 >
                   <div className="flex items-center">
-                    <div className="w-32 h-32 mr-6 flex-shrink-0">
+                    {/* 이미지 컨테이너 */}
+                    <div className="flex w-28 h-28 justify-center item-center flex-shrink-0">
                       <img 
                         src={result.gestureImg} 
                         alt={result.gestureName}
-                        className="w-full h-full object-cover rounded-md" 
+                        className="h-full object-cover rounded-md" 
                       />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold mb-2 dark:text-d-txt-50">
-                        {result.gestureName}
-                      </h3>
-                      <p className="text-gray-600 dark:text-d-txt-50/70 mb-4">
-                        {result.meanings[0]?.meaning.substring(0, 100)}
-                        {result.meanings[0]?.meaning.length > 100 ? '...' : ''}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {result.meanings.map((meaning) => (
-                          <div key={meaning.countryId} className="flex items-center">
-                            <img 
-                              src={countryFlags[meaning.countryName] || '/images/flags/default.png'} 
-                              alt={meaning.countryName}
-                              className="w-8 h-8 rounded-full object-cover mr-1" 
-                            />
+                    {/* 제스처 설명 - 말풍선 스타일 */}
+                    <div className="flex-1 ml-4 relative">
+                      <div className="relative bg-white rounded-lg shadow-md p-6 dark:bg-gray-100 drop-shadow-basic">
+                        {/* 말풍선 꼬리 */}
+                        <div className="absolute left-0 top-2/3 transform -translate-x-full -translate-y-1/2">
+                          <svg width="15" height="30" viewBox="0 0 15 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 5 L0 15 L15 25 Z" fill="white" className="dark:fill-gray-100"/>
+                          </svg>
+                        </div>
+                        
+                        {/* 제목 */}
+                        <div className="flex justify-between items-start mb-1 relative z-10">
+                          <h3 className="text-3xl font-bold font-[NanumSquareRoundEB] text-gray-900">
+                            {result.gestureName}
+                          </h3>
+                          
+                          {/* 국가 플래그 영역 */}
+                          <div className="flex items-center space-x-2">
+                            {result.meanings.map((meaning) => (
+                              <React.Fragment key={meaning.countryId}>
+                                <div className="relative group">
+                                <img 
+                                  src={countryFlags[meaning.countryName] || '/images/placeholder/400/320'} 
+                                  alt={meaning.countryName}
+                                  className="w-10 h-6 object-cover drop-shadow-nation" 
+                                />
+                                </div>
+                              </React.Fragment>
+                            ))}
                           </div>
-                        ))}
+                        </div>
+                        
+                        {/* 설명 텍스트 */}
+                        <p className="text-lg text-gray-700 relative z-10 font-[NanumSquareRound]">
+                          {result.meanings[0]?.meaning}
+                        </p>
                       </div>
                     </div>
                   </div>

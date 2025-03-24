@@ -104,7 +104,7 @@ function HeaderBar() {
             draggable="false" // 드래그 방지
           />
       </button>
-      <div className="w-full flex justify-center mt-11 mb-10 py-4 px-6">
+      <div className="w-full flex justify-center mt-11 mb-5 py-4 px-6">
         <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
           <div className="flex items-center">
             {/* 검색 인풋 컴포넌트 */}
