@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 // Dictionary.tsx에서 정의된 타입 사용
 type Country = {
@@ -21,17 +22,27 @@ function DictHeader({ title, country, showCompareGuide = false, className }: Hea
     return `/images/flags/${country.code}.png`;
   };
 
+  // 뒤로가기
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   return (
     <header
-      className={`w-full h-[60px] mt-[20px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic ${className || ''}`}
+      className={`w-full h-[60px] mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic ${className || ''}`}
     >
+      <div>
+        <button className="cursor-pointer" onClick={handleGoBack}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+      </div>
       <div className="flex justify-center items-center flex-1">
         {/* 국기 있을 때 */}
         {country && (
           <img
             src={getFlagPath(country)}
             alt={`${country.name} flag`}
-            className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-basic"
+            className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
           />
         )}
         <h1 className="text-[32px] font-[NanumSquareRoundEB] text-center">{title}</h1>
