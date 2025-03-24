@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Progress from '@/pages/quiz/Progress.tsx';
 import Webcam from 'react-webcam';
 import QuizResult from '../QuizResult';
+import PbNumber from '../PbNumber';
 import { useRef, useState, useEffect } from 'react';
 
 function AiQuiz() {
@@ -26,14 +27,10 @@ function AiQuiz() {
     <div>
       {isResult ? <QuizResult /> : ''}
       <div className="flex flex-col h-screen overflow-hidden w-full ">
-        {/* 초시계: 디자인 더 이쁜 시계로 바꾸기! */}
+        {/* 문제 번호 확인 창창 */}
         <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-10">
           <div className="flex justfy-center items-conter">
-            {/* 퀴즈 화면에 들어왔을 때부터 초가 줄어드는 부분: 함수 만들기 => progress component로 옮기는것 고려하기기*/}
-            <p className="absolute z-10 transform translate-x-3 translate-y-3 text-2xl font-[NanumSquareRoundB] text-gray-400">
-              10
-            </p>
-            <img src="/images/Time.png" alt="Timer" className="z-1 w-15 h-15" />
+            <PbNumber />
           </div>
         </div>
 
