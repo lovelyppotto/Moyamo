@@ -33,6 +33,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// ✅ MySQL JDBC 드라이버 추가
+	implementation 'mysql:mysql-connector-java:8.0.33'
+
+	//AWS
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.261'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
