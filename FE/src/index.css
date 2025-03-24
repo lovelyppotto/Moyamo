@@ -9,7 +9,7 @@
   --color-kr-200: #c2cdff;
   --color-kr-300: #9cabff;
   --color-kr-400: #757eff;
-  --color-kr-450: #5151CF; /* dark */
+  --color-kr-450: #5151cf; /* dark */
   --color-kr-500: #5352ff; /* main */
   --color-kr-600: #4636f5;
   --color-kr-700: #3c2ad8;
@@ -65,7 +65,7 @@
   --color-inch-worm-200: #edff92;
   --color-inch-worm-300: #ddff53;
   --color-inch-worm-400: #c9fb20;
-  --color-inch-worm-450: #BDDE58; /* dark */
+  --color-inch-worm-450: #bdde58; /* dark */
   --color-inch-worm-500: #aee600; /* main */
   --color-inch-worm-600: #84b500;
   --color-inch-worm-700: #648902;
@@ -84,7 +84,7 @@
   --color-lavender-rose-50: #fef1f9;
   --color-lavender-rose-100: #fde6f5;
   --color-lavender-rose-200: #feccec;
-  --color-lavender-rose-250: #D983B8; /* dark */
+  --color-lavender-rose-250: #d983b8; /* dark */
   --color-lavender-rose-300: #fe91d4; /* main */
   --color-lavender-rose-400: #fc6ac0;
   --color-lavender-rose-500: #f63ea6;
@@ -92,7 +92,7 @@
   --color-lavender-rose-700: #c90d68;
 
   /* dark mode */
-  --color-d-txt-50: #EAEAEA;
+  --color-d-txt-50: #eaeaea;
 
   /* drop shadow */
   --drop-shadow-basic: 0 2px 2px rgba(0, 0, 0, 0.25);
