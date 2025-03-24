@@ -2,19 +2,32 @@
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Progress from '@/pages/quiz/Progress';
+import QuizResult from '../QuizResult';
+import PbNumber from '../PbNumber';
+import { useState, useEffect } from 'react';
 
 function GestureQuiz() {
+  const [isResult, setIsResult] = useState(false);
+
+  useEffect(() => {
+    // 결과 페이지가 나오는 함수: 일단 60초 후에 열리도록 함. 추후 조건 수정할 것
+    const timerId = setTimeout(() => {
+      setIsResult(true);
+      console.log('result창이 열렸습니다.');
+    }, 10000);
+    // 마운트 할 때 타이머 값은 초기화 된다.
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, []);
+
   return (
     <>
+      {isResult ? <QuizResult /> : ''}
       <div className="flex flex-col h-screen overflow-hidden w-full">
-        {/* 초시계: 디자인 더 이쁜 시계로 바꾸기! */}
         <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-10">
           <div className="flex justfy-center items-conter">
-            {/* 퀴즈 화면에 들어왔을 때부터 초가 줄어드는 부분: 함수 만들기 => progress component로 옮기는것 고려하기기*/}
-            <p className="absolute z-10 transform translate-x-3 translate-y-3 text-2xl font-[NanumSquareRoundB] text-gray-400">
-              10
-            </p>
-            <img src="/images/Time.png" alt="Timer" className="z-1 w-15 h-15" />
+            <PbNumber />
           </div>
         </div>
         {/* 진행 바, 퀴즈박스 */}
@@ -31,7 +44,7 @@ function GestureQuiz() {
               <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
             </button>
           </div>
-          <div className="flex justify-center w-full h-2/5 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
+          <div className="flex justify-center w-full h-2/7 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
             {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
             <img src="/images/gesture_example.png" alt="sample_img" className="p-5" />
           </div>
