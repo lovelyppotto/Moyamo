@@ -8,8 +8,10 @@ import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
 import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
+import CompareGuide from './pages/dict/CompareGuide';
 import GestureDetail from './pages/dict/GestureDetail';
 import GesturePractice from './pages/dict/GesturePractice';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -34,6 +36,11 @@ const router = createBrowserRouter([
             index: true,
             element: <Dictionary />,
           },
+          // 나라별 비교 가이드
+          {
+            path: 'guide',
+            element: <CompareGuide />,
+          },
           // 제스처 상세 페이지
           {
             path: 'detail',
@@ -44,7 +51,6 @@ const router = createBrowserRouter([
             path: 'practice',
             element: <GesturePractice />,
           },
-          // 나라별 비교 가이드
         ],
       },
       {
