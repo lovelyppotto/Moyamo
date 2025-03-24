@@ -38,7 +38,7 @@ function CompareGuide() {
             <img src="/images/flags/gr.png" alt="그리스 국기" className="h-8 shadow-sm" />
             <img src="/images/flags/tr.png" alt="터키 국기" className="h-8 shadow-sm" />
           </div>
-          <h2 className="text-center text-lg font-bold mb-4">그리스, 터키에</h2>
+          <h2 className="text-center text-lg font-bold mb-4">그리스, 터키</h2>
           <div className="border-t pt-4">
             <p className="text-center">
               손바닥이 상대를 향하게 하는 V사인은

@@ -9,6 +9,7 @@ import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
 import Quiz from './pages/quiz/Quiz';
 import Result from './pages/result/Result';
+import CompareGuide from './pages/dict/CompareGuide';
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,18 @@ const router = createBrowserRouter([
       {
         // 딕셔너리
         path: 'dictionary',
-        element: <Dictionary />,
+        children: [
+          // 딕셔너리 메인
+          {
+            index: true,
+            element: <Dictionary />,
+          },
+          // 나라별 비교 가이드
+          {
+            path: 'guide',
+            element: <CompareGuide />,
+          },
+        ],
       },
       {
         // 퀴즈
