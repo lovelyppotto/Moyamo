@@ -33,14 +33,20 @@ function Layout() {
       {isQuizPage && (
         <>
           <button className="absolute top-4 left-4 z-10">
-            <FontAwesomeIcon icon={faDoorOpen} className='text-xl md:text-2xl lg:text-3xl text-white'/>
+            <FontAwesomeIcon
+              icon={faDoorOpen}
+              className="text-xl md:text-2xl lg:text-3xl text-white"
+            />
           </button>
-           {/* 함수: 누를 때마다 볼륨 상태 바뀌도록! */}
+          {/* 함수: 누를 때마다 볼륨 상태 바뀌도록! */}
           <button className="absolute top-4 right-4 z-10">
-            <FontAwesomeIcon icon={faVolumeHigh} className='text-xl md:text-2xl lg:text-3xl  text-white'/>
+            <FontAwesomeIcon
+              icon={faVolumeHigh}
+              className="text-xl md:text-2xl lg:text-3xl  text-white"
+            />
           </button>
         </>
-      )}    
+      )}
       {isQuizPage2 && (
         <>
           <button className="absolute top-4 left-4 z-10">

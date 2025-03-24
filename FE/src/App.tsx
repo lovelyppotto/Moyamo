@@ -9,6 +9,7 @@ import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
 import Quiz from './pages/quiz/QuizStart';
 import Result from './pages/result/Result';
 import GestureDetail from './pages/dict/GestureDetail';
+import GesturePractice from './pages/dict/GesturePractice';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
           {
             path: 'detail',
             element: <GestureDetail />,
+          },
+          // 제스처 연습 페이지
+          {
+            path: 'practice',
+            element: <GesturePractice />,
           },
           // 나라별 비교 가이드
         ],

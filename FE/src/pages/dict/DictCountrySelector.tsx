@@ -26,7 +26,7 @@ function DictCountrySelector({
 }: CountrySelectorProps) {
   // 국기 이미지 경로 생성 함수
   const getFlagPath = (countryCode: string) => {
-    return `images/flags/${countryCode}.png`;
+    return `/images/flags/${countryCode}.png`;
   };
 
   // 국가 코드를 Country 객체로 변환
@@ -47,7 +47,7 @@ function DictCountrySelector({
           <img
             src={getFlagPath(selectedCountry.code)}
             alt={`${selectedCountry.code}`}
-            className="w-[50px] h-[35px] shadow-md"
+            className="w-[50px] h-[35px] drop-shadow-nation"
           />
           <span className="text-[18px]">{selectedCountry.name}</span>
           <FontAwesomeIcon icon={faCaretDown} className="ml-auto" />
@@ -64,7 +64,7 @@ function DictCountrySelector({
               <img
                 src={getFlagPath(country.code)}
                 alt={`${country.name} 국기`}
-                className="w-7 h-5 object-cover shadow-sm"
+                className="w-7 h-5 object-cover drop-shadow-nation"
               />
               <span className="text-[16px]">{country.name}</span>
             </DropdownMenuRadioItem>
