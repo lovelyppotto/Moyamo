@@ -9,12 +9,23 @@
   --color-kr-200: #c2cdff;
   --color-kr-300: #9cabff;
   --color-kr-400: #757eff;
-  --color-kr-450: #5151cf; /* dark */
   --color-kr-500: #5352ff; /* main */
   --color-kr-600: #4636f5;
   --color-kr-700: #3c2ad8;
   --color-kr-800: #3125ae;
   --color-kr-900: #2c2689;
+
+  /* dark: korea color */
+  --color-d-kr-100: #e4eafb;
+  --color-d-kr-200: #ced8f7;
+  --color-d-kr-300: #b0bff1;
+  --color-d-kr-400: #909de9;
+  --color-d-kr-500: #757ddf;
+  --color-d-kr-600: #5151cf; /* main */
+  --color-d-kr-700: #4c4ab8;
+  --color-d-kr-800: #3e3e95;
+  --color-d-kr-900: #383977;
+
 
   /* japan color */
   --color-jp-100: #fffcc6;
@@ -27,6 +38,18 @@
   --color-jp-800: #94520c;
   --color-jp-900: #7a440d;
 
+  /* dark: japan color */
+  --color-d-jp-100: #f9f0cc;
+  --color-d-jp-200: #f3e094;
+  --color-d-jp-300: #ebc853; /* main */
+  --color-d-jp-400: #e8b737;
+  --color-d-jp-500: #e09a20;
+  --color-d-jp-600: #c67719;
+  --color-d-jp-700: #a55618;
+  --color-d-jp-800: #86431a;
+  --color-d-jp-900: #6e3819;
+
+
   /* u.s.a color */
   --color-us-100: #d6f5e2;
   --color-us-200: #b1e9c9;
@@ -37,6 +60,18 @@
   --color-us-700: #136948;
   --color-us-800: #11543a;
   --color-us-900: #0f4531;
+
+  /* dark: u.s.a color */
+  --color-amazon-100: #dfece0;
+  --color-amazon-200: #c0dac4;
+  --color-amazon-300: #96bfa0;
+  --color-amazon-400: #699e78;
+  --color-amazon-500: #447954; /* main */
+  --color-amazon-600: #356645;
+  --color-amazon-700: #2b5138;
+  --color-amazon-800: #24412e;
+  --color-amazon-900: #1e3627;
+
 
   /* china color */
   --color-cn-100: #ffe6d4;
@@ -49,6 +84,19 @@
   --color-cn-800: #9e1c0e;
   --color-cn-900: #7f1b0f;
 
+  /* dark: china color */
+  --color-apricot-100: #fbe6d9;
+  --color-apricot-200: #f6c9b2;
+  --color-apricot-300: #f0a581;
+  --color-apricot-400: #eb8763; /* main */
+  --color-apricot-500: #e3552c;
+  --color-apricot-600: #d43e22;
+  --color-apricot-700: #b02d1e;
+  --color-apricot-800: #8d271f;
+  --color-apricot-900: #72221c;
+  --color-apricot-950: #3d0e0d;
+
+  
   /* italy color */
   --color-italy-100: #f6edfa;
   --color-italy-200: #eddaf4;
@@ -59,6 +107,19 @@
   --color-italy-700: #843b90;
   --color-italy-800: #6d3276;
   --color-italy-900: #5c2d62;
+
+  /* dark: italy color */
+  --color-d-italy-100: #f6eef9;
+  --color-d-italy-200: #eddbf3;
+  --color-d-italy-300: #e0bfe8;
+  --color-d-italy-400: #cd98da;
+  --color-d-italy-500: #b66fc6;
+  --color-d-italy-600: #8d499b; /* main */
+  --color-d-italy-700: #803f8c;
+  --color-d-italy-800: #6a3573;
+  --color-d-italy-900: #59305f;
+
+
 
   /* light green */
   --color-inch-worm-100: #f7ffc5;
@@ -100,11 +161,6 @@
   --drop-shadow-quiz: 5px 5px 1px rgba(255, 255, 255, 0.7);
   --drop-shadow-quiz-box: 5px 5px 1px rgba(0, 0, 0, 0.1);
 
-  /* 나눔스퀘어라운드 */
-  --font-NanumLight: 'NanumSquareRoundLight';
-  --font-NanumBasic: 'NanumSquareRound';
-  --font-NanumBold: 'NanumSquareRoundBold';
-  --font-NanumExtraBold: 'NanumSquareRoundExtraBold';
 }
 
 /* 폰트 */
