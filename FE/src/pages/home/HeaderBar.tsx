@@ -91,7 +91,7 @@ function HeaderBar() {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full z-30">
       <button
         className="absolute cursor-pointer
         left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"

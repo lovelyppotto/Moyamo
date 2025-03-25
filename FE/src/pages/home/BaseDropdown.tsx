@@ -54,7 +54,7 @@ function BaseDropdown({
         className="block text-center
           mt-1 p-0
           min-w-[90px] md:min-w-[110px] lg:min-w-[130px]
-          bg-white border-none drop-shadow-basic"
+          bg-white border-none drop-shadow-basic z-80"
       >
         {options.map((opt) => (
           <DropdownMenuItem
