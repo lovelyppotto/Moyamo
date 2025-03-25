@@ -47,7 +47,7 @@
   --color-d-jp-600: #c67719;
   --color-d-jp-700: #a55618;
   --color-d-jp-800: #86431a;
-  --color-d-jp-900: #6e3819;
+  --color-d-jp-900: #857967;
 
 
   /* u.s.a color */
@@ -62,15 +62,15 @@
   --color-us-900: #0f4531;
 
   /* dark: u.s.a color */
-  --color-amazon-100: #dfece0;
-  --color-amazon-200: #c0dac4;
-  --color-amazon-300: #96bfa0;
-  --color-amazon-400: #699e78;
-  --color-amazon-500: #447954; /* main */
-  --color-amazon-600: #356645;
-  --color-amazon-700: #2b5138;
-  --color-amazon-800: #24412e;
-  --color-amazon-900: #1e3627;
+  --color-d-us-100: #dfece0;
+  --color-d-us-200: #c0dac4;
+  --color-d-us-300: #96bfa0;
+  --color-d-us-400: #699e78;
+  --color-d-us-500: #447954; /* main */
+  --color-d-us-600: #356645;
+  --color-d-us-700: #2b5138;
+  --color-d-us-800: #24412e;
+  --color-d-us-900: #1e3627;
 
 
   /* china color */
@@ -85,16 +85,16 @@
   --color-cn-900: #7f1b0f;
 
   /* dark: china color */
-  --color-apricot-100: #fbe6d9;
-  --color-apricot-200: #f6c9b2;
-  --color-apricot-300: #f0a581;
-  --color-apricot-400: #eb8763; /* main */
-  --color-apricot-500: #e3552c;
-  --color-apricot-600: #d43e22;
-  --color-apricot-700: #b02d1e;
-  --color-apricot-800: #8d271f;
-  --color-apricot-900: #72221c;
-  --color-apricot-950: #3d0e0d;
+  --color-d-cn-100: #fbe6d9;
+  --color-d-cn-200: #f6c9b2;
+  --color-d-cn-300: #f0a581;
+  --color-d-cn-400: #eb8763; /* main */
+  --color-d-cn-500: #e3552c;
+  --color-d-cn-600: #d43e22;
+  --color-d-cn-700: #b02d1e;
+  --color-d-cn-800: #8d271f;
+  --color-d-cn-900: #72221c;
+  --color-d-cn-950: #3d0e0d;
 
   
   /* italy color */

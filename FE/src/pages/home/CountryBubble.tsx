@@ -14,6 +14,7 @@ interface TooltipPosition {
   alignOffset: number;
 }
 
+// 툴팁 관련 인터페이스
 interface CountryData {
   id: string;
   countryId: number;
@@ -27,6 +28,7 @@ interface CountryData {
   tooltipPosition: TooltipPosition;
 }
 
+// 툴팁 세팅
 const countrySetup: CountryData[] = [
   {
     id: 'korea',
@@ -35,8 +37,8 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/korea.png',
     position: 'absolute top-[20%] left-[10%]',
     labelPosition: 'absolute bottom-13 -right-5 transform translate-x-1/4 translate-y-1/4',
-    labelBackground: 'bg-kr-500 dark:bg-kr-600',
-    tooltipBackground: 'bg-kr-100',
+    labelBackground: 'bg-kr-500 dark:bg-d-kr-600',
+    tooltipBackground: 'bg-kr-100 dark:bg-d-kr-900 dark:text-d-txt-50',
     labelDirection: 'right',
     tooltipPosition: {
       side: 'top',
@@ -52,8 +54,8 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/usa.jpg',
     position: 'absolute top-[20%] right-[10%]',
     labelPosition: 'absolute bottom-13 -left-3 transform -translate-x-1/4 translate-y-1/4',
-    labelBackground: 'bg-us-600',
-    tooltipBackground: 'bg-us-100',
+    labelBackground: 'bg-us-600 dark:bg-d-us-500',
+    tooltipBackground: 'bg-us-100 dark:bg-d-us-600 dark:text-d-txt-50',
     labelDirection: 'left',
     tooltipPosition: {
       side: 'top',
@@ -69,8 +71,8 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/japan.jpg',
     position: 'absolute top-1/2 left-[20%] transform -translate-y-1/2',
     labelPosition: 'absolute bottom-14 right-32 transform translate-x-1/2 translate-y-1/2',
-    labelBackground: 'bg-jp-500',
-    tooltipBackground: 'bg-jp-100',
+    labelBackground: 'bg-jp-500 dark:bg-d-jp-400',
+    tooltipBackground: 'bg-jp-100 dark:bg-jp-100',
     labelDirection: 'right',
     tooltipPosition: {
       side: 'right',
@@ -86,8 +88,8 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/china.jpg',
     position: 'absolute bottom-[20%] right-[10%]',
     labelPosition: 'absolute bottom-14 left-0 transform -translate-x-1/2 translate-y-1/2',
-    labelBackground: 'bg-cn-600',
-    tooltipBackground: 'bg-cn-100',
+    labelBackground: 'bg-cn-600 dark:bg-d-cn-400',
+    tooltipBackground: 'bg-cn-100 dark:bg-d-cn-800 dark:text-d-txt-50',
     labelDirection: 'left',
     tooltipPosition: {
       side: 'bottom',
@@ -103,8 +105,8 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/italy.webp',
     position: 'absolute bottom-[20%] left-[10%]',
     labelPosition: 'absolute bottom-14 right-0 transform translate-x-1/2 translate-y-1/2',
-    labelBackground: 'bg-italy-600',
-    tooltipBackground: 'bg-italy-100',
+    labelBackground: 'bg-italy-600 dark:bg-d-italy-600',
+    tooltipBackground: 'bg-italy-100 dark:bg-d-italy-800 dark:text-d-txt-50',
     labelDirection: 'right',
     tooltipPosition: {
       side: 'bottom',
@@ -121,7 +123,7 @@ const countrySetup: CountryData[] = [
     position: 'absolute top-1/2 right-[20%] transform -translate-y-1/2',
     labelPosition: 'absolute bottom-11 left-33 transform -translate-x-1/2',
     labelBackground: 'bg-white',
-    tooltipBackground: 'bg-gray-50',
+    tooltipBackground: 'bg-gray-50 dark:bg-slate-100',
     labelDirection: 'left',
     tooltipPosition: {
       side: 'left',
