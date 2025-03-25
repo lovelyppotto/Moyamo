@@ -65,7 +65,6 @@ function TranslationDropdown() {
           alt={`${selectedLanguage} 국기`}
           className="w-6 h-6 mr-2 drop-shadow-nation rounded-full object-cover"
         />
-        <img src="" alt="" />
         <span className="font-[NanumSquareRoundB] text-lg">{selectedLanguage}</span>
         <ChevronDown size={18} className="ml-1" />
       </div>
