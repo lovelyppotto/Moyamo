@@ -5,12 +5,12 @@ import DictStatusLabel from './DictStatusLabel';
 
 function CompareGuide() {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-[#f5f5f5] dark:bg-gray-900 dark:text-[var(--color-d-txt-50)]">
       {/* 헤더 */}
       <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="mb-7" />
 
       {/* 메인 이미지 */}
-      <div className="w-[200px] h-[200px] mx-auto mb-7 rounded-full bg-white flex justify-center items-center drop-shadow-basic">
+      <div className="w-[200px] h-[200px] mx-auto mb-7 rounded-full bg-white dark:bg-gray-800 flex justify-center items-center drop-shadow-basic">
         <img
           src={gestureExampleImg}
           alt="V 사인 제스처"
@@ -23,7 +23,7 @@ function CompareGuide() {
         {/* 국가 그룹 카드들 - lg에서 flex로 변경 */}
         <div className="w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-none lg:flex lg:flex-wrap lg:justify-center gap-12 lg:gap-16">
           {/* 영국, 호주, 뉴질랜드 카드 */}
-          <div className="bg-white p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 dark:border-[var(--color-d-kr-600)] flex flex-col h-80 lg:w-[420px]">
             <DictStatusLabel isPositive={true} className="mb-6" />
             <div className="flex justify-center gap-2 mb-4">
               <img
@@ -45,7 +45,7 @@ function CompareGuide() {
             <h2 className="text-center text-xl font-[NanumSquareRoundB] mb-6">
               영국, 호주, 뉴질랜드
             </h2>
-            <hr className="text-gray-400" />
+            <hr className="text-gray-400 dark:text-gray-700" />
             <div className="pt-6 mt-auto">
               <p className="text-center font-[NanumSquareRound] text-lg lg:text-xl">
                 손등이 밖을 향하게 하는 V 사인은
@@ -56,7 +56,7 @@ function CompareGuide() {
           </div>
 
           {/* 그리스, 터키 카드 */}
-          <div className="bg-white p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 dark:border-[var(--color-d-italy-600)] flex flex-col h-80 lg:w-[420px]">
             <DictStatusLabel isPositive={false} className="mb-6" />
             <div className="flex justify-center gap-2 mb-4">
               <img
@@ -71,7 +71,7 @@ function CompareGuide() {
               />
             </div>
             <h2 className="text-center text-xl font-[NanumSquareRoundB] mb-6">그리스, 터키</h2>
-            <hr className="text-gray-400" />
+            <hr className="text-gray-400 dark:text-gray-700" />
             <div className="pt-6 mt-auto">
               <p className="text-center font-[NanumSquareRound] text-lg lg:text-xl">
                 손바닥이 상대를 향하게 하는 V사인은
