@@ -2,30 +2,31 @@ pipeline {
     agent any
 
     triggers {
-        gitlab(
-            triggerOnPush: true,
-            branchFilterType: 'NameBasedFilter',
-            includeBranchesSpec: 'fe/develop'
+        GenericTrigger(
+            causeString: 'Triggered by GitLab',
+            token: 'react-deploy-token',
+            regexpFilterText: '$ref',
+            regexpFilterExpression: 'refs/heads/fe/develop'
         )
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'fe/develop', 
+                    credentialsId: 'gitlab-credential-id', 
+                    url: 'https://lab.ssafy.com/s12-ai-image-sub1/S12P21D203.git'
             }
         }
-
-        stage('Build React Docker Image') {
+        stage('Build and Deploy') {
             steps {
-                sh 'docker build -t react-app-image -f Dockerfile .'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                script {
+                    dir('/path/to/react-project') {
+                        sh 'git pull origin fe/develop'
+                        sh 'docker compose down -v react'
+                        sh 'docker compose up -d --build react'
+                    }
+                }
             }
         }
     }
