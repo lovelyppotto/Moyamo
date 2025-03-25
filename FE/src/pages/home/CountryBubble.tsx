@@ -35,7 +35,7 @@ const countrySetup: CountryData[] = [
     image: '/images/attractions/korea.png',
     position: 'absolute top-[20%] left-[10%]',
     labelPosition: 'absolute bottom-13 -right-5 transform translate-x-1/4 translate-y-1/4',
-    labelBackground: 'bg-kr-500',
+    labelBackground: 'bg-kr-500 dark:bg-kr-600',
     tooltipBackground: 'bg-kr-100',
     labelDirection: 'right',
     tooltipPosition: {
@@ -150,8 +150,10 @@ function CountryBubble() {
                 <TooltipTrigger asChild>
                   <div className="relative cursor-pointer z-30 pointer-events-auto">
                     <div 
-                      className={`w-30 h-30 rounded-full overflow-hidden border-2 border-white shadow-lg 
-                        transition-transform hover:scale-105`}
+                      className={`w-30 h-30 rounded-full overflow-hidden
+                        border-3 border-white shadow-lg 
+                        transition-transform hover:scale-105
+                        dark:border-slate-600`}
                     >
                       <img
                         src={country.image}
@@ -160,9 +162,9 @@ function CountryBubble() {
                       />
                     </div>
                     <div
-                      className={`${country.labelPosition} px-4 rounded-full border-2 font-bold ${
+                      className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-600 font-bold ${
                         country.labelBackground
-                      } ${country.name === 'Communication' ? 'text-black border-black' : 'text-white'}`}
+                      } ${country.name === 'Communication' ? 'text-black border-black dark:border-slate-600' : 'text-white'}`}
                     >
                       {country.name}
                     </div>
