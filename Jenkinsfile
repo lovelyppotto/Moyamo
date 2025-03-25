@@ -28,8 +28,12 @@ pipeline {
           env.CURRENT_COLOR = (activeColor == "running") ? "blue" : "green"
           env.NEW_COLOR = (env.CURRENT_COLOR == "blue") ? "green" : "blue"
 
+          // Dockerfile & 소스코드를 EC2로 전송 후 빌드
+          scp -r * ubuntu@${EC2_IP}:/home/ubuntu/react-build-${env.NEW_COLOR}
+          ssh ubuntu@${EC2_IP} "cd /home/ubuntu/react-build-${env.NEW_COLOR} && docker build -t react-app:${env.NEW_COLOR} ."
+
           // 새 Docker 이미지 빌드
-          sh "docker build -t react-app:${env.NEW_COLOR} ."
+        //   sh "docker build -t react-app:${env.NEW_COLOR} ."
         }
       }
     }
