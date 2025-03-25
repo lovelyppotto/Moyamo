@@ -29,8 +29,8 @@ function BaseDropdown({
                 min-w-[90px] md:min-w-[110px] lg:min-w-[130px] 
                 w-auto whitespace-nowrap
                 bg-kr-300 rounded-md p-1 px-2
-                dark:bg-kr-200 dark:text-black
                 cursor-pointer relative
+                dark:bg-d-kr-700 dark:text-d-txt-50
                 ${className}`}
     >
       <ChevronDown size={18} className="flex-shrink-0 ml-1 md:ml-2" />
@@ -54,7 +54,8 @@ function BaseDropdown({
         className="block text-center
           mt-1 p-0
           min-w-[90px] md:min-w-[110px] lg:min-w-[130px]
-          bg-white border-none drop-shadow-basic z-80"
+          bg-white border-none drop-shadow-basic z-80
+          dark:bg-gray-700 dark:text-d-txt-50"
       >
         {options.map((opt) => (
           <DropdownMenuItem
@@ -63,7 +64,8 @@ function BaseDropdown({
               justify-center text-center  
               font-[NanumSquareRound] text-sm
               cursor-pointer
-              hover:bg-kr-100 hover:dark:bg-kr-200"
+              hover:bg-kr-100 hover:font-bold 
+              hover:dark:bg-d-kr-300 hover:dark:text-black"
             onClick={() => onSelect(opt)}
           >
             {opt}
