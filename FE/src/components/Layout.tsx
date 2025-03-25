@@ -9,14 +9,18 @@ function Layout() {
   const isHomePage = location.pathname === '/';
   const isResultPage = location.pathname === '/search';
   const isQuizPage = location.pathname === '/quiz';
-  const isQuizPage2 = location.pathname === '/gesturequiz'||location.pathname === '/aiquiz'||location.pathname === '/meaningquiz';
-  
+  const isQuizPage2 =
+    location.pathname === '/gesturequiz' ||
+    location.pathname === '/aiquiz' ||
+    location.pathname === '/meaningquiz';
+  const isDictPage = location.pathname.includes('/dictionary');
+
   const handleBack = () => {
     navigate(-1);
   };
 
   // 패딩 적용하지 않는 페이지
-  const noPaddingPage = isHomePage || isResultPage;
+  const noPaddingPage = isHomePage || isResultPage || isDictPage;
 
   // Result 페이지는 배경색 적용 안 함 (배경 이미지가 있으므로)
   const bgStyle = isResultPage ? {} : { backgroundColor: '#f5f5f5' };
@@ -25,7 +29,7 @@ function Layout() {
     <div className="relative flex flex-col h-screen w-full h-full overflow-hidden" style={bgStyle}>
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
       {isResultPage && (
-        <button className="absolute top-4 left-4 z-10" onClick={handleBack}>
+        <button className="absolute top-4 left-4 z-10 dark:text-white" onClick={handleBack}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
       )}

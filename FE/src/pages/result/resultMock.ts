@@ -90,7 +90,7 @@ export const searchResultMock: ResultMockData[] =[
     gestureImg:  '/images/gestures/finger-heart.png',
   },
   {
-    gestureId: 6,
+    gestureId: 7,
     gestureName: "하트",
     meanings: [
       {
