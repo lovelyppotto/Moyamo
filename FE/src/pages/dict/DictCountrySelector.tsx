@@ -49,7 +49,7 @@ function DictCountrySelector({
             alt={`${selectedCountry.code}`}
             className="w-[50px] h-[35px] drop-shadow-nation"
           />
-          <span className="text-[18px]">{selectedCountry.name}</span>
+          <span className="text-[20px] font-[NanumSquareRoundB]">{selectedCountry.name}</span>
           <FontAwesomeIcon icon={faCaretDown} className="ml-auto" />
         </div>
       </DropdownMenuTrigger>
@@ -59,14 +59,14 @@ function DictCountrySelector({
             <DropdownMenuRadioItem
               key={country.code}
               value={country.code}
-              className="flex items-center gap-3 py-3 hover:bg-gray-200 cursor-pointer "
+              className="flex items-center gap-3 py-3 hover:bg-gray-200 cursor-pointer"
             >
               <img
                 src={getFlagPath(country.code)}
                 alt={`${country.name} 국기`}
                 className="w-7 h-5 object-cover drop-shadow-nation"
               />
-              <span className="text-[16px]">{country.name}</span>
+              <span className="text-[16px] font-[NanumSquareRound]">{country.name}</span>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
