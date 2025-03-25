@@ -25,7 +25,7 @@ function Layout() {
     <div className="relative flex flex-col h-screen w-full h-full overflow-hidden" style={bgStyle}>
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
       {isResultPage && (
-        <button className="absolute top-4 left-4 z-10" onClick={handleBack}>
+        <button className="absolute top-4 left-4 z-10 dark:text-white" onClick={handleBack}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
       )}
