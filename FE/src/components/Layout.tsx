@@ -19,12 +19,13 @@ function Layout() {
   const volumeOff = <FontAwesomeIcon icon={faVolumeOff} className="text-xl md:text-2xl lg:text-3xl  "/>
   const volumeLow = <FontAwesomeIcon icon={faVolumeLow} className="text-xl md:text-2xl lg:text-3xl  "/>
   const volumeList = [ volumeHight, volumeLow, volumeOff]
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(0); //// 볼륨 상태 index
   
-  
-
   const handleBack = () => {
     navigate(-1);
+  };
+  const handleHome = () => {
+    navigate("/");
   };
   // 볼륨 상태가 바뀌는 함수: 1)아이콘 바뀌기 2)실제 소리 받아오기 3) 상태저장
   const handleVolume = () => {
@@ -58,26 +59,22 @@ function Layout() {
               className="text-xl md:text-2xl lg:text-3xl text-white"
             />
           </button>
-          {/* 함수: 누를 때마다 볼륨 상태 바뀌도록! */}
           <button className="absolute top-4 right-4 z-10 cursor-pointer text-white" onClick={handleVolume}>
             {volumeList[index]}
           </button>
         </>
       )}
+      {/* isQuizPage2는 게임 진행 페이지: 이전으로 돌아가는게 아니라 홈으로 돌아감. 검은 색.  */}
       {isQuizPage2 && (
         <>
-          <button className="absolute top-4 left-4 z-10" onClick={handleBack}>
+          <button className="absolute top-4 left-4 z-10 cursor-pointer" onClick={handleHome}>
             <FontAwesomeIcon
               icon={faDoorOpen}
               className="text-xl md:text-2xl lg:text-3xl "
             />
           </button>
-          {/* 함수: 누를 때마다 볼륨 상태 바뀌도록! */}
-          <button className="absolute top-4 right-4 z-10" onClick={handleVolume}>
-            <FontAwesomeIcon
-              icon={faVolumeHigh}
-              className="text-xl md:text-2xl lg:text-3xl  "
-            />
+          <button className="absolute top-4 right-4 z-10 cursor-pointer" onClick={handleVolume}>
+            {volumeList[index]}
           </button>
         </>
       )}
