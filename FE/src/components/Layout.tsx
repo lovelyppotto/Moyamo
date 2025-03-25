@@ -10,10 +10,8 @@ function Layout() {
   const isHomePage = location.pathname === '/';
   const isResultPage = location.pathname === '/search';
   const isQuizPage = location.pathname === '/quiz';
-  const isQuizPage2 =
-    location.pathname === '/gesturequiz' ||
-    location.pathname === '/aiquiz' ||
-    location.pathname === '/meaningquiz';
+  const isQuizPage2 = location.pathname === '/quizcontent';
+ 
   const isDictPage = location.pathname.includes('/dictionary');
   const volumeHight = <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  "/>
   const volumeOff = <FontAwesomeIcon icon={faVolumeOff} className="text-xl md:text-2xl lg:text-3xl  "/>
