@@ -5,12 +5,12 @@ import DictStatusLabel from './DictStatusLabel';
 
 function CompareGuide() {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
       <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="mb-7" />
 
       {/* 메인 이미지 */}
-      <div className="w-[200px] h-[200px] mx-auto mb-7 rounded-full bg-white flex justify-center items-center drop-shadow-basic">
+      <div className="w-[200px] h-[200px] mx-auto mb-7 rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
         <img
           src={gestureExampleImg}
           alt="V 사인 제스처"
@@ -23,7 +23,7 @@ function CompareGuide() {
         {/* 국가 그룹 카드들 - lg에서 flex로 변경 */}
         <div className="w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-none lg:flex lg:flex-wrap lg:justify-center gap-12 lg:gap-16">
           {/* 영국, 호주, 뉴질랜드 카드 */}
-          <div className="bg-white p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
             <DictStatusLabel isPositive={true} className="mb-6" />
             <div className="flex justify-center gap-2 mb-4">
               <img
@@ -56,7 +56,7 @@ function CompareGuide() {
           </div>
 
           {/* 그리스, 터키 카드 */}
-          <div className="bg-white p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 flex flex-col h-80 lg:w-[420px]">
             <DictStatusLabel isPositive={false} className="mb-6" />
             <div className="flex justify-center gap-2 mb-4">
               <img

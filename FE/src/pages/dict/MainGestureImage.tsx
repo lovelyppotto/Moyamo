@@ -25,7 +25,7 @@ function MainGestureImage({ gesture }: MainGestureImageProps) {
 
       {/* 타이틀 */}
       <div className="bg-kr-500 py-4 px-4 text-white text-center rounded-b-2xl">
-        <h2 className="text-xl font-bold">{gesture.title}</h2>
+        <h2 className="text-[22px] font-bold">{gesture.title}</h2>
       </div>
     </div>
   );
