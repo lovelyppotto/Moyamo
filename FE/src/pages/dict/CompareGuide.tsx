@@ -7,11 +7,7 @@ function CompareGuide() {
   return (
     <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
-      <DictHeader
-        title="나라별 제스처 비교 가이드"
-        showCompareGuide={false}
-        className="mb-7"
-      />
+      <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="mb-7" />
 
       {/* 메인 이미지 */}
       <div className="w-[200px] h-[200px] mx-auto mb-7 rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
