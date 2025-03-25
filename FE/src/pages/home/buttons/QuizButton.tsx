@@ -56,7 +56,10 @@ function QuizButton() {
       <DialogTrigger asChild>
         <button
           onClick={handleButtonClick}
-          className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
+          className="flex flex-col items-center
+          bg-transparent border-none z-20
+          cursor-pointer transform transition-transform duration-300
+          hover:scale-105"
         >
           <div
             className="flex items-center justify-center relative

@@ -26,7 +26,9 @@ function DictionaryButton() {
       <DialogTrigger asChild>
         <button
           onClick={handleDictionaryClick}
-          className="flex flex-col items-center bg-transparent border-none cursor-pointer transform transition-transform duration-300 hover:scale-105"
+          className="flex flex-col items-center z-20
+          bg-transparent border-none 
+          cursor-pointer transform transition-transform duration-300 hover:scale-105"
         >
           <div
             className="flex items-center justify-center relative
