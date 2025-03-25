@@ -117,12 +117,11 @@ function Dictionary() {
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    console.log('비교 가이드 버튼 클릭');
+    navigate('/dictionary/guide');
   };
 
   return (
     <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
-      <CompareGuide />
       <div className="flex flex-1 justify-center items-start py-6">
         {/* 메인 이미지 */}
         <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
