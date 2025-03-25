@@ -1,13 +1,12 @@
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import DictCountrySelector from './DictCountrySelector';
 import { DictListCarousel, Gesture } from './DictListCarousel';
 import gestureExampleImg from './gesture_example.png';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
-import CompareGuide from './CompareGuide';
 import { useNavigate } from 'react-router-dom';
+import DictHeader from './DictHeader'; // DictHeader 임포트
 
 type Country = {
   code: string;
@@ -121,45 +120,48 @@ function Dictionary() {
   };
 
   return (
-    <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
-      <div className="flex flex-1 justify-center items-start py-6">
-        {/* 메인 이미지 */}
-        <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
-          {currentGesture && (
-            <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
-          )}
-        </div>
-        {/* 국가 선택 드롭다운, 아이콘 버튼 */}
-        <div className="w-auto flex flex-col space-y-10 cursor-pointer">
-          {/* 국가 선택 드롭다운 */}
-          <DictCountrySelector
-            selectedCountry={selectedCountry}
-            onSelectCountry={handleSelectCountry}
-            countryOptions={countryOptions}
-          />
+    <div>
+      {/* 헤더*/}
+      <DictHeader
+        showCountrySelector={true}
+        selectedCountry={selectedCountry}
+        onSelectCountry={handleSelectCountry}
+        countryOptions={countryOptions}
+        showCompareGuide={true}
+      />
+      <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+        <div className="flex flex-1 justify-center items-start py-6 mx-auto">
+          {/* 메인 이미지 */}
+          <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
+            {currentGesture && (
+              <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
+            )}
+          </div>
           {/* 아이콘 버튼 */}
-          <div className="flex flex-col space-y-10">
-            <IconButton
-              icon={faHands}
-              tooltipText="제스처 연습"
-              onClick={handlePracticeButtonClick}
-            />
-            <IconButton
-              icon={faMagnifyingGlassPlus}
-              tooltipText="자세히 보기"
-              onClick={handleDetailButtonClick}
-            />
-            <IconButton
-              icon={faRectangleList}
-              tooltipText="나라별 비교 가이드"
-              onClick={handleGuideButtonClick}
-            />
+          <div className="w-auto flex flex-col space-y-10 cursor-pointer">
+            <div className="flex flex-col space-y-10">
+              <IconButton
+                icon={faHands}
+                tooltipText="제스처 연습"
+                onClick={handlePracticeButtonClick}
+              />
+              <IconButton
+                icon={faMagnifyingGlassPlus}
+                tooltipText="자세히 보기"
+                onClick={handleDetailButtonClick}
+              />
+              <IconButton
+                icon={faRectangleList}
+                tooltipText="나라별 비교 가이드"
+                onClick={handleGuideButtonClick}
+              />
+            </div>
           </div>
         </div>
-      </div>
-      {/* 캐러셀 */}
-      <div className="mt-auto py-6">
-        <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
+        {/* 캐러셀 */}
+        <div className="mt-auto py-6">
+          <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
+        </div>
       </div>
     </div>
   );
