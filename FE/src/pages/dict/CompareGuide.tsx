@@ -10,7 +10,7 @@ function CompareGuide() {
       <DictHeader
         title="나라별 제스처 비교 가이드"
         showCompareGuide={false}
-        className="mb-7 dark:bg-gray-500 dark:text-d-txt-50"
+        className="mb-7"
       />
 
       {/* 메인 이미지 */}

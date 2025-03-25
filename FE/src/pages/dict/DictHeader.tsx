@@ -29,7 +29,7 @@ function DictHeader({ title, country, showCompareGuide = false, className }: Hea
 
   return (
     <header
-      className={`w-full h-[60px] mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic ${className || ''}`}
+      className={`w-full h-[60px] mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic dark:bg-gray-500 dark:text-d-txt-50 ${className || ''}`}
     >
       <div>
         <button className="cursor-pointer" onClick={handleGoBack}>
