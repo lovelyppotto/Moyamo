@@ -151,9 +151,9 @@ function CountryBubble() {
                   <div className="relative cursor-pointer z-30 pointer-events-auto">
                     <div 
                       className={`w-30 h-30 rounded-full overflow-hidden
-                        border-3 border-white shadow-lg 
+                        border-2 border-white shadow-lg 
                         transition-transform hover:scale-105
-                        dark:border-slate-600`}
+                        dark:border-slate-100`}
                     >
                       <img
                         src={country.image}
@@ -162,9 +162,9 @@ function CountryBubble() {
                       />
                     </div>
                     <div
-                      className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-600 font-bold ${
+                      className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-100 font-bold ${
                         country.labelBackground
-                      } ${country.name === 'Communication' ? 'text-black border-black dark:border-slate-600' : 'text-white'}`}
+                      } ${country.name === 'Communication' ? 'text-black border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
                     >
                       {country.name}
                     </div>
