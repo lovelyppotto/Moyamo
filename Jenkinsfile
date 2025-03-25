@@ -13,16 +13,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'fe/develop', 
-                    credentialsId: 'gitlab-credential-id', 
-                    url: 'https://lab.ssafy.com/s12-ai-image-sub1/S12P21D203.git'
+                checkout scm
             }
         }
         stage('Build and Deploy') {
             steps {
                 script {
-                    dir('/path/to/react-project') {
-                        sh 'git pull origin fe/develop'
+                    dir('./frontend') {
                         sh 'docker compose down -v react'
                         sh 'docker compose up -d --build react'
                     }
