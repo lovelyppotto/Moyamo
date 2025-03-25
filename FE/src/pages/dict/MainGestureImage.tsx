@@ -13,8 +13,8 @@ type MainGestureImageProps = {
 
 function MainGestureImage({ gesture }: MainGestureImageProps) {
   return (
-    <div className="rounded-2xl shadow-md font-[NanumSquareRound] w-full max-w-full md:w-[550px] lg:w-[650px]">
-      {/* 이미지 - 화면에 맞게 조정되지만 오버플로우되지 않음 */}
+    <div className="rounded-2xl shadow-md font-[NanumSquareRound] w-full max-w-full md:w-[550px] lg:w-[600px]">
+      {/* 이미지 */}
       <div className="bg-white rounded-t-2xl flex items-center justify-center border-6 border-kr-500 w-full aspect-[4/3] md:max-h-[calc(70vh-120px)]">
         <img
           src={gesture.image}

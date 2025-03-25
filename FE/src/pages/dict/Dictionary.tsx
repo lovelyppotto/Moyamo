@@ -6,7 +6,7 @@ import gestureExampleImg from './gesture_example.png';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import { useNavigate } from 'react-router-dom';
-import DictHeader from './DictHeader'; // DictHeader 임포트
+import DictHeader from './DictHeader';
 
 type Country = {
   code: string;
@@ -120,7 +120,7 @@ function Dictionary() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       {/* 헤더*/}
       <DictHeader
         showCountrySelector={true}
@@ -129,10 +129,12 @@ function Dictionary() {
         countryOptions={countryOptions}
         showCompareGuide={true}
       />
-      <div className="h-screen flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
-        <div className="flex flex-1 justify-center items-start py-6 mx-auto">
+      <div className="flex-1 flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+        {/* 메인 이미지와 아이콘 영역*/}
+        <div className="flex flex-1 justify-center items-center py-6">
+          <div></div>
           {/* 메인 이미지 */}
-          <div className="flex-grow flex items-center justify-center pr-5 max-h-[calc(100vh-250px)]">
+          <div className="flex-grow flex items-center justify-center pr-5">
             {currentGesture && (
               <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
             )}
@@ -159,7 +161,7 @@ function Dictionary() {
           </div>
         </div>
         {/* 캐러셀 */}
-        <div className="mt-auto py-6">
+        <div className="w-full pb-6 mt-auto">
           <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
         </div>
       </div>
