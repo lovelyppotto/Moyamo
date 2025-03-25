@@ -8,7 +8,7 @@ export const tipsMockData: TipData[] = [
   {
     tipId: 1,
     countryId: 1,
-    content: "한국은 늦은 새벽에도 음식을 주문하면 배달이 빠르게 진행됩니다"
+    content: "한국은 늦은 시각에도 음식 주문시 배달이 빠르게 진행됩니다"
   },
   {
     tipId: 2,
