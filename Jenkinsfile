@@ -5,6 +5,7 @@ pipeline {
         IMAGE_TAG = "latest"
         SSH_CREDENTIAL = 'ec2'
     }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -35,7 +36,7 @@ pipeline {
                                     docker pull ${DOCKER_IMAGE}:${IMAGE_TAG}
                                     docker stop react || true
                                     docker rm react || true
-                                    docker run -d --name react -p 80:80 ${DOCKER_IMAGE}:${IMAGE_TAG}
+                                    docker run -d --name react -p 5173:80 ${DOCKER_IMAGE}:${IMAGE_TAG}
                                 '
                             """
                         }
@@ -47,10 +48,13 @@ pipeline {
         stage('Notify Success') {
             steps {
                 script {
+                    def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
+                    def commitAuthor = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    
                     withCredentials([string(credentialsId: 'FE-MATTERMOST', variable: 'MATTERMOST_WEBHOOK')]) {
                         sh """
                             curl -X POST -H 'Content-Type: application/json' -d '{
-                                "text": ":rocket: *FE 배포 완료!*\\n브랜치: fe/develop\\n도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                                "text": ":cat_clap: *FE 배포 완료!*\\n\\n:label: 브랜치: fe/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: [서비스 바로가기](https://j12d203.p.ssafy.io)"
                             }' $MATTERMOST_WEBHOOK
                         """
                     }
@@ -62,10 +66,13 @@ pipeline {
     post {
         failure {
             script {
+                def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
+                def commitAuthor = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                
                 withCredentials([string(credentialsId: 'FE-MATTERMOST', variable: 'MATTERMOST_WEBHOOK')]) {
                     sh """
                         curl -X POST -H 'Content-Type: application/json' -d '{
-                            "text": ":x: *FE 배포 실패!*\\n<@sunju701> 확인 부탁드립니다."
+                            "text": ":jenkins6: *FE 배포 실패!*\\n\\n<@sunju701> 확인 부탁드립니다.\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}"
                         }' $MATTERMOST_WEBHOOK
                     """
                 }
