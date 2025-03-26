@@ -120,7 +120,7 @@ function Dictionary() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 - 고정 높이 사용 */}
       <div className="flex-none mb-[29px]">
         <DictHeader
