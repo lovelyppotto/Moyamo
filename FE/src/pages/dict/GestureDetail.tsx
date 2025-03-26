@@ -14,7 +14,7 @@ function GestureDetail() {
       {/* 헤더 */}
       <DictHeader title={country.name} country={country} showCompareGuide={true} className="" />
 
-      {/* 메인 컨텐츠 영역 - 전체 화면의 90% */}
+      {/* 메인 컨텐츠 영역 */}
       <div className="flex flex-col h-[80%] overflow-hidden w-full dark:bg-gray-900 dark:text-d-txt-50">
         <div
           className="flex flex-col md:flex-col lg:flex-row mx-auto w-full max-w-6xl pt-[30px] 
