@@ -25,7 +25,7 @@ function CompareGuide() {
           </div>
         </div>
 
-        {/* 카드 컨테이너 - 나머지 높이 사용 */}
+        {/* 카드 컨테이너 */}
         <div className="flex-1 px-4 pb-6 overflow-y-auto">
           {/* 국가 그룹 카드들 */}
           <div className="w-full max-w-[1000px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
