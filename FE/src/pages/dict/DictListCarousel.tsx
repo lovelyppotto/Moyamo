@@ -106,7 +106,7 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
                   </div>
                 </CardContent>
                 <div className="w-full bg-gray-200 p-[14px]">
-                  <span className="text-md text-center text-gray-700 font-medium block">
+                  <span className="text-md text-center text-gray-500 font-[NanumSquareRoundB] block">
                     {gesture.title}
                   </span>
                 </div>
