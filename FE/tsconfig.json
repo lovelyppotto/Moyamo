@@ -15,5 +15,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    // 외부 라이브러리 타입 오류 무시
+    "skipLibCheck": true,
+
+    // 타입 오류 있어도 JS 출력 가능 설정
+    "noEmitOnError": false
   }
 }
