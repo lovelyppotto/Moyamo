@@ -36,7 +36,7 @@ pipeline {
                                     docker pull ${DOCKER_IMAGE}:${IMAGE_TAG}
                                     docker stop react || true
                                     docker rm react || true
-                                    docker run -d --name react -p 5173:80 ${DOCKER_IMAGE}:${IMAGE_TAG}
+                                    docker run -d --network nginx_jenkins_network --name react -p 5173:80 ${DOCKER_IMAGE}:${IMAGE_TAG}
                                 '
                             """
                         }
