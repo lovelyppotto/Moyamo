@@ -2,11 +2,11 @@ import { useState } from 'react';
 import {
   Dialog,
   DialogTrigger,
-  DialogHeader,
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
+import WebCamera from './Webcamera';
 
 function SearchCameraModal() {
   const [open, setOpen] = useState(false);
@@ -52,10 +52,12 @@ function SearchCameraModal() {
             </DialogTitle>
 
             {/* 카메라 영역 */}
-            <div className="flex-grow bg-white p-6 rounded-b-lg">
+            <div className="flex-grow bg-white rounded-b-lg">
               <div className="w-full h-full relative flex items-center justify-center">
                 {/* 실제 카메라 컴포넌트 */}
-                <div className="absolute inset-0 text-center text-transparent">카메라 컴포넌트</div>
+                <div className="w-full h-full inset-0 text-center text-transparent">
+                  <WebCamera />
+                </div>
               </div>
             </div>
             <div className='h-2 bg-none'></div>
