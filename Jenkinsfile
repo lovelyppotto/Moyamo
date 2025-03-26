@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     triggers {
         GenericTrigger(
             causeString: 'Triggered by GitLab',
