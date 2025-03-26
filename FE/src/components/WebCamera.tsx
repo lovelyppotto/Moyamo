@@ -39,7 +39,11 @@ function WebCamera({guidelineClassName}: WebCameraprops) {
             className={`absolute ${guidelineClassName}`}
           />
           {/* 안내 텍스트 - 위치 조정 */}
-          <p className="absolute top-5 text-center text-sm md:text-lg font-[NanumSquareRoundB] text-white">
+          <p 
+            className="absolute top-5 text-center
+            text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
+            drop-shadow-basic"
+          >
             얼굴과 상체를 가이드라인에 맞춰주세요
           </p>
         </div>

@@ -30,7 +30,8 @@ function SearchCameraModal() {
         <DialogContent
           className="p-0 w-full h-[90vh] max-h-[90%]
           rounded-2xl border-none
-          max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-hidden"
+          max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-hidden\
+          dark:text-d-txt-50"
         >
           {/* 전체 컨테이너 */}
           <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
@@ -38,7 +39,8 @@ function SearchCameraModal() {
             <DialogTitle
               className="flex item-center py-6 pl-8
               text-center text-3xl font-[NanumSquareRoundEB]
-              bg-gray-200"
+              bg-gray-200
+              dark:bg-gray-700 dark:text-d-txt-50"
             >
               <h1 className="flex item-center mt-1 mr-5">제스처 검색</h1>
               <div className="flex flex-col justify-start">
@@ -70,10 +72,15 @@ function SearchCameraModal() {
             {/* 하단 버튼 영역 */}
             <div
               className="flex justify-center px-2 py-3 
-              bg-white rounded-t-lg "
+              bg-white rounded-t-lg
+              dark:bg-gray-700"
             >
-              <button className="bg-black text-white rounded-full flex items-center justify-center w-14 h-14">
-                <Camera className="" />
+              <button 
+                className="flex items-center justify-center w-14 h-14
+                bg-black text-white rounded-full
+                dark:bg-white dark:text-gray-900"
+              >
+                <Camera />
               </button>
             </div>
           </div>
