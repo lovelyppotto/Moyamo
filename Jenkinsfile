@@ -19,8 +19,8 @@ pipeline {
             steps {
                 script {
                     dir('FE') {
-                        sh 'docker compose down -v react || true'
-                        sh 'docker compose up -d --build react'
+                        sh 'docker-compose down -v react || true'
+                        sh 'docker-compose up -d --build react'
                     }
                 }
             }
