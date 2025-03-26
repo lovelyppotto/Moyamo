@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
-import WebCamera from './Webcamera';
+import WebCamera from './WebCamera';
 
 function SearchCameraModal() {
   const [open, setOpen] = useState(false);
