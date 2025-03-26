@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     options {
-        skipDefaultCheckout(true)
+        skipDefaultCheckout(true) 
     }
 
     triggers {
@@ -15,6 +15,12 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build and Deploy') {
             steps {
                 script {
