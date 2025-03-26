@@ -3,27 +3,30 @@ import { useState, useEffect } from 'react';
 import '../../index.css';
 
 interface QuizProgressProps {
-  timeout?: number;
-  onTimeout?: null;
+  value?: number;
+  buttonPressed?: boolean;
   className?: string;
 }
 
-function QuizProgress({ timeout = 0, onTimeout=null, className = '' }: QuizProgressProps) {
-  const [remainingTime, setRemainingTime] = useState(timeout);
-  useEffect(()=>{
-    setTimeout(onTimeout, timeout);
-  }, [timeout, onTimeout]);
+function QuizProgress({ value = 0, buttonPressed = false, className = '' }: QuizProgressProps) {
+  const [progress, setProgress] = useState(value);
+  // 버튼을 누르면 25%씩 증가//settimeout은 한번만 실행됨. setInterval으로 변경.
   useEffect(() => {
-    setInterval(() => {
-      setRemainingTime((prevRemainingTime) =>  prevRemainingTime - 100);
-      },100);
-    }, []); 
-    //문제: 오른쪽에서 왼쪽으로 줄어든다.
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => {
+        const newProgress = prevProgress + 1;
+
+        if (newProgress > 100) {
+          // 결과 모달창이 띄워지도록
+        }
+        return newProgress;
+      });
+    }, 100); // 60초가 지나면(60000ms) 자동으로 25프로 증가함.
 
 
     
-  //   return () => clearTimeout(timer);
-  // }, [buttonPressed]); // 버튼이 눌러지면 25프로 증가함.
+    return () => clearTimeout(timer);
+  }, [buttonPressed]); // 버튼이 눌러지면 25프로 증가함.
 
   return (
     <div className="flex justify-center">
@@ -35,11 +38,11 @@ function QuizProgress({ timeout = 0, onTimeout=null, className = '' }: QuizProgr
           // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
           transform: 'translateZ(0)',
         }}
-        value={remainingTime}
+        value={progress}
       >
         <Progress.Indicator
           className="ease-[cubic-bezier(0.65, 0, 0.35, 1)] size-full bg-[var(--color-kr-600)] stroke-black stroke-3 transition-transform duration-[660ms]"
-          style={{ transform: `translateX(-${100 - remainingTime}%)` }}
+          style={{ transform: `translateX(-${100 - progress}%)` }}
         />
       </Progress.Root>
     </div>

@@ -7,6 +7,7 @@ import AiQuiz from './pages/quiz/ai_quiz/AiQuiz';
 import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
 import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
 import Quiz from './pages/quiz/QuizStart';
+import QuizContent from './pages/quiz/Quiz';
 import Result from './pages/result/Result';
 import CompareGuide from './pages/dict/CompareGuide';
 import GestureDetail from './pages/dict/GestureDetail';
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
         // 퀴즈
         path: 'quiz',
         element: <Quiz />,
+      },
+      {
+        // 퀴즈 컨텐츠츠
+        path: 'quizcontent',
+        element: <QuizContent />,
       },
       {
         // meaning 퀴즈(페이지 확인용)

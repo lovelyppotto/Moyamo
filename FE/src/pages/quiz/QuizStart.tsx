@@ -1,6 +1,11 @@
 import '@/index.css';
+import { useNavigate } from 'react-router-dom';
 
 function Quiz() {
+  const navigate = useNavigate()
+  const handleStart = () => {
+    navigate("/quizcontent");
+  };
   return (
     <>
       {/* w-full h-full을 쓰면 스크롤이 생김!! 전체적으로 설정한 마진값 때문인 것 같음 */}
@@ -19,7 +24,7 @@ function Quiz() {
           <div className="flex justify-center ">
             {/* tailwind.config.js에 커스텀 그림자 정의해야 함 */}
             {/* 함수: 버튼을 누르면 랜덤으로 게임 페이지로 들어가도록 하기 */}
-            <button className="text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center algin-center bg-[var(--color-lavender-rose-300)] drop-shadow-quiz animate-bounce mt-[5vh]">
+            <button className="text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center algin-center bg-[var(--color-lavender-rose-300)] drop-shadow-quiz animate-bounce mt-[5vh] cursor-pointer" onClick={handleStart}>
               <p className="drop-shadow-basic ">start</p>
             </button>
           </div>
@@ -27,7 +32,7 @@ function Quiz() {
       </div>
     </>
   );
-}
+};
 
 export default Quiz;
 //텍스트+버튼+그림들PNG우선
