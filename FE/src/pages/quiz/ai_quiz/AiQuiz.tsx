@@ -2,13 +2,13 @@
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Progress from '@/pages/quiz/Progress.tsx';
-import Webcam from 'react-webcam';
 import QuizResult from '../QuizResult';
 import PbNumber from '../PbNumber';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import WebCamera from '@/components/Webcamera';
 
 function AiQuiz() {
-  const webcamRef = useRef<Webcam>(null);
+  // const webcamRef = useRef<Webcam>(null);
   const [isResult, setIsResult] = useState(false);
 
   useEffect(() => {
@@ -51,32 +51,7 @@ function AiQuiz() {
             </div>
             {/* 웹캠 + 가이드라인 */}
             {/* 카메라가 켜지기 전에 3초정도 가림막(3초 애니메이션)이 생기도록 하기!!          */}
-            <div className="p-3 w-[80vh]  bg-white rounded-2xl ">
-              <Webcam
-                audio={false}
-                width={1280}
-                height={720}
-                ref={webcamRef}
-                videoConstraints={{
-                  facingMode: 'user',
-                }}
-                style={{ transform: 'scaleX(-1)' }}
-              />
-              <div className="absolute top-45 left-0 w-full h-full flex justify-center items-center pointer-events-none">
-                <div className="relative w-[50%] h-[80%] flex justify-center items-center animate-puls">
-                  {/* 얼굴 가이드선 (원) */}
-                  <div className="absolute top-[12vh] w-[33vh] h-[33vh] rounded-full border-2 border-dashed border-white "></div>
-
-                  {/* 상체 가이드선 (타원) */}
-                  <div className="absolute top-[45vh] w-[50vh] h-[20vh] rounded-t-[50%] border-t-2 border-l-2 border-r-2 border-dashed border-white"></div>
-
-                  {/* 안내 텍스트 */}
-                  <p className="absolute top-[7vh] text-center text-sm md:text-lg font-[NanumSquareRoundB] text-white">
-                    얼굴과 상체를 가이드라인 안에 맞춰주세요
-                  </p>
-                </div>
-              </div>
-            </div>
+            <WebCamera />
           </div>
         </div>
       </div>
