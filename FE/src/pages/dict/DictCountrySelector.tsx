@@ -42,31 +42,39 @@ function DictCountrySelector({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex justify-center items-center gap-3 w-[180px] h-16 px-4 py-2 bg-white rounded-xl border border-gray-400 shadow-sm focus:outline-none">
-        <div className="flex items-center gap-2">
+      <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[220px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer  dark:bg-gray-500 dark:text-d-txt-50">
+        <div className="flex items-center gap-2 w-full">
           <img
             src={getFlagPath(selectedCountry.code)}
             alt={`${selectedCountry.code}`}
-            className="w-[50px] h-[35px] drop-shadow-nation"
+            className="w-25% max-w-[50px] h-auto aspect-[10/7] drop-shadow-nation"
           />
-          <span className="text-[20px] font-[NanumSquareRoundB]">{selectedCountry.name}</span>
-          <FontAwesomeIcon icon={faCaretDown} className="ml-auto" />
+          <span className="text-[calc(15px+0.5vw)] max-text-[20px] font-[NanumSquareRoundB]">
+            {selectedCountry.name}
+          </span>
+          <FontAwesomeIcon icon={faCaretDown} className="ml-2" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex justify-center w-[180px] bg-white border-gray-400 rounded-xl border shadow-md mt-2">
-        <DropdownMenuRadioGroup value={selectedCountry.code} onValueChange={handleValueChange}>
+      <DropdownMenuContent className="flex justify-center w-full bg-white border-gray-400  dark:bg-gray-500 dark:text-d-txt-50 rounded-xl border shadow-md mt-2">
+        <DropdownMenuRadioGroup
+          value={selectedCountry.code}
+          onValueChange={handleValueChange}
+          className="w-full"
+        >
           {countryOptions.map((country) => (
             <DropdownMenuRadioItem
               key={country.code}
               value={country.code}
-              className="flex items-center gap-3 py-3 hover:bg-gray-200 cursor-pointer"
+              className="flex items-center gap-3 py-3 hover:bg-gray-200 dark:hover:bg-gray-400 cursor-pointer w-full"
             >
               <img
                 src={getFlagPath(country.code)}
                 alt={`${country.name} 국기`}
-                className="w-7 h-5 object-cover drop-shadow-nation"
+                className="w-15% min-w-[20px] max-w-[35px] h-auto aspect-[10/7] object-cover drop-shadow-nation"
               />
-              <span className="text-[16px] font-[NanumSquareRound]">{country.name}</span>
+              <span className="text-[calc(13px+0.3vw)] max-text-[16px] font-[NanumSquareRound] truncate">
+                {country.name}
+              </span>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
