@@ -4,9 +4,8 @@ import { useTheme } from '@/components/theme-provider';
 import { ChevronDown } from 'lucide-react';
 import DarkModeLottie from './DarkModeLottie';
 import BaseDropdown from './BaseDropdown';
-import GestureSearchInput from '../result/GestureSearch';
+import GestureSearchInput from '../../components/GestureSearch';
 import { ResultMockData } from '../result/resultMock';
-
 
 // 번역 국가/언어 정보 인터페이스
 interface TranslationLanguage {
@@ -81,7 +80,7 @@ function HeaderBar() {
 
   const handleLogoClick = () => {
     navigate('/');
-  }
+  };
 
   const handleSearch = (results: ResultMockData[]) => {
     setSearchResults(results);
@@ -95,13 +94,13 @@ function HeaderBar() {
         className="absolute cursor-pointer
         left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"
       >
-          <img
-            src={logoSrc}
-            alt="MoyamoLogo"
-            className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 user-select-none"
-            onClick={handleLogoClick}
-            draggable="false" // 드래그 방지
-          />
+        <img
+          src={logoSrc}
+          alt="MoyamoLogo"
+          className="w-25 h-10 md:w-32 md:h-13 lg:w-40 lg:h-15 user-select-none"
+          onClick={handleLogoClick}
+          draggable="false" // 드래그 방지
+        />
       </button>
       <div className="w-full flex justify-center mt-11 mb-5 py-4 px-6">
         <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
