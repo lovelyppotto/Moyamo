@@ -52,10 +52,11 @@ function SearchCameraModal() {
             </DialogTitle>
 
             {/* 카메라 영역 */}
-            <div className="flex-grow bg-white rounded-b-lg">
-              <div className="w-full h-full relative flex items-center justify-center">
+            <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
+              {/* 카메라 컨테이너에 고정된 높이 비율 설정 */}
+              <div className="w-full h-0 pb-[100%] md:pb-[80%] lg:pb-[65%] xl:pb-[50%] relative">
                 {/* 실제 카메라 컴포넌트 */}
-                <div className="w-full h-full inset-0 text-center text-transparent">
+                <div className="absolute inset-0">
                   <WebCamera />
                 </div>
               </div>
