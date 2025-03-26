@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import DictHeader from './DictHeader';
 import gestureExampleImg from './gesture_example.png';
+import '@/components/ui/scrollbar.css';
 
 function GestureDetail() {
   // 더미 데이터
@@ -32,7 +32,7 @@ function GestureDetail() {
           <hr className="text-gray-400 mb-4" />
 
           {/* 제스처 관련 설명 */}
-          <div className="h-[370px] overflow-y-auto pr-4 font-[NanumSquareRound]">
+          <div className="h-[370px] customScrollbar kr overflow-y-auto pr-4 font-[NanumSquareRound]">
             <div>
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">제스처 의미</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-4 drop-shadow-basic mb-6">
