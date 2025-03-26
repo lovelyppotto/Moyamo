@@ -120,28 +120,28 @@ function Dictionary() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* 헤더*/}
-      <DictHeader
-        showCountrySelector={true}
-        selectedCountry={selectedCountry}
-        onSelectCountry={handleSelectCountry}
-        countryOptions={countryOptions}
-        showCompareGuide={true}
-      />
-      <div className="flex-1 flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
-        {/* 메인 이미지와 아이콘 영역*/}
-        <div className="flex flex-1 justify-center items-center py-6">
-          <div></div>
+    <div className="flex flex-col h-screen">
+      {/* 헤더 - 고정 높이 사용 */}
+      <div className="flex-none mb-[29px]">
+        <DictHeader
+          showCountrySelector={true}
+          selectedCountry={selectedCountry}
+          onSelectCountry={handleSelectCountry}
+          countryOptions={countryOptions}
+          showCompareGuide={true}
+        />
+      </div>
+
+      <div className="h-full flex-1 flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+        {/* 메인 컨텐츠 영역 */}
+        <div className="h-[70%] flex justify-center items-center py-2">
           {/* 메인 이미지 */}
-          <div className="flex-grow flex items-center justify-center pr-5">
+          <div className="relative flex-grow h-full flex items-center justify-center pr-5">
             {currentGesture && (
               <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
             )}
-          </div>
-          {/* 아이콘 버튼 */}
-          <div className="w-auto flex flex-col space-y-10 cursor-pointer">
-            <div className="flex flex-col space-y-10">
+            {/* 아이콘 버튼 */}
+            <div className="w-auto h-full flex flex-col items-center justify- space-y-[30px] cursor-pointer">
               <IconButton
                 icon={faHands}
                 tooltipText="제스처 연습"
@@ -160,8 +160,9 @@ function Dictionary() {
             </div>
           </div>
         </div>
+
         {/* 캐러셀 */}
-        <div className="w-full pb-6 mt-auto">
+        <div className="h-[22%] w-full flex items-center">
           <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
         </div>
       </div>
