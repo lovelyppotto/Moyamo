@@ -11,15 +11,10 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Build and Deploy') {
             steps {
                 script {
-                    dir('./frontend') {
+                    dir('./FE') {
                         sh 'docker compose down -v react'
                         sh 'docker compose up -d --build react'
                     }
