@@ -5,7 +5,7 @@ import Progress from '@/pages/quiz/Progress.tsx';
 import QuizResult from '../QuizResult';
 import PbNumber from '../PbNumber';
 import { useState, useEffect } from 'react';
-import WebCamera from '@/components/Webcamera';
+import WebCamera from '@/components/WebCamera';
 
 function AiQuiz() {
   // const webcamRef = useRef<Webcam>(null);
