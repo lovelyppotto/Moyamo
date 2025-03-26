@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Progress from '@/pages/quiz/Progress';
 import QuizResult from '../QuizResult';
 import PbNumber from '../PbNumber';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import QUSETIONS from '../questions.ts';
 
 function GestureQuiz() {
+  const shuffledAnswers = useRef();
   const [showCorrectImage, setShowCorrectImage] = useState(false);
   const [showWrongImage, setShowWrongImage] = useState(false);
   const [answerState, setAnswerState] = useState(''); // 유저가 답을 선택했는지 상태 (초기값은 빈 값.)
@@ -62,14 +63,10 @@ function GestureQuiz() {
   );
   const handleSkipAnswer = useCallback(() => () => handleSelectAnswer(null), [handleSelectAnswer]);
 
-  const shuffledAnswers = useMemo(() => {
-    // 퀴즈가 완료되었거나 인덱스가 유효하지 않은 경우 빈 배열 반환
-    if (quizIsComplete || !QUSETIONS[activeQuestionIndex]) return [];
-
-    const answers = [...QUSETIONS[activeQuestionIndex].answers];
-    answers.sort(() => Math.random() - 0.5); // 0~1미만의 값에서 0.5를 뺀다면 100가지 경우의 수 중 50개가 음수 (값이 섞임)
-    return answers;
-  }, [activeQuestionIndex, QUSETIONS, quizIsComplete]);
+  if (!shuffledAnswers.current) {
+    shuffledAnswers.current = [...QUSETIONS[activeQuestionIndex].answers];
+    shuffledAnswers.current.sort(() => Math.random() - 0.5);
+  }
 
   if (quizIsComplete) {
     return <QuizResult />;
@@ -123,12 +120,12 @@ function GestureQuiz() {
           {/* 폰트어썸 유료 결제하면 icon circle_1이걸로 바꾸기! */}
           {/* 디자인 수정하기! 함수 넣다가 flex부분이 좀 달라짐 */}
           <div className="flex flex-wrap justify-around h-screen">
-            {shuffledAnswers.map((answer, index) => {
+            {shuffledAnswers.current.map((answer, index) => {
               const numberIcons = ['①', '②', '③', '④'];
               return (
                 <div key={answer} className="flex justify-around w-full mt-[3vh]">
                   <button
-                    className="flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB]"
+                    className="flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer"
                     onClick={() => handleSelectAnswer(answer)}
                   >
                     <p className="mr-5">{numberIcons[index]}</p>
@@ -165,3 +162,4 @@ export default GestureQuiz;
 
 // 오류: Unexpected Application Error! Cannot read properties of undefined (reading 'answers')
 // shuffledAnswers -> useMemo()에서 퀴즈가 완료되었거나 인덱스가 유효하지 않은 경우 빈 배열 반환 먼저 놔둠.
+// Ref를 사용하여 조건을 달아준다!!! (Ref는 리랜더링 안되는 객체임!!!)
