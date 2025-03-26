@@ -24,7 +24,7 @@ function CountrySelector({
       bg-white
       dark:bg-gray-800 dark:text-d-txt-50"
     >
-      <div className="p-2 rounded-t-2xl bg-gray-200 dark:bg-gray-900">
+      <div className="p-2 rounded-t-2xl bg-gray-200 dark:bg-gray-700">
         <DialogHeader className="relative m-0">
           <button 
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
@@ -46,7 +46,7 @@ function CountrySelector({
             key={country.id}
             className="flex justify-center items-center py-4 px-6
               rounded-xl transition-colors font-[NanumSquareRoundB]
-              hover:bg-kr-200 dark:hover:bg-kr-200/60"
+              hover:bg-kr-200 dark:hover:bg-d-kr-200/40"
             onClick={() => onSelectCountry(country.id)}
           >
             <div className="w-12 h-8 flex items-center justify-center mr-4 overflow-hidden drop-shadow-nation">
