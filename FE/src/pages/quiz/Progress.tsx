@@ -62,7 +62,7 @@ function QuizProgress({ timeout = 0, onTimeout = () => {}, className = '' }: Qui
 
 export default QuizProgress;
 
-// 에러메세지지: 
+// 에러메세지지:
 // @radix-ui_react-prog…ss.js?v=8045e8cd:39 Invalid prop `value` of value `600` supplied to `Progress`. The `value` prop must be:
 //   - a positive number
 //   - less than the value passed to `max` (or 100 if no `max` prop is set)
@@ -70,4 +70,4 @@ export default QuizProgress;
 // Defaulting to `null`.
 //이유:  Progress 컴포넌트의 value prop에 문제가 있습니다. 에러는 value 속성이 다음 조건을 만족해야 한다고 알려주고 있습니다:
 // 양수여야 함. remainingTime 상태가 시간이 지남에 따라 계속 감소하고 있어서 결국 음수가 되기 때문입니다. 타이머가 실행될 때 remainingTime이 0 이하로 떨어지면 Progress 컴포넌트에 대한 유효한 값이 아니게 됩니다.
-//해결: 진행률을 0-100% 범위 내에서 관리하도록 코드 수정함. progressPercent를 계산 & 양수가 되도록 함. 
+//해결: 진행률을 0-100% 범위 내에서 관리하도록 코드 수정함. progressPercent를 계산 & 양수가 되도록 함.
