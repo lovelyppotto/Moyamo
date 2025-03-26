@@ -1,6 +1,14 @@
 import { faHouse, faBackward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from 'react-router-dom';
 function QuizResult() {
+  const navigate = useNavigate()
+  const handleQuiz = () => {
+    navigate("/quizcontent");
+  };
+  const handleHome = () => {
+    navigate("/");
+  };
   return (
     <>
       <div className="h-screen w-full overflow-hidden  flex flex-col justify-center  items-center bg-black/80 z-20 absolute">
@@ -18,10 +26,10 @@ function QuizResult() {
           <img src="/images/star4.png" alt="stars" className="w-2/3 drop-shadow-quiz-box" />
         </div>
         <div className="flex justify-center p-[3vh] w-1/2 h-1/6">
-          <button className="bg-white in-hover:not-only:not-first:not-odd:: rounded-xl w-1/4 h-full mx-[2vh] text-2xl drop-shadow-quiz-box  hover:bg-yellow-200">
+          <button className="bg-white in-hover:not-only:not-first:not-odd:: rounded-xl w-1/4 h-full mx-[2vh] text-2xl drop-shadow-quiz-box  hover:bg-yellow-200" onClick={handleHome}>
             <FontAwesomeIcon icon={faHouse} />
           </button>
-          <button className="bg-white rounded-xl w-1/4 h-full mx-[2vh] drop-shadow-quiz-box text-2xl -box hover:bg-yellow-200">
+          <button className="bg-white rounded-xl w-1/4 h-full mx-[2vh] drop-shadow-quiz-box text-2xl -box hover:bg-yellow-200" onClick={handleQuiz}>
             <FontAwesomeIcon icon={faBackward} />
           </button>
         </div>
