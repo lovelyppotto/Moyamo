@@ -57,7 +57,12 @@ function SearchCameraModal() {
               <div className="w-full h-0 pb-[100%] md:pb-[80%] lg:pb-[65%] xl:pb-[50%] relative">
                 {/* 실제 카메라 컴포넌트 */}
                 <div className="absolute inset-0">
-                  <WebCamera />
+                  <WebCamera
+                    // 아래와 같이 반응형으로 화면 비율을 조절합니다
+                    guidelineClassName="max-w-[550px] 
+                    w-[85%] md:w-[70%] lg:w-[60%] xl:w-[80%] 
+                    top-25 md:top-20 lg:top-22 xl:top-15"
+                  />
                 </div>
               </div>
             </div>

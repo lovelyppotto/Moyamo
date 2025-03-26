@@ -1,7 +1,13 @@
 import { useRef } from "react";
 import Webcam from "react-webcam";
 
-function WebCamera() {
+interface WebCameraprops {
+  // 가이드라인 svg 조절 props
+  // 예시는 SearchCameraModal을 참고하세요
+  guidelineClassName?: string;
+}
+
+function WebCamera({guidelineClassName}: WebCameraprops) {
   const webcamRef = useRef<Webcam>(null);
 
   return(
@@ -30,10 +36,7 @@ function WebCamera() {
           <img 
             src="./images/guide-line.svg" 
             alt="카메라 가이드라인" 
-            className="absolute 
-            max-w-[550px] w-[85%] md:w-[70%] lg:w-[60%] xl:w-[80%] 
-            top-25 md:top-20 lg:top-22 xl:top-15
-            object-contain"
+            className={`absolute ${guidelineClassName}`}
           />
           {/* 안내 텍스트 - 위치 조정 */}
           <p className="absolute top-5 text-center text-sm md:text-lg font-[NanumSquareRoundB] text-white">
