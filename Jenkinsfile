@@ -15,15 +15,6 @@ pipeline {
     }
 
     stages {
-        stage('Manual Git Checkout') {
-            steps {
-                // 수동 clone만 수행
-                git branch: 'fe/develop',
-                    url: 'https://lab.ssafy.com/s12-ai-image-sub1/S12P21D203.git',
-                    credentialsId: 'gitlab-credential-id'
-            }
-        }
-
         stage('Build and Deploy') {
             steps {
                 script {
