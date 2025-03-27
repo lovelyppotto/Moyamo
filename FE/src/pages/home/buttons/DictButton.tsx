@@ -36,9 +36,12 @@ function DictionaryButton() {
             bg-inch-worm-500 dark:bg-inch-worm-450
             rounded-full drop-shadow-basic"
           >
-            <div className="relative mb-14 md:mb-16 lg:mb-20">
+            <div className="relative
+            w-41 md:w-50 lg:w-64
+            mr-5
+            mb-14 md:mb-16 lg:mb-20">
               {/* 책 이미지 */}
-              <img src="/images/icons/dict.png" alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
+              <img src="/images/icons/dict.webp" alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
             </div>
           </div>
           <p
