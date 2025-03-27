@@ -63,6 +63,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
         <div className="flex justify-around mt-[3vh]">
           <button
             className={getCssClass(shuffledAnswers.current[0])}
+            disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[0])}
           >
             <p className="mr-5">①</p>
@@ -70,6 +71,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
           </button>
           <button
             className={getCssClass(shuffledAnswers.current[1])}
+            disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[1])}
           >
             <p className="mr-5">②</p>
@@ -80,6 +82,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
         <div className="flex justify-around mt-[3vh]">
           <button
             className={getCssClass(shuffledAnswers.current[2])}
+            disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[2])}
           >
             <p className="mr-5">③</p>
@@ -87,6 +90,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
           </button>
           <button
             className={getCssClass(shuffledAnswers.current[3])}
+            disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[3])}
           >
             <p className="mr-5">④</p>

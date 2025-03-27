@@ -46,7 +46,7 @@ function Question({ onSelectAnswer, Index }) {
       // 다음 문제로 넘어가기 위한 타이머
       setTimeout(() => {
         onSelectAnswer(answer);
-      }, 1000);
+      }, 1200);
     }, 1000);
   }
   const handleSkipAnswer = useCallback((): void => handleSelectAnswer(null), [handleSelectAnswer]);
