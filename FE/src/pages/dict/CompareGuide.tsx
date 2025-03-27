@@ -34,17 +34,17 @@ function CompareGuide() {
               <DictStatusLabel isPositive={true} className="mb-6" />
               <div className="flex justify-center gap-[5%] mb-[4%]">
                 <img
-                  src="/images/flags/uk.png"
+                  src="/images/flags/uk.webp"
                   alt="영국 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
                 <img
-                  src="/images/flags/au.png"
+                  src="/images/flags/au.webp"
                   alt="호주 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
                 <img
-                  src="/images/flags/nz.png"
+                  src="/images/flags/nz.webp"
                   alt="뉴질랜드 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
@@ -67,12 +67,12 @@ function CompareGuide() {
               <DictStatusLabel isPositive={false} className="mb-6" />
               <div className="flex justify-center gap-[5%] mb-[5%]">
                 <img
-                  src="/images/flags/gr.png"
+                  src="/images/flags/gr.webp"
                   alt="그리스 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
                 <img
-                  src="/images/flags/tr.png"
+                  src="/images/flags/tr.webp"
                   alt="터키 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
@@ -92,12 +92,12 @@ function CompareGuide() {
               <DictStatusLabel isPositive={false} className="mb-6" />
               <div className="flex justify-center gap-[5%] mb-[5%]">
                 <img
-                  src="/images/flags/gr.png"
+                  src="/images/flags/gr.webp"
                   alt="그리스 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
                 <img
-                  src="/images/flags/tr.png"
+                  src="/images/flags/tr.webp"
                   alt="터키 국기"
                   className="w-[25%] h-auto max-w-[80px] drop-shadow-nation"
                 />
