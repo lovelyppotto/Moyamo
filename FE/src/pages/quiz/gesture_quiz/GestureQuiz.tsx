@@ -1,13 +1,10 @@
 // import '../../index.css';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Progress from '@/pages/quiz/Progress';
+
 import QuizResult from '../QuizResult';
-import PbNumber from '../PbNumber';
 import { useState, useCallback } from 'react';
 import QUSETIONS from '../questions.ts';
-import Answers from '../Answers.tsx';
 import Animation from '../Animation.tsx';
+import Question from '../Question.tsx';
 
 interface Question {
   text: string;
@@ -80,47 +77,19 @@ function GestureQuiz(): JSX.Element {
     <>
       <Animation showCorrectImage={showCorrectImage} showWrongImage={showWrongImage} />
       <div className="flex flex-col h-screen overflow-hidden w-full">
-        <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-10">
-          <div className="flex justfy-center items-conter">
-            <PbNumber key={activeQuestionIndex} Index={activeQuestionIndex} />
-          </div>
-        </div>
-        {/* 진행 바, 퀴즈박스 */}
-        {/* 마진 탑(margin-top)을 뷰포트 높이(viewport height)의 5%로 설정 */}
-        <div className="h-screen flex flex-col mt-[5vh] xl:mt-[10vh] mx-[2vh] xl:mx-[10vh]">
-          {/* 문제: 계속 이전의 progress값이 저장이 된다 */}
-          {activeQuestionIndex !== null && (
-            <div key={`progress-container-${activeQuestionIndex}`}>
-              {timeout > 0 && (
-                <Progress
-                  // key={activeQuestionIndex} // key를 index값으로 변경 : 해당 컴포넌트가 재랜더링됨.
-                  timeout={10000}
-                  onTimeout={handleSkipAnswer}
-                />
-              )}
-            </div>
-          )}
-          <div className="flex justify-between items-center mt-[3vh]">
-            <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]">
-              {`Q${activeQuestionIndex + 1}. ${QUSETIONS[activeQuestionIndex].text}`}
-            </h1>
-            <button className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200">
-              <p className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]">Skip</p>
-              <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
-            </button>
-          </div>
-          <div className="flex justify-center w-full h-2/7 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
-            {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-            <img src={QUSETIONS[activeQuestionIndex].image} alt="sample_img" className="p-5" />
-          </div>
-          {/* 보기 */}
-          <Answers
-            key={activeQuestionIndex}
-            answers={QUSETIONS[activeQuestionIndex].answers}
-            onSelect={handleSelectAnswer}
-          />
-        </div>
+        {/* <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-10"> */}
+
+        <Question
+          key={activeQuestionIndex}
+          Index={activeQuestionIndex}
+          questionText={`Q${activeQuestionIndex + 1}. ${QUSETIONS[activeQuestionIndex].text}`}
+          answers={QUSETIONS[activeQuestionIndex].answers}
+          onSelectAnswer={handleSelectAnswer}
+          quizImage={QUSETIONS[activeQuestionIndex].image}
+          onSkipAnswer={handleSkipAnswer}
+        />
       </div>
+      {/* </div> */}
     </>
   );
 }
@@ -150,4 +119,4 @@ export default GestureQuiz;
 
 //key={activeQuestionIndex}를 사용하여, key값이 바뀔 때마다 해당 컴포넌트가 재랜더링될 수 있도록 함.
 
-// Progress 컴포넌트의 마운트/언마운트 과정: React의 가상 DOM과 실제 DOM 사이의 동기화 문제로 인해 이전 PROGRESS바가 없어지지 않음 -> 강제 언마운트와 마운트 실행.
+// Progress가 여러 개 생성됨: Progress와 Answers 컴포넌트의 key가 동일하기 때문임 => key가 동일한 것을 하난의 컴포넌트로 만들어서 key를 하나만 사용하도록 함.

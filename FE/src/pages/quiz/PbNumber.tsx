@@ -33,12 +33,12 @@ function PbNumber({ Index }: PbNumberProps) {
 
   return (
     <>
-      <div className="flex justify-between w-[22vh] ">
-        <div className={`w-5 h-5 rounded-full ${color1}`}></div>
-        <div className={`w-5 h-5 rounded-full ${color2}`}></div>
-        <div className={`w-5 h-5 rounded-full ${color3}`}></div>
-        <div className={`w-5 h-5 rounded-full ${color4}`}></div>
-        <div className={`w-5 h-5 rounded-full ${color5}`}></div>
+      <div className="flex justify-center w-full ">
+        <div className={`w-5 h-5 rounded-full ${color1} mx-[2vh]`}></div>
+        <div className={`w-5 h-5 rounded-full ${color2} mx-[2vh]`}></div>
+        <div className={`w-5 h-5 rounded-full ${color3} mx-[2vh]`}></div>
+        <div className={`w-5 h-5 rounded-full ${color4} mx-[2vh]`}></div>
+        <div className={`w-5 h-5 rounded-full ${color5} mx-[2vh]`}></div>
       </div>
     </>
   );
