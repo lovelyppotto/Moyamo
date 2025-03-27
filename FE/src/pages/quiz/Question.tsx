@@ -14,7 +14,8 @@ function Question({ onSelectAnswer, Index }) {
   });
   const [showCorrectImage, setShowCorrectImage] = useState<boolean>(false);
   const [showWrongImage, setShowWrongImage] = useState<boolean>(false);
-
+  const [timer, setTimer] = useState(10000);
+  const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
   function handleSelectAnswer(answer) {
     // 먼저 'answered' 상태로 설정
     setAnswer({
@@ -22,6 +23,18 @@ function Question({ onSelectAnswer, Index }) {
       isCorrect: null,
       answerState: 'answered',
     });
+    let newTimer = 10000; //시간의 기본 최대값
+    let newProgressClass = '';
+    if (answer && answer.selectedAnswer) {
+      newTimer = 1000;
+    }
+    if (answer && answer.isCorrect !== null) {
+      newTimer = 2000;
+      newProgressClass = 'bg-gray-200';
+    }
+    setTimer(newTimer);
+    setProgressClass(newProgressClass);
+
     // 1초 후 정답 여부 확인
     setTimeout(() => {
       const isCorrect = QUESTIONS[Index].answers[0] === answer;
@@ -63,15 +76,22 @@ function Question({ onSelectAnswer, Index }) {
         {/* 문제: 계속 이전의 progress값이 저장이 된다 */}
         <Progress
           // key={activeQuestionIndex} // key를 index값으로 변경 : 해당 컴포넌트가 재랜더링됨.
-          timeout={10000}
+          key={timer}
+          timeout={timer}
           onTimeout={handleSkipAnswer}
+          className={progressClass}
         />
         <div className="flex justify-between items-center mt-[3vh]">
           <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]">
             {`Q${Index + 1}. ${QUESTIONS[Index].text}`}
           </h1>
           <button className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200">
-            <p className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]">Skip</p>
+            <p
+              className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]"
+              onClick={handleSkipAnswer}
+            >
+              Skip
+            </p>
             <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
           </button>
         </div>

@@ -103,26 +103,3 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
 }
 
 export default Answers;
-
-//아래: map을 사용할 때 두 개씩 디자인 하기 어려움.
-{
-  /* <div className="flex flex-wrap justify-around h-screen">
-{shuffledAnswers.current.map((answer, index) => {
-  const numberIcons = ['①', '②', '③', '④'];
-  return (
-    <div key={answer} className="flex justify-around w-full mt-[3vh]">
-      <button
-        className="flex justify-center items-center w-2/5 h-[10vh] bg-white rounded-xl drop-shadow-quiz-box hover:bg-[var(--color-kr-500)] hover:text-white sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer"
-        onClick={() => onSelect(answer)}
-      >
-        <p className="mr-5">{numberIcons[index]}</p>
-        <p>{answer}</p>
-      </button>
-    </div>
-  );
-})}
-</div> */
-}
-//버튼 결과에 따라서, 한번에 4개 버튼이 눌림 -> getCssClass 함수를 넣는다.
-//문제: hover배경색이 계속 남아있는 경우도 있고, 아닌 경우도 있음...! 배경화면이 없음...!
-//해결: 색상 변수 결정. 배경색상을 바꾸기 위해서 조건문 사용함. ${baseClass} ${colorClass} 형식으로 중복 방지.

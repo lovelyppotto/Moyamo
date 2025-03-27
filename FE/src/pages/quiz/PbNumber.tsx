@@ -1,3 +1,4 @@
+//문제의 번호를 보여주는 컴포넌트입니다.
 interface PbNumberProps {
   Index: number;
 }
