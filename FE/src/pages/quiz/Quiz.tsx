@@ -25,7 +25,7 @@ function Quiz(): JSX.Element {
   }, []);
 
   if (quizIsComplete) {
-    return <QuizResult />;
+    return <QuizResult userAnswers={userAnswers} />;
   }
   return (
     <>
