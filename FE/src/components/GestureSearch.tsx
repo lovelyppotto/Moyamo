@@ -1,21 +1,11 @@
-// src/components/GestureSearch.tsx
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '../pages/home/BaseDropdown';
 import SearchCameraModal from './SearchCameraModal';
-import { ResultMockData, searchResultMock } from '../pages/result/resultMock';
-
-// 국가 ID 매핑
-// const countryIdMap: Record<string, number> = {
-//   '전체': 0,
-//   '대한민국': 1,
-//   '미국': 2,
-//   '일본': 3,
-//   '중국': 4,
-//   '이탈리아': 5,
-// };
+import { ResultMockData } from '../pages/result/resultMock';
+import { useSearchStore } from '../stores/useSearchStore';
 
 interface GestureSearchInputProps {
   onSearch?: (results: ResultMockData[]) => void;
@@ -23,68 +13,52 @@ interface GestureSearchInputProps {
 
 function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
   const navigate = useNavigate();
-  const [searchCountry, setSearchCountry] = useState('전체');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<ResultMockData[]>([]);
+  const location = useLocation();
+
+  // Zustand 스토어에서 가져온 상태와 액션
+  const {
+    searchTerm,
+    setSearchTerm,
+    searchCountry,
+    setSearchCountry,
+    searchResults,
+    performSearch,
+  } = useSearchStore();
+
+  // 로컬 상태 (드롭다운 표시 여부)
   const [showResults, setShowResults] = useState(false);
 
   const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
 
-  // 검색 처리 함수 - 두 가지 방식 중 하나만 선택
-  // 검색 결과 페이지로 이동
+  // URL 변경 시 검색어 및 국가 필터 업데이트
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const gestureName = params.get('gesture_name') || '';
+    const country = params.get('country') || '전체';
+
+    // 스토어 상태 업데이트
+    setSearchTerm(gestureName);
+    setSearchCountry(country);
+  }, [location.search, setSearchTerm, setSearchCountry]);
+
+  // 검색 결과가 변경될 때 onSearch 콜백 호출
+  useEffect(() => {
+    if (onSearch && searchResults.length > 0) {
+      onSearch(searchResults);
+    }
+  }, [searchResults, onSearch]);
+
+  // 검색 처리 함수
   const handleSearch = () => {
     if (!searchTerm.trim()) return;
 
-    // 상위 컴포넌트에 결과 전달 (필요한 경우)
-    if (onSearch) {
-      const results = performSearch(searchTerm, searchCountry);
-      onSearch(results);
-    }
+    // Zustand 스토어를 통해 검색 수행
+    performSearch();
 
-    // 검색 결과 페이지로 이동 (API 형식 맞춰둠)
+    // 검색 결과 페이지로 이동
     navigate(
       `/search?gesture_name=${encodeURIComponent(searchTerm)}&country=${encodeURIComponent(searchCountry)}`
     );
-  };
-
-  // 인라인 결과 표시할 경우 사용 (드롭다운)
-  // const handleSearchInline = () => {
-  //   if (!searchTerm.trim()) {
-  //     setSearchResults([]);
-  //     setShowResults(false);
-  //     return;
-  //   }
-
-  //   const results = performSearch(searchTerm, searchCountry);
-
-  //   setSearchResults(results);
-  //   setShowResults(true);
-
-  //   // 상위 컴포넌트에 결과 전달
-  //   if (onSearch) {
-  //     onSearch(results);
-  //   }
-  // };
-
-  // 검색 로직 (재사용을 위한 별도 함수)
-  const performSearch = (term: string, country: string): ResultMockData[] => {
-    let results = searchResultMock.filter((item) => {
-      // 제스처 이름으로 검색
-      const nameMatch = item.gestureName.includes(term);
-
-      // 국가별 필터링
-      const countryMatch =
-        country === '전체' ||
-        item.meanings.some((meaning) => {
-          // 한국 -> 대한민국 변환
-          const searchCountryName = country === '한국' ? '대한민국' : country;
-          return meaning.countryName.includes(searchCountryName);
-        });
-
-      return nameMatch && countryMatch;
-    });
-
-    return results;
   };
 
   // 입력 변경 핸들러
@@ -98,7 +72,7 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
   // 입력 제출 핸들러
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSearch(); // 또는 handleSearchInline() 사용
+      handleSearch();
     }
   };
 
