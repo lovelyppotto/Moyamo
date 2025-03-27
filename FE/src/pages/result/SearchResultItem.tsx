@@ -3,12 +3,12 @@ import { GestureSearchResult } from '@/types/searchGestureType';
 
 // 국가별 국기 이미지 매핑
 const countryFlags: Record<string, string> = {
-  '대한민국': '/images/flags/kr.png',
-  '미국': '/images/flags/us.png',
-  '일본': '/images/flags/jp.png',
-  '중국': '/images/flags/cn.png',
-  '이탈리아': '/images/flags/it.png',
-  '뉴질랜드': '/images/flags/nz.png',
+  '대한민국': '/images/flags/kr.webp',
+  '미국': '/images/flags/us.webp',
+  '일본': '/images/flags/jp.webp',
+  '중국': '/images/flags/cn.webp',
+  '이탈리아': '/images/flags/it.webp',
+  '뉴질랜드': '/images/flags/nz.webp',
 };
 
 interface SearchResultItemProps {
