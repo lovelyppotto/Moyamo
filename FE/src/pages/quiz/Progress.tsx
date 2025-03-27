@@ -1,6 +1,6 @@
 import * as Progress from '@radix-ui/react-progress';
 import { useState, useEffect } from 'react';
-import '../../index.css';
+import '@/index.css';
 
 interface QuizProgressProps {
   timeout?: number;

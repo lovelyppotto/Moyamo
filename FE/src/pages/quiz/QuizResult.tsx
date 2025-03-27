@@ -14,6 +14,18 @@ function QuizResult({ userAnswers }) {
     (answer, index) => answer === QUESTIONS[index].answers[0]
   );
   const isCorrectNumber = isCorrectAnswers.length;
+  let starImage = '/images/star0.png';
+  if (isCorrectNumber === 1) {
+    starImage = '/images/star1.png';
+  } else if (isCorrectNumber === 2) {
+    starImage = '/images/star2.png';
+  } else if (isCorrectNumber === 3) {
+    starImage = '/images/star3.png';
+  } else if (isCorrectNumber === 4) {
+    starImage = '/images/star4.png';
+  } else if (isCorrectNumber === 5) {
+    starImage = '/images/star5.png';
+  }
   return (
     <>
       <div className="h-screen w-full overflow-hidden  flex flex-col justify-center  items-center bg-black/80 z-20 absolute">
@@ -30,7 +42,8 @@ function QuizResult({ userAnswers }) {
             {isCorrectNumber}
           </p>
           {/* 함수: 맞춘 갯수에 따라서 다른 사진 (로티 애니메이션) 제공 */}
-          <img src="/images/star4.png" alt="stars" className="w-2/3 drop-shadow-quiz-box" />
+
+          <img src={starImage} alt="stars" className="w-2/3 drop-shadow-quiz-box" />
         </div>
         <div className="flex justify-center p-[3vh] w-1/2 h-1/6">
           <button
