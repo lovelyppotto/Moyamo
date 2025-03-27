@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResultMockData } from './resultMock';
+import { GestureSearchResult } from '@/types/searchGestureType';
 
 // 국가별 국기 이미지 매핑
 const countryFlags: Record<string, string> = {
@@ -12,7 +12,7 @@ const countryFlags: Record<string, string> = {
 };
 
 interface SearchResultItemProps {
-  result: ResultMockData;
+  result: GestureSearchResult;
   onClick: (gestureId: number) => void;
 }
 
@@ -26,7 +26,7 @@ function SearchResultItem({ result, onClick }: SearchResultItemProps) {
         {/* 이미지 컨테이너 */}
         <div className="flex w-28 h-28 justify-center items-center mr-2 flex-shrink-0">
           <img 
-            src={result.gestureImg} 
+            src={result.gestureImage} 
             alt={result.gestureName}
             className="h-full object-cover rounded-md" 
           />
@@ -60,8 +60,8 @@ function SearchResultItem({ result, onClick }: SearchResultItemProps) {
                   <React.Fragment key={meaning.countryId}>
                     <div className="relative group">
                       <img 
-                        src={countryFlags[meaning.countryName] || '/images/placeholder/400/320'} 
-                        alt={meaning.countryName}
+                        src={countryFlags[meaning.name] || '/images/placeholder/400/320'} 
+                        alt={meaning.name}
                         className="w-10 h-6 object-cover drop-shadow-nation" 
                       />
                     </div>
