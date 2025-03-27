@@ -77,8 +77,12 @@ function GesturePractice() {
         >
           {!showCamera ? (
             <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
-              <FontAwesomeIcon icon={faCamera} className="fa-6x md:fa-9x" />
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl">
+              <div className="text-8xl lg:text-9xl ">
+                <FontAwesomeIcon
+                  icon={faCamera}
+                />
+              </div>
+              <p className="text-xl lg:text-2xl">
                 카메라를 클릭 시<br />
                 연습을 시작합니다.
               </p>
