@@ -19,22 +19,22 @@ const translationLanguages: Record<string, TranslationLanguage> = {
   KOR: {
     code: 'kr',
     name: 'KOR',
-    flagUrl: '/images/flags/kr.png',
+    flagUrl: '/images/flags/kr.webp',
   },
   'EN-US': {
     code: 'us',
     name: 'EN-US',
-    flagUrl: '/images/flags/us.png',
+    flagUrl: '/images/flags/us.webp',
   },
   CN: {
     code: 'cn',
     name: 'CN',
-    flagUrl: '/images/flags/cn.png',
+    flagUrl: '/images/flags/cn.webp',
   },
   JPN: {
     code: 'jp',
     name: 'JPN',
-    flagUrl: '/images/flags/jp.png',
+    flagUrl: '/images/flags/jp.webp',
   },
 };
 
@@ -102,7 +102,6 @@ function HeaderBar() {
     console.log('검색 결과:', results);
 
     // 다른 컴포넌트에서 검색 결과를 사용할 수 있도록 상태를 업데이트합니다
-    // 필요에 따라 Context API나 상태 관리 라이브러리를 사용할 수 있습니다
   };
 
   return (

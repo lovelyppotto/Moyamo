@@ -8,18 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 경로 설정(필요한대로 바꿔서 사용)
-const inputDir = path.join(__dirname, '../public/images/icons');
-const outputDir = path.join(__dirname, '../public/images/iconss');
+const inputDir = path.join(__dirname, '../public/images/flags');
+const outputDir = path.join(__dirname, '../public/images/flagss');
 
-const imageWidths = {
-  'dict': 512,
-  'quiz': 440,
-  'puzzle': 128,
-};
-const DEFAULT_WIDTH = 180;
+// const imageWidths = {
+//   'dict': 512,
+//   'quiz': 440,
+//   'puzzle': 128,
+// };
+const DEFAULT_WIDTH = 200;
 
 // 최적 크기 설정 (픽셀 단위)
-// const OPTIMAL_SIZE = 232; // 116 x 2 (Retina 디스플레이 고려)
+// const OPTIMAL_SIZE = 200; // 고해상도 디스플레이 고려하여 2배로 설정
 
 async function optimizeImages() {
   try {
@@ -41,7 +41,7 @@ async function optimizeImages() {
       // 원본 이미지 메타데이터 가져오기
       // const metadata = await sharp(inputPath).metadata();
 
-      const width = imageWidths[fileName] || DEFAULT_WIDTH;
+      const width = DEFAULT_WIDTH;
 
       /* 아래로 정사각형 이미지 변환 사용
 
@@ -82,7 +82,7 @@ async function optimizeImages() {
 
       await sharp(inputPath)
         .resize(width)
-        .webp({ quality: 80 })
+        .webp({ quality: 85 })
         .toFile(outputPath)
 
         console.log(`최적화 완료: ${fileName}.webp`);

@@ -1,12 +1,13 @@
 // src/stores/useSearchStore.ts
 import { create } from 'zustand';
-import { ResultMockData, searchResultMock } from '../pages/result/resultMock';
+import { GestureSearchResult } from '@/types/searchGestureType';
+import { searchResultMock } from '../pages/result/resultMock';
 
 interface SearchState {
   // 검색 상태
   searchTerm: string;
   searchCountry: string;
-  searchResults: ResultMockData[];
+  searchResults: GestureSearchResult[];
   isLoading: boolean;
 
   // 액션
@@ -50,7 +51,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
         item.meanings.some((meaning) => {
           // 한국 -> 대한민국 변환
           const searchCountryName = searchCountry === '한국' ? '대한민국' : searchCountry;
-          return meaning.countryName.includes(searchCountryName);
+          return meaning.name.includes(searchCountryName);
         });
 
       return nameMatch && countryMatch;
