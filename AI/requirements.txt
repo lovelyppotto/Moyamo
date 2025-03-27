@@ -1,6 +1,4 @@
-fastapi
-uvicorn
-tensorflow
-mediapipe
-opencv-python
-numpy
+fastapi==0.115.12
+tensorflow==2.10.0
+numpy==1.24.3
+uvicorn==0.34.0
