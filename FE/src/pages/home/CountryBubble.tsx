@@ -106,7 +106,7 @@ const countrySetup: CountryData[] = [
     position: 'absolute bottom-[20%] left-[10%]',
     labelPosition: 'absolute bottom-14 right-0 transform translate-x-1/2 translate-y-1/2',
     labelBackground: 'bg-italy-600 dark:bg-d-italy-600',
-    tooltipBackground: 'bg-gitaly-100 dark:bg-d-italy-800 dark:text-d-txt-50',
+    tooltipBackground: 'bg-italy-100 dark:bg-d-italy-800 dark:text-d-txt-50',
     labelDirection: 'right',
     tooltipPosition: {
       side: 'bottom',
