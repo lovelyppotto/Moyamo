@@ -1,25 +1,41 @@
-import GestureQuiz from "./gesture_quiz/GestureQuiz";
-import MeaningQuiz from "./meaning_quiz/MeaningQuiz";
-import AiQuiz from "./ai_quiz/AiQuiz";
+import QuizResult from './QuizResult';
+import { useState, useCallback } from 'react';
+import QUSETIONS from './questions.ts';
+import Question from './Question.tsx';
 
-function QuizContent() {
-// 컴포넌트 나눠서 관리: 추후 수정하기기
-// 조건1: ai 추가하는 퀴즈들 중 랜덤으로 가져오기
-const items = [<GestureQuiz/>, <MeaningQuiz/>, <AiQuiz/>];
-const getRandomFromThree = () => {
-    return Math.floor(Math.random() * 3);
-  };
-const randomItem = items[getRandomFromThree()];
-// 조건2: ai 제외한 퀴즈들 중 랜덤으로 가져오기
-
-return (
-    randomItem
-)
+interface Question {
+  text: string;
+  image: string;
+  answers: string[];
 }
 
-export default QuizContent
+function Quiz(): JSX.Element {
+  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]); //유저가 선택한 답들
+  const activeQuestionIndex = userAnswers.length; //key값으로 최적화
 
+  const quizIsComplete = activeQuestionIndex === QUSETIONS.length;
 
+  const handleSelectAnswer = useCallback(function handleSelectAnswer(
+    selectedAnswer: string | null
+  ): void {
+    setUserAnswers((prevUserAnswers) => {
+      const newAnswers = [...prevUserAnswers, selectedAnswer];
+      return newAnswers;
+    });
+  }, []);
 
+  if (quizIsComplete) {
+    return <QuizResult userAnswers={userAnswers} />;
+  }
+  return (
+    <>
+      <Question
+        key={activeQuestionIndex}
+        Index={activeQuestionIndex}
+        onSelectAnswer={handleSelectAnswer}
+      />
+    </>
+  );
+}
 
- 
+export default Quiz;
