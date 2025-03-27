@@ -45,47 +45,51 @@ function GesturePractice() {
       <DictHeader title="연습하기" className="" />
 
       {/* 간단한 설명 */}
-      <div className="font-[NanumSquareRoundB] text-[16px] sm:text-[18px] lg:text-[24px] pt-2 pb-1 px-4 text-center flex justify-center items-center">
-        <span>제스처를 정확히 따라하면 화면에 </span>
-        <span className="text-fern-400 font-[NanumSquareRoundEB]">O</span>
+      <div
+        className="font-[NanumSquareRoundB] text-[16px] sm:text-[18px] lg:text-[24px] pt-2 pb-1 px-4
+        lg: mt-2 lg:pt-5 text-center flex justify-center items-center"
+      >
+        <span>제스처를 정확히 따라하면 화면에&nbsp;</span>
+        <span className="text-fern-400 font-[NanumSquareRoundEB] sm:text-[22px] lg:text-[28px]">
+          O
+        </span>
         <span>가 표시됩니다.</span>
       </div>
 
       {/* 메인 컨텐츠 */}
-      <div className="flex flex-col md:flex-row w-full h-full max-w-full px-2 py-1 flex-1 justify-center">
+
+      <div className="flex flex-col lg:flex-row w-full h-full max-w-full px-2 py-1 flex-1 justify-center items-center lg:gap-8 xl:gap-12">
         {/* 따라할 제스처 */}
-        <div className="w-full md:w-[45%] flex justify-center items-center mb-2 md:mb-0 pl-2">
-          <div className="w-full max-w-[500px] sm:max-w-[85%] md:max-w-[80%] h-[38vh] md:h-[70vh] bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
+        <div className="w-full max-w-[500px] lg:w-auto lg:flex-1 flex justify-center items-center mb-2 lg:mb-0">
+          <div className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
             <img
               src={gesture.image}
               alt={`${gesture.title} image`}
-              className="w-[90%] h-[90%] object-contain"
+              className="w-[90%] h-[90%] lg:w-[80%] lg:h-[80%] object-contain"
             />
           </div>
         </div>
 
         {/* 연습화면 */}
-        <div className="w-full md:w-[45%] flex justify-center items-center">
-          <div
-            className="w-full max-w-[500px] sm:max-w-[85%] md:max-w-[80%] h-[38vh] md:h-[70vh] bg-gray-200 rounded-lg drop-shadow-basic flex justify-center items-center"
-            onClick={toggleScreen}
-          >
-            {showCamera ? (
-              <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
-                <FontAwesomeIcon icon={faCamera} className="fa-6x md:fa-9x" />
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl">
-                  카메라를 클릭 시<br />
-                  연습을 시작합니다.
-                </p>
-              </div>
-            ) : (
-              <WebCamera
-                guidelineClassName="max-w-[500px] 
-               w-[45%] sm:w-[40%] md:w-[100%] lg:w-[90%] xl:w-[90%]
-               top-auto bottom-2 md:top-auto md:bottom-[initial] lg:top-20"
-              />
-            )}
-          </div>
+        <div
+          className="w-full max-w-[500px] md:w-[500px] lg:w-[600px] h-[38vh] lg:h-[70vh] bg-gray-200 rounded-lg drop-shadow-basic flex justify-center items-center"
+          onClick={toggleScreen}
+        >
+          {!showCamera ? (
+            <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
+              <FontAwesomeIcon icon={faCamera} className="fa-6x md:fa-9x" />
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl">
+                카메라를 클릭 시<br />
+                연습을 시작합니다.
+              </p>
+            </div>
+          ) : (
+            <WebCamera
+              guidelineClassName="max-w-[500px] 
+               w-full sm:w-full md:w-full lg:w-full xl:w-full
+               top-auto bottom-2 sm:bottom-4 md:bottom-8 lg:top-20"
+            />
+          )}
         </div>
       </div>
     </div>
