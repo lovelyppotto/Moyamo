@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import FontPreloader from '@/hooks/FontPreloader';
 
 function Layout() {
   const location = useLocation();
@@ -11,7 +12,7 @@ function Layout() {
   const isResultPage = location.pathname === '/search';
   const isQuizPage = location.pathname === '/quiz';
   const isQuizPage2 = location.pathname === '/quizcontent';
- 
+
   const isDictPage = location.pathname.includes('/dictionary');
   const volumeHight = <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  "/>
   const volumeOff = <FontAwesomeIcon icon={faVolumeOff} className="text-xl md:text-2xl lg:text-3xl  "/>
@@ -42,6 +43,7 @@ function Layout() {
 
   return (
     <div className="relative flex flex-col h-screen w-full h-full overflow-hidden" style={bgStyle}>
+      <FontPreloader />
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
       {isResultPage && (
         <button className="absolute top-4 left-4 z-10 dark:text-white" onClick={handleBack}>
