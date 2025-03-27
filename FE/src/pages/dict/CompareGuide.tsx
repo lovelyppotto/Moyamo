@@ -14,13 +14,13 @@ function CompareGuide() {
 
       {/* 컨텐츠 - flex-1 대신 고정된 높이 계산 */}
       <div className="h-[calc(100vh-80px)] flex flex-col">
-        {/* 메인 이미지 - 고정 높이 사용 */}
-        <div className="h-[180px] flex justify-center items-center mb-[3%] lg:mb-[2%]">
-          <div className="w-[180px] h-[180px] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
+        {/* 메인 이미지 */}
+        <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[3%] lg:mb-[2%]">
+          <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
             <img
               src={gestureExampleImg}
               alt="V 사인 제스처"
-              className="w-[80%] h-[80%] object-contain"
+              className="w-[90%] h-[90%] object-contain"
             />
           </div>
         </div>
