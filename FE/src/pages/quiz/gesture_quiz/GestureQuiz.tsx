@@ -87,6 +87,8 @@ function GestureQuiz(): JSX.Element {
           onSelectAnswer={handleSelectAnswer}
           quizImage={QUSETIONS[activeQuestionIndex].image}
           onSkipAnswer={handleSkipAnswer}
+          isSelected={userAnswers[userAnswers.length - 1]}
+          answerState={answerState}
         />
       </div>
       {/* </div> */}

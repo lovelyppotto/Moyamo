@@ -3,7 +3,16 @@ import Answers from './Answers.tsx';
 import PbNumber from './PbNumber.tsx';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-function Question({ questionText, answers, onSelectAnswer, quizImage, onSkipAnswer, Index }) {
+function Question({
+  questionText,
+  answers,
+  onSelectAnswer,
+  quizImage,
+  onSkipAnswer,
+  Index,
+  isSelected,
+  answerState,
+}) {
   return (
     <>
       {/* 진행 바, 퀴즈박스 */}
@@ -36,6 +45,8 @@ function Question({ questionText, answers, onSelectAnswer, quizImage, onSkipAnsw
           // key={activeQuestionIndex}
           answers={answers}
           onSelect={onSelectAnswer}
+          isSelected={isSelected}
+          answerState={answerState}
         />
       </div>
     </>

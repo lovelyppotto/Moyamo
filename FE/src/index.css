@@ -26,7 +26,6 @@
   --color-d-kr-800: #3e3e95;
   --color-d-kr-900: #383977;
 
-
   /* japan color */
   --color-jp-100: #fffcc6;
   --color-jp-200: #fff888;
@@ -49,7 +48,6 @@
   --color-d-jp-800: #86431a;
   --color-d-jp-900: #857967;
 
-
   /* u.s.a color */
   --color-us-100: #d6f5e2;
   --color-us-200: #b1e9c9;
@@ -71,7 +69,6 @@
   --color-d-us-700: #2b5138;
   --color-d-us-800: #24412e;
   --color-d-us-900: #1e3627;
-
 
   /* china color */
   --color-cn-100: #ffe6d4;
@@ -96,7 +93,6 @@
   --color-d-cn-900: #72221c;
   --color-d-cn-950: #3d0e0d;
 
-  
   /* italy color */
   --color-italy-100: #f6edfa;
   --color-italy-200: #eddaf4;
@@ -118,8 +114,6 @@
   --color-d-italy-700: #803f8c;
   --color-d-italy-800: #6a3573;
   --color-d-italy-900: #59305f;
-
-
 
   /* light green */
   --color-inch-worm-100: #f7ffc5;
@@ -155,12 +149,17 @@
   /* dark mode */
   --color-d-txt-50: #eaeaea;
 
+  /* quiz mode */
+  --color-correct-300: #03ff18;
+  --color-wrong-300: #ff0303;
+  --color-answered-300: #5151cf;
+  --color-unselected-300: #ffffff;
+
   /* drop shadow */
   --drop-shadow-basic: 0 2px 2px rgba(0, 0, 0, 0.25);
   --drop-shadow-nation: 0 1px 1px rgba(0, 0, 0, 0.4);
   --drop-shadow-quiz: 5px 5px 1px rgba(255, 255, 255, 0.7);
   --drop-shadow-quiz-box: 5px 5px 1px rgba(0, 0, 0, 0.1);
-
 }
 
 /* 폰트 */
@@ -228,7 +227,6 @@
     url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareRound/NanumSquareRoundL.ttf)
       format('truetype');
 }
-
 
 /* 갈무리11 */
 @font-face {
