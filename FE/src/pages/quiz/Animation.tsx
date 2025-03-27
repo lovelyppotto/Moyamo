@@ -1,5 +1,4 @@
 //정답 여부에 따라서 애니메이션이 나오는 컴포넌트입니다.
-//추후: 뒷 배경 검정 추가하기!
 interface AnimationProps {
   showWrongImage: boolean;
   showCorrectImage: boolean;

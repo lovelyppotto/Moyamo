@@ -23,6 +23,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
       'flex justify-center items-center w-2/5 h-[10vh] rounded-xl drop-shadow-quiz-box sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
     // 현재 답변이 사용자가 선택한 답변인지 확인
     const isThisAnswerSelected = answer === isSelected;
+    const unSelected = answer !== isSelected;
 
     // 현재 답변이 정답인지 확인
     const isCorrectAnswer = answer === answers[0];
@@ -42,6 +43,9 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
     } else if (answerState === 'wrong' && isCorrectAnswer) {
       // 사용자가 오답을 선택했을 때 정답 표시
       colorClass = 'bg-[var(--color-correct-300)] text-white';
+    } else if (answerState === 'wrong' && unSelected) {
+      // 사용자가 오답을 선택했을 때 정답 표시
+      colorClass = 'bg-gray-200 text-white';
     } else {
       // 기본 상태 (미선택: 배경 흰색)
       colorClass = 'bg-white';

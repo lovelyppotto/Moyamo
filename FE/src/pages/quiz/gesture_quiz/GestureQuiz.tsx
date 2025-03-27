@@ -24,6 +24,7 @@ function GestureQuiz(): JSX.Element {
   const quizIsComplete = activeQuestionIndex === QUSETIONS.length;
   //useCallback: 주변 컴포넌트 함수가 다시 실행되어도, 재생성되지 않음.
   //함수: 유저가 선택한 답을 배열에 추가함.
+  //컴포넌트: Animation
   const timeout = 10000;
   const handleSelectAnswer = useCallback(
     function handleSelectAnswer(selectedAnswer: string | null): void {
@@ -82,13 +83,8 @@ function GestureQuiz(): JSX.Element {
         <Question
           key={activeQuestionIndex}
           Index={activeQuestionIndex}
-          questionText={`Q${activeQuestionIndex + 1}. ${QUSETIONS[activeQuestionIndex].text}`}
-          answers={QUSETIONS[activeQuestionIndex].answers}
           onSelectAnswer={handleSelectAnswer}
-          quizImage={QUSETIONS[activeQuestionIndex].image}
           onSkipAnswer={handleSkipAnswer}
-          isSelected={userAnswers[userAnswers.length - 1]}
-          answerState={answerState}
         />
       </div>
       {/* </div> */}
