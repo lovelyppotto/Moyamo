@@ -1,6 +1,8 @@
-//섞인 답변의 목록을 출력하는 목적의 컴포넌트입니다.
-//정답인 부분은 초록 색으로 바꾸기
-import { useRef } from 'react';
+/**
+ * 섞인 답변의 목록을 출력하는 목적의 컴포넌트입니다.
+ * 정답인 부분은 초록 색으로 바꾸기
+ */
+import React, { useRef } from 'react';
 
 interface AnswersProps {
   answers: string[];
@@ -9,7 +11,7 @@ interface AnswersProps {
   answerState: string;
 }
 
-function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): JSX.Element {
+const Answers: React.FC<AnswersProps> = ({ answers, onSelect, isSelected, answerState }) => {
   const shuffledAnswers = useRef<string[] | null>(null);
 
   if (!shuffledAnswers.current) {
@@ -17,10 +19,13 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
     shuffledAnswers.current.sort(() => Math.random() - 0.5);
   }
 
-  // cssClass 기본값 설정
-  const getCssClass = (answer: string) => {
+  /**
+   * 답변 아이템의 CSS 클래스를 결정하는 함수
+   */
+  const getCssClass = (answer: string): string => {
     const baseClass =
       'flex justify-center items-center w-2/5 h-[10vh] rounded-xl drop-shadow-quiz-box sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
+
     // 현재 답변이 사용자가 선택한 답변인지 확인
     const isThisAnswerSelected = answer === isSelected;
     const unSelected = answer !== isSelected;
@@ -53,15 +58,14 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
 
     return `${baseClass} ${colorClass}`;
   };
+
   return (
     <>
       {/* 퀴즈 보기 부분 */}
-      {/* 퀴즈 내용 백앤드에서 받아와서 보여지도록 하기 */}
-      {/* 폰트어썸 유료 결제하면 icon circle_1이걸로 바꾸기! */}
-      {/* 버튼 컴포넌트 만들기 */}
       <div>
         <div className="flex justify-around mt-[3vh]">
           <button
+            type="button"
             className={getCssClass(shuffledAnswers.current[0])}
             disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[0])}
@@ -70,6 +74,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
             <p>{shuffledAnswers.current[0]}</p>
           </button>
           <button
+            type="button"
             className={getCssClass(shuffledAnswers.current[1])}
             disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[1])}
@@ -81,6 +86,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
 
         <div className="flex justify-around mt-[3vh]">
           <button
+            type="button"
             className={getCssClass(shuffledAnswers.current[2])}
             disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[2])}
@@ -89,6 +95,7 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
             <p>{shuffledAnswers.current[2]}</p>
           </button>
           <button
+            type="button"
             className={getCssClass(shuffledAnswers.current[3])}
             disabled={answerState !== ''}
             onClick={() => onSelect(shuffledAnswers.current[3])}
@@ -100,6 +107,6 @@ function Answers({ answers, onSelect, isSelected, answerState }: AnswersProps): 
       </div>
     </>
   );
-}
+};
 
 export default Answers;
