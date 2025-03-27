@@ -9,13 +9,13 @@ function CompareGuide() {
       <DictHeader
         title="나라별 제스처 비교 가이드"
         showCompareGuide={false}
-        className="mb-[3%] lg:mb-[2%]"
+        className="mb-[4%] lg:mb-[3%]"
       />
 
-      {/* 컨텐츠 - flex-1 대신 고정된 높이 계산 */}
+      {/* 컨텐츠 */}
       <div className="h-[calc(100vh-80px)] flex flex-col">
         {/* 메인 이미지 */}
-        <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[3%] lg:mb-[2%]">
+        <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[4%] lg:mb-[3%]">
           <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
             <img
               src={gestureExampleImg}
@@ -26,7 +26,7 @@ function CompareGuide() {
         </div>
 
         {/* 카드 컨테이너 */}
-        <div className="flex-1 px-4 pb-6 overflow-y-auto">
+        <div className="flex-1 px-4 pb-14 md:pb-24 overflow-y-auto">
           {/* 국가 그룹 카드들 */}
           <div className="w-full md:max-w-[800px] md:px-8 lg:max-w-[1000px] lg:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* 영국, 호주, 뉴질랜드 카드 */}
