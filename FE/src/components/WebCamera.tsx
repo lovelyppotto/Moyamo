@@ -34,7 +34,7 @@ function WebCamera({guidelineClassName}: WebCameraprops) {
         <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
           {/* SVG 가이드라인 */}
           <img 
-            src="./images/guide-line.svg" 
+            src="/images/guide-line.svg" 
             alt="카메라 가이드라인" 
             className={`absolute ${guidelineClassName}`}
           />
