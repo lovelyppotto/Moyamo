@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import { ChevronDown } from 'lucide-react';
 import DarkModeLottie from './DarkModeLottie';
@@ -75,8 +75,23 @@ function TranslationDropdown() {
 function HeaderBar() {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchResults, setSearchResults] = useState<ResultMockData[]>([]);
   const logoSrc = theme === 'dark' ? './images/logo-dark.png' : './images/logo.png';
+
+  // URL에서 검색 조건 가져오기
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const gestureName = params.get('gesture_name') || '';
+    const country = params.get('country') || '전체';
+
+    // GestureSearchInput에서 이미 URL 변경에 대응하는 useEffect가 있으므로
+    // 여기서는 검색 결과 상태만 업데이트하면 됩니다
+    if (gestureName) {
+      // performSearch 함수를 여기서 재구현하지 않고, onSearch 콜백으로 결과를 받습니다
+      console.log(`URL에서 검색 조건 변경 감지: ${gestureName}, ${country}`);
+    }
+  }, [location.search]);
 
   const handleLogoClick = () => {
     navigate('/');
@@ -84,8 +99,10 @@ function HeaderBar() {
 
   const handleSearch = (results: ResultMockData[]) => {
     setSearchResults(results);
-    // 검색 결과를 상위 컴포넌트나 상태 관리 라이브러리에 저장할지 추후 선택
     console.log('검색 결과:', results);
+
+    // 다른 컴포넌트에서 검색 결과를 사용할 수 있도록 상태를 업데이트합니다
+    // 필요에 따라 Context API나 상태 관리 라이브러리를 사용할 수 있습니다
   };
 
   return (
