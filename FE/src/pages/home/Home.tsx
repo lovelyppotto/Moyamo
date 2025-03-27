@@ -38,7 +38,7 @@ function Home() {
           <div className="flex items-center justify-center mb-1 md:mb-2 lg:mb-3 w-full">
             <h1 className="md:text-4xl lg:text-5xl">through</h1>
             <img
-              src="/images/icons/puzzle.png"
+              src="/images/icons/puzzle.webp"
               alt="pixel-puzzle"
               className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-1 sm:mx-2"
             />

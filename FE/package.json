@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "optimize-images": "node scripts/optimize-images.js",
+    "build": "vite build",
+    "build:optimize": "pnpm run optimize-images && pnpm run optimize-sprites"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -25,7 +27,6 @@
     "@tailwindcss/vite": "^4.0.13",
     "@tensorflow/tfjs": "^4.22.0",
     "@types/react-lottie": "^1.2.10",
-    "@types/react-webcam": "^3.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
@@ -79,8 +80,11 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "husky": "^8.0.0",
+    "imagemin": "^9.0.1",
+    "imagemin-webp": "^8.0.0",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
+    "sharp": "^0.33.5",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.2.0"
