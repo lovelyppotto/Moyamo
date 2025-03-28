@@ -12,7 +12,7 @@ function Dictionary() {
   const navigate = useNavigate();
 
   // 제스처 선택 상태
-  const [selectedGesture, setSelectedGesture] = useState<string>('victory');
+  const [selectedGesture, setSelectedGesture] = useState<number>(1);
 
   // 국가 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>({
@@ -31,14 +31,14 @@ function Dictionary() {
   ];
 
   // 현재 선택한 국가에 해당하는 제스처 목록
-  const currentGestures = countryGestures[selectedCountry.code] || [];
+  const currentGestures = countryGestures[selectedCountry.id]?.gestures || [];
 
   // 현재 선택된 제스처
   const currentGesture =
     currentGestures.find((gesture) => gesture.id === selectedGesture) || currentGestures[0];
 
   // 제스처 선택 핸들러
-  const handleSelectGesture = (gestureId: string) => {
+  const handleSelectGesture = (gestureId: number) => {
     setSelectedGesture(gestureId);
   };
 
@@ -46,8 +46,8 @@ function Dictionary() {
   const handleSelectCountry = (country: Country) => {
     setSelectedCountry(country);
 
-    if (countryGestures[country.code]?.length > 0) {
-      setSelectedGesture(countryGestures[country.code][0].id);
+    if (countryGestures[country.id]?.gestures?.length > 0) {
+      setSelectedGesture(countryGestures[country.id].gestures[0].id);
     }
   };
 
