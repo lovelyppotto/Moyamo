@@ -13,31 +13,31 @@ export interface Country {
 export const countries: Country[] = [
   {
     id: 1,
-    code: 'KR',
+    code: 'kr',
     name: '한국',
     flagSrc: '/images/flags/kr.webp',
   },
   {
     id: 2,
-    code: 'US',
+    code: 'us',
     name: '미국',
     flagSrc: '/images/flags/us.webp',
   },
   {
     id: 3,
-    code: 'JP',
+    code: 'jp',
     name: '일본',
     flagSrc: '/images/flags/jp.webp',
   },
   {
     id: 4,
-    code: 'CN',
+    code: 'cn',
     name: '중국',
     flagSrc: '/images/flags/cn.webp',
   },
   {
     id: 5,
-    code: 'ITA',
+    code: 'ita',
     name: '이탈리아',
     flagSrc: '/images/flags/it.webp',
   },

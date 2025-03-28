@@ -39,7 +39,7 @@ function HeaderBar() {
             {/* 다크모드 토글 및 언어 선택 */}
             <div className="flex items-center ml-6">
               <DarkModeLottie />
-              <TranslationDropdown />
+              {/* <TranslationDropdown /> */}
             </div>
           </div>
         </div>
