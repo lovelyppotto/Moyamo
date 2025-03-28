@@ -59,8 +59,8 @@ function Question({ onSelectAnswer, Index }) {
       // 다음 문제로 넘어가기 위한 타이머
       setTimeout(() => {
         onSelectAnswer(answer);
-      }, 1200);
-    }, 1000);
+      }, 400);
+    }, 200);
   }
   const handleSkipAnswer = useCallback((): void => handleSelectAnswer(null), [handleSelectAnswer]);
 
@@ -82,10 +82,10 @@ function Question({ onSelectAnswer, Index }) {
           className={progressClass}
         />
         <div className="flex justify-between items-center mt-[3vh]">
-          <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]">
+          <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%]">
             {`Q${Index + 1}. ${QUESTIONS[Index].text}`}
           </h1>
-          <button className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200">
+          <button className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 cursor-pointer mx-[3%]">
             <p
               className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]"
               onClick={handleSkipAnswer}
@@ -95,17 +95,15 @@ function Question({ onSelectAnswer, Index }) {
             <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
           </button>
         </div>
-        <div className="flex justify-center w-full h-2/7 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={QUESTIONS[Index].image} alt="sample_img" className="p-5" />
-        </div>
-        {/* 보기 */}
+
+        {/* 문제와 보기 */}
         <Answers
           // key={activeQuestionIndex}
           answers={QUESTIONS[Index].answers}
           onSelect={handleSelectAnswer}
           isSelected={answer.selectedAnswer}
           answerState={answer.answerState}
+          quizImage={QUESTIONS[Index].image}
         />
       </div>
     </>
