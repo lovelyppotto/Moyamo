@@ -54,7 +54,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'FE-MATTERMOST', variable: 'MATTERMOST_WEBHOOK')]) {
                         sh """
                             curl -X POST -H 'Content-Type: application/json' -d '{
-                                "text": ":cat_clap: **FE 배포 완료!**\n\n:label: 브랜치: fe/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: [서비스 바로가기](https://j12d203.p.ssafy.io)"
+                                "text": ":cat_clap: **FE 배포 완료!**\n\n:label: 브랜치: fe/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: [서비스 바로가기](https://moyamo.site)"
                             }' $MATTERMOST_WEBHOOK
                         """
                     }
