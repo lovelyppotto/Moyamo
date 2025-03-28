@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { Gesture } from '@/types/dictionaryType';
 
 // 카드 컴포넌트 prop 타입
 interface CardProps {
@@ -26,13 +27,6 @@ const Card = ({ children, className = '' }: CardProps) => {
 // 카드 컨텐츠
 const CardContent = ({ children, className = '' }: CardContentProps) => {
   return <div className={`p-4 ${className}`}>{children}</div>;
-};
-
-// 제스처 타입 정의
-export type Gesture = {
-  id: string;
-  title: string;
-  image: string;
 };
 
 // 캐러셀 컴포넌트 프롭 타입

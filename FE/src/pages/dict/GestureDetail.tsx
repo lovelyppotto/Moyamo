@@ -1,5 +1,5 @@
 import DictHeader from './DictHeader';
-import gestureExampleImg from './gesture_example.png';
+import gestureExampleImg from '@/pages/dict/gesture_example.png';
 import '@/components/ui/scrollbar.css';
 
 function GestureDetail() {

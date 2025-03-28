@@ -4,7 +4,6 @@ import DictionaryButton from './buttons/DictButton';
 import QuizButton from './buttons/QuizButton';
 import CountryBubble from './CountryBubble';
 
-
 function Home() {
   const { theme } = useTheme();
 
@@ -30,9 +29,7 @@ function Home() {
           text-3xl text-center "
         >
           {/* 첫 번째 줄 */}
-          <h1 className="md:text-4xl lg:text-5xl mb-1 md:mb-2 lg:mb-3">
-            Unlock the world
-          </h1>
+          <h1 className="md:text-4xl lg:text-5xl mb-1 md:mb-2 lg:mb-3">Unlock the world</h1>
 
           {/* 두 번째 줄 */}
           <div className="flex items-center justify-center mb-1 md:mb-2 lg:mb-3 w-full">
@@ -65,7 +62,7 @@ function Home() {
             </div>
           </div>
         </div>
-        <p 
+        <p
           className="text-md md:text-lg lg:text-xl
           text-center font-[NanumSquareRoundB]"
         >

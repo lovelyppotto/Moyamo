@@ -3,19 +3,14 @@ import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
+import { Country } from '@/types/dictionaryType';
 
-// Dictionary.tsx에서 정의된 타입 사용
-type Country = {
-  code: string;
-  name: string;
-};
-
-interface HeaderProps {
+// DictHeader 컴포넌트 prop 타입
+interface DictHeaderProps {
   title?: string; // 제목
   country?: Country; // 국가 관련 정보
   showCompareGuide?: boolean; // 비교 가이드 버튼 표시 여부
-  className?: string;
-  // 드롭다운 관련 속성
+  className?: string; // 드롭다운 관련 속성
   showCountrySelector?: boolean; // 국가 선택 드롭다운 표시 여부
   selectedCountry?: Country;
   onSelectCountry?: (country: Country) => void;
@@ -31,7 +26,7 @@ function DictHeader({
   selectedCountry,
   onSelectCountry,
   countryOptions = [],
-}: HeaderProps) {
+}: DictHeaderProps) {
   const navigate = useNavigate();
 
   // 국가 선택 핸들러
