@@ -1,8 +1,0 @@
-{
-	"dependencies": {
-		"@fortawesome/free-regular-svg-icons": "^6.7.2"
-	},
-	"devDependencies": {
-		"typescript-plugin-css-modules": "^5.1.0"
-	}
-}
