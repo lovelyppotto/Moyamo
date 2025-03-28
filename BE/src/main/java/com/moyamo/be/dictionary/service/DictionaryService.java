@@ -25,7 +25,7 @@ public class DictionaryService {
                 cg.getMeaningId().intValue(),
                 cg.getGesture().getGestureId().intValue(),
                 cg.getGesture().getImageUrl(),
-                cg.getGesture().getGestureLabel()
+                cg.getGestureInfo().getGestureTitle()
         )).collect(Collectors.toList());
 
         GestureListWithCountryDto responseData = new GestureListWithCountryDto(
