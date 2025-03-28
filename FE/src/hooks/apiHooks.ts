@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
-import apiClient from '@/api/apiClient';
 import { getGesturesByCountry } from '@/services/dictionaryService';
+import apiClient from '@/api/apiClient';
 
 // 제스처 검색
 export function useGestureSearch(gestureName: string, countryId?: number) {
@@ -31,7 +31,18 @@ export function useGesturesByCountry(countryId?: number) {
     queryKey: ['gesturesByCountry', countryId],
     queryFn: async ({ queryKey }) => {
       const [_, id] = queryKey;
-      return getGesturesByCountry(id as number);
+      const response = await getGesturesByCountry(id as number);
+
+      // API 응답을 Gesture 타입으로 변환
+      return {
+        ...response,
+        gestures: response.gestures.map((g) => ({
+          id: g.gestureId,
+          title: g.gestureTitle,
+          image_url: g.imageUrl,
+          meaning_id: g.meaningId,
+        })),
+      };
     },
     enabled: !!countryId,
     staleTime: 0,
