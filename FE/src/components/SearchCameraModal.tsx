@@ -1,19 +1,67 @@
-import { useState } from 'react';
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
 import WebCamera from './WebCamera';
 
 function SearchCameraModal() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 타이머 끝난 후 로직
+  const handleTimerEnd = () => {
+    navigate('/dictionary/detail')
+  };
+
+  // 카운트다운 타이머 시작
+  const startCountdown = () => {
+    setIsCountingDown(true);
+    setCountdown(3);
+
+    timerRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          // 타이머 종료
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+          }
+          setIsCountingDown(false);
+          handleTimerEnd();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  // 모달이 닫힐 때 타이머 정리
+  useEffect(() => {
+    if (!open && timerRef.current) {
+      clearInterval(timerRef.current);
+      setIsCountingDown(false);
+    }
+  }, [open]);
 
   const handleCameraClick = (): void => {
     setOpen(true);
   };
+
+  const handleCaptureClick = (): void => {
+    startCountdown();
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -68,19 +116,25 @@ function SearchCameraModal() {
                 </div>
               </div>
             </div>
-            <div className='h-2 bg-none'></div>
+            <div className="h-2 bg-none"></div>
             {/* 하단 버튼 영역 */}
             <div
               className="flex justify-center px-2 py-3 
               bg-white rounded-t-lg
               dark:bg-gray-700"
             >
-              <button 
+              <button
+                onClick={handleCaptureClick}
+                disabled={isCountingDown}
                 className="flex items-center justify-center w-14 h-14
                 bg-black text-white rounded-full
                 dark:bg-white dark:text-gray-900"
               >
-                <Camera />
+                {isCountingDown ? (
+                  <span className="text-xl font-bold">{countdown}</span>
+                ) : (
+                  <Camera />
+                )}
               </button>
             </div>
           </div>
