@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { searchGestures } from "@/services/searchService";
-import apiClient from "@/api/apiClient";
+import { useQuery } from '@tanstack/react-query';
+import { searchGestures } from '@/services/searchService';
+import apiClient from '@/api/apiClient';
+import { getGesturesByCountry } from '@/services/dictionaryService';
 
 // 제스처 검색
 export function useGestureSearch(gestureName: string, countryId?: number) {
@@ -19,6 +20,20 @@ export function useTips() {
     queryFn: async () => {
       const { data } = await apiClient.get('/tips');
       return data;
-    }
-  })
+    },
+  });
+}
+
+/* 딕셔너리 */
+// 국가별 제스처 목록 조회
+export function useGesturesByCountry(countryId?: number) {
+  return useQuery({
+    queryKey: ['gesturesByCountry', countryId],
+    queryFn: async ({ queryKey }) => {
+      const [_, id] = queryKey;
+      return getGesturesByCountry(id as number);
+    },
+    enabled: !!countryId,
+    staleTime: 0,
+  });
 }
