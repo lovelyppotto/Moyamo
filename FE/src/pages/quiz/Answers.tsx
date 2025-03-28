@@ -42,6 +42,9 @@ const Answers: React.FC<AnswersProps> = ({ answers, onSelect, isSelected, answer
     } else if (answerState === 'correct' && isThisAnswerSelected) {
       // 사용자가 선택한 답변이 정답일 때(연두색)
       colorClass = 'bg-[var(--color-correct-300)] text-white';
+    } else if (answerState === 'correct' && unSelected) {
+      // 사용자가 오답을 선택했을 때 정답 표시
+      colorClass = 'bg-gray-200 text-white';
     } else if (answerState === 'wrong' && isThisAnswerSelected) {
       // 사용자가 선택한 답변이 오답일 때(빨간색)
       colorClass = 'bg-[var(--color-wrong-300)] text-white';
