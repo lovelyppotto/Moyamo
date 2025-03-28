@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderBar from '../home/HeaderBar';
 import { useTheme } from '@/components/theme-provider';
 import SearchResultsList from './SearchResultList';
-import ModeToggle from '@/components/ModeToggle';
 import { useSearchStore } from '../../stores/useSearchStore';
 import '@/components/ui/scrollbar.css';
 
@@ -79,7 +78,6 @@ function Result() {
           </div>
         </div>
       </div>
-      <ModeToggle />
     </div>
   );
 }

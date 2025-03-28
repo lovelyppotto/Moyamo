@@ -25,11 +25,12 @@ function ModeToggle() {
   }
   
   return (
-    <div className="flex items-center space-x-2 p-2 mb-4 bg-gray-100 rounded-md">
+    <div className="flex items-center space-x-2 p-2 mb-4 bg-gray-200 rounded-md">
       <Switch
         id="data-mode"
         checked={useMockData}
         onCheckedChange={handleToggle}
+        className='bg-gray-400'
       />
       <Label htmlFor="data-mode" className="cursor-pointer">
         {useMockData ? '목 데이터 사용 중' : '실제 API 사용 중'}
