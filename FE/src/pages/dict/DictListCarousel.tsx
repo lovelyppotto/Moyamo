@@ -32,7 +32,7 @@ const CardContent = ({ children, className = '' }: CardContentProps) => {
 // 캐러셀 컴포넌트 프롭 타입
 interface DictListCarouselProps {
   gestures?: Gesture[];
-  onSelectGesture?: (gestureId: string) => void;
+  onSelectGesture?: (gestureId: number) => void;
 }
 
 export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCarouselProps) {
@@ -55,7 +55,7 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
   };
 
   // 제스처 클릭 핸들러
-  const handleGestureClick = (gestureId: string) => {
+  const handleGestureClick = (gestureId: number) => {
     if (onSelectGesture) {
       onSelectGesture(gestureId);
     }
@@ -92,11 +92,17 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
               <Card className="flex flex-col cursor-pointer hover:border-blue-400 transition-colors h-full">
                 <CardContent className="flex flex-col items-center p-3 flex-grow">
                   <div className="flex items-center justify-center w-full flex-grow">
-                    <img
-                      src={gesture.image}
-                      alt={gesture.title}
-                      className="object-contain h-22 w-20"
-                    />
+                    {gesture.image_url ? (
+                      <img
+                        src={gesture.image_url}
+                        alt={`${gesture} image`}
+                        className="object-contain h-22 w-20"
+                      />
+                    ) : (
+                      <div className="h-22 w-20 flex items-center justify-center text-gray-400">
+                        이미지 없음
+                      </div>
+                    )}
                   </div>
                 </CardContent>
                 <div className="w-full bg-gray-200 p-[14px]">

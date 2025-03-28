@@ -14,7 +14,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
         {gesture.image_url ? (
           <img
             src={gesture.image_url}
-            alt={gesture.title}
+            alt={`${gesture.title} image`}
             className="max-h-[90%] max-w-[90%] object-contain"
           />
         ) : (
