@@ -2,6 +2,8 @@
  * 섞인 답변의 목록을 출력하는 목적의 컴포넌트입니다.
  * 정답인 부분은 초록 색으로 바꾸기
  */
+//옳바른 제스처를 선택하는 컴포넌트입니다.
+//수정: img를 받아와서 답 칸에 적어야 합니다. -> 
 import React, { useRef } from 'react';
 
 interface AnswersProps {
@@ -9,16 +11,9 @@ interface AnswersProps {
   onSelect: (answer: string) => void;
   isSelected: string;
   answerState: string;
-  quizImage: string;
 }
 
-const Answers: React.FC<AnswersProps> = ({
-  answers,
-  onSelect,
-  isSelected,
-  answerState,
-  quizImage,
-}) => {
+const Answers: React.FC<AnswersProps> = ({ answers, onSelect, isSelected, answerState }) => {
   const shuffledAnswers = useRef<string[] | null>(null);
 
   if (!shuffledAnswers.current) {
@@ -31,7 +26,7 @@ const Answers: React.FC<AnswersProps> = ({
    */
   const getCssClass = (answer: string): string => {
     const baseClass =
-      'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
+      'flex justify-center items-center w-2/5 h-[10vh] rounded-xl drop-shadow-quiz-box sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
 
     // 현재 답변이 사용자가 선택한 답변인지 확인
     const isThisAnswerSelected = answer === isSelected;
@@ -58,9 +53,6 @@ const Answers: React.FC<AnswersProps> = ({
     } else if (answerState === 'wrong' && unSelected) {
       // 사용자가 오답을 선택했을 때 정답 표시
       colorClass = 'bg-gray-200 text-white';
-    } else if (answerState === 'correct' && unSelected) {
-      // 사용자가 오답을 선택했을 때 정답 표시
-      colorClass = 'bg-gray-200 text-white';
     } else {
       // 기본 상태 (미선택: 배경 흰색)
       colorClass = 'bg-white';
@@ -71,14 +63,9 @@ const Answers: React.FC<AnswersProps> = ({
 
   return (
     <>
-      <div className="h-100 flex flex-row justify-around my-3">
-        {/* 문제 이미지 부분 */}
-        <div className=" bg-white w-[44%] h-full rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={quizImage} alt="sample_img" className="p-5" />
-        </div>
-        {/* 퀴즈 보기 부분 */}
-        <div className="w-[44%] h-full flex flex-col justify-between ">
+      {/* 퀴즈 보기 부분 */}
+      <div>
+        <div className="flex justify-around mt-[3vh]">
           <button
             type="button"
             className={getCssClass(shuffledAnswers.current[0])}
@@ -97,7 +84,9 @@ const Answers: React.FC<AnswersProps> = ({
             <p className="mr-5">②</p>
             <p>{shuffledAnswers.current[1]}</p>
           </button>
+        </div>
 
+        <div className="flex justify-around mt-[3vh]">
           <button
             type="button"
             className={getCssClass(shuffledAnswers.current[2])}
