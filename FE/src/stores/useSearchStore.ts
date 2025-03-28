@@ -64,7 +64,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
       // 서비스 레이어 호출 (자동으로 목 데이터/API 선택)
       const results = await searchGestures(searchTerm, countryId);
       
-      // 결과가 배열인지 확인하고 적절히 처리
+      // 결과가 배열인지 확인 후 처리
       const searchResults = Array.isArray(results) ? results : [results];
       
       // 검색 결과 및 로딩 상태 업데이트
