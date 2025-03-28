@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import DarkModeLottie from './DarkModeLottie';
 import GestureSearchInput from '../../components/GestureSearch';
-import TranslationDropdown from './dropdowns/TranslateDropdown';
+// import TranslationDropdown from './dropdowns/TranslateDropdown';
 
 // 메인 HeaderBar 컴포넌트
 function HeaderBar() {
