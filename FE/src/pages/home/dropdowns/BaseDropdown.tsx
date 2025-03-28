@@ -47,9 +47,7 @@ function BaseDropdown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        {children || defaultTrigger}
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{children || defaultTrigger}</DropdownMenuTrigger>
       <DropdownMenuContent
         className="block text-center
           mt-1 p-0

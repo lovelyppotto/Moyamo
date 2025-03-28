@@ -2,16 +2,11 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import BaseDropdown from '../pages/home/BaseDropdown';
+import BaseDropdown from '../pages/home/dropdowns/BaseDropdown';
 import SearchCameraModal from './SearchCameraModal';
-import { ResultMockData } from '../pages/result/resultMock';
 import { useSearchStore } from '../stores/useSearchStore';
 
-interface GestureSearchInputProps {
-  onSearch?: (results: ResultMockData[]) => void;
-}
-
-function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
+function GestureSearchInput() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,12 +36,10 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
     setSearchCountry(country);
   }, [location.search, setSearchTerm, setSearchCountry]);
 
-  // 검색 결과가 변경될 때 onSearch 콜백 호출
+  // 검색 결과가 있을때 표시 여부
   useEffect(() => {
-    if (onSearch && searchResults.length > 0) {
-      onSearch(searchResults);
-    }
-  }, [searchResults, onSearch]);
+    setShowResults(searchTerm !== '' && searchResults.length > 0);
+  }, [searchResults, searchTerm]);
 
   // 검색 처리 함수
   const handleSearch = () => {
@@ -124,37 +117,6 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
           </div>
         </div>
       </div>
-
-      {/* 검색 결과 표시 (드롭다운 방식 사용 시) */}
-      {showResults && searchResults.length > 0 && (
-        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results max-h-96 overflow-auto">
-          <ul className="py-2">
-            {searchResults.map((result) => (
-              <li
-                key={result.gestureId}
-                className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={() => handleGestureClick(result.gestureId)}
-              >
-                <div className="flex items-center">
-                  <div className="w-16 h-16 flex-shrink-0">
-                    <img
-                      src={result.gestureImg}
-                      alt={result.gestureName}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <h3 className="text-lg font-bold dark:text-d-txt-50">{result.gestureName}</h3>
-                    <p className="text-gray-600 dark:text-d-txt-50/70 text-sm line-clamp-2">
-                      {result.meanings.map((m) => m.countryName).join(', ')}에서 사용
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {showResults && searchResults.length === 0 && (
         <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results">
