@@ -5,7 +5,7 @@ import apiClient from "@/api/apiClient";
 // 제스처 검색
 export function useGestureSearch(gestureName: string, countryId?: number) {
   return useQuery({
-    queryKey: ['gestureSearch', gestureName, 'countryId', countryId],
+    queryKey: ['gestureName', gestureName, 'countryId', countryId],
     queryFn: () => searchGestures(gestureName, countryId), // 서비스 함수 호출
     enabled: !!gestureName.trim(),
     staleTime: 0,

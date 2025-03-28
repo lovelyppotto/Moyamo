@@ -1,38 +1,37 @@
-// src/stores/useSearchStore.ts
 import { create } from 'zustand';
 import { GestureSearchResult } from '@/types/searchGestureType';
-import { searchResultMock } from '../pages/result/resultMock';
+import { searchGestures } from '@/services/searchService';
 
 interface SearchState {
   // 검색 상태
   searchTerm: string;
-  searchCountry: string;
+  searchCountry: number; 
   searchResults: GestureSearchResult[];
   isLoading: boolean;
+  error: Error | null;
 
   // 액션
   setSearchTerm: (term: string) => void;
-  setSearchCountry: (country: string) => void;
-  performSearch: (term?: string, country?: string) => void;
+  setSearchCountry: (country: number) => void;
+  performSearch: (term?: string, country?: number) => Promise<void>;
 }
 
 export const useSearchStore = create<SearchState>((set, get) => ({
   // 초기 상태
   searchTerm: '',
-  searchCountry: '전체',
+  searchCountry: 0,
   searchResults: [],
   isLoading: false,
+  error: null,
 
   // 액션
   setSearchTerm: (term) => set({ searchTerm: term }),
 
   setSearchCountry: (country) => set({ searchCountry: country }),
 
-  performSearch: (term?: string, country?: string) => {
+  performSearch: async (term?: string, country?: number) => {
     const searchTerm = term !== undefined ? term : get().searchTerm;
     const searchCountry = country !== undefined ? country : get().searchCountry;
-
-    set({ isLoading: true });
 
     // 검색어가 비어있으면 결과 비우기
     if (!searchTerm.trim()) {
@@ -40,24 +39,26 @@ export const useSearchStore = create<SearchState>((set, get) => ({
       return;
     }
 
-    // 검색 로직 실행
-    const results = searchResultMock.filter((item) => {
-      // 제스처 이름으로 검색
-      const nameMatch = item.gestureName.includes(searchTerm);
+    set({ isLoading: true, error: null });
 
-      // 국가별 필터링
-      const countryMatch =
-        searchCountry === '전체' ||
-        item.meanings.some((meaning) => {
-          // 한국 -> 대한민국 변환
-          const searchCountryName = searchCountry === '한국' ? '대한민국' : searchCountry;
-          return meaning.name.includes(searchCountryName);
-        });
-
-      return nameMatch && countryMatch;
-    });
-
-    // 검색 결과 및 로딩 상태 업데이트
-    set({ searchResults: results, isLoading: false });
+    try {
+      // 국가 ID 가져오기 (문자열에서 숫자로 변환)
+      const countryId = searchCountry === 0 ? undefined : searchCountry;
+      
+      // 서비스 레이어 호출 (자동으로 목 데이터/API 선택)
+      const results = await searchGestures(searchTerm, countryId);
+      
+      // 결과가 배열인지 확인 처리
+      const searchResults = Array.isArray(results) ? results : [results];
+      
+      // 검색 결과 및 로딩 상태 업데이트
+      set({ searchResults, isLoading: false });
+    } catch (error) {
+      console.error('검색 오류:', error);
+      set({ 
+        error: error instanceof Error ? error : new Error('검색 중 오류가 발생했습니다.'),
+        isLoading: false 
+      });
+    }
   },
 }));

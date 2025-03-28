@@ -13,8 +13,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@libs/*": ["./src/lib/*"]
     },
+    "typeRoots": ["./node_modules/@types", "./src"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     // 외부 라이브러리 타입 오류 무시
     "skipLibCheck": true,
 

@@ -2,16 +2,40 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import BaseDropdown from '../pages/home/BaseDropdown';
+import BaseDropdown from '../pages/home/dropdowns/BaseDropdown';
 import SearchCameraModal from './SearchCameraModal';
-import { ResultMockData } from '../pages/result/resultMock';
 import { useSearchStore } from '../stores/useSearchStore';
 
-interface GestureSearchInputProps {
-  onSearch?: (results: ResultMockData[]) => void;
-}
+// 국가 이름을 ID로 변환하는 함수
+const getCountryId = (country: string): number => {
+  if (country === '전체') return 0;
 
-function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
+  const countryMap: Record<string, number> = {
+    한국: 1,
+    미국: 2,
+    일본: 3,
+    중국: 4,
+    이탈리아: 5,
+  };
+
+  return countryMap[country] || 0;
+};
+
+// ID를 국가 이름으로 변환하는 함수
+const getCountryName = (id: number): string => {
+  const idToCountry: Record<number, string> = {
+    0: '전체',
+    1: '한국',
+    2: '미국',
+    3: '일본',
+    4: '중국',
+    5: '이탈리아',
+  };
+
+  return idToCountry[id] || '전체';
+};
+
+function GestureSearchInput() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,6 +51,7 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
 
   // 로컬 상태 (드롭다운 표시 여부)
   const [showResults, setShowResults] = useState(false);
+  const [selectedCountryName, setSelectedCountryName] = useState('전체');
 
   const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
 
@@ -34,19 +59,23 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const gestureName = params.get('gesture_name') || '';
-    const country = params.get('country') || '전체';
+    const countryParam = params.get('country');
+
+    // 숫자 ID로 변환 (문자열에서 숫자로)
+    const countryId = countryParam ? parseInt(countryParam, 10) : 0;
+
+    // 국가 이름 설정
+    setSelectedCountryName(getCountryName(countryId));
 
     // 스토어 상태 업데이트
     setSearchTerm(gestureName);
-    setSearchCountry(country);
+    setSearchCountry(countryId); // 숫자로 설정
   }, [location.search, setSearchTerm, setSearchCountry]);
 
-  // 검색 결과가 변경될 때 onSearch 콜백 호출
+  // 검색 결과가 있을때 표시 여부
   useEffect(() => {
-    if (onSearch && searchResults.length > 0) {
-      onSearch(searchResults);
-    }
-  }, [searchResults, onSearch]);
+    setShowResults(searchTerm !== '' && searchResults.length > 0);
+  }, [searchResults, searchTerm]);
 
   // 검색 처리 함수
   const handleSearch = () => {
@@ -55,10 +84,8 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
     // Zustand 스토어를 통해 검색 수행
     performSearch();
 
-    // 검색 결과 페이지로 이동
-    navigate(
-      `/search?gesture_name=${encodeURIComponent(searchTerm)}&country=${encodeURIComponent(searchCountry)}`
-    );
+    // 검색 결과 페이지로 이동 (여기서 searchCountry는 숫자)
+    navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}&country=${searchCountry}`);
   };
 
   // 입력 변경 핸들러
@@ -78,13 +105,10 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
 
   // 검색 국가 변경 핸들러
   const handleCountrySelect = (country: string) => {
-    setSearchCountry(country);
-  };
-
-  // 제스처 항목 클릭 핸들러
-  const handleGestureClick = (gestureId: number) => {
-    navigate(`/gesture/${gestureId}`);
-    setShowResults(false);
+    // 국가 이름을 ID로 변환하여 저장
+    const countryId = getCountryId(country);
+    setSearchCountry(countryId);
+    setSelectedCountryName(country);
   };
 
   return (
@@ -98,7 +122,7 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
           onClick={handleSearch}
         />
         <BaseDropdown
-          selected={searchCountry}
+          selected={selectedCountryName} // 국가 이름 사용
           options={countries}
           label="검색 국가"
           onSelect={handleCountrySelect}
@@ -124,37 +148,6 @@ function GestureSearchInput({ onSearch }: GestureSearchInputProps) {
           </div>
         </div>
       </div>
-
-      {/* 검색 결과 표시 (드롭다운 방식 사용 시) */}
-      {showResults && searchResults.length > 0 && (
-        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results max-h-96 overflow-auto">
-          <ul className="py-2">
-            {searchResults.map((result) => (
-              <li
-                key={result.gestureId}
-                className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={() => handleGestureClick(result.gestureId)}
-              >
-                <div className="flex items-center">
-                  <div className="w-16 h-16 flex-shrink-0">
-                    <img
-                      src={result.gestureImg}
-                      alt={result.gestureName}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <h3 className="text-lg font-bold dark:text-d-txt-50">{result.gestureName}</h3>
-                    <p className="text-gray-600 dark:text-d-txt-50/70 text-sm line-clamp-2">
-                      {result.meanings.map((m) => m.countryName).join(', ')}에서 사용
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {showResults && searchResults.length === 0 && (
         <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results">
