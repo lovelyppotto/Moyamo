@@ -23,11 +23,14 @@ function Result() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('gesture_name') || '';
-    const country = queryParams.get('country') || '전체';
+
+    // country는 숫자 문자열로 오므로 숫자로 변환
+    const countryParam = queryParams.get('country');
+    const country = countryParam ? parseInt(countryParam, 10) : 0; // 문자열을 숫자로 변환
 
     // Zustand 스토어 상태 업데이트
     setSearchTerm(query);
-    setSearchCountry(country);
+    setSearchCountry(country); // 숫자로 변환된 값 전달
 
     // 검색 수행 (Zustand 스토어의 함수 사용)
     if (query) {
