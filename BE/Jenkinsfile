@@ -24,7 +24,7 @@ pipeline {
                     sh """
                         cd BE
                         chmod +x ./gradlew
-                        ./gradlew clean build -x test--no-daemon
+                        ./gradlew clean build -x test --no-daemon
 
                         echo "Building Docker Image..."
                         docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
