@@ -1,4 +1,3 @@
-// src/stores/useSearchStore.ts
 import { create } from 'zustand';
 import { GestureSearchResult } from '@/types/searchGestureType';
 import { searchGestures } from '@/services/searchService';
@@ -6,36 +5,21 @@ import { searchGestures } from '@/services/searchService';
 interface SearchState {
   // 검색 상태
   searchTerm: string;
-  searchCountry: string;
+  searchCountry: number; 
   searchResults: GestureSearchResult[];
   isLoading: boolean;
   error: Error | null;
 
   // 액션
   setSearchTerm: (term: string) => void;
-  setSearchCountry: (country: string) => void;
-  performSearch: (term?: string, country?: string) => Promise<void>;
+  setSearchCountry: (country: number) => void;
+  performSearch: (term?: string, country?: number) => Promise<void>;
 }
-
-// 국가 이름을 ID로 변환하는 함수
-const getCountryId = (country: string): number | undefined => {
-  if (country === '전체') return undefined;
-  
-  const countryMap: Record<string, number> = {
-    '대한민국': 1,
-    '미국': 2,
-    '일본': 3,
-    '중국': 4,
-    '이탈리아': 5,
-  };
-  
-  return countryMap[country];
-};
 
 export const useSearchStore = create<SearchState>((set, get) => ({
   // 초기 상태
   searchTerm: '',
-  searchCountry: '전체',
+  searchCountry: 0,
   searchResults: [],
   isLoading: false,
   error: null,
@@ -45,7 +29,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
   setSearchCountry: (country) => set({ searchCountry: country }),
 
-  performSearch: async (term?: string, country?: string) => {
+  performSearch: async (term?: string, country?: number) => {
     const searchTerm = term !== undefined ? term : get().searchTerm;
     const searchCountry = country !== undefined ? country : get().searchCountry;
 
@@ -58,8 +42,8 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      // 국가 ID 가져오기
-      const countryId = getCountryId(searchCountry);
+      // 국가 ID 가져오기 (문자열에서 숫자로 변환)
+      const countryId = searchCountry === 0 ? undefined : searchCountry;
       
       // 서비스 레이어 호출 (자동으로 목 데이터/API 선택)
       const results = await searchGestures(searchTerm, countryId);

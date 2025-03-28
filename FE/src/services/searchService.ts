@@ -36,11 +36,12 @@ const getMockSearchResults = (gestureName: string, countryId?: number): GestureS
   });
 };
 
-// 검색 API 호출 함수 (기존 코드)
+
+//검색 API 호출 함수
 export const searchGestures = async (
   gestureName: string,
   countryId?: number
-): Promise<GestureSearchResult | GestureSearchResult[]> => {
+): Promise<GestureSearchResult[]> => {
   // 목 데이터 사용 여부 확인
   if (useMockData()) {
     console.log('[개발 환경] 목 데이터 사용 중...');
@@ -49,7 +50,7 @@ export const searchGestures = async (
     return getMockSearchResults(gestureName, countryId);
   }
 
-  // 실제 API 호출 (기존 코드 유지)
+  // 실제 API 호출
   console.log('[프로덕션 환경] 실제 API 호출 중...');
   try {
     const { data } = await apiClient.get<SearchResponse>('/search/gestures', {
@@ -59,8 +60,8 @@ export const searchGestures = async (
       },
     });
 
-    // camelCase로 변환
-    return {
+    // camelCase로 변환한 단일 결과를 배열로 감싸서 반환
+    const result = {
       gestureId: data.data.gesture_id,
       gestureName: data.data.gesture_name,
       gestureImage: data.data.gesture_image,
@@ -70,6 +71,9 @@ export const searchGestures = async (
         meaning: m.meaning,
       })),
     };
+
+    // 항상 배열로 반환
+    return [result];
   } catch (error) {
     console.error('API 호출 실패, 목 데이터로 대체:', error);
     // API 호출 실패 시 목 데이터로 대체
