@@ -1,9 +1,4 @@
-// 제스처 타입
-type Gesture = {
-  id: string;
-  title: string;
-  image: string;
-};
+import { Gesture } from '@/types/dictionaryType';
 
 // 메인 이미지 컴포넌트 Props 타입
 type MainGestureImageProps = {
@@ -16,11 +11,17 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
     <div className="rounded-2xl font-[NanumSquareRound] w-full h-full max-w-lg mx-auto">
       {/* 이미지 */}
       <div className="bg-white rounded-t-2xl flex items-center justify-center border-4 border-kr-500 w-full h-[70%]">
-        <img
-          src={gesture.image}
-          alt={gesture.title}
-          className="max-h-[90%] max-w-[90%] object-contain"
-        />
+        {gesture.image_url ? (
+          <img
+            src={gesture.image_url}
+            alt={`${gesture.title} image`}
+            className="max-h-[90%] max-w-[90%] object-contain"
+          />
+        ) : (
+          <div className="text-gray-400 flex items-center justify-center h-full w-full">
+            이미지가 없습니다
+          </div>
+        )}
       </div>
 
       {/* 타이틀 */}

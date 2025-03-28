@@ -1,106 +1,74 @@
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { DictListCarousel, Gesture } from './DictListCarousel';
-import gestureExampleImg from './gesture_example.png';
+import { useEffect, useState } from 'react';
+import { DictListCarousel } from './DictListCarousel';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './DictHeader';
-
-type Country = {
-  code: string;
-  name: string;
-};
-
-// 국가별 제스쳐 데이터 관리하는 타입
-type CountryGestures = {
-  [countryCode: string]: Gesture[];
-};
+import { Country, Gesture } from '@/types/dictionaryType';
+import { useGesturesByCountry } from '@/hooks/apiHooks';
 
 function Dictionary() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // 제스처 선택 상태
-  const [selectedGesture, setSelectedGesture] = useState<string>('victory');
-
-  // 국가 선택 상태
-  const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: 'us',
-    name: '미국',
-  });
+  // URL에서 country_id 파라미터 가져오기
+  const queryParams = new URLSearchParams(location.search);
+  const countryIdParam = queryParams.get('country_id');
 
   // 국가 목록
   const countryOptions: Country[] = [
-    { code: 'us', name: '미국' },
-    { code: 'kr', name: '한국' },
-    { code: 'cn', name: '중국' },
-    { code: 'jp', name: '일본' },
-    { code: 'it', name: '이탈리아' },
+    { code: 'kr', name: '한국', id: 1 },
+    { code: 'us', name: '미국', id: 2 },
+    { code: 'jp', name: '일본', id: 3 },
+    { code: 'cn', name: '중국', id: 4 },
+    { code: 'it', name: '이탈리아', id: 5 },
   ];
 
-  // 제스처 더미 데이터
-  const countryGestures: CountryGestures = {
-    kr: [
-      { id: 'victory', title: '승리, 평화', image: gestureExampleImg },
-      { id: 'money', title: '돈, 부유함', image: gestureExampleImg },
-      { id: 'emphasis', title: '강조, 풍자', image: gestureExampleImg },
-      { id: 'come', title: '이리와', image: gestureExampleImg },
-      { id: 'luck', title: '행운을 빌어', image: gestureExampleImg },
-    ],
-    us: [
-      { id: 'thumbs-up', title: '좋아요', image: gestureExampleImg },
-      { id: 'ok', title: '괜찮아', image: gestureExampleImg },
-      { id: 'peace', title: '평화', image: gestureExampleImg },
-      { id: 'rock', title: '락앤롤', image: gestureExampleImg },
-      { id: 'highfive', title: '하이파이브', image: gestureExampleImg },
-    ],
-    cn: [
-      { id: 'cn-1', title: '환영', image: gestureExampleImg },
-      { id: 'cn-2', title: '번영', image: gestureExampleImg },
-      { id: 'cn-3', title: '행운', image: gestureExampleImg },
-      { id: 'cn-4', title: '존경', image: gestureExampleImg },
-      { id: 'cn-5', title: '인사', image: gestureExampleImg },
-    ],
-    jp: [
-      { id: 'jp-1', title: '존경', image: gestureExampleImg },
-      { id: 'jp-2', title: '사죄', image: gestureExampleImg },
-      { id: 'jp-3', title: '감사', image: gestureExampleImg },
-      { id: 'jp-4', title: '거절', image: gestureExampleImg },
-      { id: 'jp-5', title: '초대', image: gestureExampleImg },
-    ],
-    it: [
-      { id: 'it-1', title: '맛있어요', image: gestureExampleImg },
-      { id: 'it-2', title: '완벽해', image: gestureExampleImg },
-      { id: 'it-3', title: '질문', image: gestureExampleImg },
-      { id: 'it-4', title: '무슨 소리야', image: gestureExampleImg },
-      { id: 'it-5', title: '잠시만', image: gestureExampleImg },
-    ],
-  };
+  // URL 파라미터에서 국가 ID 가져오기
+  const initialCountry = countryIdParam
+    ? countryOptions.find((country) => country.id === parseInt(countryIdParam)) || countryOptions[0]
+    : countryOptions[0];
+
+  const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
+  const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
+
+  // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
+  const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
+
+  // API에서 제스처 데이터 가져오기
+  useEffect(() => {
+    if (gestureData && gestureData.gestures && gestureData.gestures.length > 0) {
+      // 국가 변경되면 첫번째 제스처를 선택
+      setSelectedGesture(gestureData.gestures[0].id);
+    }
+  }, [gestureData]);
 
   // 현재 선택한 국가에 해당하는 제스처 목록
-  const currentGestures = countryGestures[selectedCountry.code] || [];
+  const currentGestures = gestureData?.gestures || [];
 
   // 현재 선택된 제스처
   const currentGesture =
-    currentGestures.find((gesture) => gesture.id === selectedGesture) || currentGestures[0];
+    currentGestures.find((gesture) => gesture.id === selectedGesture) ||
+    (currentGestures.length > 0 ? currentGestures[0] : null);
 
   // 제스처 선택 핸들러
-  const handleSelectGesture = (gestureId: string) => {
+  const handleSelectGesture = (gestureId: number) => {
     setSelectedGesture(gestureId);
   };
 
   // 국가 선택 핸들러
   const handleSelectCountry = (country: Country) => {
     setSelectedCountry(country);
-
-    if (countryGestures[country.code]?.length > 0) {
-      setSelectedGesture(countryGestures[country.code][0].id);
-    }
+    // 다른 국가 선택 시 URL 파라미터 업데이트
+    navigate(`/dictionary?country_id=${country.id}`, { replace: true });
   };
 
   // 제스처 연습으로 이동
   const handlePracticeButtonClick = () => {
+    if (!currentGesture) return; // 제스처가 없으면 이동 안함
+
     navigate('/dictionary/practice', {
       state: {
         country: selectedCountry,
@@ -131,6 +99,7 @@ function Dictionary() {
           showCompareGuide={true}
         />
       </div>
+      {/* 로딩 페이지 */}
 
       <div className="h-full flex-1 flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
         {/* 메인 컨텐츠 영역 */}

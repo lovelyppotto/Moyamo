@@ -7,11 +7,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-type Country = {
-  code: string;
-  name: string;
-};
+import { Country } from '@/types/dictionaryType';
 
 type CountrySelectorProps = {
   selectedCountry: Country;
