@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import DarkModeLottie from './DarkModeLottie';
 import GestureSearchInput from '../../components/GestureSearch';
-import TranslationDropdown from './dropdowns/TranslateDropdown';
+// import TranslationDropdown from './dropdowns/TranslateDropdown';
 
 // 메인 HeaderBar 컴포넌트
 function HeaderBar() {
@@ -39,7 +39,7 @@ function HeaderBar() {
             {/* 다크모드 토글 및 언어 선택 */}
             <div className="flex items-center ml-6">
               <DarkModeLottie />
-              <TranslationDropdown />
+              {/* <TranslationDropdown /> */}
             </div>
           </div>
         </div>

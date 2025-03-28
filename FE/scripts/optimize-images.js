@@ -81,7 +81,11 @@ async function optimizeImages() {
       */
 
       await sharp(inputPath)
-        .resize(width)
+        .resize({
+          width: width,
+          height: 133,
+          fit: 'fill' // 지정한 크기 안에 들어가도록 함
+        })
         .webp({ quality: 85 })
         .toFile(outputPath)
 
