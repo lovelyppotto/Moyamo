@@ -72,7 +72,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
       setTimeout(() => {
         onSelectAnswer(answer);
       }, 400);
-    }, 100);
+    }, 200);
   }
   const handleSkipAnswer = useCallback((): void => handleSelectAnswer(null), [handleSelectAnswer]);
 
@@ -94,7 +94,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
           className={progressClass}
         />
         <div className="flex justify-between items-center mt-[3vh]">
-          <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB]">
+          <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%]">
             {`Q${Index + 1}. ${QUESTIONS[Index].text}`}
           </h1>
           <button
@@ -105,17 +105,15 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
             <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
           </button>
         </div>
-        <div className="flex justify-center w-full h-2/7 bg-white rounded-xl drop-shadow-quiz-box  my-[3vh]">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={QUESTIONS[Index].image} alt="sample_img" className="p-5" />
-        </div>
-        {/* 보기 */}
+
+        {/* 문제와 보기 */}
         <Answers
           // key={activeQuestionIndex}
           answers={QUESTIONS[Index].answers}
           onSelect={handleSelectAnswer}
           isSelected={answer.selectedAnswer}
           answerState={answer.answerState}
+          quizImage={QUESTIONS[Index].image}
         />
       </div>
     </>
