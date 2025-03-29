@@ -1,10 +1,14 @@
 package com.moyamo.be.dictionary.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.moyamo.be.common.ApiResponse;
+import com.moyamo.be.dictionary.dto.GestureDetailResponseDto;
 import com.moyamo.be.dictionary.dto.GestureListResponseDto;
 import com.moyamo.be.dictionary.dto.GestureListWithCountryDto;
 import com.moyamo.be.dictionary.entity.Country;
 import com.moyamo.be.dictionary.entity.CountryGesture;
+import com.moyamo.be.dictionary.entity.Gesture;
+import com.moyamo.be.dictionary.entity.GestureInfo;
 import com.moyamo.be.dictionary.repository.CountryGestureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,5 +40,37 @@ public class DictionaryService {
         );
 
         return new ApiResponse<>(200, responseData);
+    }
+
+    public ApiResponse<GestureDetailResponseDto> getGestureDetail(int gestureId, int countryId) {
+        CountryGesture cg = countryGestureRepository
+                .findByGesture_GestureIdAndCountry_CountryId(gestureId, countryId)
+                .orElseThrow(() -> new NotFoundException("제스처 데이터를 찾을 수 없습니다."));
+
+        Gesture gesture = cg.getGesture();
+        Country country = cg.getCountry();
+        GestureInfo info = cg.getGestureInfo();
+
+        int multiple = countryGestureRepository.countOtherCountriesByGestureId(gestureId);
+
+        GestureDetailResponseDto detail = new GestureDetailResponseDto(
+                country.getCountryId(),
+                country.getCountryName(),
+                country.getImageUrl(),
+
+                cg.getMeaningId(),
+                gesture.getGestureId(),
+                gesture.getImageUrl(),
+                info.getGestureTitle(),
+                info.getGestureMeaning(),
+                info.getGestureSituation(),
+                info.getGestureOthers(),
+                info.getGestureTmi(),
+                info.getIsPositive(),
+
+                multiple
+        );
+
+        return new ApiResponse<>(200, detail);
     }
 }
