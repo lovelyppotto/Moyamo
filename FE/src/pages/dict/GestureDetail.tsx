@@ -1,13 +1,13 @@
 import DictHeader from './DictHeader';
-import gestureExampleImg from '@/pages/dict/gesture_example.png';
+import { Country } from '@/types/dictionaryType';
 import '@/components/ui/scrollbar.css';
+import { useLocation } from 'react-router-dom';
 
 function GestureDetail() {
-  // 더미 데이터
-  const country = {
-    code: 'us',
-    name: '미국',
-  };
+  const location = useLocation();
+  const { country, gesture } = location.state || {};
+  console.log('country : ', country);
+  console.log('gesture : ', gesture);
 
   return (
     <div className="flex flex-col h-screen">
@@ -27,7 +27,7 @@ function GestureDetail() {
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               <img
-                src={gestureExampleImg}
+                src={gesture.image_url}
                 alt="테스트 이미지"
                 className="w-[35%] md:w-[60%] lg:w-[80%] h-auto max-h-[90%] object-contain"
               />

@@ -41,7 +41,7 @@ function DictHeader({
   // 국기 이미지 경로 생성
   const getFlagPath = (country?: Country) => {
     if (!country) return undefined;
-    return `/images/flags/${country.code}.png`;
+    return `/images/flags/${country.code}.webp`;
   };
 
   // 뒤로가기
