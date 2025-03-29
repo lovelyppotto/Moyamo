@@ -2,10 +2,13 @@ import DictHeader from './DictHeader';
 import { Country } from '@/types/dictionaryType';
 import '@/components/ui/scrollbar.css';
 import { useLocation } from 'react-router-dom';
+import { useCountryStyles } from '@/hooks/useCountryStyles';
 
 function GestureDetail() {
   const location = useLocation();
   const { country, gesture } = location.state || {};
+  const { getColorClass, getHoverClass, isDark } = useCountryStyles(); //useCountryStyles 훅 사용
+
   console.log('country : ', country);
   console.log('gesture : ', gesture);
 
@@ -108,8 +111,8 @@ function GestureDetail() {
       <div className="h-[10%] w-full bg-[#f5f5f5] dark:bg-gray-900 flex items-center justify-center mb-3 mt-3">
         <div className="w-full max-w-6xl px-6">
           <button
-            className="w-full max-w-[600px] mx-auto py-3 bg-kr-500 text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
-            hover:bg-kr-600 transition-colors block"
+            className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(country.code)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
+            hover:${getHoverClass} transition-colors block`}
           >
             연습하기
           </button>
