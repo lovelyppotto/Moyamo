@@ -2,22 +2,31 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { useCountryStyles } from '@/hooks/useCountryStyles';
 
 interface IconButtonProps {
   icon: IconDefinition; //FontAwesome 아이콘의 타입을 정의
   tooltipText: string;
   onClick?: () => void;
   className?: string;
+  selectedCountry: string;
 }
 
-function IconButton({ icon, tooltipText, onClick, className = '' }: IconButtonProps) {
+function IconButton({
+  icon,
+  tooltipText,
+  onClick,
+  className = '',
+  selectedCountry,
+}: IconButtonProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
   return (
     <div className="relative font-[NanumSquareRound]">
       {/* 아이콘 버튼 */}
       <button
-        className={`w-16 h-16 bg-kr-500 rounded-lg flex items-center justify-center text-white shadow-lg ${className}`}
+        className={`w-16 h-16 ${getColorClass(selectedCountry)} rounded-lg flex items-center justify-center text-white shadow-lg ${className}`}
         onClick={onClick}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}

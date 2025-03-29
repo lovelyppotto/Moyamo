@@ -1,5 +1,4 @@
 import DictHeader from './DictHeader';
-import { Country } from '@/types/dictionaryType';
 import '@/components/ui/scrollbar.css';
 import { useLocation } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
@@ -7,10 +6,7 @@ import { useCountryStyles } from '@/hooks/useCountryStyles';
 function GestureDetail() {
   const location = useLocation();
   const { country, gesture } = location.state || {};
-  const { getColorClass, getHoverClass, isDark } = useCountryStyles(); //useCountryStyles 훅 사용
-
-  console.log('country : ', country);
-  console.log('gesture : ', gesture);
+  const { getColorClass, getHoverClass} = useCountryStyles(); //useCountryStyles 훅 사용
 
   // '다른 나라에서의 의미' 데이터 파싱
   const parseGestureOthers = (getureOthers: string) => {

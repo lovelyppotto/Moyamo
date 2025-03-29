@@ -127,16 +127,19 @@ function Dictionary() {
                 icon={faHands}
                 tooltipText="제스처 연습"
                 onClick={handlePracticeButtonClick}
+                selectedCountry={selectedCountry.code}
               />
               <IconButton
                 icon={faMagnifyingGlassPlus}
                 tooltipText="자세히 보기"
                 onClick={handleDetailButtonClick}
+                selectedCountry={selectedCountry.code}
               />
               <IconButton
                 icon={faRectangleList}
                 tooltipText="나라별 비교 가이드"
                 onClick={handleGuideButtonClick}
+                selectedCountry={selectedCountry.code}
               />
             </div>
           </div>
