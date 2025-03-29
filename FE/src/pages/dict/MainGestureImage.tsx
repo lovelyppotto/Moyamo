@@ -1,4 +1,5 @@
 import { Gesture } from '@/types/dictionaryType';
+import { useCountryStyles } from '@/hooks/useCountryStyles';
 
 // 메인 이미지 컴포넌트 Props 타입
 type MainGestureImageProps = {

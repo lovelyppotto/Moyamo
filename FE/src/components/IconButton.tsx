@@ -26,14 +26,13 @@ function IconButton({
     <div className="relative font-[NanumSquareRound]">
       {/* 아이콘 버튼 */}
       <button
-        className={`w-16 h-16 ${getColorClass(selectedCountry)} rounded-lg flex items-center justify-center text-white shadow-lg ${className}`}
+        className={`w-16 h-16 ${getColorClass(selectedCountry)} ${getHoverClass(selectedCountry)} transition-colors rounded-lg flex items-center justify-center text-white shadow-lg ${className}`}
         onClick={onClick}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
         <FontAwesomeIcon icon={icon} size="xl" color="white" />
       </button>
-
       {/* 아이콘 호버했을 때 툴팁 */}
       {showTooltip && (
         <div className="absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-md px-4 py-2 flex items-center whitespace-nowrap z-10">
