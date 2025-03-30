@@ -1,24 +1,42 @@
 import { GestureResponse } from '../types/dictionaryType';
 import apiClient from '@/api/apiClient';
 
+// API 응답에서 받는 제스처 아이템 원본 형태
+type GestureApiItem = GestureResponse['data']['gestures'][0];
+
+// 변환된 카멜케이스 제스처 아이템 형태
+interface GestureItem {
+  meaningId: number;
+  gestureId: number;
+  imageUrl: string | null;
+  gestureTitle: string;
+}
+
+// 국가별 제스처 목록 반환 타입
+interface GesturesByCountry {
+  countryId: number;
+  countryName: string;
+  imageUrl: string | null;
+  gestures: GestureItem[];
+}
+
 /**
  * 국가별 제스처 목록 조회
  * @param countryId
  * @returns 제스처 목록
  */
-export const getGesturesByCountry = async (countryId: number) => {
+export const getGesturesByCountry = async (countryId: number): Promise<GesturesByCountry> => {
   const { data } = await apiClient.get<GestureResponse>('/api/gestures/', {
     params: {
       country_id: countryId,
     },
   });
 
-  // 카멜케이스로 변환
   return {
     countryId: data.data.country_id,
     countryName: data.data.country_name,
     imageUrl: data.data.image_url,
-    gestures: data.data.gestures.map((gesture) => ({
+    gestures: data.data.gestures.map((gesture: GestureApiItem) => ({
       meaningId: gesture.meaning_id,
       gestureId: gesture.gesture_id,
       imageUrl: gesture.image_url,
