@@ -7,7 +7,7 @@ import { getTips } from '@/services/tipService';
 export function useGestureSearch(gestureName: string, countryId?: number) {
   console.log('검색 쿼리 시작:', { gestureName, countryId, isEnabled: !!gestureName.trim() });
   return useQuery({
-    queryKey: ['gestureName', gestureName, 'countryId', countryId],
+    queryKey: ['gestureName', gestureName, countryId],
     queryFn: () => searchGestures(gestureName, countryId), // 서비스 함수 호출
     enabled: !!gestureName.trim(),
     staleTime: 5 * 60 * 1000,
