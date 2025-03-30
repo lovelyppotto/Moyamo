@@ -3,7 +3,11 @@ export interface Meanings {
   name: string;
   meaning: string;
 }
-
+export interface ApiMeaning {
+  country_id: number;
+  name: string;
+  meaning: string;
+}
 export interface GestureSearchResult {
   gestureId: number;
   gestureName: string;
@@ -19,10 +23,6 @@ export interface SearchResponse {
     gesture_id: number;
     gesture_name: string;
     gesture_image: string;
-    meanings: {
-      country_id: number;
-      name: string;
-      meaning: string;
-    }[];
+    meanings: ApiMeaning[];
   };
 }

@@ -1,6 +1,7 @@
 import { SearchResponse, GestureSearchResult } from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/pages/result/resultMock';
+import { ApiMeaning } from '@/types/searchGestureType';
 
 // 개발 환경 확인
 const isDevelopment = import.meta.env.MODE === 'development';
@@ -65,7 +66,7 @@ export const searchGestures = async (
       gestureId: data.data.gesture_id,
       gestureName: data.data.gesture_name,
       gestureImage: data.data.gesture_image,
-      meanings: data.data.meanings.map((m) => ({
+      meanings: data.data.meanings.map((m: ApiMeaning) => ({
         countryId: m.country_id,
         name: m.name,
         meaning: m.meaning,

@@ -12,7 +12,6 @@ const getCountryId = (country: string): number => {
   if (country === '전체') return 0;
 
   const countryMap: Record<string, number> = {
-    전체: 0,
     한국: 1,
     미국: 2,
     일본: 3,
@@ -49,7 +48,7 @@ function GestureSearchInput() {
     setSearchCountry,
   } = useSearchStore();
 
-  const { data: searchResults, isLoading, refetch } = useGestureSearch(
+  const { data: searchResults, refetch } = useGestureSearch(
     searchTerm,
     searchCountry === 0 ? undefined : searchCountry // 0이면 전체 검색
   );
