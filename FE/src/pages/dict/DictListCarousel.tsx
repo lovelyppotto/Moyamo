@@ -43,7 +43,7 @@ export function DictListCarousel({
   selectedCountry,
 }: DictListCarouselProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  const { getBorderColorClass } = useCountryStyles();
+  const { getHoverBorderClass } = useCountryStyles();
   // 왼쪽으로 스크롤
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -96,7 +96,7 @@ export function DictListCarousel({
               onClick={() => handleGestureClick(gesture.id)}
             >
               <Card
-                className={`flex flex-col cursor-pointer hover:${getBorderColorClass(selectedCountry)} transition-colors h-full`}
+                className={`flex flex-col cursor-pointer ${getHoverBorderClass(selectedCountry)} transition-colors h-full`}
               >
                 <CardContent className="flex flex-col items-center p-3 flex-grow">
                   <div className="flex items-center justify-center w-full flex-grow">

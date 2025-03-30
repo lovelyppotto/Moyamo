@@ -115,10 +115,48 @@ export function useCountryStyles() {
     }
   };
 
+  // 호버 테두리색 반환
+  const getHoverBorderClass = (countryCode?: string) => {
+    const code = countryCode?.toLowerCase() || 'kr';
+
+    if (isDark) {
+      switch (code) {
+        case 'kr':
+          return 'hover:border-d-kr-600';
+        case 'jp':
+          return 'hover:border-d-jp-300';
+        case 'us':
+          return 'hover:border-d-us-500';
+        case 'cn':
+          return 'hover:border-d-cn-400';
+        case 'it':
+          return 'hover:border-d-italy-600';
+        default:
+          return 'hover:border-d-kr-600';
+      }
+    }
+
+    switch (code) {
+      case 'kr':
+        return 'hover:border-kr-500';
+      case 'jp':
+        return 'hover:border-jp-500';
+      case 'us':
+        return 'hover:border-us-600';
+      case 'cn':
+        return 'hover:border-cn-500';
+      case 'it':
+        return 'hover:border-italy-600';
+      default:
+        return 'hover:border-kr-500';
+    }
+  };
+
   return {
     getColorClass,
     getHoverClass,
     getBorderColorClass,
+    getHoverBorderClass,
     isDark,
   };
 }
