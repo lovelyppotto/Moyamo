@@ -8,12 +8,12 @@ type MainGestureImageProps = {
 };
 
 function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
-  const { getColorClass } = useCountryStyles(); //useCountryStyles 훅 사용
+  const { getColorClass, getBorderColorClass } = useCountryStyles(); //useCountryStyles 훅 사용
   return (
     <div className="rounded-2xl font-[NanumSquareRound] w-full h-full max-w-lg mx-auto">
       {/* 이미지 */}
       <div
-        className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getColorClass(countryCode)} w-full h-[70%]`}
+        className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getBorderColorClass(countryCode)} w-full h-[70%]`}
       >
         {gesture.image_url ? (
           <img

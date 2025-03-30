@@ -4,6 +4,7 @@ export function useCountryStyles() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
+  // 배경색 반환
   const getColorClass = (countryCode?: string) => {
     const code = countryCode?.toLowerCase() || 'kr';
 
@@ -40,6 +41,7 @@ export function useCountryStyles() {
     }
   };
 
+  // 호버색 반환
   const getHoverClass = (countryCode?: string) => {
     const code = countryCode?.toLowerCase() || 'kr';
 
@@ -76,9 +78,47 @@ export function useCountryStyles() {
     }
   };
 
+  // 테두리색 반환
+  const getBorderColorClass = (countryCode?: string) => {
+    const code = countryCode?.toLowerCase() || 'kr';
+
+    if (isDark) {
+      switch (code) {
+        case 'kr':
+          return 'border-d-kr-600';
+        case 'jp':
+          return 'border-d-jp-300';
+        case 'us':
+          return 'border-d-us-500';
+        case 'cn':
+          return 'border-d-cn-400';
+        case 'it':
+          return 'border-d-italy-600';
+        default:
+          return 'border-d-kr-600';
+      }
+    }
+
+    switch (code) {
+      case 'kr':
+        return 'border-kr-500';
+      case 'jp':
+        return 'border-jp-500';
+      case 'us':
+        return 'border-us-600';
+      case 'cn':
+        return 'border-cn-500';
+      case 'it':
+        return 'border-italy-600';
+      default:
+        return 'border-kr-500';
+    }
+  };
+
   return {
     getColorClass,
     getHoverClass,
+    getBorderColorClass,
     isDark,
   };
 }
