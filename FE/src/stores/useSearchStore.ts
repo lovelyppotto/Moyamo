@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { GestureSearchResult } from '@/types/searchGestureType';
 import { searchGestures } from '@/services/searchService';
+// import { useGestureSearch } from '@/hooks/apiHooks';
 
 interface SearchState {
   // 검색 상태

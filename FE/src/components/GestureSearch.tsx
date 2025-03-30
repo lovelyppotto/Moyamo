@@ -11,6 +11,7 @@ const getCountryId = (country: string): number => {
   if (country === '전체') return 0;
 
   const countryMap: Record<string, number> = {
+    전체: 0,
     한국: 1,
     미국: 2,
     일본: 3,
@@ -59,7 +60,7 @@ function GestureSearchInput() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const gestureName = params.get('gesture_name') || '';
-    const countryParam = params.get('country');
+    const countryParam = params.get('country_id');
 
     // 숫자 ID로 변환 (문자열에서 숫자로)
     const countryId = countryParam ? parseInt(countryParam, 10) : 0;
@@ -85,7 +86,7 @@ function GestureSearchInput() {
     performSearch();
 
     // 검색 결과 페이지로 이동 (여기서 searchCountry는 숫자)
-    navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}&country=${searchCountry}`);
+    navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}&country_id=${searchCountry}`);
   };
 
   // 입력 변경 핸들러
