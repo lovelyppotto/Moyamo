@@ -65,21 +65,6 @@ const router = createBrowserRouter([
         path: 'quizcontent',
         element: <QuizContent />,
       },
-      {
-        // meaning 퀴즈(페이지 확인용)
-        path: 'meaningquiz',
-        element: <MeaningQuiz />,
-      },
-      {
-        // gesture 퀴즈(페이지 확인용)
-        path: 'gesturequiz',
-        element: <GestureQuiz />,
-      },
-      {
-        // ai 퀴즈(페이지 확인용)
-        path: 'aiquiz',
-        element: <AiQuiz />,
-      },
     ],
   },
 ]);
