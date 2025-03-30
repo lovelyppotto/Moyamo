@@ -15,7 +15,7 @@ public interface GestureSearchRepository extends JpaRepository<CountryGesture, I
             "JOIN FETCH cg.gesture g " +
             "JOIN FETCH cg.country c " +
             "JOIN FETCH cg.gestureInfo gi " +
-            "WHERE g.gestureLabel = :gestureName " +
+            "WHERE gi.gestureTitle = :gestureTitle " +
             "AND (:countryId = 0 OR c.countryId = :countryId)")
     List<CountryGesture> findByGestureNameAndCountryId(
             @Param("gestureName") String gestureName,
