@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Gesture } from '@/types/dictionaryType';
+import { useCountryStyles } from '@/hooks/useCountryStyles';
 
 // 카드 컴포넌트 prop 타입
 interface CardProps {
@@ -33,11 +34,16 @@ const CardContent = ({ children, className = '' }: CardContentProps) => {
 interface DictListCarouselProps {
   gestures?: Gesture[];
   onSelectGesture?: (gestureId: number) => void;
+  selectedCountry?: string;
 }
 
-export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCarouselProps) {
+export function DictListCarousel({
+  gestures = [],
+  onSelectGesture,
+  selectedCountry,
+}: DictListCarouselProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
-
+  const { getBorderColorClass } = useCountryStyles();
   // 왼쪽으로 스크롤
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -68,7 +74,7 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
         {/* 이전 버튼 */}
         <button
           onClick={scrollLeft}
-          className="absolute left-4 z-10 flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600"
+          className="absolute left-4 z-10 flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
         >
           <FontAwesomeIcon icon={faChevronLeft} />
         </button>
@@ -89,7 +95,9 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
               className="flex-shrink-0 sm:w-[33%] md:w-[33%] lg:w-[27%] xl:w-[27%] snap-start px-2 items-center"
               onClick={() => handleGestureClick(gesture.id)}
             >
-              <Card className="flex flex-col cursor-pointer hover:border-blue-400 transition-colors h-full">
+              <Card
+                className={`flex flex-col cursor-pointer hover:${getBorderColorClass(selectedCountry)} transition-colors h-full`}
+              >
                 <CardContent className="flex flex-col items-center p-3 flex-grow">
                   <div className="flex items-center justify-center w-full flex-grow">
                     {gesture.image_url ? (
@@ -118,7 +126,7 @@ export function DictListCarousel({ gestures = [], onSelectGesture }: DictListCar
         {/* 다음 버튼 */}
         <button
           onClick={scrollRight}
-          className="absolute right-4 z-10 flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full shadow-xl text-gray-600"
+          className="absolute right-4 z-10 flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full shadow-xl text-gray-600 cursor-pointer"
         >
           <FontAwesomeIcon icon={faChevronRight} />
         </button>

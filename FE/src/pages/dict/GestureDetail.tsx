@@ -6,11 +6,11 @@ import { useCountryStyles } from '@/hooks/useCountryStyles';
 function GestureDetail() {
   const location = useLocation();
   const { country, gesture } = location.state || {};
-  const { getColorClass, getHoverClass} = useCountryStyles(); //useCountryStyles 훅 사용
+  const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
   // '다른 나라에서의 의미' 데이터 파싱
   const parseGestureOthers = (getureOthers: string) => {
-    if (!gesture) return [];
+    if (!getureOthers) return [];
 
     const groups = getureOthers.split('/');
     return groups.map((group) => {
@@ -108,7 +108,7 @@ function GestureDetail() {
         <div className="w-full max-w-6xl px-6">
           <button
             className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(country.code)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
-            hover:${getHoverClass} transition-colors block`}
+            hover:${getHoverClass(country.code)} transition-colors block cursor-pointer`}
           >
             연습하기
           </button>

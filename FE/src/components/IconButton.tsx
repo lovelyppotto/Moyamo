@@ -26,7 +26,8 @@ function IconButton({
     <div className="relative font-[NanumSquareRound]">
       {/* 아이콘 버튼 */}
       <button
-        className={`w-16 h-16 ${getColorClass(selectedCountry)} ${getHoverClass(selectedCountry)} transition-colors rounded-lg flex items-center justify-center text-white shadow-lg ${className}`}
+        className={`w-16 h-16 ${getColorClass(selectedCountry)} ${getHoverClass(selectedCountry)} transition-colors rounded-lg flex items-center justify-center text-white shadow-lg 
+        cursor-pointer ${className}`}
         onClick={onClick}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}

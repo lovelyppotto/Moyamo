@@ -82,7 +82,7 @@ function DictHeader({
 
         {/* 국가 선택 드롭다운 표시*/}
         {showCountrySelector && selectedCountry && (
-          <div className="flex justify-center">
+          <div className="flex justify-center cursor-pointer">
             <DictCountrySelector
               selectedCountry={selectedCountry}
               onSelectCountry={handleCountrySelect}
@@ -94,7 +94,7 @@ function DictHeader({
       {/* 오른쪽 - 비교 가이드 버튼 있을 때 */}
       {showCompareGuide && (
         <button
-          className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors rounded-lg"
+          className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors rounded-lg cursor-pointer"
           onClick={handleGuideClick}
         >
           <FontAwesomeIcon icon={faRectangleList} className="mr-1.5" />

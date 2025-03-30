@@ -147,7 +147,11 @@ function Dictionary() {
 
         {/* 캐러셀 */}
         <div className="h-[22%] w-full flex items-center">
-          <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
+          <DictListCarousel
+            gestures={currentGestures}
+            onSelectGesture={handleSelectGesture}
+            selectedCountry={selectedCountry.code}
+          />
         </div>
       </div>
     </div>
