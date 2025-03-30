@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class TipResponseDto {
     private int tip_id;

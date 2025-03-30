@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class GestureListWithCountryDto {
     private int country_id;
