@@ -5,11 +5,12 @@ import apiClient from '@/api/apiClient';
 
 // 제스처 검색
 export function useGestureSearch(gestureName: string, countryId?: number) {
+  console.log('검색 쿼리 시작:', { gestureName, countryId, isEnabled: !!gestureName.trim() });
   return useQuery({
     queryKey: ['gestureName', gestureName, 'countryId', countryId],
     queryFn: () => searchGestures(gestureName, countryId), // 서비스 함수 호출
     enabled: !!gestureName.trim(),
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

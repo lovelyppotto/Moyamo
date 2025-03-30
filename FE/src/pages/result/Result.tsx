@@ -5,6 +5,7 @@ import { useTheme } from '@/components/theme-provider';
 import SearchResultsList from './SearchResultList';
 import { useSearchStore } from '../../stores/useSearchStore';
 import '@/components/ui/scrollbar.css';
+import { useGestureSearch } from '@/hooks/apiHooks';
 
 function Result() {
   const { theme } = useTheme();
@@ -13,31 +14,36 @@ function Result() {
 
   // Zustand 스토어에서 가져온 상태와 액션
   const {
+    searchTerm,
+    searchCountry,
     setSearchTerm,
     setSearchCountry,
-    searchResults,
-    performSearch: storePerformSearch,
   } = useSearchStore();
 
+  const { data: searchResults, isLoading, error, refetch } = useGestureSearch(
+    searchTerm,
+    searchCountry === 0 ? undefined : searchCountry
+  );
+  
   // URL에서 검색어와 국가 파라미터 추출
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('gesture_name') || '';
-
+    
     // country는 숫자 문자열로 오므로 숫자로 변환
-    const countryParam = queryParams.get('country');
+    const countryParam = queryParams.get('country_id');
     const country = countryParam ? parseInt(countryParam, 10) : 0; // 문자열을 숫자로 변환
-
+    
     // Zustand 스토어 상태 업데이트
     setSearchTerm(query);
     setSearchCountry(country); // 숫자로 변환된 값 전달
 
-    // 검색 수행 (Zustand 스토어의 함수 사용)
     if (query) {
-      storePerformSearch(query, country);
+      refetch();
     }
-  }, [location.search, setSearchTerm, setSearchCountry, storePerformSearch]);
-
+    
+  }, [location.search, setSearchTerm, setSearchCountry]);
+  
   // 제스처 상세 페이지로 이동
   const handleGestureClick = (gestureId: number) => {
     navigate(`/gesture/${gestureId}`);
@@ -77,7 +83,9 @@ function Result() {
           }}
         >
           <div>
-            <SearchResultsList results={searchResults} onResultClick={handleGestureClick} />
+            <SearchResultsList
+            results={searchResults || []}
+              onResultClick={handleGestureClick} />
           </div>
         </div>
       </div>

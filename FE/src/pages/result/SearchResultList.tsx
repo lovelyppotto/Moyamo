@@ -1,9 +1,9 @@
-import { ResultMockData } from './resultMock.ts';
+import { GestureSearchResult } from '@/types/searchGestureType.ts';
 import SearchResultItem from './SearchResultItem.tsx';
 
 
 interface SearchResultsListProps {
-  results: ResultMockData[];
+  results: GestureSearchResult[];
   onResultClick: (gestureId: number) => void;
 }
 
