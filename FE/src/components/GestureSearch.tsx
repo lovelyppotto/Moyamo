@@ -5,6 +5,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '../pages/home/dropdowns/BaseDropdown';
 import SearchCameraModal from './SearchCameraModal';
 import { useSearchStore } from '../stores/useSearchStore';
+import { useGestureSearch } from '@/hooks/apiHooks';
 
 // 국가 이름을 ID로 변환하는 함수
 const getCountryId = (country: string): number => {
@@ -40,15 +41,18 @@ function GestureSearchInput() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Zustand 스토어에서 가져온 상태와 액션
+  // Zustand 스토어에서 가져온 UI 상태
   const {
     searchTerm,
     setSearchTerm,
     searchCountry,
     setSearchCountry,
-    searchResults,
-    performSearch,
   } = useSearchStore();
+
+  const { data: searchResults, isLoading, refetch } = useGestureSearch(
+    searchTerm,
+    searchCountry === 0 ? undefined : searchCountry // 0이면 전체 검색
+  );
 
   // 로컬 상태 (드롭다운 표시 여부)
   const [showResults, setShowResults] = useState(false);
@@ -75,17 +79,17 @@ function GestureSearchInput() {
 
   // 검색 결과가 있을때 표시 여부
   useEffect(() => {
-    setShowResults(searchTerm !== '' && searchResults.length > 0);
+    setShowResults(searchTerm !== '' && !!searchResults && searchResults.length > 0);
   }, [searchResults, searchTerm]);
 
   // 검색 처리 함수
   const handleSearch = () => {
     if (!searchTerm.trim()) return;
-
-    // Zustand 스토어를 통해 검색 수행
-    performSearch();
-
-    // 검색 결과 페이지로 이동 (여기서 searchCountry는 숫자)
+  
+    // 쿼리 리패치
+    refetch();
+  
+    // 검색 결과 페이지로 이동
     navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}&country_id=${searchCountry}`);
   };
 
@@ -150,13 +154,14 @@ function GestureSearchInput() {
         </div>
       </div>
 
-      {showResults && searchResults.length === 0 && (
+      {/* 추후 엘라스틱서치 도입되면 ui적으로 사용할지 안사용할지 정하기 */}
+      {/* {searchTerm !== '' && !isLoading && (!searchResults || searchResults.length === 0) && (
         <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results">
           <div className="py-8 text-center text-gray-500 dark:text-d-txt-50/70">
             검색 결과가 없습니다.
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

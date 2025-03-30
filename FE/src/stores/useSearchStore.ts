@@ -1,65 +1,22 @@
+// stores/useSearchStore.ts
 import { create } from 'zustand';
-import { GestureSearchResult } from '@/types/searchGestureType';
-import { searchGestures } from '@/services/searchService';
-// import { useGestureSearch } from '@/hooks/apiHooks';
 
-interface SearchState {
-  // 검색 상태
+interface SearchUIState {
+  // UI 상태만 관리
   searchTerm: string;
-  searchCountry: number; 
-  searchResults: GestureSearchResult[];
-  isLoading: boolean;
-  error: Error | null;
-
+  searchCountry: number;
+  
   // 액션
   setSearchTerm: (term: string) => void;
   setSearchCountry: (country: number) => void;
-  performSearch: (term?: string, country?: number) => Promise<void>;
 }
 
-export const useSearchStore = create<SearchState>((set, get) => ({
+export const useSearchStore = create<SearchUIState>((set) => ({
   // 초기 상태
   searchTerm: '',
   searchCountry: 0,
-  searchResults: [],
-  isLoading: false,
-  error: null,
-
+  
   // 액션
   setSearchTerm: (term) => set({ searchTerm: term }),
-
   setSearchCountry: (country) => set({ searchCountry: country }),
-
-  performSearch: async (term?: string, country?: number) => {
-    const searchTerm = term !== undefined ? term : get().searchTerm;
-    const searchCountry = country !== undefined ? country : get().searchCountry;
-
-    // 검색어가 비어있으면 결과 비우기
-    if (!searchTerm.trim()) {
-      set({ searchResults: [], isLoading: false });
-      return;
-    }
-
-    set({ isLoading: true, error: null });
-
-    try {
-      // 국가 ID 가져오기 (문자열에서 숫자로 변환)
-      const countryId = searchCountry === 0 ? undefined : searchCountry;
-      
-      // 서비스 레이어 호출 (자동으로 목 데이터/API 선택)
-      const results = await searchGestures(searchTerm, countryId);
-      
-      // 결과가 배열인지 확인 처리
-      const searchResults = Array.isArray(results) ? results : [results];
-      
-      // 검색 결과 및 로딩 상태 업데이트
-      set({ searchResults, isLoading: false });
-    } catch (error) {
-      console.error('검색 오류:', error);
-      set({ 
-        error: error instanceof Error ? error : new Error('검색 중 오류가 발생했습니다.'),
-        isLoading: false 
-      });
-    }
-  },
 }));

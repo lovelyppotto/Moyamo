@@ -10,7 +10,7 @@ export function useGestureSearch(gestureName: string, countryId?: number) {
     queryKey: ['gestureName', gestureName, 'countryId', countryId],
     queryFn: () => searchGestures(gestureName, countryId), // 서비스 함수 호출
     enabled: !!gestureName.trim(),
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
