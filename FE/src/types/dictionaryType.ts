@@ -14,6 +14,22 @@ export type GestureResponse = {
   };
 };
 
+// 비교 가이드 API 응답
+export type GestureCompareResponse = {
+  status: number;
+  data: {
+    gesture_id: number;
+    gesture_title: string;
+    meanings: {
+      country_id: number;
+      country_name: string;
+      gesture_meaning: string;
+      gesture_situation: string;
+      is_positive: boolean;
+    }[];
+  };
+};
+
 // 국가 정보 타입
 export type Country = {
   code: string;
@@ -112,7 +128,8 @@ export const countryGestures: CountryGestures = {
         meaning_id: 1,
         gesture_meaning: '승리, 기념',
         gesture_situation: '미국에서 사진 찍을 때 사용하는 제스처',
-        gesture_others: '영국, 호주, 뉴질랜드, 아일랜드: 손등이 보이는 브이는 모욕의 의미/터키, 그리스: 손바닥이 상대를 향하는 브이는 모욕의 의미/인도: 화장실 가고싶다는 의미',
+        gesture_others:
+          '영국, 호주, 뉴질랜드, 아일랜드: 손등이 보이는 브이는 모욕의 의미/터키, 그리스: 손바닥이 상대를 향하는 브이는 모욕의 의미/인도: 화장실 가고싶다는 의미',
         gesture_tmi:
           '제2차 세계대전 당시 영국 총리였던 윈스턴 처칠이 브이 포즈로 사진을 찍으면서 유명해졌습니다./백년전쟁 때 프랑스군이 영국군을 포로로 잡고 검지와 중지를 잘랐기 때문에 영국군들이 아직 자신들의 손가락이 멀쩡하다고 프랑스군을 조롱하는 의미로 쓴 것이 유래라고 알려져 있습니다.',
         is_positive: true,
