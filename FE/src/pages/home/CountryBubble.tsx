@@ -1,10 +1,10 @@
-import { tipsMockData } from "./tipMock";
 import { 
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import { useTips } from "@/hooks/apiHooks";
 
  // 툴팁 위치 정보 타입
 interface TooltipPosition {
@@ -135,10 +135,13 @@ const countrySetup: CountryData[] = [
 ];
 
 function CountryBubble() {
+  const { data: tips } = useTips();
+
   const getTipContent = (countryId: number): string => {
-    const tip = tipsMockData.find(tip => tip.countryId === countryId);
-    return tip?.content || '제스처로 소통하며 새로운 문화를 경험해보세요!'
-  }
+    const tip = tips?.find(tip => tip.countryId === countryId);
+    return tip?.content || '제스처로 소통하며 새로운 문화를 경험해보세요!';
+  };
+
   return (
     <TooltipProvider>
       <div>

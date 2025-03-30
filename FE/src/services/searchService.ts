@@ -1,4 +1,4 @@
-import { SearchResponse, GestureSearchResult } from '@/types/searchGestureType';
+import { SearchResponse, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/pages/result/resultMock';
 
@@ -65,7 +65,7 @@ export const searchGestures = async (
       gestureId: data.data.gesture_id,
       gestureName: data.data.gesture_name,
       gestureImage: data.data.gesture_image,
-      meanings: data.data.meanings.map((m) => ({
+      meanings: data.data.meanings.map((m: ApiMeaning) => ({
         countryId: m.country_id,
         name: m.name,
         meaning: m.meaning,
