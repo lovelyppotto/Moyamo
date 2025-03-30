@@ -2,35 +2,36 @@
  * 섞인 답변의 목록을 출력하는 목적의 컴포넌트입니다.
  * 정답인 부분은 초록 색으로 바꾸기
  */
+//옳바른 제스처를 선택하는 컴포넌트입니다.
+//수정: img를 받아와서 답 칸에 적어야 합니다. -> 
 import React, { useRef } from 'react';
 
 interface Option {
   option_id: number;
-  option_meaning: string;
+  gesture_id: number;
+  gesture_image: string;
 }
 
 interface Answer {
   answer_id: number;
   correct_option_id: number;
-  correct_meaning: string;
+  correct_gesture_id: number;
 }
 
-interface AnswersProps {
+interface Answers2Props {
   options: Option[];
   answer: Answer;
   onSelect: (answer: number | null) => void;
   isSelected: number | null;
   answerState: string;
-  quizImage: string;
 }
 
-const Answers: React.FC<AnswersProps> = ({
+const Answers2: React.FC<Answers2Props> = ({
   options,
   answer,
   onSelect,
   isSelected,
   answerState,
-  quizImage,
 }) => {
   const shuffledAnswers = useRef<Option[] | null>(null);
 
@@ -86,61 +87,64 @@ const Answers: React.FC<AnswersProps> = ({
     return `${baseClass} ${colorClass}`;
   };
 
-  return (
-    <>
-      <div className="h-100 flex flex-row justify-around my-3">
-        {/* 문제 이미지 부분 */}
-        <div className=" bg-white w-[44%] h-full rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={quizImage} alt="sample_img" className="p-5" />
-        </div>
-        {/* 퀴즈 보기 부분 */}
-        <div className="w-[44%] h-full flex flex-col justify-between ">
-          {shuffledAnswers.current && (
-            <>
-              <button
-                type="button"
-                className={getCssClass(shuffledAnswers.current[0].option_id)}
-                disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![0].option_id)}
-              >
-                <p className="mr-5">①</p>
-                <p>{shuffledAnswers.current[0].option_meaning}</p>
-              </button>
-              <button
-                type="button"
-                className={getCssClass(shuffledAnswers.current[1].option_id)}
-                disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![1].option_id)}
-              >
-                <p className="mr-5">②</p>
-                <p>{shuffledAnswers.current[1].option_meaning}</p>
-              </button>
+  // 옵션이나 답변이 없는 경우 처리
+  if (!options.length || !answer) {
+    return null;
+  }
 
-              <button
-                type="button"
-                className={getCssClass(shuffledAnswers.current[2].option_id)}
-                disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![2].option_id)}
-              >
-                <p className="mr-5">③</p>
-                <p>{shuffledAnswers.current[2].option_meaning}</p>
-              </button>
-              <button
-                type="button"
-                className={getCssClass(shuffledAnswers.current[3].option_id)}
-                disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![3].option_id)}
-              >
-                <p className="mr-5">④</p>
-                <p>{shuffledAnswers.current[3].option_meaning}</p>
-              </button>
-            </>
-          )}
-        </div>
+  return (
+    <div>
+      <div className="flex justify-around mt-[3vh]">
+        {shuffledAnswers.current && (
+          <>
+            <button
+              type="button"
+              className={getCssClass(shuffledAnswers.current[0].option_id)}
+              disabled={answerState !== ''}
+              onClick={() => onSelect(shuffledAnswers.current![0].option_id)}
+            >
+              <p className="mr-5">①</p>
+              <img src={shuffledAnswers.current[0].gesture_image} alt="gesture_image" />
+            </button>
+            <button
+              type="button"
+              className={getCssClass(shuffledAnswers.current[1].option_id)}
+              disabled={answerState !== ''}
+              onClick={() => onSelect(shuffledAnswers.current![1].option_id)}
+            >
+              <p className="mr-5">②</p>
+              <img src={shuffledAnswers.current[1].gesture_image} alt="gesture_image" />
+            </button>
+          </>
+        )}
       </div>
-    </>
+
+      <div className="flex justify-around mt-[3vh]">
+        {shuffledAnswers.current && (
+          <>
+            <button
+              type="button"
+              className={getCssClass(shuffledAnswers.current[2].option_id)}
+              disabled={answerState !== ''}
+              onClick={() => onSelect(shuffledAnswers.current![2].option_id)}
+            >
+              <p className="mr-5">③</p>
+              <img src={shuffledAnswers.current[2].gesture_image} alt="gesture_image" />
+            </button>
+            <button
+              type="button"
+              className={getCssClass(shuffledAnswers.current[3].option_id)}
+              disabled={answerState !== ''}
+              onClick={() => onSelect(shuffledAnswers.current![3].option_id)}
+            >
+              <p className="mr-5">④</p>
+              <img src={shuffledAnswers.current[3].gesture_image} alt="gesture_image" />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
-export default Answers;
+export default Answers2;
