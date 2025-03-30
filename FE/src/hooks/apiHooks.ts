@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
 import { getGesturesByCountry } from '@/services/dictionaryService';
-import apiClient from '@/api/apiClient';
+import { getTips } from '@/services/tipService';
 
 // 제스처 검색
 export function useGestureSearch(gestureName: string, countryId?: number) {
@@ -14,14 +14,13 @@ export function useGestureSearch(gestureName: string, countryId?: number) {
   });
 }
 
-// 문화적 팁 가져오기(카멜케이스 변환 필요)
+// 문화적 팁 가져오기
 export function useTips() {
   return useQuery({
     queryKey: ['tips'],
-    queryFn: async () => {
-      const { data } = await apiClient.get('/tips');
-      return data;
-    },
+    queryFn: getTips,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 }
 

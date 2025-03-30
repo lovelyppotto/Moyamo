@@ -1,7 +1,6 @@
-import { SearchResponse, GestureSearchResult } from '@/types/searchGestureType';
+import { SearchResponse, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/pages/result/resultMock';
-import { ApiMeaning } from '@/types/searchGestureType';
 
 // 개발 환경 확인
 const isDevelopment = import.meta.env.MODE === 'development';

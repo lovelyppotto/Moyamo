@@ -1,8 +1,4 @@
-export interface TipData {
-  tipId: number;
-  countryId: number;
-  content: string;
-}
+import { TipData } from "@/types/tipType"
 
 export const tipsMockData: TipData[] = [
   {
