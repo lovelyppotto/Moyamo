@@ -1,25 +1,28 @@
 import Progress from './Progress.tsx';
 import Answers from './Answers.tsx';
+import Answers2 from './Answers2.tsx';
+import Answers3 from './Answers3.tsx';
 import PbNumber from './PbNumber.tsx';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useCallback } from 'react';
 import QUESTIONS from './questions.ts';
 import Animation from './Animation.tsx';
+
 interface ResultProps {
   Index: number;
-  onSelectAnswer: (answer: string) => void; // 추후 id로 바꿀 예정
+  onSelectAnswer: (answer: number | null) => void;
+}
+
+interface AnswerState {
+  selectedAnswer: number | null;
+  isCorrect: boolean | null;
+  answerState: string;
 }
 
 function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
-  interface AnswerState {
-    selectedAnswer: string | null;
-    isCorrect: boolean | null;
-    answerState: string;
-  }
-
   const [answer, setAnswer] = useState<AnswerState>({
-    selectedAnswer: '',
+    selectedAnswer: null,
     isCorrect: null,
     answerState: '',
   });
@@ -28,8 +31,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
   const [timer, setTimer] = useState(10000);
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
 
-  function handleSelectAnswer(answer: string) {
-    // 먼저 'answered' 상태로 설정
+  function handleSelectAnswer(answer: number | null) {
     setAnswer({
       selectedAnswer: answer,
       isCorrect: null,
@@ -37,7 +39,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
     });
     let newTimer = 10000; //시간의 기본 최대값
     let newProgressClass = '';
-    if (answer && answer.selectedAnswer) {
+    if (answer !== null) {
       newTimer = 1000;
     }
     if (answer && answer.isCorrect !== null) {
@@ -49,11 +51,10 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
-      const isCorrect = QUESTIONS[Index].answers[0] === answer;
-      // 'correct' 또는 'wrong' 상태로 업데이트
+      const isCorrect = answer === QUESTIONS[0].data[Index].answer.correct_option_id;
       setAnswer({
         selectedAnswer: answer,
-        isCorrect: isCorrect,
+        isCorrect,
         answerState: isCorrect ? 'correct' : 'wrong',
       });
       // 정답 여부에 따라 이미지 표시
@@ -95,7 +96,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
         />
         <div className="flex justify-between items-center mt-[3vh]">
           <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%]">
-            {`Q${Index + 1}. ${QUESTIONS[Index].text}`}
+            {`Q${Index + 1}. ${QUESTIONS[0].data[Index].question_text}`}
           </h1>
           <button
             className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 cursor-pointer "
@@ -105,16 +106,35 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
             <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
           </button>
         </div>
-
         {/* 문제와 보기 */}
-        <Answers
-          // key={activeQuestionIndex}
-          answers={QUESTIONS[Index].answers}
-          onSelect={handleSelectAnswer}
-          isSelected={answer.selectedAnswer}
-          answerState={answer.answerState}
-          quizImage={QUESTIONS[Index].image}
-        />
+        {QUESTIONS[0].data[Index].question_type === 'MEANING' && (
+          <Answers
+            options={QUESTIONS[0].data[Index].options}
+            answer={QUESTIONS[0].data[Index].answer}
+            onSelect={handleSelectAnswer}
+            isSelected={answer.selectedAnswer}
+            answerState={answer.answerState}
+            quizImage={QUESTIONS[0].data[Index].question_image}
+          />
+        )}
+        {QUESTIONS[0].data[Index].question_type === 'GESTURE' && (
+          <Answers2
+            options={QUESTIONS[0].data[Index].options}
+            answer={QUESTIONS[0].data[Index].answer}
+            onSelect={handleSelectAnswer}
+            isSelected={answer.selectedAnswer}
+            answerState={answer.answerState}
+          />
+        )}
+        {QUESTIONS[0].data[Index].question_type === 'CAMERA' && (
+          <Answers3
+            options={QUESTIONS[0].data[Index].options}
+            answer={QUESTIONS[0].data[Index].answer}
+            onSelect={handleSelectAnswer}
+            isSelected={answer.selectedAnswer}
+            answerState={answer.answerState}
+          />
+        )}
       </div>
     </>
   );

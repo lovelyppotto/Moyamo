@@ -2,7 +2,12 @@ import { faHouse, faBackward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import QUESTIONS from './questions.ts';
-function QuizResult({ userAnswers }) {
+
+interface QuizResultProps {
+  userAnswers: (number | null)[];
+}
+
+function QuizResult({ userAnswers }: QuizResultProps): JSX.Element {
   const navigate = useNavigate();
   const handleQuiz = () => {
     navigate('/quiz');
@@ -10,10 +15,12 @@ function QuizResult({ userAnswers }) {
   const handleHome = () => {
     navigate('/');
   };
+
   const isCorrectAnswers = userAnswers.filter(
-    (answer, index) => answer === QUESTIONS[index].answers[0]
+    (answer, index) => answer === QUESTIONS[0].data[index].answer.correct_option_id
   );
   const isCorrectNumber = isCorrectAnswers.length;
+
   let starImage = '/images/star0.png';
   if (isCorrectNumber === 1) {
     starImage = '/images/star1.png';
@@ -26,6 +33,7 @@ function QuizResult({ userAnswers }) {
   } else if (isCorrectNumber === 5) {
     starImage = '/images/star5.png';
   }
+
   return (
     <>
       <div className="h-screen w-full overflow-hidden  flex flex-col justify-center  items-center bg-black/80 z-20 absolute">
