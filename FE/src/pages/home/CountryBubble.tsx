@@ -1,4 +1,3 @@
-import { tipsMockData } from "./tipMock";
 import { 
   Tooltip,
   TooltipContent,
