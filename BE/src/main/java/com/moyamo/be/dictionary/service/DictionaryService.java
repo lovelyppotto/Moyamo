@@ -2,9 +2,7 @@ package com.moyamo.be.dictionary.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.moyamo.be.common.ApiResponse;
-import com.moyamo.be.dictionary.dto.GestureDetailResponseDto;
-import com.moyamo.be.dictionary.dto.GestureListResponseDto;
-import com.moyamo.be.dictionary.dto.GestureListWithCountryDto;
+import com.moyamo.be.dictionary.dto.*;
 import com.moyamo.be.dictionary.entity.Country;
 import com.moyamo.be.dictionary.entity.CountryGesture;
 import com.moyamo.be.dictionary.entity.Gesture;
@@ -13,7 +11,9 @@ import com.moyamo.be.dictionary.repository.CountryGestureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,5 +72,46 @@ public class DictionaryService {
         );
 
         return new ApiResponse<>(200, detail);
+    }
+
+    public ApiResponse<CountryGestureResponseDto> getGestureCompare(int gestureId) {
+        List<CountryGesture> list = countryGestureRepository.findByGesture_GestureId(gestureId);
+        if(list.isEmpty()){
+            throw new NotFoundException("gesture_id에 대한 정보 없음 " + gestureId);
+        }
+
+        Map<String, List<CountryGesture>> grouped = list.stream()
+                .collect(Collectors.groupingBy(cg ->
+                        cg.getGestureInfo().getGestureMeaning() + "|" +
+                                cg.getGestureInfo().getGestureSituation() + "|" +
+                                cg.getGestureInfo().getIsPositive()
+                ));
+
+        List<GestureMeaningDto> meanings = new ArrayList<>();
+        for (Map.Entry<String, List<CountryGesture>> entry : grouped.entrySet()) {
+            List<CountryGesture> groupList = entry.getValue();
+
+            CountryGesture first = groupList.get(0);
+            String gestureMeaning = first.getGestureInfo().getGestureMeaning();
+            String gestureSituation = first.getGestureInfo().getGestureSituation();
+            boolean isPositive = first.getGestureInfo().getIsPositive();
+
+            String countryNames = groupList.stream()
+                    .map(cg -> cg.getCountry().getCountryName())
+                    .distinct()
+                    .collect(Collectors.joining(","));
+
+            String countryIds = groupList.stream()
+                    .map(cg -> String.valueOf(cg.getCountry().getCountryId()))
+                    .distinct()
+                    .collect(Collectors.joining(","));
+
+            meanings.add(new GestureMeaningDto(countryIds, countryNames, gestureMeaning, gestureSituation, isPositive));
+        }
+
+        CountryGestureResponseDto responseDto =
+                new CountryGestureResponseDto(gestureId, meanings);
+
+        return new ApiResponse<>(200, responseDto);
     }
 }

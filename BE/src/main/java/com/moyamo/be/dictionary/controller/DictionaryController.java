@@ -1,6 +1,7 @@
 package com.moyamo.be.dictionary.controller;
 
 import com.moyamo.be.common.ApiResponse;
+import com.moyamo.be.dictionary.dto.CountryGestureResponseDto;
 import com.moyamo.be.dictionary.dto.GestureDetailResponseDto;
 import com.moyamo.be.dictionary.dto.GestureListResponseDto;
 import com.moyamo.be.dictionary.dto.GestureListWithCountryDto;
@@ -32,5 +33,10 @@ public class DictionaryController {
     @GetMapping("/detail")
     public ApiResponse<GestureDetailResponseDto> getGestureDetail(@RequestParam("gesture_id") int gestureId, @RequestParam("country_id") int countryId) {
         return dictionaryService.getGestureDetail(gestureId, countryId);
+    }
+
+    @GetMapping("/compare")
+    public ApiResponse<CountryGestureResponseDto> getGestureCompare(@RequestParam("gesture_id") int gestureId) {
+        return dictionaryService.getGestureCompare(gestureId);
     }
 }
