@@ -6,7 +6,7 @@ import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './DictHeader';
-import { Country, Gesture } from '@/types/dictionaryType';
+import { Country, countryGestures } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
 
 function Dictionary() {
@@ -35,18 +35,25 @@ function Dictionary() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
-  const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
+  // const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
+  const currentGestures = countryGestures[selectedCountry.id]?.gestures || [];
 
   // API에서 제스처 데이터 가져오기
+  // useEffect(() => {
+  //   if (gestureData && gestureData.gestures && gestureData.gestures.length > 0) {
+  //     // 국가 변경되면 첫번째 제스처를 선택
+  //     setSelectedGesture(gestureData.gestures[0].id);
+  //   }
+  // }, [gestureData]);
   useEffect(() => {
-    if (gestureData && gestureData.gestures && gestureData.gestures.length > 0) {
+    if (currentGestures.length > 0) {
       // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(gestureData.gestures[0].id);
+      setSelectedGesture(currentGestures[0].id);
     }
-  }, [gestureData]);
+  }, [selectedCountry, currentGestures]);
 
   // 현재 선택한 국가에 해당하는 제스처 목록
-  const currentGestures = gestureData?.gestures || [];
+  // const currentGestures = gestureData?.gestures || [];
 
   // 현재 선택된 제스처
   const currentGesture =
@@ -79,7 +86,12 @@ function Dictionary() {
 
   // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
-    navigate('/dictionary/detail');
+    navigate('/dictionary/detail', {
+      state: {
+        country: selectedCountry,
+        gesture: currentGesture,
+      },
+    });
   };
 
   // 비교 가이드로 이동
@@ -115,16 +127,19 @@ function Dictionary() {
                 icon={faHands}
                 tooltipText="제스처 연습"
                 onClick={handlePracticeButtonClick}
+                selectedCountry={selectedCountry.code}
               />
               <IconButton
                 icon={faMagnifyingGlassPlus}
                 tooltipText="자세히 보기"
                 onClick={handleDetailButtonClick}
+                selectedCountry={selectedCountry.code}
               />
               <IconButton
                 icon={faRectangleList}
                 tooltipText="나라별 비교 가이드"
                 onClick={handleGuideButtonClick}
+                selectedCountry={selectedCountry.code}
               />
             </div>
           </div>
@@ -132,7 +147,11 @@ function Dictionary() {
 
         {/* 캐러셀 */}
         <div className="h-[22%] w-full flex items-center">
-          <DictListCarousel gestures={currentGestures} onSelectGesture={handleSelectGesture} />
+          <DictListCarousel
+            gestures={currentGestures}
+            onSelectGesture={handleSelectGesture}
+            selectedCountry={selectedCountry.code}
+          />
         </div>
       </div>
     </div>
