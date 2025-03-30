@@ -8,10 +8,13 @@ type MainGestureImageProps = {
 };
 
 function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
+  const { getColorClass } = useCountryStyles(); //useCountryStyles 훅 사용
   return (
     <div className="rounded-2xl font-[NanumSquareRound] w-full h-full max-w-lg mx-auto">
       {/* 이미지 */}
-      <div className="bg-white rounded-t-2xl flex items-center justify-center border-4 border-kr-500 w-full h-[70%]">
+      <div
+        className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getColorClass(countryCode)} w-full h-[70%]`}
+      >
         {gesture.image_url ? (
           <img
             src={gesture.image_url}
@@ -27,7 +30,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
 
       {/* 타이틀 */}
       <div
-        className={`bg-${countryCode}-500 py-2 px-4 h-[15%] bg-kr-500 text-white text-center rounded-b-2xl flex items-center justify-center`}
+        className={`bg-${countryCode}-500 py-2 px-4 h-[15%] ${getColorClass(countryCode)} text-white text-center rounded-b-2xl flex items-center justify-center`}
       >
         <h2 className="text-lg md:text-xl font-bold">{gesture.title}</h2>
       </div>
