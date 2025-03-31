@@ -3,6 +3,7 @@ package com.moyamo.be.tip.controller;
 import com.moyamo.be.common.ApiResponse;
 import com.moyamo.be.tip.dto.TipResponseDto;
 import com.moyamo.be.tip.service.TipService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ public class TipController {
         this.tipService = tipService;
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping
     public ApiResponse<List<TipResponseDto>> getTip() {
         return tipService.getTips();
