@@ -1,4 +1,5 @@
 import { GestureSearchResult } from "@/types/searchGestureType";
+import { getFlagImage } from "@/utils/imageUtils";
 
 export const searchResultMock: GestureSearchResult[] =[
   {
@@ -7,12 +8,13 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 1,
-        name: "대한민국", 
+        imageUrl: getFlagImage("kr"),
+        countryName: "대한민국", 
         meaning: "손가락으로 만드는 V자 모양의 제스처. '승리'를 뜻하며 사진을 찍을 때 많이 사용한다."
       },
       {
         countryId: 2,
-        name: "미국", 
+        countryName: "미국", 
         meaning: "손가락으로 만드는 V자 모양의 제스처. '승리'를 뜻하며 사진을 찍을 때 많이 사용한다."
       },
     ],
@@ -24,7 +26,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 2,
-        name: "미국",
+        imageUrl: getFlagImage("us"),
+        countryName: "미국",
         meaning: "중지와 검지를 꼬는 제스처. 악과 불운이 사라진다는 미신에서 시작되었으며 'Good Luck'의 의미를 가진다."
       },
     ],
@@ -36,7 +39,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 3,
-        name: "일본",
+        imageUrl: getFlagImage("jp"),
+        countryName: "일본",
         meaning: "검지로 자신의 얼굴(보통 코)을 가리키며 제스처를 취한 '본인'을 뜻한다."
       },
     ],
@@ -48,7 +52,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 1,
-        name: "대한민국",
+        imageUrl: getFlagImage("kr"),
+        countryName: "대한민국",
         meaning: "엄지와 검지를 이용해 하트를 만든다."
       },
     ],
@@ -60,7 +65,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 2,
-        name: "미국",
+        imageUrl: getFlagImage("us"),
+        countryName: "미국",
         meaning: "엄지와 검지를 이용해 하트를 만든다."
       },
     ],
@@ -72,7 +78,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 3,
-        name: "일본",
+        imageUrl: getFlagImage("jp"),
+        countryName: "일본",
         meaning: "엄지와 검지를 이용해 하트를 만든다."
       },
     ],
@@ -84,7 +91,8 @@ export const searchResultMock: GestureSearchResult[] =[
     meanings: [
       {
         countryId: 4,
-        name: "중국",
+        imageUrl: getFlagImage("cn"),
+        countryName: "중국",
         meaning: "엄지와 검지를 이용해 하트를 만든다."
       },
     ],

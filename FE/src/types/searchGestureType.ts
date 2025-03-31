@@ -1,11 +1,13 @@
 export interface Meanings {
   countryId: number;
-  name: string;
+  countryName: string;
+  imageUrl?: string;
   meaning: string;
 }
 export interface ApiMeaning {
   country_id: number;
-  name: string;
+  image_url?: string;
+  country_name: string;
   meaning: string;
 }
 export interface GestureSearchResult {

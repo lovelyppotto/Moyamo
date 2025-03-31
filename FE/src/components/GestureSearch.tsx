@@ -9,9 +9,8 @@ import { useGestureSearch } from '@/hooks/apiHooks';
 
 // 국가 이름을 ID로 변환하는 함수
 const getCountryId = (country: string): number => {
-  if (country === '전체') return 0;
-
   const countryMap: Record<string, number> = {
+    전체: 0,
     한국: 1,
     미국: 2,
     일본: 3,
@@ -50,7 +49,7 @@ function GestureSearchInput() {
 
   const { data: searchResults, refetch } = useGestureSearch(
     searchTerm,
-    searchCountry === 0 ? undefined : searchCountry // 0이면 전체 검색
+    searchCountry
   );
 
   // 로컬 상태 (드롭다운 표시 여부)
@@ -89,7 +88,7 @@ function GestureSearchInput() {
     refetch();
   
     // 검색 결과 페이지로 이동
-    navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}&country_id=${searchCountry}`);
+    navigate(`/search?gesture_name=${encodeURIComponent(searchTerm)}${searchCountry !== 0 ? `&country_id=${searchCountry}` : ''}`);
   };
 
   // 입력 변경 핸들러

@@ -53,7 +53,7 @@ export const searchGestures = async (
   // 실제 API 호출
   console.log('[프로덕션 환경] 실제 API 호출 중...');
   try {
-    const { data } = await apiClient.get<SearchResponse>('/api/search/gestures', {
+    const { data } = await apiClient.get<SearchResponse>('/api/search', {
       params: {
         gesture_name: gestureName,
         country_id: countryId,
@@ -67,19 +67,25 @@ export const searchGestures = async (
       gestureImage: data.data.gesture_image,
       meanings: data.data.meanings.map((m: ApiMeaning) => ({
         countryId: m.country_id,
-        name: m.name,
+        imageUrl: m.image_url,
+        countryName: m.country_name,
         meaning: m.meaning,
       })),
     };
-
-    // 항상 배열로 반환
-    return [result];
+    return [result]; // 배열로 반환
   } catch (error) {
     console.error('API 호출 실패, 목 데이터로 대체:', error);
     // API 호출 실패 시 목 데이터로 대체
     return getMockSearchResults(gestureName, countryId);
   }
 };
+
+// 제스처 상세 정보 조회 API
+// export const getGestureDetail = async (
+//   gestureId: number,
+//   countryId?: number,
+// ): Promise<GestureM
+
 
 // 목 데이터와 API 사용 모드 전환 함수 (개발 편의용)
 export const toggleMockDataMode = (useMock: boolean) => {
