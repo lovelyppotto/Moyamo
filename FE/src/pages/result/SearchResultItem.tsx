@@ -69,7 +69,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
                       <img
                         src={meaning.imageUrl}
                         alt={meaning.countryName}
-                        className={`w-10 h-6 object-cover drop-shadow-nation hover:scale-110 transition-transform cursor-pointer
+                        className={`w-14 h-8 object-cover drop-shadow-nation hover:scale-110 transition-transform cursor-pointer
                           ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                         onClick={(e) => handleFlagClick(e, meaning.countryId)}
                         title={`${meaning.countryName}의 의미: ${meaning.meaning}`}

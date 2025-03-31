@@ -9,6 +9,7 @@ interface SearchUIState {
   // 액션
   setSearchTerm: (term: string) => void;
   setSearchCountry: (country: number) => void;
+  resetSearch: () => void;
 }
 
 export const useSearchStore = create<SearchUIState>((set) => ({
@@ -19,4 +20,5 @@ export const useSearchStore = create<SearchUIState>((set) => ({
   // 액션
   setSearchTerm: (term) => set({ searchTerm: term }),
   setSearchCountry: (country) => set({ searchCountry: country }),
+  resetSearch: () => set({ searchTerm: '', searchCountry: 0 }),
 }));
