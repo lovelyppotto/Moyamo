@@ -1,3 +1,5 @@
+def shouldBuild = false
+
 pipeline {
     agent any
 
@@ -26,31 +28,32 @@ pipeline {
             steps {
                 script {
                     def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
-                    if (!changes.readLines().any { it.startsWith("AI/") }) {
-                      echo "AI 디렉토리 변경 없음! 빌드 중단"
-                      currentBuild.result = 'SUCCESS'
-                      return
+                    if (changes.readLines().any { it.startsWith("AI/") }) {
+                        echo "AI 디렉토리 변경 감지됨!"
+                        shouldBuild = true
                     } else {
-                    echo "AI 디렉토리 변경 감지됨! 계속 진행"
+                        echo "AI 디렉토리 변경 없음! 이후 단계 스킵"
+                        shouldBuild = false
                     }
                 }
             }
         }
 
         stage('Build & Push All Services') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     def services = ['static-gesture', 'dynamic-gesture', 'complex-gesture']
 
                     for (service in services) {
-                        dir(service) {
+                        dir("AI/${service}") { 
                             def image = "${DOCKERHUB_USER}/${DOCKER_REPO}-${service}:${DOCKER_TAG}"
-
                             sh """
                                 echo "Building ${image}..."
                                 docker build -t ${image} .
                             """
-
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
                                 docker.image(image).push()
                             }
@@ -61,6 +64,9 @@ pipeline {
         }
 
         stage('Deploy to EC2 with Docker Compose') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     withCredentials([
@@ -69,7 +75,7 @@ pipeline {
                         sshagent(credentials: [SSH_CREDENTIAL]) {
                             sh """
                                 echo "docker-compose.yml 복사 중..."
-                                scp -o StrictHostKeyChecking=no ${LOCAL_COMPOSE_PATH} ${SSH_USER}@${EC2_IP}:${REMOTE_DIR}/docker-compose.yml
+                                scp -o StrictHostKeyChecking=no AI/${LOCAL_COMPOSE_PATH} ${SSH_USER}@${EC2_IP}:${REMOTE_DIR}/docker-compose.yml
 
                                 echo "EC2에서 서비스 재배포 중..."
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
@@ -86,6 +92,9 @@ pipeline {
         }
 
         stage('Notify Success') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
