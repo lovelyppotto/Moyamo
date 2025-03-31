@@ -92,10 +92,10 @@ function Dictionary() {
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    navigate('/dictionary/guide', {
-      state: {
-        gesture: currentGesture,
-      },
+    if (!currentGesture) return;
+
+    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`, {
+      replace: true,
     });
   };
 
