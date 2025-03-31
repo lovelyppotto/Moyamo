@@ -6,7 +6,7 @@ export default [
         question_id: 1,
         question_text: '이 제스처의 의미는?', 
         question_type: 'MEANING',
-        question_image: 'https://example.com/gesture5.png', //추가
+        question_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb', //추가
         options: [
           { option_id: 101, option_meaning: '승리' },
           { option_id: 102, option_meaning: '평화' },
@@ -35,7 +35,7 @@ export default [
         answer: {
           answer_id: 3,
           correct_gesture_id: 7,
-          correct_gesture_image: 'https://example.com/gesture7.png',
+          correct_gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb',
           correct_gesture_name: 'finger_heart',
           
         },
@@ -45,10 +45,10 @@ export default [
         question_text: '이 상황에서 적절한 제스처는?',
         question_type: 'GESTURE',
         options: [
-          { option_id: 199, gesture_id: 3, gesture_image: 'https://example.com/gesture5.png' },
-          { option_id: 200, gesture_id: 4, gesture_image: 'https://example.com/gesture6.png' },
-          { option_id: 201, gesture_id: 5, gesture_image: 'https://example.com/gesture5.png' },
-          { option_id: 202, gesture_id: 6, gesture_image: 'https://example.com/gesture6.png' },
+          { option_id: 199, gesture_id: 3, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb'},
+          { option_id: 200, gesture_id: 4, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
+          { option_id: 201, gesture_id: 5, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
+          { option_id: 202, gesture_id: 6, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
         ],
         answer: { answer_id: 4, correct_option_id: 201, correct_gesture_id: 5 },
       },
@@ -56,7 +56,7 @@ export default [
         question_id: 5,
         question_text: '이 제스처의 의미는?',
         question_type: 'MEANING',
-        question_image: 'https://example.com/gesture5.png', //추가
+        question_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb', //추가
         options: [
           { option_id: 101, option_meaning: '승리' },
           { option_id: 102, option_meaning: '평화' },

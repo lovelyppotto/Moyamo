@@ -150,8 +150,9 @@
   --color-d-txt-50: #eaeaea;
 
   /* quiz mode */
-  --color-correct-300: #03ff18;
-  --color-wrong-300: #ff0303;
+  --color-correct-300: #00b60f;
+  /* --color-wrong-300: #ff4736; */
+  --color-wrong-300: gray;
   --color-answered-300: #5151cf;
   --color-unselected-300: #ffffff;
 

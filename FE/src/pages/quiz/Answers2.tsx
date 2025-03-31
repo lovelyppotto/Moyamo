@@ -45,7 +45,7 @@ const Answers2: React.FC<Answers2Props> = ({
    */
   const getCssClass = (optionId: number): string => {
     const baseClass =
-      'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
+      'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] mx-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
 
     // 현재 답변이 사용자가 선택한 답변인지 확인
     const isThisAnswerSelected = optionId === isSelected;
@@ -93,8 +93,14 @@ const Answers2: React.FC<Answers2Props> = ({
   }
 
   return (
-    <div>
-      <div className="flex justify-around mt-[3vh]">
+  
+      <div className="h-screen flex flex-col ">
+        {/* 문제 이미지 부분 */}
+        <div className=" bg-white w-full h-1/5 rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
+          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
+          <p className='sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] '>~~~한 상황에서 주로 사용하는 표현</p>
+        </div>
+      <div className="flex justify-between mt-[3vh]">
         {shuffledAnswers.current && (
           <>
             <button
@@ -119,7 +125,7 @@ const Answers2: React.FC<Answers2Props> = ({
         )}
       </div>
 
-      <div className="flex justify-around mt-[3vh]">
+      <div className="flex justify-between mt-[3vh]">
         {shuffledAnswers.current && (
           <>
             <button
