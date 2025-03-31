@@ -18,7 +18,6 @@ function GestureDetail() {
   } = useGestureDetail(gesture?.gestureId, country?.id);
 
   const gestureData = gestureDetailData || gesture;
-  console.log(gestureData);
 
   // 로딩 상태 확인
   if (isLoading) {
@@ -128,7 +127,7 @@ function GestureDetail() {
     navigate('/dictionary/practice', {
       state: {
         country: country,
-        gesture: gestureData, // 이거 gesture보낼지 gestureData 보낼지 논의 필요
+        gesture: gesture, // 이거 gesture보낼지 gestureData 보낼지 논의 필요
       },
     });
   };
@@ -176,7 +175,7 @@ function GestureDetail() {
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-              <ul className="text-lg space-y-3">
+                <ul className="text-lg space-y-3">
                   {parsedSitudationData.map((item, index) => (
                     <li key={index}>• {item}</li>
                   ))}
