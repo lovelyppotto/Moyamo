@@ -1,8 +1,8 @@
-import { TipData, TipResponse } from "@/types/tipType";
+import { TipData, TipResponse, ApiResponse } from "@/types/tipType";
 import apiClient from "@/api/apiClient";
 import { tipsMockData } from "@/pages/home/tipMock";
 
-const isDevelopment = import.meta.env.MODE === 'develop';
+const isDevelopment = import.meta.env.MODE === 'development';
 
 const useMockData = () => {
   try {
@@ -22,10 +22,10 @@ const getMockTips = (): Promise<TipData[]> => {
 
 const fetchTips = async (): Promise<TipData[]> => {
   try {
-    const response = await apiClient.get<TipResponse[]>('/api/tips');
+    const response = await apiClient.get<ApiResponse<TipResponse>>('/api/tips');
     
     // 백엔드 데이터를 프론트엔드 형식으로 변환 (스네이크케이스 -> 카멜케이스)
-    return response.data.map((item) => ({
+    return response.data.data.map((item) => ({
       tipId: item.tip_id,
       countryId: item.country_id,
       content: item.content,

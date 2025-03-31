@@ -9,3 +9,8 @@ export interface TipResponse {
   country_id: number;
   content: string;
 }
+
+export interface ApiResponse<T> {
+  status: number;
+  data: T[];
+}
