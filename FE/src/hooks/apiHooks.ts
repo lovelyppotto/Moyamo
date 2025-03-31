@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
-import { getGesturesByCountry } from '@/services/dictionaryService';
+import { getGesturesByCountry, getGestureDetail } from '@/services/dictionaryService';
 import { getTips } from '@/services/tipService';
 
 // 제스처 검색
@@ -32,19 +32,23 @@ export function useGesturesByCountry(countryId?: number) {
     queryFn: async ({ queryKey }) => {
       const [_, id] = queryKey;
       const response = await getGesturesByCountry(id as number);
-
-      // API 응답을 Gesture 타입으로 변환
-      return {
-        ...response,
-        gestures: response.gestures.map((g) => ({
-          id: g.gestureId,
-          title: g.gestureTitle,
-          image_url: g.imageUrl,
-          meaning_id: g.meaningId,
-        })),
-      };
+      return response;
     },
     enabled: !!countryId,
+    staleTime: 0,
+  });
+}
+
+// 제스처 상세정보 가져오기
+export function useGestureDetail(gestureId?: number, countryId?: number) {
+  return useQuery({
+    queryKey: ['gestureDetail', gestureId, countryId],
+    queryFn: async ({ queryKey }) => {
+      const [_, gestureIdParam, countryIdParam] = queryKey;
+      const response = await getGestureDetail(gestureIdParam as number, countryIdParam as number);
+      return response;
+    },
+    enabled: !!gestureId && !!countryId,
     staleTime: 0,
   });
 }
