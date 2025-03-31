@@ -8,6 +8,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class CountryGestureResponseDto {
-    private int gestureId;
+    private int gesture_id;
+    private String image_url;
+
     private List<GestureMeaningDto> meanings;
 }
