@@ -21,7 +21,7 @@ pipeline {
         stage('Check BE Directory Changes') {
             steps {
                 script {
-                    def changes = sh(script: "git diff --name-only origin/be/develop HEAD", returnStdout: true).trim()
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
                     if (!changes.readLines().any { it.startsWith("BE/") }) {
                         echo "BE 디렉토리 변경 없음! 빌드 중단"
                         currentBuild.result = 'SUCCESS'
