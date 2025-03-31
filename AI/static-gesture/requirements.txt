@@ -1,11 +1,6 @@
+
 fastapi==0.110.0
-uvicorn==0.29.0
+uvicorn[standard]
 
 numpy==1.26.4
 tensorflow==2.19.0
-
-# CORS 허용
-python-multipart==0.0.9
-
-# CORS 미들웨어용
-starlette==0.36.3
