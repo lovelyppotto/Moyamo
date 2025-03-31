@@ -6,7 +6,7 @@ import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './DictHeader';
-import { Country, countryGestures } from '@/types/dictionaryType';
+import { Country, CountryGestures } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
 
 function Dictionary() {
@@ -35,25 +35,19 @@ function Dictionary() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
-  // const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
-  const currentGestures = countryGestures[selectedCountry.id]?.gestures || [];
+  const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
 
   // API에서 제스처 데이터 가져오기
-  // useEffect(() => {
-  //   if (gestureData && gestureData.gestures && gestureData.gestures.length > 0) {
-  //     // 국가 변경되면 첫번째 제스처를 선택
-  //     setSelectedGesture(gestureData.gestures[0].id);
-  //   }
-  // }, [gestureData]);
   useEffect(() => {
-    if (currentGestures.length > 0) {
+    // gestureData가 존재하고 gestures 배열이 있을 때만 처리
+    if (gestureData?.gestures && gestureData.gestures.length > 0) {
       // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(currentGestures[0].id);
+      setSelectedGesture(gestureData.gestures[0].id);
     }
-  }, [selectedCountry, currentGestures]);
+  }, [gestureData]);
 
   // 현재 선택한 국가에 해당하는 제스처 목록
-  // const currentGestures = gestureData?.gestures || [];
+  const currentGestures = gestureData?.gestures || [];
 
   // 현재 선택된 제스처
   const currentGesture =
@@ -86,6 +80,8 @@ function Dictionary() {
 
   // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
+    if (!currentGesture) return; // 제스처가 없으면 이동 안함
+
     navigate('/dictionary/detail', {
       state: {
         country: selectedCountry,
