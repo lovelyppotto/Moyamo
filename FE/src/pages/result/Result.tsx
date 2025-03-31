@@ -13,6 +13,9 @@ function Result() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const backgroundImageUrl =
+    theme === 'dark' ? getBackgroundImage('background-dark') : getBackgroundImage('background');
+
   // Zustand 스토어에서 가져온 상태와 액션
   const { searchTerm, searchCountry, setSearchTerm, setSearchCountry } = useSearchStore();
 
@@ -54,8 +57,7 @@ function Result() {
     <div
       className="min-h-screen w-full flex flex-col"
       style={{
-        backgroundImage:
-        theme === 'dark' ? `url(${getBackgroundImage('background-dark')})` : `url(${getBackgroundImage('background')})`,
+        backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

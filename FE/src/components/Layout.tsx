@@ -46,7 +46,7 @@ function Layout() {
       <FontPreloader />
       {/* 뒤로 가기 버튼 - result, dict 페이지*/}
       {isResultPage && (
-        <button className="absolute top-4 left-4 z-10 dark:text-white" onClick={handleBack}>
+        <button className="absolute cursor-pointer top-4 left-4 z-10 dark:text-white" onClick={handleBack}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
       )}
