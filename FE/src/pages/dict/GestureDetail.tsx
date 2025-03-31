@@ -1,19 +1,44 @@
 import DictHeader from './DictHeader';
 import '@/components/ui/scrollbar.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
+import { useGestureDetail } from '@/hooks/apiHooks';
 
 function GestureDetail() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { country, gesture } = location.state || {};
   const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
-  console.log('디테일 테스트 : ',    gesture);
-  // '다른 나라에서의 의미' 데이터 파싱
-  const parseGestureOthers = (getureOthers: string) => {
-    if (!getureOthers) return [];
+  // useGestureDetail 훅을 사용하여 제스처 상세 정보 가져오기
+  const {
+    data: gestureDetailData,
+    isLoading,
+    isError,
+  } = useGestureDetail(gesture?.gestureId, country?.id);
 
-    const groups = getureOthers.split('/');
+  const gestureData = gestureDetailData || gesture;
+  console.log(gestureData);
+
+  // 로딩 상태 확인
+  if (isLoading) {
+    return <div className="h-screen flex items-center justify-center">로딩 중...</div>;
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return (
+      <div className="h-screen flex items-center justify-center">데이터를 불러올 수 없습니다.</div>
+    );
+  }
+  // '사용 상황' 데이터 파싱
+
+
+  // '다른 나라에서의 의미' 데이터 파싱
+  const parseGestureOthers = (gestureOthers: string) => {
+    if (!gestureOthers) return [];
+
+    const groups = gestureOthers.split('/');
     return groups.map((group) => {
       const [countries, meaning] = group.split(':');
       return {
@@ -29,10 +54,22 @@ function GestureDetail() {
   };
 
   // '다른 나라에서의 의미' 파싱된 데이터 저장
-  const otherMeanings = gesture?.gesture_others ? parseGestureOthers(gesture.gesture_others) : [];
+  const otherMeanings = gestureData?.gestureOthers
+    ? parseGestureOthers(gestureData.gestureOthers)
+    : [];
 
   // 'TMI' 파싱된 데이터 저장
-  const tmi = gesture?.gesture_tmi ? parseTmiData(gesture.gesture_tmi) : [];
+  const tmi = gestureData?.gestureTmi ? parseTmiData(gestureData.gestureTmi) : [];
+
+  // 연습하기 버튼 클릭 핸들러
+  const handlePracticeClick = () => {
+    navigate('/dictionary/practice', {
+      state: {
+        country: country,
+        gesture: gestureData, // 이거 gesture보낼지 gestureData 보낼지 논의 필요
+      },
+    });
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -52,8 +89,8 @@ function GestureDetail() {
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               <img
-                src={gesture.image_url}
-                alt={`${gesture.title} image`}
+                src={gestureData.gestureImage}
+                alt={`${gestureData.gestureTitle} image`}
                 className="w-[35%] md:w-[60%] lg:w-[80%] h-auto max-h-[90%] object-contain"
               />
             </div>
@@ -72,12 +109,12 @@ function GestureDetail() {
             <div className="pr-4 font-[NanumSquareRound] text-[18px]">
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">의미</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                {gesture.gesture_meaning}
+                {gestureData.gestureMeaning}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                {gesture.gesture_situation}
+                {gestureData.gestureSituation}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">다른 나라에서의 의미</h2>
@@ -110,6 +147,7 @@ function GestureDetail() {
           <button
             className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(country.code)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
             hover:${getHoverClass(country.code)} transition-colors block cursor-pointer`}
+            onClick={handlePracticeClick}
           >
             연습하기
           </button>

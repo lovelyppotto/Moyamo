@@ -6,7 +6,7 @@ import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './DictHeader';
-import { Country, CountryGestures } from '@/types/dictionaryType';
+import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
 
 function Dictionary() {
