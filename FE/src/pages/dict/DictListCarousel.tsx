@@ -89,9 +89,9 @@ export function DictListCarousel({
           }}
         >
           {/* 카드 관련 */}
-          {gestures.map((gesture) => (
+          {gestures.map((gesture, index) => (
             <div
-              key={gesture.id}
+              key={`gesture-${gesture.id || index}`}
               className="flex-shrink-0 sm:w-[33%] md:w-[33%] lg:w-[27%] xl:w-[27%] snap-start px-2 items-center"
               onClick={() => handleGestureClick(gesture.id)}
             >
