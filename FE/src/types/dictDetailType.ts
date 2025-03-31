@@ -1,0 +1,32 @@
+// API 응답 형태
+export type GestureDetailResponse = {
+  status: number;
+  data: {
+    country_id: number;
+    country_name: string;
+    image_url: string | null;
+    meaning_id: number;
+    gesture_id: number;
+    gesture_image: string | null;
+    gesture_title: string;
+    gesture_meaning: string;
+    gesture_situation: string;
+    gesture_others: string;
+    gesture_tmi: string;
+  };
+};
+
+// 제스처 디테일 목록 반환 타입
+export interface GestureDetail {
+  countryId: number;
+  countryName: string;
+  imageUrl: string | null;
+  meaningId: number;
+  gestureId: number;
+  gestureImage: string | null;
+  gestureTitle: string;
+  gestureMeaning: string;
+  gestureSituation: string;
+  gestureOthers: string;
+  gestureTmi: string;
+}
