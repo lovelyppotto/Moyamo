@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import WebCamera from '@/components/WebCamera';
-import { Country, Gesture } from '@/types/dictionaryType';
 
 function GesturePractice() {
   const location = useLocation();
@@ -16,6 +15,7 @@ function GesturePractice() {
   }
 
   const { country, gesture } = location.state || [];
+  console.log('연습 테스트 : ', gesture);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
@@ -45,8 +45,8 @@ function GesturePractice() {
         <div className="w-full max-w-[500px] lg:w-auto lg:flex-1 flex justify-center items-center mb-2 lg:mb-0">
           <div className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
             <img
-              src={gesture.image}
-              alt={`${gesture.title} image`}
+              src={gesture.imageUrl}
+              alt={`${gesture.gestureTitle} image`}
               className="w-[90%] h-[90%] lg:w-[80%] lg:h-[80%] object-contain"
             />
           </div>
