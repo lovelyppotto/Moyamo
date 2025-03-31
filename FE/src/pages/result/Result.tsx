@@ -6,6 +6,7 @@ import SearchResultsList from './SearchResultList';
 import { useSearchStore } from '../../stores/useSearchStore';
 import '@/components/ui/scrollbar.css';
 import { useGestureSearch } from '@/hooks/apiHooks';
+import { getBackgroundImage } from '@/utils/imageUtils';
 
 function Result() {
   const { theme } = useTheme();
@@ -54,7 +55,7 @@ function Result() {
       className="min-h-screen w-full flex flex-col"
       style={{
         backgroundImage:
-          theme === 'dark' ? 'url(/images/background-dark.webp)' : 'url(/images/background.webp)',
+        theme === 'dark' ? `url(${getBackgroundImage('background-dark')})` : `url(${getBackgroundImage('background')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

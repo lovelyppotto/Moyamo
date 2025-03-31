@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '../pages/home/dropdowns/BaseDropdown';
@@ -12,10 +11,11 @@ import { useSearchNavigation } from '@/hooks/useSearchNavigation';
 
 function GestureSearchInput() {
   // Zustand 스토어에서 가져온 UI 상태
-  const { searchTerm, setSearchTerm, searchCountry, setSearchCountry } =
-    useSearchStore();
+  const { searchTerm, setSearchTerm, searchCountry, setSearchCountry } = useSearchStore();
 
-  const { data: searchResults, refetch } = useGestureSearch(searchTerm, searchCountry);
+  const { data: searchResults, refetch } = useGestureSearch(searchTerm, searchCountry, {
+    enabled: false,
+  });
 
   // 로컬 상태 (드롭다운 표시 여부)
   const [showResults, setShowResults] = useState(false);
