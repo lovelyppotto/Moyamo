@@ -32,26 +32,88 @@ function GestureDetail() {
     );
   }
   // '사용 상황' 데이터 파싱
+  const parseGestureSituation = (situationData: string) => {
+    if (!situationData) return [];
 
+    // '/'가 포함되어 있는지 확인
+    if (situationData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      return situationData.split('/').map((item) => item.trim());
+    } else {
+      // '/'가 없는 경우 전체 문자열을 하나의 항목으로 처리
+      return [situationData.trim()];
+    }
+  };
 
   // '다른 나라에서의 의미' 데이터 파싱
-  const parseGestureOthers = (gestureOthers: string) => {
-    if (!gestureOthers) return [];
+  const parseGestureOthers = (gestureOthersData: string) => {
+    if (!gestureOthersData) return [];
 
-    const groups = gestureOthers.split('/');
-    return groups.map((group) => {
-      const [countries, meaning] = group.split(':');
-      return {
-        countries: countries.trim(),
-        meaning: meaning.trim(),
-      };
-    });
+    // '/'가 포함되어 있는지 확인
+    if (gestureOthersData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      const groups = gestureOthersData.split('/');
+      return groups.map((group) => {
+        if (!group.includes(':')) {
+          // ':'가 없는 경우 전체를 countries로 처리
+          return {
+            countries: group.trim(),
+            meaning: '',
+          };
+        }
+
+        const parts = group.split(':');
+        const countries = parts[0] || '';
+        const meaning = parts[1] || '';
+
+        return {
+          countries: countries.trim(),
+          meaning: meaning.trim(),
+        };
+      });
+    } else {
+      // '/'가 없는 경우, 한 건만 처리
+      if (!gestureOthersData.includes(':')) {
+        // ':'도 없는 경우
+        return [
+          {
+            countries: gestureOthersData.trim(),
+            meaning: '',
+          },
+        ];
+      }
+
+      const parts = gestureOthersData.split(':');
+      const countries = parts[0] || '';
+      const meaning = parts[1] || '';
+
+      return [
+        {
+          countries: countries.trim(),
+          meaning: meaning.trim(),
+        },
+      ];
+    }
   };
 
   // TMI 데이터 파싱
   const parseTmiData = (tmiData: string) => {
-    return tmiData.split('/').map((item) => item.trim());
+    if (!tmiData) return [];
+
+    // '/'가 포함되어 있는지 확인
+    if (tmiData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      return tmiData.split('/').map((item) => item.trim());
+    } else {
+      // '/'가 없는 경우 전체 문자열을 하나의 항목으로 처리
+      return [tmiData.trim()];
+    }
   };
+
+  // '사용 상황' 파싱된 데이터 저장
+  const parsedSitudationData = gestureData?.gestureSituation
+    ? parseGestureSituation(gestureData.gestureSituation)
+    : [];
 
   // '다른 나라에서의 의미' 파싱된 데이터 저장
   const otherMeanings = gestureData?.gestureOthers
@@ -106,19 +168,23 @@ function GestureDetail() {
             </div>
             <hr className="text-gray-400 mb-4" />
 
-            <div className="pr-4 font-[NanumSquareRound] text-[18px]">
+            <div className="pr-4 font-[NanumSquareRound]">
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
                 {gestureData.gestureMeaning}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                {gestureData.gestureSituation}
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
+              <ul className="text-lg space-y-3">
+                  {parsedSitudationData.map((item, index) => (
+                    <li key={index}>• {item}</li>
+                  ))}
+                </ul>
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">다른 나라에서의 의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
                 <ul className="text-lg space-y-3">
                   {otherMeanings.map((item, index) => (
                     <li key={index}>
@@ -129,7 +195,7 @@ function GestureDetail() {
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">TMI</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
                 <ul className="text-lg space-y-3">
                   {tmi.map((item, index) => (
                     <li key={index}>• {item}</li>
