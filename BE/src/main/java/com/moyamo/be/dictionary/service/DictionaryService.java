@@ -76,9 +76,11 @@ public class DictionaryService {
 
     public ApiResponse<CountryGestureResponseDto> getGestureCompare(int gestureId) {
         List<CountryGesture> list = countryGestureRepository.findByGesture_GestureId(gestureId);
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             throw new NotFoundException("gesture_id에 대한 정보 없음 " + gestureId);
         }
+
+        String imageUrl = list.get(0).getGesture().getImageUrl();
 
         Map<String, List<CountryGesture>> grouped = list.stream()
                 .collect(Collectors.groupingBy(cg ->
@@ -110,7 +112,7 @@ public class DictionaryService {
         }
 
         CountryGestureResponseDto responseDto =
-                new CountryGestureResponseDto(gestureId, meanings);
+                new CountryGestureResponseDto(gestureId, imageUrl, meanings);
 
         return new ApiResponse<>(200, responseDto);
     }
