@@ -4,6 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { getFlagImage } from "@/utils/imageUtils";
 
 interface CountrySelectorProps {
   title: string;
@@ -51,7 +52,7 @@ function CountrySelector({
           >
             <div className="w-12 h-8 flex items-center justify-center mr-4 overflow-hidden drop-shadow-nation">
               <img 
-                src={country.flagSrc} 
+                src={getFlagImage(country.flagSrc)} 
                 alt={`${country.name} 국기`} 
                 className="max-w-full max-h-full object-contain"
               />

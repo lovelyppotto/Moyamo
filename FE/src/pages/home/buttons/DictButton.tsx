@@ -5,6 +5,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import CountrySelector from '../CountrySelector';
+import { getIconImage } from '@/utils/imageUtils';
 
 
 function DictionaryButton() {
@@ -41,7 +42,7 @@ function DictionaryButton() {
             mr-5
             mb-14 md:mb-16 lg:mb-20">
               {/* 책 이미지 */}
-              <img src="/images/icons/dict.webp" alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
+              <img src={getIconImage('dict')} alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
             </div>
           </div>
           <p

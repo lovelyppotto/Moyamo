@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons';
 import CountrySelector from '../CountrySelector';
+import { getIconImage } from '@/utils/imageUtils';
 
 function QuizButton() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ function QuizButton() {
               className="relative 
               ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
             >
-              <img src="/images/icons/quiz.webp" alt="QuizIcon" className="drop-shadow-basic" draggable="false"/>
+              <img src={getIconImage('quiz')} alt="QuizIcon" className="drop-shadow-basic" draggable="false"/>
             </div>
           </div>
           <p

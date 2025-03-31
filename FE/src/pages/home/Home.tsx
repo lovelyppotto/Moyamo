@@ -3,6 +3,7 @@ import { useTheme } from '@/components/theme-provider';
 import DictionaryButton from './buttons/DictButton';
 import QuizButton from './buttons/QuizButton';
 import CountryBubble from './CountryBubble';
+import { getBackgroundImage, getIconImage } from '@/utils/imageUtils';
 
 function Home() {
   const { theme } = useTheme();
@@ -12,7 +13,7 @@ function Home() {
       className="h-screen overflow-hidden w-full flex flex-col"
       style={{
         backgroundImage:
-          theme === 'dark' ? 'url(/images/background-dark.webp)' : 'url(/images/background.webp)',
+          theme === 'dark' ? `url(${getBackgroundImage('background-dark')})` : `url(${getBackgroundImage('background')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -35,7 +36,7 @@ function Home() {
           <div className="flex items-center justify-center mb-1 md:mb-2 lg:mb-3 w-full">
             <h1 className="md:text-4xl lg:text-5xl">through</h1>
             <img
-              src="/images/icons/puzzle.webp"
+              src={getIconImage('puzzle')}
               alt="pixel-puzzle"
               className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-1 sm:mx-2"
             />
