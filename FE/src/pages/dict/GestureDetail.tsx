@@ -8,6 +8,7 @@ function GestureDetail() {
   const { country, gesture } = location.state || {};
   const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
+  console.log('디테일 테스트 : ',    gesture);
   // '다른 나라에서의 의미' 데이터 파싱
   const parseGestureOthers = (getureOthers: string) => {
     if (!getureOthers) return [];

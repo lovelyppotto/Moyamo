@@ -95,6 +95,9 @@ function Dictionary() {
     navigate('/dictionary/guide');
   };
 
+  console.log('선택된 국가 : ', selectedCountry);
+  console.log('선택된 제스처 : ', currentGesture);
+
   return (
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 - 고정 높이 사용 */}
