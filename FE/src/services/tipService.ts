@@ -22,7 +22,7 @@ const getMockTips = (): Promise<TipData[]> => {
 
 const fetchTips = async (): Promise<TipData[]> => {
   try {
-    const response = await apiClient.get<TipResponse[]>('/tips');
+    const response = await apiClient.get<TipResponse[]>('/api/tips');
     
     // 백엔드 데이터를 프론트엔드 형식으로 변환 (스네이크케이스 -> 카멜케이스)
     return response.data.map((item) => ({

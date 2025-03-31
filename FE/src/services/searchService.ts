@@ -53,7 +53,7 @@ export const searchGestures = async (
   // 실제 API 호출
   console.log('[프로덕션 환경] 실제 API 호출 중...');
   try {
-    const { data } = await apiClient.get<SearchResponse>('/search/gestures', {
+    const { data } = await apiClient.get<SearchResponse>('/api/search/gestures', {
       params: {
         gesture_name: gestureName,
         country_id: countryId,
