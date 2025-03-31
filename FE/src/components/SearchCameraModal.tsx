@@ -84,13 +84,10 @@ function SearchCameraModal() {
           {/* 전체 컨테이너 */}
           <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
             {/* 헤더 부분 */}
-            <DialogTitle
-              className="flex item-center py-6 pl-8
-              text-center text-3xl font-[NanumSquareRoundEB]
-              bg-gray-200
-              dark:bg-gray-700 dark:text-d-txt-50"
-            >
-              <h1 className="flex item-center mt-1 mr-5">제스처 검색</h1>
+            <div className="bg-gray-200 dark:bg-gray-700 dark:text-d-txt-50 py-6 pl-8">
+              <DialogTitle className="flex item-center text-center text-3xl font-[NanumSquareRoundEB]">
+                제스처 검색
+              </DialogTitle>
               <div className="flex flex-col justify-start">
                 <p className="text-base text-left font-[NanumSquareRoundL]">
                   가이드라인에 맞춰 자세를 잡고 제스처를 취한 상태로 카메라 버튼을 누릅니다.
@@ -99,7 +96,7 @@ function SearchCameraModal() {
                   3초간 자세를 유지해 주세요.
                 </p>
               </div>
-            </DialogTitle>
+            </div>
 
             {/* 카메라 영역 */}
             <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">

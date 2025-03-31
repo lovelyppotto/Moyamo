@@ -1,4 +1,4 @@
-import WebCamera from '@/components/WebCamera';
+import WebCamera from "@/components/WebCamera";
 
 interface Answers3Props {
   options: Array<{
@@ -17,13 +17,16 @@ interface Answers3Props {
 }
 
 const Answers3: React.FC<Answers3Props> = ({
-  onSelect,
-  answer,
+  // 구조 파괴된 요소 모두 사용할때 활성화 해주세요!(빨간줄떠서 주석처리했습니다)
+  // onSelect,
+  // answer,
 }) => {
   return (
     <div className="flex-col mt-[3vh] h-2/3 flex items-center">
       <div className="flex justify-between items-center mb-[2vh]" />
-      <WebCamera onGestureDetected={(gestureId) => onSelect(gestureId)} />
+      {/* 웹 카메라 웹소켓 연결중 + 코드 구조 변화로 해당 함수 현재 동작하지 않습니다. 추후 추가 수정이 필요합니다! */}
+      {/* <WebCamera onGestureDetected={(gestureId: number) => onSelect(gestureId)} /> */}
+      <WebCamera />
     </div>
   );
 }

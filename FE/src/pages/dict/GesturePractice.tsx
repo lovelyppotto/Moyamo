@@ -70,8 +70,8 @@ function GesturePractice() {
           ) : (
             <WebCamera
               guidelineClassName="max-w-[500px] 
-               w-[48%] lg:w-[80%]
-               top-13  lg:top-22"
+                w-[48%] lg:w-[80%]
+                top-13  lg:top-22"
             />
           )}
         </div>
