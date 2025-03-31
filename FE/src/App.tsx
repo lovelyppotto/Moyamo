@@ -38,7 +38,7 @@ const router = createBrowserRouter([
           },
           // 나라별 비교 가이드
           {
-            path: 'guide',
+            path: 'compare',
             element: <CompareGuide />,
           },
           // 제스처 상세 페이지
