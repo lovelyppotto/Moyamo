@@ -1,37 +1,136 @@
 import DictHeader from './DictHeader';
 import '@/components/ui/scrollbar.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
+import { useGestureDetail } from '@/hooks/apiHooks';
 
 function GestureDetail() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { country, gesture } = location.state || {};
   const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
-  // '다른 나라에서의 의미' 데이터 파싱
-  const parseGestureOthers = (getureOthers: string) => {
-    if (!getureOthers) return [];
+  // useGestureDetail 훅을 사용하여 제스처 상세 정보 가져오기
+  const {
+    data: gestureDetailData,
+    isLoading,
+    isError,
+  } = useGestureDetail(gesture?.gestureId, country?.id);
 
-    const groups = getureOthers.split('/');
-    return groups.map((group) => {
-      const [countries, meaning] = group.split(':');
-      return {
-        countries: countries.trim(),
-        meaning: meaning.trim(),
-      };
-    });
+  const gestureData = gestureDetailData || gesture;
+
+  // 로딩 상태 확인
+  if (isLoading) {
+    return <div className="h-screen flex items-center justify-center">로딩 중...</div>;
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return (
+      <div className="h-screen flex items-center justify-center">데이터를 불러올 수 없습니다.</div>
+    );
+  }
+  // '사용 상황' 데이터 파싱
+  const parseGestureSituation = (situationData: string) => {
+    if (!situationData) return [];
+
+    // '/'가 포함되어 있는지 확인
+    if (situationData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      return situationData.split('/').map((item) => item.trim());
+    } else {
+      // '/'가 없는 경우 전체 문자열을 하나의 항목으로 처리
+      return [situationData.trim()];
+    }
+  };
+
+  // '다른 나라에서의 의미' 데이터 파싱
+  const parseGestureOthers = (gestureOthersData: string) => {
+    if (!gestureOthersData) return [];
+
+    // '/'가 포함되어 있는지 확인
+    if (gestureOthersData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      const groups = gestureOthersData.split('/');
+      return groups.map((group) => {
+        if (!group.includes(':')) {
+          // ':'가 없는 경우 전체를 countries로 처리
+          return {
+            countries: group.trim(),
+            meaning: '',
+          };
+        }
+
+        const parts = group.split(':');
+        const countries = parts[0] || '';
+        const meaning = parts[1] || '';
+
+        return {
+          countries: countries.trim(),
+          meaning: meaning.trim(),
+        };
+      });
+    } else {
+      // '/'가 없는 경우, 한 건만 처리
+      if (!gestureOthersData.includes(':')) {
+        // ':'도 없는 경우
+        return [
+          {
+            countries: gestureOthersData.trim(),
+            meaning: '',
+          },
+        ];
+      }
+
+      const parts = gestureOthersData.split(':');
+      const countries = parts[0] || '';
+      const meaning = parts[1] || '';
+
+      return [
+        {
+          countries: countries.trim(),
+          meaning: meaning.trim(),
+        },
+      ];
+    }
   };
 
   // TMI 데이터 파싱
   const parseTmiData = (tmiData: string) => {
-    return tmiData.split('/').map((item) => item.trim());
+    if (!tmiData) return [];
+
+    // '/'가 포함되어 있는지 확인
+    if (tmiData.includes('/')) {
+      // '/'로 구분된 여러 항목이 있는 경우
+      return tmiData.split('/').map((item) => item.trim());
+    } else {
+      // '/'가 없는 경우 전체 문자열을 하나의 항목으로 처리
+      return [tmiData.trim()];
+    }
   };
 
+  // '사용 상황' 파싱된 데이터 저장
+  const parsedSitudationData = gestureData?.gestureSituation
+    ? parseGestureSituation(gestureData.gestureSituation)
+    : [];
+
   // '다른 나라에서의 의미' 파싱된 데이터 저장
-  const otherMeanings = gesture?.gesture_others ? parseGestureOthers(gesture.gesture_others) : [];
+  const otherMeanings = gestureData?.gestureOthers
+    ? parseGestureOthers(gestureData.gestureOthers)
+    : [];
 
   // 'TMI' 파싱된 데이터 저장
-  const tmi = gesture?.gesture_tmi ? parseTmiData(gesture.gesture_tmi) : [];
+  const tmi = gestureData?.gestureTmi ? parseTmiData(gestureData.gestureTmi) : [];
+
+  // 연습하기 버튼 클릭 핸들러
+  const handlePracticeClick = () => {
+    navigate('/dictionary/practice', {
+      state: {
+        country: country,
+        gesture: gesture, // 이거 gesture보낼지 gestureData 보낼지 논의 필요
+      },
+    });
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -51,8 +150,8 @@ function GestureDetail() {
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               <img
-                src={gesture.image_url}
-                alt={`${gesture.title} image`}
+                src={gestureData.gestureImage}
+                alt={`${gestureData.gestureTitle} image`}
                 className="w-[35%] md:w-[60%] lg:w-[80%] h-auto max-h-[90%] object-contain"
               />
             </div>
@@ -68,19 +167,23 @@ function GestureDetail() {
             </div>
             <hr className="text-gray-400 mb-4" />
 
-            <div className="pr-4 font-[NanumSquareRound] text-[18px]">
+            <div className="pr-4 font-[NanumSquareRound]">
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                {gesture.gesture_meaning}
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
+                {gestureData.gestureMeaning}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                {gesture.gesture_situation}
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
+                <ul className="text-lg space-y-3">
+                  {parsedSitudationData.map((item, index) => (
+                    <li key={index}>• {item}</li>
+                  ))}
+                </ul>
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">다른 나라에서의 의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
                 <ul className="text-lg space-y-3">
                   {otherMeanings.map((item, index) => (
                     <li key={index}>
@@ -91,7 +194,7 @@ function GestureDetail() {
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">TMI</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
                 <ul className="text-lg space-y-3">
                   {tmi.map((item, index) => (
                     <li key={index}>• {item}</li>
@@ -109,6 +212,7 @@ function GestureDetail() {
           <button
             className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(country.code)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
             hover:${getHoverClass(country.code)} transition-colors block cursor-pointer`}
+            onClick={handlePracticeClick}
           >
             연습하기
           </button>

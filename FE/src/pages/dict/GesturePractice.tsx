@@ -5,25 +5,6 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import WebCamera from '@/components/WebCamera';
 
-// 목록에서 선택된 제스처
-interface Gesture {
-  id: string;
-  title: string;
-  image: string;
-}
-
-// 목록에서 선택된 국가
-interface Country {
-  code: string;
-  name: string;
-}
-
-// location.stated의 타입 안정성을 보장 (기본적으로 any, unknown 타입임)
-interface LocationState {
-  country: Country;
-  gesture: Gesture;
-}
-
 function GesturePractice() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,7 +14,8 @@ function GesturePractice() {
     navigate('/dictionary');
   }
 
-  const { country, gesture } = location.state as LocationState;
+  const { country, gesture } = location.state || [];
+  console.log('연습 테스트 : ', gesture);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
@@ -63,8 +45,8 @@ function GesturePractice() {
         <div className="w-full max-w-[500px] lg:w-auto lg:flex-1 flex justify-center items-center mb-2 lg:mb-0">
           <div className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
             <img
-              src={gesture.image}
-              alt={`${gesture.title} image`}
+              src={gesture.imageUrl}
+              alt={`${gesture.gestureTitle} image`}
               className="w-[90%] h-[90%] lg:w-[80%] lg:h-[80%] object-contain"
             />
           </div>
@@ -78,9 +60,7 @@ function GesturePractice() {
           {!showCamera ? (
             <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
               <div className="text-8xl lg:text-9xl ">
-                <FontAwesomeIcon
-                  icon={faCamera}
-                />
+                <FontAwesomeIcon icon={faCamera} />
               </div>
               <p className="text-xl lg:text-2xl">
                 카메라를 클릭 시<br />
