@@ -11,15 +11,15 @@ import java.util.List;
 @Repository
 public interface GestureSearchRepository extends JpaRepository<CountryGesture, Integer> {
 
-    @Query("SELECT cg FROM CountryGesture cg " +
-            "JOIN FETCH cg.gesture g " +
-            "JOIN FETCH cg.country c " +
-            "JOIN FETCH cg.gestureInfo gi " +
-            "WHERE gi.gestureTitle = :gestureTitle " +
-            "AND (:countryId = 0 OR c.countryId = :countryId)")
-    List<CountryGesture> findByGestureNameAndCountryId(
-            @Param("gestureName") String gestureName,
-            @Param("countryId") int countryId
-    );
+    @Query("""
+        SELECT cg FROM CountryGesture cg
+        JOIN FETCH cg.gesture g
+        JOIN FETCH cg.country c
+        JOIN FETCH cg.gestureInfo gi
+        WHERE gi.gestureTitle LIKE %:gestureName%
+        AND (:countryId = 0 OR c.countryId = :countryId)
+    """)
+    List<CountryGesture> findGesturesByTitleAndCountry(@Param("gestureName") String gestureName,
+                                                       @Param("countryId") int countryId);
 
 }

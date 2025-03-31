@@ -18,7 +18,7 @@ public class GestureSearchService {
     private final GestureSearchRepository gestureSearchRepository;
 
     public ApiResponse<GestureSearchResponseDto> findGestureByNameAndCountry(String gestureName, Integer countryId) {
-        List<CountryGesture> countryGestures = gestureSearchRepository.findByGestureNameAndCountryId(gestureName, countryId);
+        List<CountryGesture> countryGestures = gestureSearchRepository.findGesturesByTitleAndCountry(gestureName, countryId);
 
         if (countryGestures.isEmpty()) {
             return null;
