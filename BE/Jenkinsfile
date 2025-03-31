@@ -1,3 +1,5 @@
+def shouldBuild = false  // 전역 변수 선언
+
 pipeline {
     agent any
 
@@ -22,18 +24,21 @@ pipeline {
             steps {
                 script {
                     def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
-                    if (!changes.readLines().any { it.startsWith("BE/") }) {
-                        echo "BE 디렉토리 변경 없음! 빌드 중단"
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    } else {
+                    if (changes.readLines().any { it.startsWith("BE/") }) {
                         echo "BE 디렉토리 변경 감지됨! 계속 진행"
+                        shouldBuild = true
+                    } else {
+                        echo "BE 디렉토리 변경 없음! 이후 단계 모두 스킵"
+                        shouldBuild = false
                     }
                 }
             }
         }
 
         stage('Build & Push Docker Image') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     sh """
@@ -52,6 +57,9 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     withCredentials([
@@ -86,6 +94,9 @@ pipeline {
         }
 
         stage('Notify Success') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
