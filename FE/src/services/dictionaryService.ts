@@ -57,6 +57,8 @@ export const getGestureDetail = async (
     gestureSituation: data.data.gesture_situation,
     gestureOthers: data.data.gesture_others,
     gestureTmi: data.data.gesture_tmi,
+    isPositive: data.data.is_positive,
+    multipleGestures: data.data.multiple_gestures,
   };
 };
 

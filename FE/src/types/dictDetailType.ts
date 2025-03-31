@@ -13,6 +13,8 @@ export type GestureDetailResponse = {
     gesture_situation: string;
     gesture_others: string;
     gesture_tmi: string;
+    is_positive: boolean;
+    multiple_gestures: number;
   };
 };
 
@@ -29,4 +31,6 @@ export interface GestureDetail {
   gestureSituation: string;
   gestureOthers: string;
   gestureTmi: string;
+  isPositive: boolean;
+  multipleGestures: number;
 }
