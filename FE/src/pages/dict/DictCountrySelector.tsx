@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Country } from '@/types/dictionaryType';
+import { getFlagImage } from '@/utils/imageUtils';
 
 type CountrySelectorProps = {
   selectedCountry: Country;
@@ -20,10 +21,6 @@ function DictCountrySelector({
   onSelectCountry,
   countryOptions,
 }: CountrySelectorProps) {
-  // 국기 이미지 경로 생성 함수
-  const getFlagPath = (countryCode: string) => {
-    return `/images/flags/${countryCode}.webp`;
-  };
 
   // 국가 코드를 Country 객체로 변환
   const getCountryByCode = (code: string) => {
@@ -41,7 +38,7 @@ function DictCountrySelector({
       <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[220px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer  dark:bg-gray-500 dark:text-d-txt-50">
         <div className="flex items-center gap-2 w-full">
           <img
-            src={getFlagPath(selectedCountry.code)}
+            src={getFlagImage(selectedCountry.code)}
             alt={`${selectedCountry.code}`}
             className="w-25% max-w-[50px] h-auto aspect-[10/7] drop-shadow-nation"
           />
@@ -64,7 +61,7 @@ function DictCountrySelector({
               className="flex items-center gap-3 py-3 hover:bg-gray-200 dark:hover:bg-gray-400 cursor-pointer w-full"
             >
               <img
-                src={getFlagPath(country.code)}
+                src={getFlagImage(country.code)}
                 alt={`${country.name} 국기`}
                 className="w-15% min-w-[20px] max-w-[35px] h-auto aspect-[10/7] object-cover drop-shadow-nation"
               />

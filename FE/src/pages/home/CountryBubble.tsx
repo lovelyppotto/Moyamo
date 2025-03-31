@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
 import { useTips } from "@/hooks/apiHooks";
+import { getAttractionImage } from "@/utils/imageUtils";
 
  // 툴팁 위치 정보 타입
 interface TooltipPosition {
@@ -34,7 +35,7 @@ const countrySetup: CountryData[] = [
     id: 'korea',
     countryId: 1,
     name: 'Korea',
-    image: '/images/attractions/korea.webp',
+    image: 'korea',
     position: 'absolute top-[20%] left-[10%]',
     labelPosition: 'absolute bottom-13 -right-5 transform translate-x-1/4 translate-y-1/4',
     labelBackground: 'bg-kr-500 dark:bg-d-kr-600',
@@ -51,7 +52,7 @@ const countrySetup: CountryData[] = [
     id: 'usa',
     countryId: 2,
     name: 'USA',
-    image: '/images/attractions/usa.webp',
+    image: 'usa',
     position: 'absolute top-[20%] right-[10%]',
     labelPosition: 'absolute bottom-13 -left-3 transform -translate-x-1/4 translate-y-1/4',
     labelBackground: 'bg-us-600 dark:bg-d-us-500',
@@ -68,7 +69,7 @@ const countrySetup: CountryData[] = [
     id: 'japan',
     countryId: 3,
     name: 'Japan',
-    image: '/images/attractions/japan.webp',
+    image: 'japan',
     position: 'absolute top-1/2 left-[20%] transform -translate-y-1/2',
     labelPosition: 'absolute bottom-14 right-32 transform translate-x-1/2 translate-y-1/2',
     labelBackground: 'bg-jp-500 dark:bg-d-jp-400',
@@ -85,7 +86,7 @@ const countrySetup: CountryData[] = [
     id: 'china',
     countryId: 4,
     name: 'China',
-    image: '/images/attractions/china.webp',
+    image: 'china',
     position: 'absolute bottom-[20%] right-[10%]',
     labelPosition: 'absolute bottom-14 left-0 transform -translate-x-1/2 translate-y-1/2',
     labelBackground: 'bg-cn-600 dark:bg-d-cn-400',
@@ -102,7 +103,7 @@ const countrySetup: CountryData[] = [
     id: 'italy',
     countryId: 5,
     name: 'Italy',
-    image: '/images/attractions/italy.webp',
+    image: 'italy',
     position: 'absolute bottom-[20%] left-[10%]',
     labelPosition: 'absolute bottom-14 right-0 transform translate-x-1/2 translate-y-1/2',
     labelBackground: 'bg-italy-600 dark:bg-d-italy-600',
@@ -119,7 +120,7 @@ const countrySetup: CountryData[] = [
     id: 'communication',
     countryId: 0, // 국가가 아니므로 특별 ID 부여
     name: 'Communication',
-    image: '/images/attractions/communication.webp',
+    image: 'communication',
     position: 'absolute top-1/2 right-[20%] transform -translate-y-1/2',
     labelPosition: 'absolute bottom-11 left-33 transform -translate-x-1/2',
     labelBackground: 'bg-white',
@@ -161,7 +162,7 @@ function CountryBubble() {
                         dark:border-slate-100`}
                     >
                       <img
-                        src={country.image}
+                        src={getAttractionImage(country.image)} 
                         alt={country.name}
                         className="w-full h-full object-cover"
                       />

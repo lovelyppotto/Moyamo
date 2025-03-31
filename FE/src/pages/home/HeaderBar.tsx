@@ -2,13 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import DarkModeLottie from './DarkModeLottie';
 import GestureSearchInput from '../../components/GestureSearch';
-// import TranslationDropdown from './dropdowns/TranslateDropdown';
+import { getLogoImage } from '@/utils/imageUtils';
 
 // 메인 HeaderBar 컴포넌트
 function HeaderBar() {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const logoSrc = theme === 'dark' ? './images/logo-dark.png' : './images/logo.png';
+  const logoSrc = theme === 'dark' ? `${getLogoImage('logo-dark')}` : `${getLogoImage('logo')}`;
 
   const handleLogoClick = () => {
     navigate('/');
