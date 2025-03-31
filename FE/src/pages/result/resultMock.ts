@@ -14,6 +14,7 @@ export const searchResultMock: GestureSearchResult[] =[
       },
       {
         countryId: 2,
+        imageUrl: getFlagImage("us"),
         countryName: "미국", 
         meaning: "손가락으로 만드는 V자 모양의 제스처. '승리'를 뜻하며 사진을 찍을 때 많이 사용한다."
       },
