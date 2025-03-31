@@ -16,6 +16,7 @@ public class QuizResponseDto {
     private int question_id;
     private String question_text;
     private String question_type;
+    private String gesture_url;
     private List<OptionDto> options;
     private AnswerDto answer;
 }

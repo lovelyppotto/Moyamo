@@ -26,7 +26,7 @@ public class QuizService {
     public List<QuizResponseDto> getQuestionsByTypes(List<QuestionType> types) {
         List<Question> questions = questionRepository.findByQuestionTypeIn(types);
 
-        for(Question question: questions){
+        for (Question question : questions) {
             System.out.println(question.getQuestionId());
         }
         if (questions.size() > 5) {
@@ -37,7 +37,6 @@ public class QuizService {
         return questions.stream().map(this::convertQuestionToDto).collect(Collectors.toList());
     }
 
-    // 엔티티를 DTO로 변환하는 메서드 (이미 구현되어 있는 convertQuestionToDto)
     private QuizResponseDto convertQuestionToDto(Question question) {
         List<OptionDto> optionDtos = question.getOptions().stream().map(option -> {
             if (question.getQuestionType() == QuestionType.MEANING) {
@@ -54,27 +53,29 @@ public class QuizService {
                         option.getGesture() != null ? option.getGesture().getGestureId() : null,
                         option.getGesture() != null ? option.getGesture().getImageUrl() : null
                 );
-            } else { // CAMERA 문제는 옵션이 없다고 가정
+            } else {
                 return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
         Answer answerEntity = question.getAnswer();
         AnswerDto answerDto = null;
-        if(answerEntity != null) {
-            if(question.getQuestionType() == QuestionType.MEANING) {
+        String gestureUrl = null;
+        if (answerEntity != null) {
+            if (question.getQuestionType() == QuestionType.MEANING) {
                 answerDto = new AnswerDto(
                         answerEntity.getAnswerId(),
                         answerEntity.getOption() != null ? answerEntity.getOption().getOptionId() : null,
                         null
                 );
-            } else if(question.getQuestionType() == QuestionType.GESTURE) {
+                gestureUrl = answerEntity.getGesture() != null ? answerEntity.getGesture().getImageUrl() : null;
+            } else if (question.getQuestionType() == QuestionType.GESTURE) {
                 answerDto = new AnswerDto(
                         answerEntity.getAnswerId(),
                         answerEntity.getOption() != null ? answerEntity.getOption().getOptionId() : null,
                         answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureLabel() : null
                 );
-            } else if(question.getQuestionType() == QuestionType.CAMERA) {
+            } else if (question.getQuestionType() == QuestionType.CAMERA) {
                 answerDto = new AnswerDto(
                         answerEntity.getAnswerId(),
                         null,
@@ -87,6 +88,7 @@ public class QuizService {
                 question.getQuestionId(),
                 question.getQuestionText(),
                 question.getQuestionType().name(),
+                gestureUrl,
                 optionDtos,
                 answerDto
         );
