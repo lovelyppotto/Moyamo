@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { Gesture } from '@/types/dictionaryType';
+import { GestureItem } from '@/types/dictionaryType';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
 
 // 카드 컴포넌트 prop 타입
@@ -32,7 +32,7 @@ const CardContent = ({ children, className = '' }: CardContentProps) => {
 
 // 캐러셀 컴포넌트 프롭 타입
 interface DictListCarouselProps {
-  gestures?: Gesture[];
+  gestures?: GestureItem[];
   onSelectGesture?: (gestureId: number) => void;
   selectedCountry?: string;
 }
@@ -91,18 +91,18 @@ export function DictListCarousel({
           {/* 카드 관련 */}
           {gestures.map((gesture, index) => (
             <div
-              key={`gesture-${gesture.id || index}`}
+              key={`gesture-${gesture.gestureId || index}`}
               className="flex-shrink-0 sm:w-[33%] md:w-[33%] lg:w-[27%] xl:w-[27%] snap-start px-2 items-center"
-              onClick={() => handleGestureClick(gesture.id)}
+              onClick={() => handleGestureClick(gesture.gestureId)}
             >
               <Card
                 className={`flex flex-col cursor-pointer ${getHoverBorderClass(selectedCountry)} transition-colors h-full`}
               >
                 <CardContent className="flex flex-col items-center p-3 flex-grow">
                   <div className="flex items-center justify-center w-full flex-grow">
-                    {gesture.image_url ? (
+                    {gesture.imageUrl ? (
                       <img
-                        src={gesture.image_url}
+                        src={gesture.imageUrl}
                         alt={`${gesture} image`}
                         className="object-contain h-22 w-20"
                       />
@@ -115,7 +115,7 @@ export function DictListCarousel({
                 </CardContent>
                 <div className="w-full bg-gray-200 p-[14px]">
                   <span className="text-md text-center text-gray-500 font-[NanumSquareRoundB] block">
-                    {gesture.title}
+                    {gesture.gestureTitle}
                   </span>
                 </div>
               </Card>

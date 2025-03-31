@@ -1,4 +1,4 @@
-import { GestureListResponse, GestureItem, GesturesByCountry } from '../types/dictionaryType';
+import { GestureListResponse, GesturesByCountry } from '../types/dictionaryType';
 import { GestureDetailResponse, GestureDetail } from '../types/dictDetailType';
 import apiClient from '@/api/apiClient';
 

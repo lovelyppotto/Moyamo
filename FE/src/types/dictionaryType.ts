@@ -14,7 +14,7 @@ export type GestureListResponse = {
   };
 };
 
-// 변환된 카멜케이스 제스처 아이템 형태
+// gestures API 응답 카멜케이스로 변환
 export interface GestureItem {
   meaningId: number;
   gestureId: number;
@@ -22,7 +22,7 @@ export interface GestureItem {
   gestureTitle: string;
 }
 
-// 국가별 제스처 목록 반환 타입
+// GestureListResponse 카멜케이스로 변환
 export interface GesturesByCountry {
   countryId: number;
   countryName: string;

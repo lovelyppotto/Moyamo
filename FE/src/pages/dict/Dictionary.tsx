@@ -42,7 +42,7 @@ function Dictionary() {
     // gestureData가 존재하고 gestures 배열이 있을 때만 처리
     if (gestureData?.gestures && gestureData.gestures.length > 0) {
       // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(gestureData.gestures[0].id);
+      setSelectedGesture(gestureData.gestures[0].gestureId);
     }
   }, [gestureData]);
 
@@ -51,7 +51,7 @@ function Dictionary() {
 
   // 현재 선택된 제스처
   const currentGesture =
-    currentGestures.find((gesture) => gesture.id === selectedGesture) ||
+    currentGestures.find((gesture) => gesture.gestureId === selectedGesture) ||
     (currentGestures.length > 0 ? currentGestures[0] : null);
 
   // 제스처 선택 핸들러
