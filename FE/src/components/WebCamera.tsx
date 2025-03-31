@@ -6,8 +6,6 @@ import {
   FilesetResolver
 } from "@mediapipe/tasks-vision";
 
-// const SERVER_WS_URL = "ws://localhost:8000/ws/predict"; // FastAPI WebSocket 주소
-
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
   guidelineClassName?: string;
@@ -41,9 +39,6 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
       minHandDetectionConfidence: 0.5,
       minHandPresenceConfidence: 0.5,
       minTrackingConfidence: 0.5,
-      normRectCalculatorOptions: {
-        useImageDimensions: true
-      }
     });
     
     handLandmarkerRef.current = handLandmarker;
@@ -140,7 +135,7 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
   // WebSocket 연결 관리: isConnected 상태에 따라 연결 생성 및 해제
   useEffect(() => {
     if (isConnected) {
-      socket.current = new WebSocket(import.meta.env.VITE_SERVER_WS_URL);
+      socket.current = new WebSocket(import.meta.env.SERVER_WS_URL);
 
       socket.current.onopen = () => {
         console.log("[✅ WebSocket 연결됨]");
@@ -285,7 +280,7 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
         style={{ transform: 'scaleX(-1)' }}
       />
       
-      {/* 가이드라인 컨테이너 - 기존 WebCamera 컴포넌트와 동일 */}
+      {/* 가이드라인 컨테이너 */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
           {/* SVG 가이드라인 */}
