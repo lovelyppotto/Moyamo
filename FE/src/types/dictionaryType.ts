@@ -1,5 +1,5 @@
 // API 응답 형태
-export type GestureResponse = {
+export type GestureListResponse = {
   status: number;
   data: {
     country_id: number;
@@ -14,21 +14,21 @@ export type GestureResponse = {
   };
 };
 
-// 비교 가이드 API 응답
-export type GestureCompareResponse = {
-  status: number;
-  data: {
-    gesture_id: number;
-    gesture_title: string;
-    meanings: {
-      country_id: number;
-      country_name: string;
-      gesture_meaning: string;
-      gesture_situation: string;
-      is_positive: boolean;
-    }[];
-  };
-};
+// gestures API 응답 카멜케이스로 변환
+export interface GestureItem {
+  meaningId: number;
+  gestureId: number;
+  imageUrl: string | null;
+  gestureTitle: string;
+}
+
+// GestureListResponse 카멜케이스로 변환
+export interface GesturesByCountry {
+  countryId: number;
+  countryName: string;
+  imageUrl: string | null;
+  gestures: GestureItem[];
+}
 
 // 국가 정보 타입
 export type Country = {
