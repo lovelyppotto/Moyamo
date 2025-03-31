@@ -3,7 +3,7 @@ export type CompareGuideResponse = {
   status: number;
   data: {
     gesture_id: number;
-    gesture_title: string;
+    image_url: string | null;
     meanings: {
       country_id: number;
       country_name: string;
@@ -26,6 +26,6 @@ export interface MeaningItem {
 // CompareGuideResponse 카멜케이스로 변환
 export type CompareGuide = {
   gestureId: number;
-  gestureTitle: string;
+  imageUrl: string | null;
   meanings: MeaningItem[];
 };
