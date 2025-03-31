@@ -6,34 +6,30 @@ import SearchResultsList from './SearchResultList';
 import { useSearchStore } from '../../stores/useSearchStore';
 import '@/components/ui/scrollbar.css';
 import { useGestureSearch } from '@/hooks/apiHooks';
+import { getBackgroundImage } from '@/utils/imageUtils';
 
 function Result() {
   const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Zustand 스토어에서 가져온 상태와 액션
-  const {
-    searchTerm,
-    searchCountry,
-    setSearchTerm,
-    setSearchCountry,
-  } = useSearchStore();
+  const backgroundImageUrl =
+    theme === 'dark' ? getBackgroundImage('background-dark') : getBackgroundImage('background');
 
-  const { data: searchResults, isLoading, error, refetch } = useGestureSearch(
-    searchTerm,
-    searchCountry === 0 ? undefined : searchCountry
-  );
-  
+  // Zustand 스토어에서 가져온 상태와 액션
+  const { searchTerm, searchCountry, setSearchTerm, setSearchCountry } = useSearchStore();
+
+  const { data: searchResults, refetch } = useGestureSearch(searchTerm, searchCountry);
+
   // URL에서 검색어와 국가 파라미터 추출
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('gesture_name') || '';
-    
+
     // country는 숫자 문자열로 오므로 숫자로 변환
     const countryParam = queryParams.get('country_id');
     const country = countryParam ? parseInt(countryParam, 10) : 0; // 문자열을 숫자로 변환
-    
+
     // Zustand 스토어 상태 업데이트
     setSearchTerm(query);
     setSearchCountry(country); // 숫자로 변환된 값 전달
@@ -41,20 +37,27 @@ function Result() {
     if (query) {
       refetch();
     }
-    
   }, [location.search, setSearchTerm, setSearchCountry]);
-  
+
   // 제스처 상세 페이지로 이동
-  const handleGestureClick = (gestureId: number) => {
-    navigate(`/gesture/${gestureId}`);
+  const handleFlagClick = (countryId: number, gestureName: string) => {
+    // 선택된 국가로 검색 필터 변경
+    setSearchCountry(countryId);
+
+    // URL 업데이트 (GestureSearchInput과 동일한 형식으로)
+    const queryParams = new URLSearchParams();
+    queryParams.set('gesture_name', searchTerm);
+    if (countryId !== 0) {
+      queryParams.set('country_id', countryId.toString());
+    }
+    navigate(`/search?${queryParams.toString()}`, { replace: true });
   };
 
   return (
     <div
       className="min-h-screen w-full flex flex-col"
       style={{
-        backgroundImage:
-          theme === 'dark' ? 'url(/images/background-dark.webp)' : 'url(/images/background.webp)',
+        backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -83,9 +86,7 @@ function Result() {
           }}
         >
           <div>
-            <SearchResultsList
-            results={searchResults || []}
-              onResultClick={handleGestureClick} />
+            <SearchResultsList results={searchResults || []} onFlagClick={handleFlagClick} />
           </div>
         </div>
       </div>

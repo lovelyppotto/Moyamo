@@ -4,10 +4,10 @@ import SearchResultItem from './SearchResultItem.tsx';
 
 interface SearchResultsListProps {
   results: GestureSearchResult[];
-  onResultClick: (gestureId: number) => void;
+  onFlagClick?: (countryId: number, gestureName: string) => void;
 }
 
-function SearchResultsList({ results, onResultClick }: SearchResultsListProps) {
+function SearchResultsList({ results, onFlagClick }: SearchResultsListProps) {
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       {/* 결과 리스트 컨테이너 (스크롤) */}
@@ -19,7 +19,7 @@ function SearchResultsList({ results, onResultClick }: SearchResultsListProps) {
         ) : (
           <div className="grid grid-cols-1 gap-6 pb-4 px-4">
             {results.map((result) => (
-              <SearchResultItem key={result.gestureId} result={result} onClick={onResultClick} />
+              <SearchResultItem key={result.gestureId} result={result} onFlagClick={onFlagClick} />
             ))}
           </div>
         )}

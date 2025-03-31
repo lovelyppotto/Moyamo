@@ -15,9 +15,9 @@ function HeaderBar() {
   };
 
   return (
-    <div className="relative w-full z-30">
+    <div className="relative w-full z-30 pointer-events-none">
       <button
-        className="absolute cursor-pointer
+        className="absolute cursor-pointer pointer-events-auto
         left-[15%] top-[35px] md:left-[14.5%] md:top-[12px] lg:left-[13.5%] lg:top-[5px]"
       >
         <img
@@ -29,7 +29,10 @@ function HeaderBar() {
         />
       </button>
       <div className="w-full flex justify-center mt-11 mb-5 py-4 px-6">
-        <div className="dark:text-d-txt-50/80 w-[75%] bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm">
+        <div 
+          className="dark:text-d-txt-50/80 w-[75%]
+          bg-white dark:bg-white/15 py-1 px-6 rounded-xl shadow-sm
+          pointer-events-auto">
           <div className="flex items-center">
             {/* 검색 인풋 컴포넌트 */}
             <div className="flex-1">

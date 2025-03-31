@@ -4,13 +4,30 @@ import { getGesturesByCountry, getGestureDetail } from '@/services/dictionarySer
 import { getTips } from '@/services/tipService';
 
 // 제스처 검색
-export function useGestureSearch(gestureName: string, countryId?: number) {
-  console.log('검색 쿼리 시작:', { gestureName, countryId, isEnabled: !!gestureName.trim() });
+export function useGestureSearch(
+  gestureName: string,
+  countryId?: number,
+  options = { enabled: true }
+) {
+  const trimmedName = gestureName.trim();
+  const isValidQuery = !!trimmedName;
+
+  // // 개발용 로그
+  // if (process.env.NODE_ENV === 'development') {
+  //   console.log('검색 쿼리 파라미터:', {
+  //     gestureName: trimmedName,
+  //     countryId,
+  //     isEnabled: isValidQuery && options.enabled,
+  //   });
+  // }
+
   return useQuery({
-    queryKey: ['gestureName', gestureName, countryId],
-    queryFn: () => searchGestures(gestureName, countryId), // 서비스 함수 호출
-    enabled: !!gestureName.trim(),
+    queryKey: ['gestureName', trimmedName, countryId],
+    queryFn: () => searchGestures(trimmedName, countryId),
+    // 검색어가 있고 enabled 옵션이 true일 때만 API 호출
+    enabled: isValidQuery && options.enabled,
     staleTime: 5 * 60 * 1000,
+    initialData: isValidQuery ? undefined : [],
   });
 }
 
