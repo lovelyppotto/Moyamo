@@ -17,6 +17,7 @@ public class GestureSearchResponseDto {
     @AllArgsConstructor
     public static class Meaning {
         private int country_id;
+        private String image_url;
         private String country_name;
         private String meaning;
     }

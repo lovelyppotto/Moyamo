@@ -29,6 +29,7 @@ public class GestureSearchService {
         List<GestureSearchResponseDto.Meaning> meanings = countryGestures.stream()
                 .map(cg -> new GestureSearchResponseDto.Meaning(
                         cg.getCountry().getCountryId(),
+                        cg.getCountry().getImageUrl(),
                         cg.getCountry().getCountryName(),
                         cg.getGestureInfo().getGestureMeaning()))
                 .collect(Collectors.toList());
