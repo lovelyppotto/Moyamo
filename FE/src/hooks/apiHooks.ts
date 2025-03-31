@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
-import { getGesturesByCountry, getGestureDetail } from '@/services/dictionaryService';
+import { getGesturesByCountry} from '@/services/dictListService';
+import { getGestureDetail} from '@/services/dictDetailService';
 import { getTips } from '@/services/tipService';
 
 // 제스처 검색
