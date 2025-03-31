@@ -92,7 +92,11 @@ function Dictionary() {
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    navigate('/dictionary/guide');
+    navigate('/dictionary/guide', {
+      state: {
+        gesture: currentGesture,
+      },
+    });
   };
 
   return (
@@ -104,7 +108,7 @@ function Dictionary() {
           selectedCountry={selectedCountry}
           onSelectCountry={handleSelectCountry}
           countryOptions={countryOptions}
-          showCompareGuide={true}
+          showCompareGuide={false}
         />
       </div>
       {/* 로딩 페이지 */}
