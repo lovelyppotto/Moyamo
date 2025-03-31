@@ -10,6 +10,7 @@ interface SearchUIState {
   setSearchTerm: (term: string) => void;
   setSearchCountry: (country: number) => void;
   resetSearch: () => void;
+  resetSearchTerm: () => void;
 }
 
 export const useSearchStore = create<SearchUIState>((set) => ({
@@ -21,4 +22,5 @@ export const useSearchStore = create<SearchUIState>((set) => ({
   setSearchTerm: (term) => set({ searchTerm: term }),
   setSearchCountry: (country) => set({ searchCountry: country }),
   resetSearch: () => set({ searchTerm: '', searchCountry: 0 }),
+  resetSearchTerm: () => set((state) => ({ searchTerm: '', searchCountry: state.searchCountry })), 
 }));
