@@ -35,6 +35,11 @@ function CompareGuide() {
     return countryCodeMap[countryName];
   };
 
+  // lg인데 카드가 1개일 때 중앙 정렬
+  const gridLayoutClass =
+    gestureMeanings.length === 1
+      ? 'w-full md:max-w-[800px] md:px-8 lg:max-w-[700px] lg:px-0 mx-auto grid grid-cols-1 gap-8 place-items-center'
+      : 'w-full md:max-w-[800px] md:px-8 lg:max-w-[1000px] lg:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8';
 
   return (
     <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50">
