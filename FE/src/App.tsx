@@ -3,9 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
-import AiQuiz from './pages/quiz/ai_quiz/AiQuiz';
-import GestureQuiz from './pages/quiz/gesture_quiz/GestureQuiz';
-import MeaningQuiz from './pages/quiz/meaning_quiz/MeaningQuiz';
+import ModelTest from './pages/test/modeltest';
 import Quiz from './pages/quiz/QuizStart';
 import QuizContent from './pages/quiz/Quiz';
 import Result from './pages/result/Result';
@@ -66,19 +64,9 @@ const router = createBrowserRouter([
         element: <QuizContent />,
       },
       {
-        // meaning 퀴즈(페이지 확인용)
-        path: 'meaningquiz',
-        element: <MeaningQuiz />,
-      },
-      {
-        // gesture 퀴즈(페이지 확인용)
-        path: 'gesturequiz',
-        element: <GestureQuiz />,
-      },
-      {
-        // ai 퀴즈(페이지 확인용)
-        path: 'aiquiz',
-        element: <AiQuiz />,
+        // 퀴즈 컨텐츠츠
+        path: 'modeltest',
+        element: <ModelTest />,
       },
     ],
   },
