@@ -11,6 +11,7 @@ public class GestureDetailResponseDto {
     private int country_id;
     private String country_name;
     private String image_url;
+    private String gesture_label;
 
     private int meaning_id;
     private int gesture_id;
@@ -22,6 +23,6 @@ public class GestureDetailResponseDto {
     private String gesture_tmi;
 
     @JsonProperty("is_positive")
-    private boolean is_positive;
+    private boolean positive;
     private int multiple_gestures;
 }
