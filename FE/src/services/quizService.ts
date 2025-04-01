@@ -1,15 +1,22 @@
 import apiClient from '@/api/apiClient';
 import { QuizResponse, QuestionData, FrontendQuestionData } from '@/types/quizTypes';
-import { quizMockData } from '@/pages/quiz/questions';
-//개발환경
+import { quizMockData as mockData } from '@/pages/quiz/questions';
+
+// 타입 단언을 사용하여 quizMockData의 타입을 명시적으로 지정
+const quizMockData = mockData as QuestionData[];
+
+// 개발 환경 확인
 const isDevelopment = import.meta.env.MODE === 'development';
-//목데이터 사용여부
+
+// 목 데이터 사용 여부를 localStorage에서 가져오기 (개발 중 전환 가능하도록)
 const useMockData = () => {
   try {
     const storedValue = localStorage.getItem('useMockData');
+    // localStorage에 값이 명시적으로 있으면 그 값을 사용
     if (storedValue !== null) {
       return storedValue === 'true';
     }
+    // 없으면 개발 환경 여부로 결정
     return isDevelopment;
   } catch {
     return isDevelopment;
@@ -39,16 +46,17 @@ const transformQuizData = (data: QuestionData[]): FrontendQuestionData[] => {
 
 // 퀴즈 문제 가져오기
 export const getQuizQuestions = async (useCamera: boolean): Promise<FrontendQuestionData[]> => {
-  //목데이터 사용 여부 확인
+  // 목 데이터 사용 여부 확인
   if (useMockData()) {
     console.log('[개발 환경] 목 데이터 사용 중...');
-    // 개발 환경에서는 목 데이터 사용
+    // API 응답 딜레이 시뮬레이션
     await new Promise((resolve) => setTimeout(resolve, 300));
     return transformQuizData(quizMockData);
   }
 
+  // 실제 API 호출
+  console.log('[프로덕션 환경] 실제 API 호출 중...');
   try {
-    // 실제 API 엔드포인트와 파라미터에 맞게 호출
     const params = new URLSearchParams();
     params.append('type', 'GESTURE');
     params.append('type', 'MEANING');
@@ -57,43 +65,31 @@ export const getQuizQuestions = async (useCamera: boolean): Promise<FrontendQues
     }
 
     const { data } = await apiClient.get<QuizResponse>(`/api/quiz?${params.toString()}`);
-
-    // 서버 응답을 프론트엔드 형식으로 변환
     return transformQuizData(data.data);
   } catch (error) {
-    console.error('퀴즈 데이터를 가져오는 중 오류 발생:', error);
-
-    if (error.response) {
-      // API 에러 응답 구조에 맞게 처리
-      const { status, data } = error.response;
-      if (status === 404 && data.error === 'QUIZZES_NOT_FOUND') {
-        throw new Error('충분한 퀴즈 문제를 찾을 수 없습니다.');
-      }
-      if (status === 400 && data.error === 'INVALID_PARAMETER') {
-        throw new Error('잘못된 파라미터입니다.');
-      }
-    }
-
-    // 기타 네트워크 오류 등
-    throw new Error('퀴즈 데이터를 불러오는 중 오류가 발생했습니다.');
+    console.error('API 호출 실패, 목 데이터로 대체:', error);
+    return transformQuizData(quizMockData);
   }
 };
 
-// 카메라로 촬영한 제스처 인식 (mock)
+// 카메라로 촬영한 제스처 인식
 export const detectGesture = async (imageData: string): Promise<{ gesture: string }> => {
+  // 목 데이터 사용 여부 확인
   if (useMockData()) {
-    // 개발 환경에서는 랜덤 제스처 반환
-    const gestures = ['thumbs_up', 'victory', 'ok', 'pardon', 'money'];
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    console.log('[개발 환경] 목 데이터로 제스처 인식 시뮬레이션...');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
     return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
   }
 
+  // 실제 API 호출
+  console.log('[프로덕션 환경] 실제 제스처 인식 API 호출 중...');
   try {
-    // 실제 API 호출 (구현 예정): 데이터를 받아야 함.
     const { data } = await apiClient.post('/api/gestures/detect', { image: imageData });
     return data;
   } catch (error) {
-    console.error('제스처 인식 중 오류 발생:', error);
-    throw new Error('제스처 인식에 실패했습니다.');
+    console.error('제스처 인식 API 호출 실패, 목 데이터로 대체:', error);
+    const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
+    return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
   }
 };

@@ -6,12 +6,13 @@ import PbNumber from './PbNumber.tsx';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useCallback } from 'react';
-import QUESTIONS from './questions.ts';
+import { FrontendQuestionData } from '@/types/quizTypes';
 import Animation from './Animation.tsx';
 
 interface ResultProps {
   Index: number;
   onSelectAnswer: (answer: number | null) => void;
+  questionData: FrontendQuestionData;
 }
 
 interface AnswerState {
@@ -20,7 +21,7 @@ interface AnswerState {
   answerState: string;
 }
 
-function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
+function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Element {
   const [answer, setAnswer] = useState<AnswerState>({
     selectedAnswer: null,
     isCorrect: null,
@@ -51,7 +52,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
-      const isCorrect = answer === QUESTIONS[0].data[Index].answer.correct_option_id;
+      const isCorrect = answer === questionData.answer.correctOptionId;
       setAnswer({
         selectedAnswer: answer,
         isCorrect,
@@ -75,6 +76,7 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
       }, 400);
     }, 200);
   }
+
   const handleSkipAnswer = useCallback((): void => handleSelectAnswer(null), [handleSelectAnswer]);
 
   return (
@@ -96,40 +98,40 @@ function Question({ onSelectAnswer, Index }: ResultProps): JSX.Element {
         />
         <div className="flex justify-between items-center mt-[3vh]">
           <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%]">
-            {`Q${Index + 1}. ${QUESTIONS[0].data[Index].question_text}`}
+            {`Q${Index + 1}. ${questionData.text}`}
           </h1>
           <button
             className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 cursor-pointer "
             onClick={handleSkipAnswer}
           >
-            <p className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB] ">Skip</p>
+            <p className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]">Skip</p>
             <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
           </button>
         </div>
-        {/* 문제와 보기 */}
-        {QUESTIONS[0].data[Index].question_type === 'MEANING' && (
+
+        {questionData.type === 'MEANING' && (
           <Answers
-            options={QUESTIONS[0].data[Index].options}
-            answer={QUESTIONS[0].data[Index].answer}
+            options={questionData.options}
+            answer={questionData.answer}
             onSelect={handleSelectAnswer}
             isSelected={answer.selectedAnswer}
             answerState={answer.answerState}
-            quizImage={QUESTIONS[0].data[Index].question_image}
+            quizImage={questionData.gestureUrl}
           />
         )}
-        {QUESTIONS[0].data[Index].question_type === 'GESTURE' && (
+        {questionData.type === 'GESTURE' && (
           <Answers2
-            options={QUESTIONS[0].data[Index].options}
-            answer={QUESTIONS[0].data[Index].answer}
+            options={questionData.options}
+            answer={questionData.answer}
             onSelect={handleSelectAnswer}
             isSelected={answer.selectedAnswer}
             answerState={answer.answerState}
           />
         )}
-        {QUESTIONS[0].data[Index].question_type === 'CAMERA' && (
+        {questionData.type === 'CAMERA' && (
           <Answers3
-            options={QUESTIONS[0].data[Index].options}
-            answer={QUESTIONS[0].data[Index].answer}
+            options={questionData.options}
+            answer={questionData.answer}
             onSelect={handleSelectAnswer}
             isSelected={answer.selectedAnswer}
             answerState={answer.answerState}

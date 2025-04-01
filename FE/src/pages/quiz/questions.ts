@@ -1,11 +1,11 @@
 // 개발용 목 데이터 (API 응답 구조에 맞춤)
-import standingGlb from '@/assets/models/Standing.glb?url';
+const standingGlbUrl = '/src/assets/models/Standing.glb';
 export const quizMockData = [
   {
     question_id: 1,
-    question_text: '이 제스처의 의미는?',
+    question_text: '[MOCK]이 제스처의 의미는?',
     question_type: 'MEANING',
-    gesture_url: { standingGlb },
+    gesture_url: standingGlbUrl,
     options: [
       {
         option_id: 1,
@@ -40,7 +40,7 @@ export const quizMockData = [
   },
   {
     question_id: 6,
-    question_text: '미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
+    question_text: '[MOCK]미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
     question_type: 'GESTURE',
     gesture_url: null,
     options: [
@@ -48,25 +48,25 @@ export const quizMockData = [
         option_id: 21,
         option_meaning: null,
         gesture_id: 10,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 22,
         option_meaning: null,
         gesture_id: 15,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 23,
         option_meaning: null,
         gesture_id: 16,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 24,
         option_meaning: null,
         gesture_id: 17,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
     ],
     answer: {
@@ -78,7 +78,7 @@ export const quizMockData = [
   {
     question_id: 9,
     question_text:
-      "미국에서 이 제스처는 '다시 말해주세요'라는 의미를 가집니다. 이 제스처를 카메라에 보여주세요.",
+      "[MOCK]미국에서 이 제스처는 '다시 말해주세요'라는 의미를 가집니다. 이 제스처를 카메라에 보여주세요.",
     question_type: 'CAMERA',
     gesture_url: null,
     options: [],
@@ -90,9 +90,9 @@ export const quizMockData = [
   },
   {
     question_id: 1,
-    question_text: '이 제스처의 의미는?',
+    question_text: '[MOCK]이 제스처의 의미는?',
     question_type: 'MEANING',
-    gesture_url: { standingGlb },
+    gesture_url: standingGlbUrl,
     options: [
       {
         option_id: 1,
@@ -127,7 +127,7 @@ export const quizMockData = [
   },
   {
     question_id: 6,
-    question_text: '미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
+    question_text: '[MOCK]미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
     question_type: 'GESTURE',
     gesture_url: null,
     options: [
@@ -135,25 +135,25 @@ export const quizMockData = [
         option_id: 21,
         option_meaning: null,
         gesture_id: 10,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 22,
         option_meaning: null,
         gesture_id: 15,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 23,
         option_meaning: null,
         gesture_id: 16,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
       {
         option_id: 24,
         option_meaning: null,
         gesture_id: 17,
-        gesture_image: { standingGlb },
+        gesture_image: standingGlbUrl,
       },
     ],
     answer: {

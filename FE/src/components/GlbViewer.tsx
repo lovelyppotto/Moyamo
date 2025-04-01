@@ -8,146 +8,187 @@ interface GlbViewerProps {
   index?: number;
 }
 
+// 공유 리소스
+const loader = new GLTFLoader();
+const scene = new THREE.Scene();
+scene.background = null;
+
 export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  const modelRef = useRef<THREE.Object3D | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Scene 설정
-    const scene = new THREE.Scene();
-
     // Camera 설정
     const camera = new THREE.PerspectiveCamera(
-      75,
+      50,
       containerRef.current.clientWidth / containerRef.current.clientHeight,
       0.1,
       1000
     );
-    camera.position.y = 1.5;
-    camera.position.z = 4;
-    scene.add(camera);
+    camera.position.set(0, 1.5, 3);
 
-    // Renderer 설정
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true
-    });
+    // Renderer 설정 (기존 renderer가 있으면 재사용)
+    if (!rendererRef.current) {
+      rendererRef.current = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: 'low-power', // 저전력 모드 사용
+      });
+    }
+    const renderer = rendererRef.current;
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-    renderer.outputEncoding = THREE.sRGBEncoding;  // sRGB 색상 공간 사용
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;  // 톤 매핑 추가
-    renderer.toneMappingExposure = 1.0;  // 노출 조정
+    renderer.setPixelRatio(1); // 성능을 위해 픽셀 비율을 1로 고정
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
     containerRef.current.appendChild(renderer.domElement);
 
-    // Light 설정
-    const ambientLight = new THREE.AmbientLight('white', 0.5);
-    scene.add(ambientLight);
+    // 기존 모델 제거
+    if (modelRef.current) {
+      scene.remove(modelRef.current);
+      modelRef.current = null;
+    }
 
-    const directionalLight = new THREE.DirectionalLight('white', 1);
-    directionalLight.position.x = 1;
-    directionalLight.position.z = 2;
-    scene.add(directionalLight);
+    // Light 설정
+    const lights = [
+      new THREE.AmbientLight('white', 0.7),
+      new THREE.DirectionalLight('white', 1.2),
+      new THREE.DirectionalLight('white', 0.5),
+    ];
+
+    lights[1].position.set(2, 2, 2);
+    lights[2].position.set(-2, 0, -2);
+    lights.forEach((light) => scene.add(light));
 
     // Controls 설정
-    const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = new OrbitControls(camera, renderer.domElement);
+    const controls = controlsRef.current;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.enableZoom = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 3;
 
-    // Animation Mixer
-    let mixer: THREE.AnimationMixer | null = null;
-
-    // GLB/GLTF 로더
-    const loader = new GLTFLoader();
+    // GLB 로딩
     loader.load(
       url,
       (gltf) => {
-        console.log('Model loaded successfully:', gltf);
         const model = gltf.scene;
-        
-        // 모델 재질 설정
-        model.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            if (child.material) {
-              child.material.roughness = 0.7;  // 거칠기 조정
-              child.material.metalness = 0.3;  // 금속성 조정
-              child.material.envMapIntensity = 1.0;  // 환경 맵 강도
-            }
+        modelRef.current = model;
+
+        model.traverse((child: any) => {
+          if (child instanceof THREE.Mesh && child.material) {
+            child.material.roughness = 0.5;
+            child.material.metalness = 0.5;
+            child.material.envMapIntensity = 1.2;
           }
         });
 
         scene.add(model);
 
-        // 모델 크기 자동 조정
+        // 모델 크기 조정
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxSize = Math.max(size.x, size.y, size.z);
-        const scale = 2 / maxSize;
+        const scale = 1.5 / maxSize;
         model.scale.multiplyScalar(scale);
 
-        // 모델 위치 중앙 정렬
+        // 모델 위치 조정
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center.multiplyScalar(scale));
+        model.position.y -= 0.5;
 
         // 애니메이션 설정
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(model);
-          const animation = gltf.animations[0]; // 첫 번째 애니메이션 사용
-          const action = mixer.clipAction(animation);
+        if (gltf.animations.length > 0) {
+          if (mixerRef.current) {
+            mixerRef.current.stopAllAction();
+          }
+          mixerRef.current = new THREE.AnimationMixer(model);
+          const action = mixerRef.current.clipAction(gltf.animations[0]);
           action.play();
-          console.log('Animation loaded:', animation.name);
         }
       },
-      (progress) => {
-        const percentage = (progress.loaded / progress.total * 100);
-        console.log('Loading progress:', percentage + '%');
-      },
-      (error) => {
-        console.error('\n GLB/GLTF 로딩 에러:', error);
-      }
+      undefined,
+      console.error
     );
 
     // 애니메이션 루프
     const clock = new THREE.Clock();
+    const animate = () => {
+      animationFrameRef.current = requestAnimationFrame(animate);
 
-    function draw() {
-      const delta = clock.getDelta();
-      
-      // 애니메이션 업데이트
-      if (mixer) {
-        mixer.update(delta);
+      if (mixerRef.current) {
+        mixerRef.current.update(clock.getDelta());
       }
 
       controls.update();
       renderer.render(scene, camera);
-      requestAnimationFrame(draw);
-    }
+    };
+    animate();
 
     // 리사이즈 핸들러
-    function handleResize() {
+    const handleResize = () => {
       if (!containerRef.current) return;
-      
+
       camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-      renderer.render(scene, camera);
-    }
+    };
 
     window.addEventListener('resize', handleResize);
-    draw();
 
     // 클린업
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (mixer) {
-        mixer.stopAllAction();
+
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
-      renderer.dispose();
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
+
+      if (mixerRef.current) {
+        mixerRef.current.stopAllAction();
       }
+
+      if (controlsRef.current) {
+        controlsRef.current.dispose();
+      }
+
+      if (modelRef.current) {
+        scene.remove(modelRef.current);
+        modelRef.current.traverse((child: any) => {
+          if (child instanceof THREE.Mesh) {
+            child.geometry.dispose();
+            if (child.material) {
+              child.material.dispose();
+            }
+          }
+        });
+      }
+
+      if (containerRef.current && rendererRef.current) {
+        containerRef.current.removeChild(rendererRef.current.domElement);
+      }
+
+      lights.forEach((light) => scene.remove(light));
     };
   }, [url, index]);
 
-  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
-} 
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    />
+  );
+}
