@@ -22,7 +22,7 @@ public class DictionaryService {
     private final CountryGestureRepository countryGestureRepository;
 
     public ApiResponse<GestureListWithCountryDto> getGesturesByCountry(Integer countryId) {
-        List<CountryGesture> gestures = countryGestureRepository.findByCountry_CountryId(countryId);
+        List<CountryGesture> gestures = countryGestureRepository.findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNull(countryId);
 
         Country country = gestures.get(0).getCountry();
         List<GestureListResponseDto> gestureList = gestures.stream().map(cg -> new GestureListResponseDto(
