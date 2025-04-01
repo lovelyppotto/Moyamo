@@ -144,8 +144,8 @@ function GestureDetail() {
       {/* 헤더 */}
       <DictHeader
         title={gestureData.countryName}
-        countryName={gestureData.countryName}
-        showCompareGuide={true}
+        gestureCompareInfo={gestureData}
+        showCompareGuide={gestureData.multipleGestures >= 1}
         className=""
       />
 
