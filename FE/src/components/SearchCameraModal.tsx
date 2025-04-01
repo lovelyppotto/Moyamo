@@ -9,15 +9,22 @@ function SearchCameraModal() {
   const [open, setOpen] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 타이머 끝난 후 로직
   const handleTimerEnd = () => {
-    navigate('/dictionary/detail')
+    navigate('/dictionary/detail');
   };
 
   // 카운트다운 타이머 시작
   const startCountdown = () => {
+    // 웹소켓이 연결되지 않았다면 카운트다운 시작하지 않음
+    if (!isWebSocketConnected) {
+      console.log('[⚠️ 웹소켓 연결 확인 필요] 카운트다운을 시작할 수 없습니다.');
+      return;
+    }
+
     setIsCountingDown(true);
     setCountdown(3);
 
@@ -55,11 +62,19 @@ function SearchCameraModal() {
   }, [open]);
 
   const handleCameraClick = (): void => {
+    console.log('[🎬 카메라 모달 열기]');
     setOpen(true);
   };
 
   const handleCaptureClick = (): void => {
+    console.log('[📸 캡처 버튼 클릭] 웹소켓 연결 상태:', isWebSocketConnected);
     startCountdown();
+  };
+
+  // WebSocket 연결 상태 콜백 핸들러
+  const handleConnectionStatus = (status: boolean) => {
+    console.log('[🌐 WebSocket 연결 상태 변경]:', status);
+    setIsWebSocketConnected(status);
   };
 
   return (
@@ -76,67 +91,66 @@ function SearchCameraModal() {
           </button>
         </DialogTrigger>
         <DialogContent
-          className="p-0 w-full h-[90vh] max-h-[90%]
+          className="p-0 w-[95vw] max-w-[500px] max-h-[90vh]
           rounded-2xl border-none
-          max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-hidden\
+          mx-auto overflow-hidden
           dark:text-d-txt-50"
         >
           {/* 전체 컨테이너 */}
-          <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
+          <div className="flex flex-col rounded-2xl overflow-hidden">
             {/* 헤더 부분 */}
-            <DialogTitle
-              className="flex item-center py-6 pl-8
-              text-center text-3xl font-[NanumSquareRoundEB]
-              bg-gray-200
-              dark:bg-gray-700 dark:text-d-txt-50"
-            >
-              <h1 className="flex item-center mt-1 mr-5">제스처 검색</h1>
+            <div className="bg-gray-200 dark:bg-gray-700 dark:text-d-txt-50 py-4 px-6">
+              <DialogTitle className="flex item-center text-center text-xl font-[NanumSquareRoundEB]">
+                제스처 검색
+              </DialogTitle>
               <div className="flex flex-col justify-start">
-                <p className="text-base text-left font-[NanumSquareRoundL]">
+                <p className="text-sm text-left font-[NanumSquareRound]">
                   가이드라인에 맞춰 자세를 잡고 제스처를 취한 상태로 카메라 버튼을 누릅니다.
                 </p>
-                <p className="text-base text-left font-[NanumSquareRoundL]">
+                <p className="text-sm text-left font-[NanumSquareRound]">
                   3초간 자세를 유지해 주세요.
                 </p>
               </div>
-            </DialogTitle>
+            </div>
 
             {/* 카메라 영역 */}
             <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
-              {/* 카메라 컨테이너에 고정된 높이 비율 설정 */}
-              <div className="w-full h-0 pb-[100%] md:pb-[80%] lg:pb-[65%] xl:pb-[50%] relative">
-                {/* 실제 카메라 컴포넌트 */}
-                <div className="absolute inset-0">
+              {/* 카메라 컨테이너를 정사각형 비율로 설정 */}
+              <div className="bg-white">
+                <div className="aspect-square w-full">
                   <WebCamera
-                    // 아래와 같이 반응형으로 화면 비율을 조절합니다
-                    guidelineClassName="max-w-[550px] 
-                    w-[85%] md:w-[70%] lg:w-[60%] xl:w-[80%] 
-                    top-25 md:top-20 lg:top-22 xl:top-15"
+                    guidelineClassName="w-[70%] mt-35"
+                    guideText="버튼을 누르면 검색이 진행됩니다"
+                    onConnectionStatus={handleConnectionStatus}
                   />
                 </div>
               </div>
             </div>
             <div className="h-2 bg-none"></div>
+
             {/* 하단 버튼 영역 */}
-            <div
-              className="flex justify-center px-2 py-3 
-              bg-white rounded-t-lg
-              dark:bg-gray-700"
-            >
+            <div className="flex rounded-md justify-center py-1 bg-white dark:bg-gray-700">
               <button
                 onClick={handleCaptureClick}
-                disabled={isCountingDown}
-                className="flex items-center justify-center w-14 h-14
-                bg-black text-white rounded-full
-                dark:bg-white dark:text-gray-900"
+                disabled={isCountingDown || !isWebSocketConnected}
+                className={`flex items-center justify-center w-7 h-7 ${isWebSocketConnected ? 'bg-black' : 'bg-gray-400'} text-white rounded-full`}
               >
                 {isCountingDown ? (
-                  <span className="text-xl font-bold">{countdown}</span>
+                  <span className="text-lg font-bold">{countdown}</span>
                 ) : (
-                  <Camera />
+                  <Camera size={20} />
                 )}
               </button>
             </div>
+
+            {/* 연결 상태 표시 */}
+            {!isWebSocketConnected && open && (
+              <div className="absolute bottom-24 left-0 right-0 flex justify-center">
+                <div className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm">
+                  서버 연결 중입니다. 잠시만 기다려주세요.
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

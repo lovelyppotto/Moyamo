@@ -1,6 +1,6 @@
 import { TipData, TipResponse, ApiResponse } from "@/types/tipType";
 import apiClient from "@/api/apiClient";
-import { tipsMockData } from "@/pages/home/tipMock";
+import { tipsMockData } from "@/data/tipMock";
 
 const isDevelopment = import.meta.env.MODE === 'development';
 

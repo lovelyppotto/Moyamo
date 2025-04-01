@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         DOCKER_IMAGE = "sseon701/moyamo-react"
         IMAGE_TAG = "latest"
@@ -12,6 +13,22 @@ pipeline {
                 git branch: 'fe/develop',
                     url: 'https://lab.ssafy.com/s12-ai-image-sub1/S12P21D203.git',
                     credentialsId: 'gitlab-credential-id'
+            }
+        }
+        
+        stage('Prepare .env') {
+            steps {
+                dir('FE') {
+                    withCredentials([
+                        string(credentialsId: 'VITE_API_BASE_URL', variable: 'VITE_API_BASE_URL'),
+                        string(credentialsId: 'VITE_SERVER_STATIC_WS_URL', variable: 'VITE_SERVER_STATIC_WS_URL')
+                    ]) {
+                        sh """
+                            echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" > .env
+                            echo "VITE_SERVER_STATIC_WS_URL=${VITE_SERVER_STATIC_WS_URL}" >> .env
+                        """
+                    }
+                }
             }
         }
 
@@ -54,7 +71,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'FE-MATTERMOST', variable: 'MATTERMOST_WEBHOOK')]) {
                         sh """
                             curl -X POST -H 'Content-Type: application/json' -d '{
-                                "text": ":cat_clap: **FE 배포 완료!**\n\n:label: 브랜치: fe/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: [서비스 바로가기](https://moyamo.site)"
+                                "text": ":cat_clap: **FE 배포 완료!**\\n\\n:label: 브랜치: fe/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${IMAGE_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: [서비스 바로가기](https://moyamo.site)"
                             }' $MATTERMOST_WEBHOOK
                         """
                     }
@@ -72,7 +89,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'FE-MATTERMOST', variable: 'MATTERMOST_WEBHOOK')]) {
                     sh """
                         curl -X POST -H 'Content-Type: application/json' -d '{
-                            "text": ":jenkins6: **FE 배포 실패!**\n\n<@sunju701> 확인 부탁드립니다.\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}"
+                            "text": ":jenkins6: **FE 배포 실패!**\\n\\n<@sunju701> 확인 부탁드립니다.\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}"
                         }' $MATTERMOST_WEBHOOK
                     """
                 }

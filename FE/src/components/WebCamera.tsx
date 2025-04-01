@@ -1,35 +1,197 @@
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
+import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
+import { useHandLandmarker } from '@/hooks/useHandLandmarker';
+import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
 
-interface WebCameraprops {
+interface WebCameraProps {
   // 가이드라인 svg 조절 props
-  // 예시는 SearchCameraModal을 참고하세요
   guidelineClassName?: string;
+  guideText?:string;
+  // 연결 상태를 외부에서 제어할 수 있도록 추가
+  onConnectionStatus?: (status: boolean) => void;
 }
 
-function WebCamera({ guidelineClassName }: WebCameraprops) {
+const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCameraProps) => {
+  // 웹소켓 서비스 사용
+  const {
+    status: wsStatus,
+    gesture,
+    confidence,
+    sendLandmarks,
+    connect: connectWs,
+    disconnect: disconnectWs,
+  } = useGestureWebSocket();
+
+  // HandLandmarker 훅 사용
+  const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
+    useHandLandmarker();
+
+  // 컴포넌트 상태 및 참조
   const webcamRef = useRef<Webcam>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const resultsRef = useRef<HandLandmarkerResult | null>(null);
+
+  // 부모 컴포넌트에 웹소켓 연결 상태 알림
+  useEffect(() => {
+    if (onConnectionStatus) {
+      onConnectionStatus(wsStatus === 'open');
+    }
+  }, [wsStatus, onConnectionStatus]);
+
+  // 컴포넌트 마운트 시 웹소켓 연결
+  useEffect(() => {
+    console.log('[🔍 WebCamera 컴포넌트 마운트]');
+
+    // 약간의 지연 후 웹소켓 연결 시작
+    const timer = setTimeout(() => {
+      console.log('[🔍 웹소켓 연결 시작]');
+      connectWs();
+    }, 500);
+
+    return () => {
+      console.log('[🔍 WebCamera 컴포넌트 언마운트]');
+      clearTimeout(timer);
+
+      // 애니메이션 정리
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+
+      // WebSocket 연결 해제
+      disconnectWs();
+    };
+  }, [connectWs, disconnectWs]);
+
+  // 웹캠에서 프레임을 가져와 처리하는 함수
+  const predictWebcam = useCallback(async () => {
+    if (!webcamRef.current || !webcamRef.current.video || !canvasRef.current) {
+      // 아직 준비가 안 되었으면 다음 프레임에서 다시 시도
+      animationRef.current = requestAnimationFrame(predictWebcam);
+      return;
+    }
+
+    const video = webcamRef.current.video;
+
+    // 비디오 프레임에서 손 랜드마크 감지
+    const results = await detectFrame(video);
+
+    if (results) {
+      resultsRef.current = results;
+
+      // 손 랜드마크가 감지되면 즉시 서버로 전송
+      if (results.landmarks && results.landmarks.length > 0) {
+        sendLandmarks(results.landmarks);
+      }
+
+      // 캔버스에 랜드마크 그리기
+      drawCanvas(results);
+    }
+
+    // 다음 프레임 처리
+    animationRef.current = requestAnimationFrame(predictWebcam);
+  }, [detectFrame, sendLandmarks]);
+
+  // 캔버스에 랜드마크 그리기 함수
+  const drawCanvas = useCallback(
+    (results: HandLandmarkerResult) => {
+      const canvasCtx = canvasRef.current!.getContext('2d')!;
+      const width = canvasRef.current!.width;
+      const height = canvasRef.current!.height;
+
+      // 캔버스 초기화
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, width, height);
+
+      // 정사각형 영역에 비디오 그리기
+      if (webcamRef.current && webcamRef.current.video) {
+        const video = webcamRef.current.video;
+
+        // 정사각형 크기 계산
+        const size = Math.min(width, height);
+        const offsetX = (width - size) / 2;
+        const offsetY = (height - size) / 2;
+
+        // 정사각형 영역에 비디오 그리기
+        canvasCtx.drawImage(video, offsetX, offsetY, size, size);
+      }
+
+      // 랜드마크 그리기
+      if (results.landmarks) {
+        for (const landmarks of results.landmarks) {
+          // 관절 연결선 그리기 (손가락과 손 윤곽)
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+            color: '#ebc853',
+            lineWidth: 5,
+          });
+
+          // 랜드마크 점 그리기
+          drawLandmarks(canvasCtx, landmarks, {
+            color: '#fffcc6',
+            lineWidth: 2,
+            radius: 4,
+          });
+        }
+      }
+
+      canvasCtx.restore();
+    },
+    [HAND_CONNECTIONS, drawConnectors, drawLandmarks]
+  );
+
+  // 모델 로딩이 완료되면 웹캠 예측 시작
+  useEffect(() => {
+    if (!isLoading && !error) {
+      predictWebcam();
+    }
+  }, [isLoading, error, predictWebcam]);
+
+  // 에러 발생 시 로깅
+  useEffect(() => {
+    if (error) {
+      console.error('[🖐️ HandLandmarker 오류]', error);
+    }
+  }, [error]);
 
   return (
     <div className="w-full h-full bg-white relative overflow-hidden">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+          <div className="text-white text-xl font-bold">모델 로딩 중...</div>
+        </div>
+      )}
+
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+          <div className="text-red-500 text-xl font-bold">모델 로딩 오류</div>
+        </div>
+      )}
+
+      {/* 웹캠 (숨겨진 상태) */}
       <Webcam
         audio={false}
-        // 해상도 설정
-        width={1280}
+        width={720} // 정사각형에 가까운 비율
         height={720}
         ref={webcamRef}
         videoConstraints={{
           facingMode: 'user',
+          width: 720,
+          height: 720,
         }}
-        // 백엔드에 반전된 상태로 넘어가는지 확인 필요
-        style={{
-          transform: 'scaleX(-1)',
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
+        className="invisible absolute"
       />
-      {/* 가이드라인 컨테이너 - absolute 포지셔닝 조정 */}
+
+      {/* 캔버스 (웹캠 화면과 손 랜드마크를 표시) */}
+      <canvas
+        ref={canvasRef}
+        width={720}
+        height={720}
+        className="w-full h-full"
+        style={{ transform: 'scaleX(-1)' }}
+      />
+
+      {/* 가이드라인 컨테이너 */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
           {/* SVG 가이드라인 */}
@@ -44,12 +206,43 @@ function WebCamera({ guidelineClassName }: WebCameraprops) {
             text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
             drop-shadow-basic"
           >
-            얼굴과 상체를 가이드라인에 맞춰주세요
+            {guideText}
           </p>
         </div>
       </div>
+
+      {/* 제스처 인식 결과 표시 (화면 상단에 표시) */}
+      {gesture && (
+        <div className="absolute top-20 left-0 right-0 flex justify-center items-center">
+          <div className="bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg font-bold">
+            인식된 제스처: {gesture}
+            {confidence !== null && <div className="mt-1">일치율: {confidence.toFixed(1)}%</div>}
+          </div>
+        </div>
+      )}
+
+      {/* 웹소켓 연결 상태 표시 */}
+      {wsStatus !== 'open' && (
+        <div className="absolute bottom-10 left-0 right-0 flex justify-center">
+          <div
+            className={`px-4 py-2 rounded-lg text-white text-sm ${
+              wsStatus === 'connecting'
+                ? 'bg-yellow-500'
+                : wsStatus === 'error'
+                  ? 'bg-red-500'
+                  : 'bg-gray-500'
+            }`}
+          >
+            {wsStatus === 'connecting'
+              ? '서버에 연결 중...'
+              : wsStatus === 'error'
+                ? '서버 연결 오류'
+                : '서버 연결 끊김'}
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default WebCamera;

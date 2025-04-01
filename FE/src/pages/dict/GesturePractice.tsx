@@ -10,12 +10,7 @@ function GesturePractice() {
   const navigate = useNavigate();
   const [showCamera, setShowCamera] = useState(false);
 
-  if (!location.state) {
-    navigate('/dictionary');
-  }
-
   const { country, gesture } = location.state || [];
-  console.log('연습 테스트 : ', gesture);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
@@ -70,8 +65,8 @@ function GesturePractice() {
           ) : (
             <WebCamera
               guidelineClassName="max-w-[500px] 
-               w-[48%] lg:w-[80%]
-               top-13  lg:top-22"
+                w-[48%] lg:w-[80%]
+                top-13  lg:top-22"
             />
           )}
         </div>
