@@ -8,15 +8,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 경로 설정(필요한대로 바꿔서 사용)
-const inputDir = path.join(__dirname, '../public/images/flags');
-const outputDir = path.join(__dirname, '../public/images/flagss');
+const inputDir = path.join(__dirname, '../public/images/logos');
+const outputDir = path.join(__dirname, '../public/images/logo');
 
 // const imageWidths = {
 //   'dict': 512,
 //   'quiz': 440,
 //   'puzzle': 128,
 // };
-const DEFAULT_WIDTH = 200;
+const DEFAULT_WIDTH = 320;
 
 // 최적 크기 설정 (픽셀 단위)
 // const OPTIMAL_SIZE = 200; // 고해상도 디스플레이 고려하여 2배로 설정
