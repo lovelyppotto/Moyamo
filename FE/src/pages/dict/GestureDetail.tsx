@@ -139,7 +139,6 @@ function GestureDetail() {
     });
   };
 
-
   return (
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
@@ -159,13 +158,14 @@ function GestureDetail() {
           {/* 제스처 이미지 */}
           <div className="w-full lg:w-1/2 p-6 flex justify-center items-center">
             <div
-              className="w-full max-w-[600px] md:max-w-[400px] sm:max-w-[350px] lg:h-[90%] md:h-[220px] sm:h-[200px] min-h-[200px] 
+              className="w-full max-w-[600px] md:max-w-[500px] sm:max-w-[500px] lg:h-[90%] sm:h-[300px] min-h-[150px] 
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
+              {/* 이미지 크기 조정: md일 때 너비를 75%로 증가, 높이도 조정 */}
               <img
                 src={gestureData.gestureImage || defaultImagePath}
                 alt={`${gestureData.gestureTitle} image`}
-                className="w-[35%] md:w-[60%] lg:w-[80%] h-auto max-h-[90%] object-contain"
+                className="p-2 w-[25%] md:w-[80%] h-auto max-h-[90%] object-contain"
               />
             </div>
           </div>
