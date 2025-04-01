@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - nginx_jenkins_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.3
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - nginx_jenkins_network
+
+  moyamo-be:
+    image: sseon701/moyamo-spring:latest
+    container_name: moyamo-be
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+    networks:
+      - nginx_jenkins_network
+
+networks:
+  nginx_jenkins_network:
+    driver: bridge
