@@ -79,7 +79,7 @@ pipeline {
                                     docker-compose down --remove-orphans || true &&
                                     docker-compose rm -f || true &&
                                     docker-compose pull &&
-                                    COMPOSE_PROJECT_NAME=moyamo_project docker-compose up -d
+                                    docker-compose up -d
                                 '
                             """
                         }

@@ -40,5 +40,6 @@ services:
 
 networks:
   nginx_jenkins_network:
+    external: true
     name: nginx_jenkins_network
     driver: bridge
