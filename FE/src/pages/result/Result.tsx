@@ -41,16 +41,16 @@ function Result() {
 
   // 제스처 상세 페이지로 이동
   const handleFlagClick = (countryId: number, gestureName: string) => {
-    // 선택된 국가로 검색 필터 변경
-    setSearchCountry(countryId);
-
-    // URL 업데이트 (GestureSearchInput과 동일한 형식으로)
-    const queryParams = new URLSearchParams();
-    queryParams.set('gesture_name', searchTerm);
-    if (countryId !== 0) {
-      queryParams.set('country_id', countryId.toString());
+    // 선택된 제스처와 국가 ID를 사용하여 상세 페이지로 이동
+    if (searchResults) {
+      const selectedGesture = searchResults.find((result) => result.gestureName === gestureName);
+      if (selectedGesture) {
+        // navigate를 사용하여 상세 페이지로 이동
+        navigate(
+          `/dictionary/detail?gesture_id=${selectedGesture.gestureId}&country_id=${countryId}`
+        );
+      }
     }
-    navigate(`/search?${queryParams.toString()}`, { replace: true });
   };
 
   return (
