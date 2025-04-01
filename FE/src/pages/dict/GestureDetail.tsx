@@ -3,21 +3,28 @@ import '@/components/ui/scrollbar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
 import { useGestureDetail } from '@/hooks/apiHooks';
+import { useCountryCode } from '@/hooks/useCountryCode';
 
 function GestureDetail() {
+  // 이미지 제대로 들어오면 삭제!!!!
+  const defaultImagePath = '/images/gestures/cross-finger.png';
+
   const location = useLocation();
   const navigate = useNavigate();
-  const { country, gesture } = location.state || {};
   const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
-  // useGestureDetail 훅을 사용하여 제스처 상세 정보 가져오기
-  const {
-    data: gestureDetailData,
-    isLoading,
-    isError,
-  } = useGestureDetail(gesture?.gestureId, country?.id);
+  // URL에서 country_id 파라미터 가져오기
+  const queryParams = new URLSearchParams(location.search);
+  const gestureIdParam = queryParams.get('gesture_id') as string;
+  const gestureId = parseInt(gestureIdParam);
+  const countryIdParam = queryParams.get('country_id') as string;
+  const countryId = parseInt(countryIdParam);
+  const getCountryCode = useCountryCode();
 
-  const gestureData = gestureDetailData || gesture;
+  // useGestureDetail 훅을 사용하여 제스처 상세 정보 가져오기
+  const { data: gestureDetailData, isLoading, isError } = useGestureDetail(gestureId, countryId);
+  const gestureData = gestureDetailData;
+  const countryCode = getCountryCode(gestureData?.countryName);
 
   // 로딩 상태 확인
   if (isLoading) {
@@ -30,6 +37,7 @@ function GestureDetail() {
       <div className="h-screen flex items-center justify-center">데이터를 불러올 수 없습니다.</div>
     );
   }
+
   // '사용 상황' 데이터 파싱
   const parseGestureSituation = (situationData: string) => {
     if (!situationData) return [];
@@ -126,8 +134,7 @@ function GestureDetail() {
   const handlePracticeClick = () => {
     navigate('/dictionary/practice', {
       state: {
-        country: country,
-        gesture: gesture, // 이거 gesture보낼지 gestureData 보낼지 논의 필요
+        gesture: gestureId,
       },
     });
   };
@@ -135,13 +142,18 @@ function GestureDetail() {
   return (
     <div className="flex flex-col h-screen">
       {/* 헤더 */}
-      <DictHeader title={country.name} country={country} showCompareGuide={true} className="" />
+      <DictHeader
+        title={gestureData.countryName}
+        countryName={gestureData.countryName}
+        showCompareGuide={true}
+        className=""
+      />
 
       {/* 메인 컨텐츠 영역 */}
       <div className="flex flex-col h-[80%] overflow-hidden w-full dark:bg-gray-900 dark:text-d-txt-50">
         <div
           className={`flex flex-col md:flex-col lg:flex-row mx-auto w-full max-w-6xl pt-[30px] 
-          overflow-y-auto customScrollbar ${country?.code ? country.code : ''} h-full`}
+          overflow-y-auto customScrollbar ${countryCode} h-full`}
         >
           {/* 제스처 이미지 */}
           <div className="w-full lg:w-1/2 p-6 flex justify-center items-center">
@@ -150,7 +162,7 @@ function GestureDetail() {
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               <img
-                src={gestureData.gestureImage}
+                src={gestureData.gestureImage || defaultImagePath}
                 alt={`${gestureData.gestureTitle} image`}
                 className="w-[35%] md:w-[60%] lg:w-[80%] h-auto max-h-[90%] object-contain"
               />
@@ -159,7 +171,7 @@ function GestureDetail() {
 
           {/* 제스처 관련 설명 */}
           <div
-            className={`w-full lg:w-1/2 p-6 relative overflow-y-auto customScrollbar ${country?.code ? country.code : ''}`}
+            className={`w-full lg:w-1/2 p-6 relative overflow-y-auto customScrollbar ${countryCode}`}
           >
             {/* 제스처 사전 제목 */}
             <div className="mb-2">
@@ -210,8 +222,8 @@ function GestureDetail() {
       <div className="h-[10%] w-full bg-[#f5f5f5] dark:bg-gray-900 flex items-center justify-center mb-3 mt-3">
         <div className="w-full max-w-6xl px-6">
           <button
-            className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(country.code)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
-            hover:${getHoverClass(country.code)} transition-colors block cursor-pointer`}
+            className={`w-full max-w-[600px] mx-auto py-3 ${getColorClass(countryCode)} text-white text-xl font-[NanumSquareRoundEB] rounded-lg 
+            hover:${getHoverClass(countryCode)} transition-colors block cursor-pointer`}
             onClick={handlePracticeClick}
           >
             연습하기
