@@ -106,6 +106,11 @@ public class DictionaryService {
             String gestureSituation = first.getGestureInfo().getGestureSituation();
             boolean isPositive = first.getGestureInfo().getIsPositive();
 
+            String countryImageUrls = groupList.stream()
+                    .map(cg -> cg.getCountry().getImageUrl())
+                    .distinct()
+                    .collect(Collectors.joining(","));
+
             String countryNames = groupList.stream()
                     .map(cg -> cg.getCountry().getCountryName())
                     .distinct()
@@ -116,7 +121,7 @@ public class DictionaryService {
                     .distinct()
                     .collect(Collectors.joining(","));
 
-            meanings.add(new GestureMeaningDto(countryIds, countryNames, gestureMeaning, gestureSituation, isPositive));
+            meanings.add(new GestureMeaningDto(countryIds, countryNames, countryImageUrls, gestureMeaning, gestureSituation, isPositive));
         }
 
         CountryGestureResponseDto responseDto =
