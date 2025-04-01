@@ -1,4 +1,4 @@
-//서버에 type을 전달해야 함. 
+//서버에 type을 전달해야 함.
 import '@/index.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -49,12 +49,12 @@ function Quiz() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           {/* w-full h-full을 쓰면 스크롤이 생김!! 전체적으로 설정한 마진값 때문인 것 같음 */}
-          <div className="flex flex-col h-screen overflow-hidden w-full bg-[#313131] ">
+          <div className="flex flex-col h-screen overflow-hidden w-full bg-[var(--color-kr-100)] dark:bg-gray-900">
             <div className=" flex flex-col justify-center items-center h-3/4 ">
               {/* 중간 텍스트 부분 / 일단 마진값 */}
               <div className="flex flex-col items-center align-center font-['DNFBitBitv2'] mb-30 animate-pulse">
                 <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/2 h-auto " />
-                <div className="text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz ">
+                <div className=" text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz ">
                   GESTURE QUIZ
                 </div>
                 {/* <img src="/images/quiz_img2.png" alt="quiz-img" className="w-1/5 h-1/5" /> */}
@@ -65,7 +65,7 @@ function Quiz() {
                 {/* tailwind.config.js에 커스텀 그림자 정의해야 함 */}
                 {/* 함수: 버튼을 누르면 랜덤으로 게임 페이지로 들어가도록 하기 */}
                 <button
-                  className="text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center algin-center bg-[var(--color-lavender-rose-300)] drop-shadow-quiz animate-bounce mt-[5vh] cursor-pointer"
+                  className="text-4xl xl:text-6xl font-['DNFBitBitv2']  text-gray-900  drop-shadow-quiz-box  dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center algin-center  bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce mt-[5vh] cursor-pointer"
                   onClick={handleButtonClick}
                 >
                   <p className="drop-shadow-basic ">start</p>
