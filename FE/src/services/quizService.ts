@@ -1,9 +1,9 @@
 import apiClient from '@/api/apiClient';
 import { QuizResponse, QuestionData, FrontendQuestionData } from '@/types/quizTypes';
 import { quizMockData } from '@/pages/quiz/questions';
-
+//개발환경
 const isDevelopment = import.meta.env.MODE === 'development';
-
+//목데이터 사용여부
 const useMockData = () => {
   try {
     const storedValue = localStorage.getItem('useMockData');
@@ -39,7 +39,9 @@ const transformQuizData = (data: QuestionData[]): FrontendQuestionData[] => {
 
 // 퀴즈 문제 가져오기
 export const getQuizQuestions = async (useCamera: boolean): Promise<FrontendQuestionData[]> => {
+  //목데이터 사용 여부 확인
   if (useMockData()) {
+    console.log('[개발 환경] 목 데이터 사용 중...');
     // 개발 환경에서는 목 데이터 사용
     await new Promise((resolve) => setTimeout(resolve, 300));
     return transformQuizData(quizMockData);
