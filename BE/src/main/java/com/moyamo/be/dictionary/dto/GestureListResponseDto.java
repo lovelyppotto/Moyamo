@@ -11,4 +11,5 @@ public class GestureListResponseDto {
     private int gesture_id;
     private String image_url;
     private String gesture_title;
+    private int multiple_gestures;
 }
