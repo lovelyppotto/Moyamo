@@ -70,29 +70,37 @@ function Dictionary() {
   const handlePracticeButtonClick = () => {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
-    navigate('/dictionary/practice', {
-      state: {
-        country: selectedCountry,
-        gesture: currentGesture,
-      },
-    });
+    navigate(
+      `/dictionary/practice?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`,
+      {
+        replace: true,
+        state: {
+          country: selectedCountry,
+          gesture: currentGesture,
+        },
+      }
+    );
   };
 
   // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
-    navigate('/dictionary/detail', {
-      state: {
-        country: selectedCountry,
-        gesture: currentGesture,
-      },
-    });
+    navigate(
+      `/dictionary/detail?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`,
+      {
+        replace: true,
+      }
+    );
   };
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    navigate('/dictionary/guide');
+    if (!currentGesture) return;
+
+    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`, {
+      replace: true,
+    });
   };
 
   return (
@@ -104,7 +112,7 @@ function Dictionary() {
           selectedCountry={selectedCountry}
           onSelectCountry={handleSelectCountry}
           countryOptions={countryOptions}
-          showCompareGuide={true}
+          showCompareGuide={false}
         />
       </div>
       {/* 로딩 페이지 */}
