@@ -75,6 +75,12 @@ pipeline {
                             sh """
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
                                     cd /home/ubuntu/moyamo-be &&
+                                    echo "DB_URL=${DB_URL}" > .env &&
+                                    echo "DB_USERNAME=${DB_USERNAME}" >> .env &&
+                                    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env &&
+                                    echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}" >> .env &&
+                                    echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}" >> .env &&
+                                    echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> .env &&
                                     docker-compose down --remove-orphans || true &&
                                     docker-compose rm -f || true &&
                                     docker-compose pull &&
@@ -86,6 +92,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Notify Success') {
             when {
