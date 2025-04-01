@@ -139,6 +139,7 @@ function Dictionary() {
                 tooltipText="나라별 비교 가이드"
                 onClick={handleGuideButtonClick}
                 selectedCountry={selectedCountry.code}
+                disabled={!currentGesture?.multipleGestures}
               />
             </div>
           </div>
