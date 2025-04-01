@@ -91,7 +91,7 @@ function SearchCameraModal() {
           </button>
         </DialogTrigger>
         <DialogContent
-          className="p-0 w-[95vw] max-w-md h-auto
+          className="p-0 w-[95vw] max-w-[500px] max-h-[90vh]
           rounded-2xl border-none
           mx-auto overflow-hidden
           dark:text-d-txt-50"
@@ -99,15 +99,15 @@ function SearchCameraModal() {
           {/* 전체 컨테이너 */}
           <div className="flex flex-col rounded-2xl overflow-hidden">
             {/* 헤더 부분 */}
-            <div className="bg-gray-200 dark:bg-gray-700 dark:text-d-txt-50 py-6 pl-8">
-              <DialogTitle className="flex item-center text-center text-3xl font-[NanumSquareRoundEB]">
+            <div className="bg-gray-200 dark:bg-gray-700 dark:text-d-txt-50 py-4 px-6">
+              <DialogTitle className="flex item-center text-center text-xl font-[NanumSquareRoundEB]">
                 제스처 검색
               </DialogTitle>
               <div className="flex flex-col justify-start">
-                <p className="text-base text-left font-[NanumSquareRoundL]">
+                <p className="text-sm text-left font-[NanumSquareRound]">
                   가이드라인에 맞춰 자세를 잡고 제스처를 취한 상태로 카메라 버튼을 누릅니다.
                 </p>
-                <p className="text-base text-left font-[NanumSquareRoundL]">
+                <p className="text-sm text-left font-[NanumSquareRound]">
                   3초간 자세를 유지해 주세요.
                 </p>
               </div>
@@ -116,10 +116,11 @@ function SearchCameraModal() {
             {/* 카메라 영역 */}
             <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
               {/* 카메라 컨테이너를 정사각형 비율로 설정 */}
-              <div className="bg-white py-2">
+              <div className="bg-white">
                 <div className="aspect-square w-full">
                   <WebCamera
-                    guidelineClassName="w-[80%] max-w-[400px]"
+                    guidelineClassName="w-[70%] mt-35"
+                    guideText="버튼을 누르면 검색이 진행됩니다"
                     onConnectionStatus={handleConnectionStatus}
                   />
                 </div>
@@ -128,23 +129,16 @@ function SearchCameraModal() {
             <div className="h-2 bg-none"></div>
 
             {/* 하단 버튼 영역 */}
-            <div
-              className="flex justify-center px-2 py-3 
-              bg-white rounded-t-lg
-              dark:bg-gray-700"
-            >
+            <div className="flex rounded-md justify-center py-1 bg-white dark:bg-gray-700">
               <button
                 onClick={handleCaptureClick}
                 disabled={isCountingDown || !isWebSocketConnected}
-                className={`flex items-center justify-center w-14 h-14
-                ${isWebSocketConnected ? 'bg-black' : 'bg-gray-400'} text-white rounded-full
-                dark:bg-white dark:text-gray-900
-                ${!isWebSocketConnected && 'cursor-not-allowed'}`}
+                className={`flex items-center justify-center w-7 h-7 ${isWebSocketConnected ? 'bg-black' : 'bg-gray-400'} text-white rounded-full`}
               >
                 {isCountingDown ? (
-                  <span className="text-xl font-bold">{countdown}</span>
+                  <span className="text-lg font-bold">{countdown}</span>
                 ) : (
-                  <Camera />
+                  <Camera size={20} />
                 )}
               </button>
             </div>

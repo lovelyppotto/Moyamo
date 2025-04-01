@@ -7,11 +7,12 @@ import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
   guidelineClassName?: string;
+  guideText?:string;
   // 연결 상태를 외부에서 제어할 수 있도록 추가
   onConnectionStatus?: (status: boolean) => void;
 }
 
-const WebCamera = ({ guidelineClassName, onConnectionStatus }: WebCameraProps) => {
+const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCameraProps) => {
   // 웹소켓 서비스 사용
   const {
     status: wsStatus,
@@ -205,7 +206,7 @@ const WebCamera = ({ guidelineClassName, onConnectionStatus }: WebCameraProps) =
             text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
             drop-shadow-basic"
           >
-            손 제스처를 인식하고 있습니다
+            {guideText}
           </p>
         </div>
       </div>
