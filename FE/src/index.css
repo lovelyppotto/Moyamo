@@ -166,10 +166,11 @@
 /* 폰트 */
 /* 던파 비트비트체 2 */
 @font-face {
-  font-family: 'DNFBitBitv2';
+  font-family: 'DNFBitBit';
+  src: url('/fonts/DNFBitBitv2.woff2') format('woff2'),
+      url('/fonts/DNFBitBitv2.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
-  font-weight: 400;
-  src: url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf') format('opentype');
   font-display: swap;
 }
 
