@@ -38,7 +38,10 @@ function GesturePractice() {
       <div className="flex flex-col lg:flex-row w-full h-full max-w-full px-2 py-1 flex-1 justify-center items-center lg:gap-8 xl:gap-12">
         {/* 따라할 제스처 */}
         <div className="w-full max-w-[500px] lg:w-auto lg:flex-1 flex justify-center items-center mb-2 lg:mb-0">
-          <div className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
+          <div
+            className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic 
+          flex justify-center items-center p-3"
+          >
             <img
               src={gesture.imageUrl}
               alt={`${gesture.gestureTitle} image`}
@@ -49,7 +52,8 @@ function GesturePractice() {
 
         {/* 연습화면 */}
         <div
-          className="w-full max-w-[500px] md:w-[500px] lg:w-[600px] h-[38vh] lg:h-[70vh] bg-gray-200 rounded-lg drop-shadow-basic flex justify-center items-center"
+          className="w-full max-w-[500px] md:w-[500px] lg:w-[600px] h-[38vh] lg:h-[70vh] bg-gray-200 rounded-lg drop-shadow-basic 
+          flex justify-center items-center cursor-pointer"
           onClick={toggleScreen}
         >
           {!showCamera ? (
