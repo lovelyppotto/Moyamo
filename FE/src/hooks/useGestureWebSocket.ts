@@ -23,7 +23,7 @@ interface UseGestureWebSocketReturn {
  * 제스처 인식을 위한 웹소켓 통신을 관리하는 커스텀 훅
  */
 export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
-  const SERVER_URL = import.meta.env.VITE_SERVER_WS_URL
+  const SERVER_URL = import.meta.env.VITE_SERVER_STATIC_WS_URL
   // 웹소켓 상태 관리
   const [status, setStatus] = useState<WebSocketStatus>('closed');
   // 제스처 인식 결과 관리
