@@ -1,19 +1,22 @@
-import { useLocation } from 'react-router-dom';
 import DictHeader from './DictHeader';
 import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
-import { countryCodeMap, MeaningItem } from '../../types/dictCompareType';
+import { MeaningItem } from '../../types/dictCompareType';
 import { getFlagImage } from '@/utils/imageUtils';
+import { useCountryCode } from '@/hooks/useCountryCode';
 
 function CompareGuide() {
-  const location = useLocation();
-  const { gesture } = location.state || {};
+  // 이미지 제대로 들어오면 삭제!!!!
+  const defaultImagePath = '/images/gestures/cross-finger.png';
 
+  // URL 쿼리 파라미터에서 gesture_id 추출
+  const searchParams = new URLSearchParams(location.search);
+  const gestureIdParam = searchParams.get('gesture_id');
+  const gestureId = gestureIdParam ? parseInt(gestureIdParam, 10) : undefined;
   // useCompareGuide 훅을 사용하여 제스처 비교 가이드 가져오기
-  const { data: gestureGuideData, isLoading, isError } = useCompareGuide(gesture?.gestureId);
+  const { data: gestureGuideData, isLoading, isError } = useCompareGuide(gestureId);
 
-  const currentGestureData = gestureGuideData || gesture;
-  console.log('비교 가이드 데이터 : ', currentGestureData);
+  const currentGestureData = gestureGuideData;
 
   // 로딩 상태 확인
   if (isLoading) {
@@ -30,10 +33,7 @@ function CompareGuide() {
   // 제스처 의미 데이터
   const gestureMeanings = currentGestureData.meanings || [];
 
-  // 국가 이름 -> 국가 코드 변환 함수
-  const getCountryCode = (countryName: string) => {
-    return countryCodeMap[countryName];
-  };
+  const getCountryCode = useCountryCode();
 
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
@@ -56,8 +56,8 @@ function CompareGuide() {
         <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[4%] lg:mb-[3%]">
           <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
             <img
-              src={currentGestureData.imageUrl}
-              alt={`compare guide image`}
+              src={currentGestureData.imageUrl || defaultImagePath}
+              alt="compare guide image"
               className="w-[90%] h-[90%] object-contain"
             />
           </div>
