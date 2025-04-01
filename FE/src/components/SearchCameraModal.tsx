@@ -91,13 +91,13 @@ function SearchCameraModal() {
           </button>
         </DialogTrigger>
         <DialogContent
-          className="p-0 w-full h-[90vh] max-h-[90%]
+          className="p-0 w-[95vw] max-w-md h-auto
           rounded-2xl border-none
-          max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-5xl overflow-hidden\
+          mx-auto overflow-hidden
           dark:text-d-txt-50"
         >
           {/* 전체 컨테이너 */}
-          <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
+          <div className="flex flex-col rounded-2xl overflow-hidden">
             {/* 헤더 부분 */}
             <div className="bg-gray-200 dark:bg-gray-700 dark:text-d-txt-50 py-6 pl-8">
               <DialogTitle className="flex item-center text-center text-3xl font-[NanumSquareRoundEB]">
@@ -115,16 +115,11 @@ function SearchCameraModal() {
 
             {/* 카메라 영역 */}
             <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
-              {/* 카메라 컨테이너에 고정된 높이 비율 설정 */}
-              <div className="w-full h-0 pb-[100%] md:pb-[80%] lg:pb-[65%] xl:pb-[50%] relative">
-                {/* 실제 카메라 컴포넌트 */}
-                <div className="absolute inset-0">
+              {/* 카메라 컨테이너를 정사각형 비율로 설정 */}
+              <div className="bg-white py-2">
+                <div className="aspect-square w-full">
                   <WebCamera
-                    // 아래와 같이 반응형으로 화면 비율을 조절합니다
-                    guidelineClassName="max-w-[550px] 
-                    w-[85%] md:w-[70%] lg:w-[60%] xl:w-[80%] 
-                    top-25 md:top-20 lg:top-22 xl:top-15"
-                    // WebSocket 연결 상태 콜백 추가
+                    guidelineClassName="w-[80%] max-w-[400px]"
                     onConnectionStatus={handleConnectionStatus}
                   />
                 </div>
