@@ -74,13 +74,9 @@ pipeline {
                         sshagent(credentials: [SSH_CREDENTIAL]) {
                             sh """
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
-                                    mkdir -p /home/ubuntu/moyamo-be &&
-                                    sudo chown -R ${SSH_USER}:${SSH_USER} /home/ubuntu/moyamo-be
-                                '
-                                scp -o StrictHostKeyChecking=no -r BE/* ${SSH_USER}@${EC2_IP}:/home/ubuntu/moyamo-be/
-                                ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
                                     cd /home/ubuntu/moyamo-be &&
-                                    docker-compose down || true &&
+                                    docker-compose down --remove-orphans || true &&
+                                    docker-compose rm -f || true &&
                                     docker-compose pull &&
                                     docker-compose up -d
                                 '
