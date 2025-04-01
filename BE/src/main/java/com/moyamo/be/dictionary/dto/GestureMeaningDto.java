@@ -10,6 +10,7 @@ import lombok.Getter;
 public class GestureMeaningDto {
     private String country_id;
     private String country_name;
+    private String country_image_url;
     private String gesture_meaning;
     private String gesture_situation;
     @JsonProperty("is_positive")
