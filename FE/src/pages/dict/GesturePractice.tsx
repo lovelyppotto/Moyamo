@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import DictHeader from './DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
@@ -7,11 +7,10 @@ import WebCamera from '@/components/WebCamera';
 
 function GesturePractice() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [showCamera, setShowCamera] = useState(false);
 
-  const { country, gesture } = location.state || [];
-
+  const { gesture } = location.state || [];
+  
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
     setShowCamera(!showCamera);

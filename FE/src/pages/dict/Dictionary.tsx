@@ -70,16 +70,11 @@ function Dictionary() {
   const handlePracticeButtonClick = () => {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
-    navigate(
-      `/dictionary/practice?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`,
-      {
-        replace: true,
-        state: {
-          country: selectedCountry,
-          gesture: currentGesture,
-        },
-      }
-    );
+    navigate('/dictionary/practice', {
+      state: {
+        gesture: currentGesture,
+      },
+    });
   };
 
   // 제스처 디테일로 이동
