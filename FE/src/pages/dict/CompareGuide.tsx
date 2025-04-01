@@ -44,8 +44,39 @@ function CompareGuide() {
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
     gestureMeanings.length === 1
-      ? 'w-full md:max-w-[800px] md:px-8 lg:max-w-[700px] lg:px-0 mx-auto grid grid-cols-1 gap-8 place-items-center'
+      ? 'w-full md:max-w-[800px] md:px-8 lg:max-w-[600px] lg:px-0 mx-auto grid grid-cols-1 gap-8 place-items-center'
       : 'w-full md:max-w-[800px] md:px-8 lg:max-w-[1000px] lg:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8';
+
+  // 사용 상황 텍스트를 / 구분자로 파싱하여 표시하는 함수
+  const parseSituation = (situation: string) => {
+    if (!situation) return null;
+
+    // /로 문자열 분리
+    const situations = situation
+      .split('/')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    // 상황이 하나만 있는 경우 그대로 표시
+    if (situations.length <= 1) {
+      return (
+        <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+          {situation}
+        </p>
+      );
+    }
+
+    // 여러개 있는 경우
+    return (
+      <ul className="list-disc w-[70%] mx-auto pl-8 font-[NanumSquareRound] text-[16px] lg:text-[18px]">
+        {situations.map((item, index) => (
+          <li key={index} className="mb-2 pl-1">
+            {item}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50">
@@ -121,16 +152,14 @@ function CompareGuide() {
                       </p>
                     </div>
 
-                    {/* 중간 구분선 */}
-
                     {/* 사용 상황 */}
                     <div className="flex flex-col items-center">
                       <p className="font-[NanumSquareRoundB] text-[18px] lg:text-[20px] mb-2">
                         사용 상황
                       </p>
-                      <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
-                        {meaning.gestureSituation}
-                      </p>
+                      <div className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+                        {parseSituation(meaning.gestureSituation)}
+                      </div>
                     </div>
                   </div>
                 </div>
