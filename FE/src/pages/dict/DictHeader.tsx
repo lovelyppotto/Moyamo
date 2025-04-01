@@ -4,11 +4,12 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
-
+import { getFlagImage } from '@/utils/imageUtils';
+import { useCountryCode } from '@/hooks/useCountryCode';
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
   title?: string; // 제목
-  country?: Country; // 국가 관련 정보
+  countryName?: string; // 국가 관련 정보
   showCompareGuide?: boolean; // 비교 가이드 버튼 표시 여부
   className?: string; // 드롭다운 관련 속성
   showCountrySelector?: boolean; // 국가 선택 드롭다운 표시 여부
@@ -19,7 +20,7 @@ interface DictHeaderProps {
 
 function DictHeader({
   title,
-  country,
+  countryName,
   showCompareGuide = false,
   className,
   showCountrySelector = false,
@@ -28,7 +29,8 @@ function DictHeader({
   countryOptions = [],
 }: DictHeaderProps) {
   const navigate = useNavigate();
-
+  const getCountryCode = useCountryCode();
+  const countryCode = getCountryCode(countryName);
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
     if (onSelectCountry) {
@@ -36,12 +38,6 @@ function DictHeader({
     } else {
       console.log('국가 선택 핸들러가 제공되지 않았습니다.');
     }
-  };
-
-  // 국기 이미지 경로 생성
-  const getFlagPath = (country?: Country) => {
-    if (!country) return undefined;
-    return `/images/flags/${country.code}.webp`;
   };
 
   // 뒤로가기
@@ -69,10 +65,10 @@ function DictHeader({
         {/* 제목 표시할 때 */}
         {!showCountrySelector && (
           <>
-            {country && (
+            {countryName && (
               <img
-                src={getFlagPath(country)}
-                alt={`${country.name} flag`}
+                src={getFlagImage(countryCode)}
+                alt={`${countryName} flag`}
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
               />
             )}
