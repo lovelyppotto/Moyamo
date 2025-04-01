@@ -134,23 +134,24 @@ function GestureDetail() {
   const handlePracticeClick = () => {
     navigate('/dictionary/practice', {
       state: {
-        gesture: gestureId,
+        gesture: gestureData,
       },
     });
   };
 
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
       <DictHeader
         title={gestureData.countryName}
-        countryName={gestureData.countryName}
-        showCompareGuide={true}
+        gestureCompareInfo={gestureData}
+        showCompareGuide={gestureData.multipleGestures >= 1}
         className=""
       />
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex flex-col h-[80%] overflow-hidden w-full dark:bg-gray-900 dark:text-d-txt-50">
+      <div className="flex flex-col h-[80%] overflow-hidden w-full ">
         <div
           className={`flex flex-col md:flex-col lg:flex-row mx-auto w-full max-w-6xl pt-[30px] 
           overflow-y-auto customScrollbar ${countryCode} h-full`}

@@ -6,10 +6,11 @@ import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
+import { GestureDetail } from '@/types/dictDetailType';
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
   title?: string; // 제목
-  countryName?: string; // 국가 관련 정보
+  gestureCompareInfo?: GestureDetail; // 국가 관련 정보
   showCompareGuide?: boolean; // 비교 가이드 버튼 표시 여부
   className?: string; // 드롭다운 관련 속성
   showCountrySelector?: boolean; // 국가 선택 드롭다운 표시 여부
@@ -20,7 +21,7 @@ interface DictHeaderProps {
 
 function DictHeader({
   title,
-  countryName,
+  gestureCompareInfo,
   showCompareGuide = false,
   className,
   showCountrySelector = false,
@@ -30,7 +31,7 @@ function DictHeader({
 }: DictHeaderProps) {
   const navigate = useNavigate();
   const getCountryCode = useCountryCode();
-  const countryCode = getCountryCode(countryName);
+  const countryCode = getCountryCode(gestureCompareInfo?.countryName);
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
     if (onSelectCountry) {
@@ -65,10 +66,10 @@ function DictHeader({
         {/* 제목 표시할 때 */}
         {!showCountrySelector && (
           <>
-            {countryName && (
+            {gestureCompareInfo && (
               <img
                 src={getFlagImage(countryCode)}
-                alt={`${countryName} flag`}
+                alt={`${gestureCompareInfo.countryName} flag`}
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
               />
             )}
@@ -90,7 +91,8 @@ function DictHeader({
       {/* 오른쪽 - 비교 가이드 버튼 있을 때 */}
       {showCompareGuide && (
         <button
-          className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors rounded-lg cursor-pointer"
+          className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600
+           hover:bg-gray-300 transition-colors rounded-lg cursor-pointer"
           onClick={handleGuideClick}
         >
           <FontAwesomeIcon icon={faRectangleList} className="mr-1.5" />

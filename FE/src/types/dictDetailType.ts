@@ -5,6 +5,7 @@ export type GestureDetailResponse = {
     country_id: number;
     country_name: string;
     image_url: string | null;
+    gesture_label: string;
     meaning_id: number;
     gesture_id: number;
     gesture_image: string | null;
@@ -23,6 +24,7 @@ export interface GestureDetail {
   countryId: number;
   countryName: string;
   imageUrl: string | null;
+  gestureLabel: string;
   meaningId: number;
   gestureId: number;
   gestureImage: string | null;
