@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GestureSearchResult } from '@/types/searchGestureType';
 
 interface SearchResultItemProps {
@@ -7,6 +8,7 @@ interface SearchResultItemProps {
 }
 
 function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
+  const navigate = useNavigate();
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
 
   // 제스처 상세 페이지로 이동
@@ -14,11 +16,39 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
     // 같은 국가 클릭시 초기화, 다른 국가 클릭시 해당 국가로 변경
     setSelectedCountryId(selectedCountryId === countryId ? null : countryId);
 
+    // 선택한 국가 정보 찾기
+    const selectedCountryInfo = result.meanings.find((m) => m.countryId === countryId);
+
+    if (!selectedCountryInfo) {
+      console.error('선택한 국가 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    // GestureDetail 컴포넌트에 필요한 최소한의 정보 전달
+    navigate('/dictionary/detail', {
+      state: {
+        country: {
+          id: countryId,
+          name: selectedCountryInfo.countryName,
+          // code는 제공되지 않으므로 빈 문자열 전달
+          code: '',
+        },
+        gesture: {
+          gestureId: result.gestureId,
+          gestureTitle: result.gestureName,
+          gestureImage: result.gestureImage,
+          gestureMeaning: selectedCountryInfo.meaning,
+        },
+      },
+    });
+
     // 상위 컴포넌트의 핸들러가 있으면 호출
     if (onFlagClick) {
       onFlagClick(countryId, result.gestureName);
     }
   };
+
+  console.log('렌더링된 결과:', result.gestureName, 'gestureId:', result.gestureId);
 
   return (
     <div className="my-2">
