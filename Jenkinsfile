@@ -19,7 +19,6 @@ pipeline {
         stage('Prepare .env') {
             steps {
                 dir('FE') {
-                    // Jenkins Credentials에서 환경변수를 가져와서 .env 파일 생성
                     withCredentials([
                         string(credentialsId: 'VITE_API_BASE_URL', variable: 'VITE_API_BASE_URL'),
                         string(credentialsId: 'VITE_SERVER_STATIC_WS_URL', variable: 'VITE_SERVER_STATIC_WS_URL')
