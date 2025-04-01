@@ -10,6 +10,7 @@ export type GestureListResponse = {
       gesture_id: number;
       image_url: string | null;
       gesture_title: string;
+      multiple_gestures: number;
     }[];
   };
 };
@@ -20,6 +21,7 @@ export interface GestureItem {
   gestureId: number;
   imageUrl: string | null;
   gestureTitle: string;
+  multipleGestures: number;
 }
 
 // GestureListResponse 카멜케이스로 변환
@@ -59,4 +61,3 @@ export type CountryGestures = {
     gestures: Gesture[];
   };
 };
-
