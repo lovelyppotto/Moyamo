@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
 import { getGesturesByCountry, getGestureDetail } from '@/services/dictionaryService';
+import { getQuizQuestions, detectGesture } from '@/services/quizService';
 import { getTips } from '@/services/tipService';
 
 // 제스처 검색
@@ -67,5 +68,21 @@ export function useGestureDetail(gestureId?: number, countryId?: number) {
     },
     enabled: !!gestureId && !!countryId,
     staleTime: 0,
+  });
+}
+
+//퀴즈 문제 가져오기
+export function useQuizQuestions(useCamera: boolean) {
+  return useQuery({
+    queryKey: ['quizQuestions', useCamera],
+    queryFn: () => getQuizQuestions(useCamera),
+    staleTime: 1000 * 60 * 5, // 5분 동안 데이터 신선하게 유지
+  });
+}
+
+//영상 퀴즈 ai 인식 결과 가져오기: 수정예정. (데이터 주고 받는 함수)
+export function useGestureDetection() {
+  return useMutation({
+    mutationFn: (imageData: string) => detectGesture(imageData),
   });
 }

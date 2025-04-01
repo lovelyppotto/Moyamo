@@ -3,8 +3,9 @@
  * 정답인 부분은 초록 색으로 바꾸기
  */
 //옳바른 제스처를 선택하는 컴포넌트입니다.
-//수정: img를 받아와서 답 칸에 적어야 합니다. -> 
+//수정: img를 받아와서 답 칸에 적어야 합니다. ->
 import React, { useRef } from 'react';
+import { GlbViewer } from '../../components/GlbViewer';
 
 interface Option {
   option_id: number;
@@ -93,13 +94,14 @@ const Answers2: React.FC<Answers2Props> = ({
   }
 
   return (
-  
-      <div className="h-screen flex flex-col ">
-        {/* 문제 이미지 부분 */}
-        <div className=" bg-white w-full h-1/5 rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <p className='sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] '>~~~한 상황에서 주로 사용하는 표현</p>
-        </div>
+    <div className="h-screen flex flex-col ">
+      {/* 문제 이미지 부분 */}
+      <div className=" bg-white w-full h-1/5 rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
+        {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
+        <p className="sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] ">
+          ~~~한 상황에서 주로 사용하는 표현
+        </p>
+      </div>
       <div className="flex justify-between mt-[3vh]">
         {shuffledAnswers.current && (
           <>
@@ -110,7 +112,7 @@ const Answers2: React.FC<Answers2Props> = ({
               onClick={() => onSelect(shuffledAnswers.current![0].option_id)}
             >
               <p className="mr-5">①</p>
-              <img src={shuffledAnswers.current[0].gesture_image} alt="gesture_image" />
+              <GlbViewer url={shuffledAnswers.current[0].gesture_image} />
             </button>
             <button
               type="button"
@@ -119,7 +121,7 @@ const Answers2: React.FC<Answers2Props> = ({
               onClick={() => onSelect(shuffledAnswers.current![1].option_id)}
             >
               <p className="mr-5">②</p>
-              <img src={shuffledAnswers.current[1].gesture_image} alt="gesture_image" />
+              <GlbViewer url={shuffledAnswers.current[1].gesture_image} />
             </button>
           </>
         )}
@@ -135,7 +137,7 @@ const Answers2: React.FC<Answers2Props> = ({
               onClick={() => onSelect(shuffledAnswers.current![2].option_id)}
             >
               <p className="mr-5">③</p>
-              <img src={shuffledAnswers.current[2].gesture_image} alt="gesture_image" />
+              <GlbViewer url={shuffledAnswers.current[2].gesture_image} />
             </button>
             <button
               type="button"
@@ -144,7 +146,7 @@ const Answers2: React.FC<Answers2Props> = ({
               onClick={() => onSelect(shuffledAnswers.current![3].option_id)}
             >
               <p className="mr-5">④</p>
-              <img src={shuffledAnswers.current[3].gesture_image} alt="gesture_image" />
+              <GlbViewer url={shuffledAnswers.current[3].gesture_image} />
             </button>
           </>
         )}

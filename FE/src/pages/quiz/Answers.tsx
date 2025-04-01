@@ -3,6 +3,7 @@
  * 정답인 부분은 초록 색으로 바꾸기
  */
 import React, { useRef } from 'react';
+import { GlbViewer } from '@/components/GlbViewer';
 
 interface Option {
   option_id: number;
@@ -92,7 +93,7 @@ const Answers: React.FC<AnswersProps> = ({
         {/* 문제 이미지 부분 */}
         <div className=" bg-white w-[44%] h-full rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
           {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={quizImage} alt="sample_img" className="p-5" />
+          <GlbViewer url={quizImage} />
         </div>
         {/* 퀴즈 보기 부분 */}
         <div className="w-[44%] h-full flex flex-col justify-between ">

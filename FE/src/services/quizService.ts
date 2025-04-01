@@ -89,7 +89,7 @@ export const detectGesture = async (imageData: string): Promise<{ gesture: strin
   }
 
   try {
-    // 실제 API 호출 (구현 예정)
+    // 실제 API 호출 (구현 예정): 데이터를 받아야 함.
     const { data } = await apiClient.post('/api/gestures/detect', { image: imageData });
     return data;
   } catch (error) {
