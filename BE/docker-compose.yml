@@ -40,4 +40,5 @@ services:
 
 networks:
   nginx_jenkins_network:
+    name: nginx_jenkins_network
     driver: bridge
