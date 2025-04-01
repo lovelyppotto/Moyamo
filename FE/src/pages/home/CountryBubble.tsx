@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { 
   Tooltip,
   TooltipContent,
@@ -7,7 +8,7 @@ import {
 import { useTips } from "@/hooks/apiHooks";
 import { getAttractionImage } from "@/utils/imageUtils";
 
- // 툴팁 위치 정보 타입
+// 툴팁 위치 정보 타입
 interface TooltipPosition {
   side: 'top' | 'right' | 'bottom' | 'left';
   align: 'start' | 'center' | 'end';
@@ -29,7 +30,10 @@ interface CountryData {
   tooltipPosition: TooltipPosition;
 }
 
-// 툴팁 세팅
+// 디바이스 타입 정의
+type DeviceType = 'desktop' | 'tablet' | 'mobile';
+
+// 툴팁 세팅 - 원본 코드 그대로
 const countrySetup: CountryData[] = [
   {
     id: 'korea',
@@ -137,68 +141,183 @@ const countrySetup: CountryData[] = [
 
 function CountryBubble() {
   const { data: tips } = useTips();
+  const [deviceType, setDeviceType] = useState<DeviceType>('desktop');
+  const [openTooltip, setOpenTooltip] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 화면 크기에 따라 디바이스 타입 설정
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width <= 640) {
+        setDeviceType('mobile');
+      } else if (width <= 1024) {
+        setDeviceType('tablet');
+      } else {
+        setDeviceType('desktop');
+      }
+    };
+
+    // 초기 로드 시 설정
+    handleResize();
+
+    // 리사이즈 이벤트 리스너 등록
+    window.addEventListener('resize', handleResize);
+    
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // mobile UI에서 툴팁 토글 처리
+  const handleTooltipToggle = (countryId: string) => {
+    if (openTooltip === countryId) {
+      setOpenTooltip(null); // 이미 열린 툴팁이면 닫기
+    } else {
+      setOpenTooltip(countryId); // 아니면 새로운 툴팁 열기
+    }
+  };
 
   const getTipContent = (countryId: number): string => {
     const tip = tips?.find(tip => tip.countryId === countryId);
     return tip?.content || '제스처로 소통하며 새로운 문화를 경험해보세요!';
   };
 
-  return (
-    <TooltipProvider>
-      <div>
-        {/* 국가별 관광지 사진 영역 - 6각형 레이아웃
-        {/* 각 border 채도 낮출 예정 */}
-        <div className="absolute top-10 w-full h-full z-30 pointer-events-none">
-          {countrySetup.map((country) => 
-            <div key={country.id} className={country.position}>
-              <div className="relative">
-                <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="relative cursor-pointer z-30 pointer-events-auto">
-                    <div 
-                      className={`w-30 h-30 rounded-full overflow-hidden
-                        border-2 border-white shadow-lg 
-                        transition-transform hover:scale-105
-                        dark:border-slate-100`}
-                    >
+  // 태블릿/모바일 환경에서 간소화된 버블 UI
+  const renderMobileUI = () => {
+    // 태블릿과 모바일 환경에서는 Communication 제외
+    const filteredCountries = countrySetup.filter(country => country.id !== 'communication');
+      
+    return (
+      <div className="flex flex-row flex-wrap justify-center gap-x-6 gap-y-4 px-4">
+        {filteredCountries.map((country) => (
+          <div key={country.id} className="relative">
+            <div 
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => handleTooltipToggle(country.id)}
+            >
+              <div 
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 
+                ${openTooltip === country.id ? 'border-yellow-400 scale-110' : 'border-white'}
+                shadow-md hover:shadow-lg transition-all dark:border-slate-100`}
+              >
+                <img
+                  src={getAttractionImage(country.image)}
+                  alt={country.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div 
+                className={`mt-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold 
+                ${country.labelBackground} 
+                ${country.name === 'Communication' ? 'text-black border border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
+              >
+                {country.name}
+              </div>
+            </div>
+            
+            {/* 선택된 국가의 툴팁 표시 */}
+            {openTooltip === country.id && (
+              <div 
+                className={`${country.tooltipBackground} fixed z-50 text-black p-4 rounded-lg shadow-lg w-full max-w-xs
+                left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+              >
+                <div className="flex flex-row items-center">
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
                       <img
-                        src={getAttractionImage(country.image)} 
+                        src={getAttractionImage(country.image)}
                         alt={country.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div
-                      className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-100 font-bold ${
-                        country.labelBackground
-                      } ${country.name === 'Communication' ? 'text-black border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
-                    >
-                      {country.name}
-                    </div>
                   </div>
-                </TooltipTrigger>
-                {/* Portal 통해 DOM 최상위에 렌더링 */}
-                <TooltipContent
-                  side={country.tooltipPosition.side}
-                  align={country.tooltipPosition.align}
-                  sideOffset={country.tooltipPosition.sideOffset}
-                  alignOffset={country.tooltipPosition.alignOffset}
-                  className={`${country.tooltipBackground} text-black p-6 rounded-lg shadow-lg max-w-xs`}
-                  style={{ zIndex: 20 }}
+                  <div className="flex-grow">
+                    <p className="font-[Galmuri11] font-bold text-xs sm:text-sm">
+                      {getTipContent(country.countryId)}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenTooltip(null);
+                  }}
                 >
-                  <div className="flex flex-col gap-2">
-                    <p className="font-[Galmuri11] font-bold text-sm">{getTipContent(country.countryId)}</p>
-                  </div>
-                </TooltipContent>
-
-                </Tooltip>
+                  ✕
+                </button>
               </div>
-            </div>
-          )}
-        {/* 점선 연결선 */}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
-    </TooltipProvider>
-  );
+    );
+  };
+
+  // 데스크탑 UI - 호버 및 클릭 둘 다 사용
+  const renderDesktopUI = () => {
+    return (
+      <TooltipProvider>
+        <div>
+          {/* 국가별 관광지 사진 영역 - 6각형 레이아웃 */}
+          {/* 각 border 채도 낮출 예정 */}
+          <div className="absolute top-10 w-full h-full z-30 pointer-events-none">
+            {countrySetup.map((country) => 
+              <div key={country.id} className={country.position}>
+                <div className="relative">
+                  <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      className="relative cursor-pointer z-30 pointer-events-auto"
+                      onClick={() => handleTooltipToggle(country.id)}
+                    >
+                      <div 
+                        className={`w-30 h-30 rounded-full overflow-hidden
+                          border-2 border-white shadow-lg 
+                          transition-transform hover:scale-105
+                          dark:border-slate-100`}
+                      >
+                        <img
+                          src={getAttractionImage(country.image)} 
+                          alt={country.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div
+                        className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-100 font-bold ${
+                          country.labelBackground
+                        } ${country.name === 'Communication' ? 'text-black border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
+                      >
+                        {country.name}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  {/* Portal 통해 DOM 최상위에 렌더링 */}
+                  <TooltipContent
+                    side={country.tooltipPosition.side}
+                    align={country.tooltipPosition.align}
+                    sideOffset={country.tooltipPosition.sideOffset}
+                    alignOffset={country.tooltipPosition.alignOffset}
+                    className={`${country.tooltipBackground} text-black p-6 rounded-lg shadow-lg max-w-xs`}
+                    style={{ zIndex: 20 }}
+                  >
+                    <div className="flex flex-col gap-2">
+                      <p className="font-[Galmuri11] font-bold text-sm">{getTipContent(country.countryId)}</p>
+                    </div>
+                  </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </TooltipProvider>
+    );
+  };
+  
+  // 디바이스 타입에 따라 적절한 UI 렌더링
+  return deviceType === 'desktop' ? renderDesktopUI() : renderMobileUI();
 }
 
 export default CountryBubble;
