@@ -5,14 +5,15 @@ import { HandLandmarker, HandLandmarkerResult, FilesetResolver } from '@mediapip
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
   guidelineClassName?: string;
+  onConnectionStatus?: (status: boolean) => void;
 }
 
-const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
+const WebCamera = ({ guidelineClassName, onConnectionStatus }: WebCameraProps) => {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handLandmarkerRef = useRef<HandLandmarker | null>(null);
   const resultsRef = useRef<HandLandmarkerResult | null>(null);
-  const landmarkFrames = useRef<any[]>([]); // 50프레임 저장할 배열
+  const [confidence, setConfidence] = useState<number | null>(null); // 일치율 추가
   const [gesture, setGesture] = useState<string | null>(null); // 서버 응답된 제스처
   const [isConnected, setIsConnected] = useState(false); // WebSocket 연결 상태
   const [isLoading, setIsLoading] = useState(true); // 모델 로딩 상태
@@ -114,45 +115,81 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
   // 서버로 랜드마크 데이터를 즉시 전송하는 함수
   const sendLandmarksToServer = (landmarks: any[]) => {
     if (socket.current && socket.current.readyState === WebSocket.OPEN) {
-      // 랜드마크 데이터 직렬화 (중요: x, y, z 좌표만 포함)
-      const serializedLandmarks = landmarks.map((hand) =>
-        hand.map((lm: any) => ({
-          x: lm.x,
-          y: lm.y,
-          z: lm.z,
-        }))
-      );
+      try {
+        // 랜드마크 데이터 직렬화 (중요: x, y, z 좌표만 포함)
+        const serializedLandmarks = landmarks.map((hand) =>
+          hand.map((lm: any) => ({
+            x: lm.x,
+            y: lm.y,
+            z: lm.z,
+          }))
+        );
 
-      const data = JSON.stringify({ frames: serializedLandmarks });
-      socket.current.send(data);
-      console.log(`[📤 전송됨] landmark 전송: ${serializedLandmarks.length} 손`);
+        const data = JSON.stringify({ frames: serializedLandmarks });
+        socket.current.send(data);
+        console.log(`[📤 전송됨] landmark 전송: ${serializedLandmarks.length} 손`);
+      } catch (error) {
+        console.error('[⚠️ 데이터 전송 오류]', error);
+      }
+    } else {
+      console.log('[⚠️ WebSocket 연결되지 않음] 데이터 전송 실패');
     }
   };
-  
+
   // WebSocket 연결 관리: isConnected 상태에 따라 연결 생성 및 해제
   useEffect(() => {
     if (isConnected) {
-      socket.current = new WebSocket(import.meta.env.SERVER_WS_URL);
+      // 직접 서버 주소 지정 (import.meta.env 대신 하드코딩)
+      const SERVER_URL = 'wss://moyamo.site/static-gesture/ws/predict';
+      console.log('[🔄 WebSocket 연결 시도]', SERVER_URL);
 
-      socket.current.onopen = () => {
-        console.log('[✅ WebSocket 연결됨]');
-      };
-      socket.current.onmessage = (event) => {
-        try {
-          const response = JSON.parse(event.data);
-          setGesture(response.gesture); // 서버에서 받은 제스처 표시
-        } catch (err) {
-          console.error('메시지 파싱 오류:', event.data);
-        }
-      };
-      socket.current.onclose = () => {
-        console.log('[❌ WebSocket 연결 종료]');
-      };
-      socket.current.onerror = (error) => {
-        console.error('[⚠️ WebSocket 오류]', error);
-      };
+      try {
+        socket.current = new WebSocket(SERVER_URL);
+
+        socket.current.onopen = () => {
+          console.log('[✅ WebSocket 연결됨]');
+          if (onConnectionStatus) {
+            onConnectionStatus(true);
+          }
+        };
+        socket.current.onmessage = (event) => {
+          try {
+            console.log('[📥 응답 수신] 데이터:', event.data);
+            const response = JSON.parse(event.data);
+            if (response.gesture) {
+              setGesture(response.gesture);
+              // 일치율 정보가 있으면 표시
+              if (response.confidence !== undefined) {
+                setConfidence(response.confidence);
+              }
+            } else if (response.error) {
+              console.error('[⚠️ 서버 오류 응답]:', response.error);
+            }
+          } catch (err) {
+            console.error('메시지 파싱 오류:', event.data);
+          }
+        };
+        socket.current.onclose = () => {
+          console.log('[❌ WebSocket 연결 종료]');
+          if (onConnectionStatus) {
+            onConnectionStatus(false);
+          }
+        };
+        socket.current.onerror = (error) => {
+          console.error('[⚠️ WebSocket 오류]', error);
+          // 연결 실패 시 재시도 로직 (선택적)
+          setTimeout(() => {
+            console.log('[🔁 WebSocket 재연결 시도]');
+            setIsConnected(false);
+            setTimeout(() => setIsConnected(true), 1000);
+          }, 2000);
+        };
+      } catch (error) {
+        console.error('[⚠️ WebSocket 생성 오류]', error);
+      }
     } else {
       if (socket.current) {
+        console.log('[📴 WebSocket 연결 해제 중]');
         socket.current.close();
         socket.current = null;
       }
@@ -162,17 +199,24 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
 
   // 컴포넌트 마운트 시 HandLandmarker 초기화
   useEffect(() => {
+    console.log("[🔍 WebCamera 컴포넌트 마운트]");
     initializeHandLandmarker();
-
-    // 컴포넌트가 마운트되면 자동으로 연결 시작
-    setIsConnected(true);
-
+    
+    // 컴포넌트가 마운트되면 자동으로 연결 시작 - 약간의 지연 추가
+    const timer = setTimeout(() => {
+      console.log("[🔍 웹소켓 연결 시작]");
+      setIsConnected(true);
+    }, 500);
+    
     return () => {
+      console.log("[🔍 WebCamera 컴포넌트 언마운트]");
+      clearTimeout(timer);
+      
       // 리소스 정리
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-
+      
       // WebSocket 연결 해제
       if (socket.current) {
         socket.current.close();
@@ -315,10 +359,12 @@ const WebCamera = ({ guidelineClassName }: WebCameraProps) => {
       </div>
 
       {/* 제스처 인식 결과 표시 (화면 상단에 표시) */}
+      {/* 제스처 인식 결과 표시 (화면 상단에 표시) */}
       {gesture && (
         <div className="absolute top-20 left-0 right-0 flex justify-center items-center">
           <div className="bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg font-bold">
             인식된 제스처: {gesture}
+            {confidence !== null && <div className="mt-1">일치율: {confidence.toFixed(1)}%</div>}
           </div>
         </div>
       )}

@@ -9,15 +9,22 @@ function SearchCameraModal() {
   const [open, setOpen] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 타이머 끝난 후 로직
   const handleTimerEnd = () => {
-    navigate('/dictionary/detail')
+    navigate('/dictionary/detail');
   };
 
   // 카운트다운 타이머 시작
   const startCountdown = () => {
+    // 웹소켓이 연결되지 않았다면 카운트다운 시작하지 않음
+    if (!isWebSocketConnected) {
+      console.log('[⚠️ 웹소켓 연결 확인 필요] 카운트다운을 시작할 수 없습니다.');
+      return;
+    }
+
     setIsCountingDown(true);
     setCountdown(3);
 
@@ -55,11 +62,19 @@ function SearchCameraModal() {
   }, [open]);
 
   const handleCameraClick = (): void => {
+    console.log('[🎬 카메라 모달 열기]');
     setOpen(true);
   };
 
   const handleCaptureClick = (): void => {
+    console.log('[📸 캡처 버튼 클릭] 웹소켓 연결 상태:', isWebSocketConnected);
     startCountdown();
+  };
+
+  // WebSocket 연결 상태 콜백 핸들러
+  const handleConnectionStatus = (status: boolean) => {
+    console.log('[🌐 WebSocket 연결 상태 변경]:', status);
+    setIsWebSocketConnected(status);
   };
 
   return (
@@ -109,11 +124,14 @@ function SearchCameraModal() {
                     guidelineClassName="max-w-[550px] 
                     w-[85%] md:w-[70%] lg:w-[60%] xl:w-[80%] 
                     top-25 md:top-20 lg:top-22 xl:top-15"
+                    // WebSocket 연결 상태 콜백 추가
+                    onConnectionStatus={handleConnectionStatus}
                   />
                 </div>
               </div>
             </div>
             <div className="h-2 bg-none"></div>
+
             {/* 하단 버튼 영역 */}
             <div
               className="flex justify-center px-2 py-3 
@@ -122,10 +140,11 @@ function SearchCameraModal() {
             >
               <button
                 onClick={handleCaptureClick}
-                disabled={isCountingDown}
-                className="flex items-center justify-center w-14 h-14
-                bg-black text-white rounded-full
-                dark:bg-white dark:text-gray-900"
+                disabled={isCountingDown || !isWebSocketConnected}
+                className={`flex items-center justify-center w-14 h-14
+                ${isWebSocketConnected ? 'bg-black' : 'bg-gray-400'} text-white rounded-full
+                dark:bg-white dark:text-gray-900
+                ${!isWebSocketConnected && 'cursor-not-allowed'}`}
               >
                 {isCountingDown ? (
                   <span className="text-xl font-bold">{countdown}</span>
@@ -134,6 +153,15 @@ function SearchCameraModal() {
                 )}
               </button>
             </div>
+
+            {/* 연결 상태 표시 */}
+            {!isWebSocketConnected && open && (
+              <div className="absolute bottom-24 left-0 right-0 flex justify-center">
+                <div className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm">
+                  서버 연결 중입니다. 잠시만 기다려주세요.
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
