@@ -25,12 +25,19 @@ public class DictionaryService {
         List<CountryGesture> gestures = countryGestureRepository.findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNull(countryId);
 
         Country country = gestures.get(0).getCountry();
-        List<GestureListResponseDto> gestureList = gestures.stream().map(cg -> new GestureListResponseDto(
-                cg.getMeaningId().intValue(),
-                cg.getGesture().getGestureId().intValue(),
-                cg.getGesture().getImageUrl(),
-                cg.getGestureInfo().getGestureTitle()
-        )).collect(Collectors.toList());
+        List<GestureListResponseDto> gestureList = gestures.stream()
+                .map(cg -> {
+                    int gestureId = cg.getGesture().getGestureId();
+                    int multiple = countryGestureRepository.countOtherCountriesByGestureId(gestureId);
+                    return new GestureListResponseDto(
+                            cg.getMeaningId().intValue(),
+                            gestureId,
+                            cg.getGesture().getImageUrl(),
+                            cg.getGestureInfo().getGestureTitle(),
+                            multiple
+                    );
+                })
+                .collect(Collectors.toList());
 
         GestureListWithCountryDto responseData = new GestureListWithCountryDto(
                 country.getCountryId(),
