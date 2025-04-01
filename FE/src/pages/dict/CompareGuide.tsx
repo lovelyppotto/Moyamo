@@ -6,6 +6,8 @@ import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 
 function CompareGuide() {
+  const getCountryCode = useCountryCode();
+  
   // 이미지 제대로 들어오면 삭제!!!!
   const defaultImagePath = '/images/gestures/cross-finger.png';
 
@@ -32,8 +34,6 @@ function CompareGuide() {
 
   // 제스처 의미 데이터
   const gestureMeanings = currentGestureData.meanings || [];
-
-  const getCountryCode = useCountryCode();
 
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
