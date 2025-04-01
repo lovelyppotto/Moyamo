@@ -3,24 +3,14 @@
  * 정답인 부분은 초록 색으로 바꾸기
  */
 //옳바른 제스처를 선택하는 컴포넌트입니다.
-//수정: img를 받아와서 답 칸에 적어야 합니다. -> 
+//수정: img를 받아와서 답 칸에 적어야 합니다. ->
 import React, { useRef } from 'react';
-
-interface Option {
-  option_id: number;
-  gesture_id: number;
-  gesture_image: string;
-}
-
-interface Answer {
-  answer_id: number;
-  correct_option_id: number;
-  correct_gesture_id: number;
-}
+import { GlbViewer } from '@/components/GlbViewer';
+import { FrontendQuestionData } from '@/types/quizTypes';
 
 interface Answers2Props {
-  options: Option[];
-  answer: Answer;
+  options: FrontendQuestionData['options'];
+  answer: FrontendQuestionData['answer'];
   onSelect: (answer: number | null) => void;
   isSelected: number | null;
   answerState: string;
@@ -33,7 +23,7 @@ const Answers2: React.FC<Answers2Props> = ({
   isSelected,
   answerState,
 }) => {
-  const shuffledAnswers = useRef<Option[] | null>(null);
+  const shuffledAnswers = useRef<FrontendQuestionData['options'] | null>(null);
 
   if (!shuffledAnswers.current) {
     shuffledAnswers.current = [...options];
@@ -45,17 +35,13 @@ const Answers2: React.FC<Answers2Props> = ({
    */
   const getCssClass = (optionId: number): string => {
     const baseClass =
-      'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] mx-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
+      'flex flex-col items-center justify-around p-4 w-[45%] h-[80%] rounded-xl drop-shadow-quiz-box sm:text-sm md:text-xl lg:text-2xl font-[NanumSquareRoundB] cursor-pointer';
 
-    // 현재 답변이 사용자가 선택한 답변인지 확인
     const isThisAnswerSelected = optionId === isSelected;
     const unSelected = optionId !== isSelected;
+    const isCorrectAnswer = answer?.correctOptionId === optionId;
 
-    // 현재 답변이 정답인지 확인
-    const isCorrectAnswer = answer?.correct_option_id === optionId;
-
-    // 색상 변수 결정: 배경색상을 바꾸기 위해서 조건문 사용함.
-    let colorClass = 'bg-white'; // 기본값 설정
+    let colorClass = 'bg-white';
 
     if (!answer) {
       return `${baseClass} ${colorClass}`;
@@ -93,62 +79,68 @@ const Answers2: React.FC<Answers2Props> = ({
   }
 
   return (
-  
-      <div className="h-screen flex flex-col ">
-        {/* 문제 이미지 부분 */}
-        <div className=" bg-white w-full h-1/5 rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <p className='sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] '>~~~한 상황에서 주로 사용하는 표현</p>
-        </div>
-      <div className="flex justify-between mt-[3vh]">
-        {shuffledAnswers.current && (
-          <>
+    <div className="h-screen flex flex-col px-4 pt-[3vh]">
+      {shuffledAnswers.current && (
+        <>
+          <div className="flex justify-between h-[44%]">
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[0].option_id)}
+              className={getCssClass(shuffledAnswers.current[0].id)}
               disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![0].option_id)}
+              onClick={() => onSelect(shuffledAnswers.current![0].id)}
             >
-              <p className="mr-5">①</p>
-              <img src={shuffledAnswers.current[0].gesture_image} alt="gesture_image" />
+              <p className="text-2xl">①</p>
+              {shuffledAnswers.current[0].gestureImage && (
+                <div className="w-full h-[80%] flex items-center justify-center">
+                  <GlbViewer url={shuffledAnswers.current[0].gestureImage} />
+                </div>
+              )}
             </button>
-            <button
-              type="button"
-              className={getCssClass(shuffledAnswers.current[1].option_id)}
-              disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![1].option_id)}
-            >
-              <p className="mr-5">②</p>
-              <img src={shuffledAnswers.current[1].gesture_image} alt="gesture_image" />
-            </button>
-          </>
-        )}
-      </div>
 
-      <div className="flex justify-between mt-[3vh]">
-        {shuffledAnswers.current && (
-          <>
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[2].option_id)}
+              className={getCssClass(shuffledAnswers.current[1].id)}
               disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![2].option_id)}
+              onClick={() => onSelect(shuffledAnswers.current![1].id)}
             >
-              <p className="mr-5">③</p>
-              <img src={shuffledAnswers.current[2].gesture_image} alt="gesture_image" />
+              <p className="text-2xl">②</p>
+              {shuffledAnswers.current[1].gestureImage && (
+                <div className="w-full h-[80%] flex items-center justify-center">
+                  <GlbViewer url={shuffledAnswers.current[1].gestureImage} />
+                </div>
+              )}
+            </button>
+          </div>
+          <div className="flex justify-between  h-[44%]">
+            <button
+              type="button"
+              className={getCssClass(shuffledAnswers.current[2].id)}
+              disabled={answerState !== ''}
+              onClick={() => onSelect(shuffledAnswers.current![2].id)}
+            >
+              <p className="text-2xl">③</p>
+              {shuffledAnswers.current[2].gestureImage && (
+                <div className="w-full h-[80%] flex items-center justify-center">
+                  <GlbViewer url={shuffledAnswers.current[2].gestureImage} />
+                </div>
+              )}
             </button>
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[3].option_id)}
+              className={getCssClass(shuffledAnswers.current[3].id)}
               disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![3].option_id)}
+              onClick={() => onSelect(shuffledAnswers.current![3].id)}
             >
-              <p className="mr-5">④</p>
-              <img src={shuffledAnswers.current[3].gesture_image} alt="gesture_image" />
+              <p className="text-2xl">④</p>
+              {shuffledAnswers.current[3].gestureImage && (
+                <div className="w-full h-[80%] flex items-center justify-center">
+                  <GlbViewer url={shuffledAnswers.current[3].gestureImage} />
+                </div>
+              )}
             </button>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

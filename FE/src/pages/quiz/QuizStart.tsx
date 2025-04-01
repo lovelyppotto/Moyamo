@@ -1,4 +1,4 @@
-//서버에 type 모달달
+//서버에 type을 전달해야 함. 
 import '@/index.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';

@@ -1,70 +1,165 @@
-export default [
+// 개발용 목 데이터 (API 응답 구조에 맞춤)
+const standingGlbUrl = '/src/assets/models/Standing.glb';
+export const quizMockData = [
   {
-    status: 200,
-    data: [
+    question_id: 1,
+    question_text: '[MOCK]이 제스처의 의미는?',
+    question_type: 'MEANING',
+    gesture_url: standingGlbUrl,
+    options: [
       {
-        question_id: 1,
-        question_text: '이 제스처의 의미는?', 
-        question_type: 'MEANING',
-        question_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb', //추가
-        options: [
-          { option_id: 101, option_meaning: '승리' },
-          { option_id: 102, option_meaning: '평화' },
-          { option_id: 103, option_meaning: '모욕' },
-          { option_id: 104, option_meaning: '인사' },
-        ],
-        answer: { answer_id: 1, correct_option_id: 101, correct_meaning: '승리' },
-      }, 
-      {
-        question_id: 2,
-        question_text: '이 상황에서 적절한 제스처는?',
-        question_type: 'GESTURE',
-        options: [
-          { option_id: 199, gesture_id: 3, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-          { option_id: 200, gesture_id: 4, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-          { option_id: 201, gesture_id: 5, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-          { option_id: 202, gesture_id: 6, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-        ],
-        answer: { answer_id: 2, correct_option_id: 201, correct_gesture_id: 5 },
+        option_id: 1,
+        option_meaning: '승리',
+        gesture_id: null,
+        gesture_image: null,
       },
       {
-        question_id: 3,
-        question_text: '00나라에서 00의미로 사용되는 이 제스처를 맞추시오',
-        question_type: 'CAMERA',
-        options: [],
-        answer: {
-          answer_id: 3,
-          correct_gesture_id: 7,
-          correct_gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb',
-          correct_gesture_name: 'finger_heart',
-          
-        },
+        option_id: 2,
+        option_meaning: '평화',
+        gesture_id: null,
+        gesture_image: null,
       },
       {
-        question_id: 4,
-        question_text: '이 상황에서 적절한 제스처는?',
-        question_type: 'GESTURE',
-        options: [
-          { option_id: 199, gesture_id: 3, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb'},
-          { option_id: 200, gesture_id: 4, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-          { option_id: 201, gesture_id: 5, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-          { option_id: 202, gesture_id: 6, gesture_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb' },
-        ],
-        answer: { answer_id: 4, correct_option_id: 201, correct_gesture_id: 5 },
+        option_id: 3,
+        option_meaning: '모욕',
+        gesture_id: null,
+        gesture_image: null,
       },
       {
-        question_id: 5,
-        question_text: '이 제스처의 의미는?',
-        question_type: 'MEANING',
-        question_image: 'https://moyamos3.s3.ap-northeast-2.amazonaws.com/gesture/83cf4156-95ea-4154-b32b-dd52f49ca200_handtest2.glb', //추가
-        options: [
-          { option_id: 101, option_meaning: '승리' },
-          { option_id: 102, option_meaning: '평화' },
-          { option_id: 103, option_meaning: '모욕' },
-          { option_id: 104, option_meaning: '인사' },//수정정
-        ],
-        answer: { answer_id: 5, correct_option_id: 101, correct_meaning: '승리' },
+        option_id: 4,
+        option_meaning: '인사',
+        gesture_id: null,
+        gesture_image: null,
       },
     ],
+    answer: {
+      answer_id: 1,
+      answer_option_id: 1,
+      correct_gesture_name: null,
+    },
+  },
+  {
+    question_id: 6,
+    question_text: '[MOCK]미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
+    question_type: 'GESTURE',
+    gesture_url: null,
+    options: [
+      {
+        option_id: 21,
+        option_meaning: null,
+        gesture_id: 10,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 22,
+        option_meaning: null,
+        gesture_id: 15,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 23,
+        option_meaning: null,
+        gesture_id: 16,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 24,
+        option_meaning: null,
+        gesture_id: 17,
+        gesture_image: standingGlbUrl,
+      },
+    ],
+    answer: {
+      answer_id: 6,
+      answer_option_id: 21,
+      correct_gesture_name: null,
+    },
+  },
+  {
+    question_id: 9,
+    question_text:
+      "[MOCK]미국에서 이 제스처는 '다시 말해주세요'라는 의미를 가집니다. 이 제스처를 카메라에 보여주세요.",
+    question_type: 'CAMERA',
+    gesture_url: null,
+    options: [],
+    answer: {
+      answer_id: 9,
+      answer_option_id: null,
+      correct_gesture_name: 'pardon',
+    },
+  },
+  {
+    question_id: 1,
+    question_text: '[MOCK]이 제스처의 의미는?',
+    question_type: 'MEANING',
+    gesture_url: standingGlbUrl,
+    options: [
+      {
+        option_id: 1,
+        option_meaning: '승리',
+        gesture_id: null,
+        gesture_image: null,
+      },
+      {
+        option_id: 2,
+        option_meaning: '평화',
+        gesture_id: null,
+        gesture_image: null,
+      },
+      {
+        option_id: 3,
+        option_meaning: '모욕',
+        gesture_id: null,
+        gesture_image: null,
+      },
+      {
+        option_id: 4,
+        option_meaning: '인사',
+        gesture_id: null,
+        gesture_image: null,
+      },
+    ],
+    answer: {
+      answer_id: 1,
+      answer_option_id: 1,
+      correct_gesture_name: null,
+    },
+  },
+  {
+    question_id: 6,
+    question_text: '[MOCK]미국에서 이 제스처는 돈을 의미합니다. 이 제스처는 무엇일까요?',
+    question_type: 'GESTURE',
+    gesture_url: null,
+    options: [
+      {
+        option_id: 21,
+        option_meaning: null,
+        gesture_id: 10,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 22,
+        option_meaning: null,
+        gesture_id: 15,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 23,
+        option_meaning: null,
+        gesture_id: 16,
+        gesture_image: standingGlbUrl,
+      },
+      {
+        option_id: 24,
+        option_meaning: null,
+        gesture_id: 17,
+        gesture_image: standingGlbUrl,
+      },
+    ],
+    answer: {
+      answer_id: 6,
+      answer_option_id: 21,
+      correct_gesture_name: null,
+    },
   },
 ];

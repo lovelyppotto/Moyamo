@@ -3,25 +3,16 @@
  * 정답인 부분은 초록 색으로 바꾸기
  */
 import React, { useRef } from 'react';
-
-interface Option {
-  option_id: number;
-  option_meaning: string;
-}
-
-interface Answer {
-  answer_id: number;
-  correct_option_id: number;
-  correct_meaning: string;
-}
+import { GlbViewer } from '@/components/GlbViewer';
+import { FrontendQuestionData } from '@/types/quizTypes';
 
 interface AnswersProps {
-  options: Option[];
-  answer: Answer;
+  options: FrontendQuestionData['options'];
+  answer: FrontendQuestionData['answer'];
   onSelect: (answer: number | null) => void;
   isSelected: number | null;
   answerState: string;
-  quizImage: string;
+  quizImage: string | null;
 }
 
 const Answers: React.FC<AnswersProps> = ({
@@ -32,7 +23,7 @@ const Answers: React.FC<AnswersProps> = ({
   answerState,
   quizImage,
 }) => {
-  const shuffledAnswers = useRef<Option[] | null>(null);
+  const shuffledAnswers = useRef<FrontendQuestionData['options'] | null>(null);
 
   if (!shuffledAnswers.current) {
     shuffledAnswers.current = [...options];
@@ -51,7 +42,7 @@ const Answers: React.FC<AnswersProps> = ({
     const unSelected = optionId !== isSelected;
 
     // 현재 답변이 정답인지 확인
-    const isCorrectAnswer = answer?.correct_option_id === optionId;
+    const isCorrectAnswer = answer?.correctOptionId === optionId;
 
     // 색상 변수 결정: 배경색상을 바꾸기 위해서 조건문 사용함.
     let colorClass = 'bg-white'; // 기본값 설정
@@ -89,10 +80,13 @@ const Answers: React.FC<AnswersProps> = ({
   return (
     <>
       <div className="h-100 flex flex-row justify-around my-3">
+        <p className="sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer">
+          {answer.correctGestureName}
+        </p>
         {/* 문제 이미지 부분 */}
         <div className=" bg-white w-[44%] h-full rounded-xl drop-shadow-quiz-box flex justify-center items-center ">
           {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
-          <img src={quizImage} alt="sample_img" className="p-5" />
+          {quizImage && <GlbViewer url={quizImage} />}
         </div>
         {/* 퀴즈 보기 부분 */}
         <div className="w-[44%] h-full flex flex-col justify-between ">
@@ -100,40 +94,40 @@ const Answers: React.FC<AnswersProps> = ({
             <>
               <button
                 type="button"
-                className={getCssClass(shuffledAnswers.current[0].option_id)}
+                className={getCssClass(shuffledAnswers.current[0].id)}
                 disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![0].option_id)}
+                onClick={() => onSelect(shuffledAnswers.current![0].id)}
               >
                 <p className="mr-5">①</p>
-                <p>{shuffledAnswers.current[0].option_meaning}</p>
+                <p>{shuffledAnswers.current[0].meaning}</p>
               </button>
               <button
                 type="button"
-                className={getCssClass(shuffledAnswers.current[1].option_id)}
+                className={getCssClass(shuffledAnswers.current[1].id)}
                 disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![1].option_id)}
+                onClick={() => onSelect(shuffledAnswers.current![1].id)}
               >
                 <p className="mr-5">②</p>
-                <p>{shuffledAnswers.current[1].option_meaning}</p>
+                <p>{shuffledAnswers.current[1].meaning}</p>
               </button>
 
               <button
                 type="button"
-                className={getCssClass(shuffledAnswers.current[2].option_id)}
+                className={getCssClass(shuffledAnswers.current[2].id)}
                 disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![2].option_id)}
+                onClick={() => onSelect(shuffledAnswers.current![2].id)}
               >
                 <p className="mr-5">③</p>
-                <p>{shuffledAnswers.current[2].option_meaning}</p>
+                <p>{shuffledAnswers.current[2].meaning}</p>
               </button>
               <button
                 type="button"
-                className={getCssClass(shuffledAnswers.current[3].option_id)}
+                className={getCssClass(shuffledAnswers.current[3].id)}
                 disabled={answerState !== ''}
-                onClick={() => onSelect(shuffledAnswers.current![3].option_id)}
+                onClick={() => onSelect(shuffledAnswers.current![3].id)}
               >
                 <p className="mr-5">④</p>
-                <p>{shuffledAnswers.current[3].option_meaning}</p>
+                <p>{shuffledAnswers.current[3].meaning}</p>
               </button>
             </>
           )}
