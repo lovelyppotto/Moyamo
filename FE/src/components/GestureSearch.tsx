@@ -20,11 +20,26 @@ function GestureSearchInput() {
   // 로컬 상태 (드롭다운 표시 여부)
   const [showResults, setShowResults] = useState(false);
   const [selectedCountryName, setSelectedCountryName] = useState('전체');
+  const [isMobile, setIsMobile] = useState(false);
 
   const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
 
   const { handleSearch, updateUrlOnInputChange, updateUrlOnCountrySelect } =
     useSearchNavigation(setSelectedCountryName);
+
+  // 화면 크기에 따라 모바일 여부 감지
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   // 검색 결과 표시 여부 결정
   useEffect(() => {
@@ -67,12 +82,16 @@ function GestureSearchInput() {
     <div className="search-container relative">
       {/* 검색 카테고리 선택 */}
       <div className="flex items-center flex-1">
-        <FontAwesomeIcon
-          icon={faMagnifyingGlass}
-          size="lg"
-          className="mr-3 cursor-pointer text-gray-600 dark:text-white"
-          onClick={executeSearch}
-        />
+        {/* 모바일이 아닐 때만 검색 아이콘 표시 */}
+        {!isMobile && (
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            size="lg"
+            className="mr-3 cursor-pointer text-gray-600 dark:text-white"
+            onClick={executeSearch}
+          />
+        )}
+
         <BaseDropdown
           selected={selectedCountryName} // 국가 이름 사용
           options={countries}
@@ -85,7 +104,7 @@ function GestureSearchInput() {
           <div className="relative flex-1 min-w-[70%]">
             <input
               className="w-full h-10 px-2 
-              text-sm md:text-base
+              text-xs sm:text-sm mb:text-base lg:text-md
               border-b border-gray-400 focus:outline-none
               dark:border-d-txt-50/80
               dark:text-d-txt-50/90
