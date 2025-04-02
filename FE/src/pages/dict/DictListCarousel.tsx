@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { GestureItem } from '@/types/dictionaryType';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
-import { cn } from '@/lib/utils';
+import { DictGestureCard } from './DictGestureCard';
 
 // 캐러셀 컴포넌트 프롭 타입
 interface DictListCarouselProps {
@@ -11,50 +11,6 @@ interface DictListCarouselProps {
   onSelectGesture?: (gestureId: number) => void;
   selectedCountry?: string;
 }
-
-// 제스처 카드 컴포넌트
-interface GestureCardProps {
-  gesture: GestureItem;
-  onClick: () => void;
-  hoverBorderClass: string;
-}
-
-const GestureCard = ({ gesture, onClick, hoverBorderClass }: GestureCardProps) => {
-  return (
-    <div
-      className={cn(
-        'h-full w-full rounded-lg border border-gray-300 overflow-hidden bg-white shadow-sm mx-auto',
-        'cursor-pointer transition-all duration-200 group',
-        hoverBorderClass
-      )}
-      onClick={onClick}
-    >
-      <div className="h-full flex flex-col">
-        {/* 이미지 영역 */}
-        <div className="flex-grow flex items-center justify-center p-2 sm:p-3">
-          {gesture.imageUrl ? (
-            <img
-              src={gesture.imageUrl}
-              alt={`${gesture.gestureTitle} 이미지`}
-              className="object-contain max-h-full max-w-full"
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center text-gray-400">
-              이미지 없음
-            </div>
-          )}
-        </div>
-
-        {/* 타이틀 영역 */}
-        <div className="w-full bg-gray-200 p-2 sm:p-[14px]">
-          <span className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
-            {gesture.gestureTitle}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export function DictListCarousel({
   gestures = [],
@@ -114,9 +70,9 @@ export function DictListCarousel({
         {gestures.map((gesture, index) => (
           <div
             key={`gesture-${gesture.gestureId || index}`}
-            className="flex-shrink-0 w-[60%] sm:w-[45%] md:w-[35%] lg:w-[30%] snap-start px-2 h-full"
+            className="flex-shrink-0 w-[70%] sm:w-[60%] md:w-[45%] lg:w-[35%] xl:w-[30%] 2xl:w-[28%] snap-start px-2 h-full"
           >
-            <GestureCard
+            <DictGestureCard
               gesture={gesture}
               onClick={() => handleGestureClick(gesture.gestureId)}
               hoverBorderClass={`hover:${getBorderClass(selectedCountry)}`}
