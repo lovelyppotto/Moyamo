@@ -7,6 +7,8 @@ services:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.security.enabled=false
+    volumes:
+      - /usr/share/elasticsearch/config/synonyms.txt:/usr/share/elasticsearch/config/synonyms.txt
     ports:
       - "9200:9200"
     networks:
