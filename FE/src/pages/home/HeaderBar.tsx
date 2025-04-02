@@ -40,7 +40,7 @@ function HeaderBar() {
       {/* 로고 */}
       <button
         className="absolute cursor-pointer
-        left-[7%] top-[28px] sm:left-[6%] sm:top-[23px] md:left-[14.5%] md:top-[17px] lg:left-[13.5%] lg:top-[px]"
+        left-[7%] top-[28px] sm:left-[13%] sm:top-[23px] md:left-[14.5%] md:top-[17px] lg:left-[13.5%] lg:top-[11px]"
       >
         <img
           src={logoSrc}
