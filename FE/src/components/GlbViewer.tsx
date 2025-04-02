@@ -19,13 +19,13 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
 
     // Camera 설정
     const camera = new THREE.PerspectiveCamera(
-      75,
+      70,
       containerRef.current.clientWidth / containerRef.current.clientHeight,
       0.1,
       1000
     );
-    camera.position.y = 1.5;
-    camera.position.z = 2.5; // 4에서 2.5로 변경하여 카메라를 더 가까이 배치
+    camera.position.y = 0; // 1.5에서 0으로 변경하여 정면에서 보도록 조정
+    camera.position.z = 2.5;
     scene.add(camera);
 
     // Renderer 설정
@@ -46,7 +46,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
 
     const directionalLight = new THREE.DirectionalLight('#ffe0b3', 1.2); // 따뜻한 톤의 주 조명, 강도 증가
     directionalLight.position.x = 1;
-    directionalLight.position.z = 2;
+    directionalLight.position.z = 1;
     scene.add(directionalLight);
 
     // 추가 조명으로 부드러운 채우기 조명 추가
@@ -61,10 +61,17 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     backLight.position.y = 1;
     scene.add(backLight);
 
-    // Controls 설정
+    // Controls 설정 - 좌우로만 회전 가능하도록 제한
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+
+    // 상하 회전 제한 (좌우만 회전 가능하도록)
+    controls.minPolarAngle = Math.PI / 2; // 90도
+    controls.maxPolarAngle = Math.PI / 2; // 90도
+
+    // 줌 비활성화 (선택적)
+    // controls.enableZoom = false;
 
     // Animation Mixer
     let mixer: THREE.AnimationMixer | null = null;
@@ -102,11 +109,12 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center.multiplyScalar(scale));
 
-        // 애니메이션 설정
+        // 애니메이션 설정 - 속도를 3배 줄임
         if (gltf.animations && gltf.animations.length > 0) {
           mixer = new THREE.AnimationMixer(model);
           const animation = gltf.animations[0]; // 첫 번째 애니메이션 사용
           const action = mixer.clipAction(animation);
+          action.timeScale = 0.5; // 애니메이션 속도를 2배 줄임 (1/3)
           action.play();
           console.log('Animation loaded:', animation.name);
         }
