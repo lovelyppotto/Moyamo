@@ -20,9 +20,6 @@ export default defineConfig({
     },
   },
   server: {
-    headers: {
-      'Cache-Control': 'max-age=31536000, immutable',
-    },
     proxy: {
       '/api': {
         target: 'https://moyamo.site',

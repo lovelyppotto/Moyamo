@@ -156,13 +156,15 @@ function CountryBubble() {
       // 디바이스 타입 설정
       if (width <= 640) {
         setDeviceType('mobile');
-        setIsHoverable(false);
+        // 모바일에서도 호버 가능하도록 변경
+        setIsHoverable(true);
       } else if (width <= 768) {
         setDeviceType('portrait-tablet');
-        setIsHoverable(false);
+        // 태블릿에서도 호버 가능하도록 변경
+        setIsHoverable(true);
       } else if (width <= 1024) {
         setDeviceType('landscape-tablet');
-        setIsHoverable(true); // 태블릿 가로 모드에서는 호버 기능 활성화
+        setIsHoverable(true);
       } else {
         setDeviceType('desktop');
         setIsHoverable(true);
@@ -216,64 +218,76 @@ function CountryBubble() {
     return tip?.content || '제스처로 소통하며 새로운 문화를 경험해보세요!';
   };
 
-  // 태블릿/모바일 환경에서 간소화된 버블 UI
+  // 모바일/태블릿 환경에서 툴팁을 사용하는 방식으로 변경
   const renderMobileUI = () => {
     // 태블릿과 모바일 환경에서는 Communication 제외
     const filteredCountries = countrySetup.filter((country) => country.id !== 'communication');
 
     return (
-      <>
-        <div className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-8 px-4 py-6">
+      <TooltipProvider>
+        <div className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-8 pb-2">
           {filteredCountries.map((country) => (
             <div key={country.id} className="relative inline-block">
-              <div
-                id={`button-${country.id}`}
-                className="flex flex-col items-center cursor-pointer"
-                onClick={() => handleTooltipToggle(country.id)}
+              <Tooltip
+                open={openTooltip === country.id ? true : undefined}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    setOpenTooltip(null);
+                  }
+                }}
               >
-                <div
-                  className={`w-12 h-12 xs:w-15 xs:h-15 sm:w-20 sm:h-20 rounded-full overflow-hidden
-                    border-2 ${
-                      openTooltip === country.id
-                        ? `${
-                            country.id === 'korea'
-                              ? 'border-kr-500'
-                              : country.id === 'usa'
-                                ? 'border-us-600'
-                                : country.id === 'japan'
-                                  ? 'border-jp-500'
-                                  : country.id === 'china'
-                                    ? 'border-cn-600'
-                                    : country.id === 'italy'
-                                      ? 'border-italy-600'
-                                      : 'border-gray-500'
-                          } scale-105`
-                        : 'border-white'
-                    }
-                  shadow-md hover:shadow-lg transition-all dark:border-slate-100`}
-                >
-                  <img
-                    src={getAttractionImage(country.image)}
-                    alt={country.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div
-                  className={`mt-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold 
-                  ${country.labelBackground} 
-                  ${country.name === 'Communication' ? 'text-black border border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
-                >
-                  {country.name}
-                </div>
-              </div>
-
-              {/* 선택된 국가의 툴팁 표시 */}
-              {openTooltip === country.id && (
-                <div
+                <TooltipTrigger asChild>
+                  <div
+                    id={`button-${country.id}`}
+                    className="flex flex-col items-center cursor-pointer"
+                    onClick={() => handleTooltipToggle(country.id)}
+                    onMouseEnter={() => {
+                      if (isHoverable) {
+                        setOpenTooltip(country.id);
+                      }
+                    }}
+                  >
+                    <div
+                      className={`w-13 h-13 xs:w-15 xs:h-15 sm:w-20 sm:h-20 rounded-full overflow-hidden
+                        border-2 ${
+                          openTooltip === country.id
+                            ? `${
+                                country.id === 'korea'
+                                  ? 'border-kr-500'
+                                  : country.id === 'usa'
+                                    ? 'border-us-600'
+                                    : country.id === 'japan'
+                                      ? 'border-jp-500'
+                                      : country.id === 'china'
+                                        ? 'border-cn-600'
+                                        : country.id === 'italy'
+                                          ? 'border-italy-600'
+                                          : 'border-gray-500'
+                              } scale-105`
+                            : 'border-white'
+                        }
+                      shadow-md hover:shadow-lg transition-all dark:border-slate-100`}
+                    >
+                      <img
+                        src={getAttractionImage(country.image)}
+                        alt={country.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div
+                      className={`mt-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold 
+                      ${country.labelBackground} 
+                      ${country.name === 'Communication' ? 'text-black border border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
+                    >
+                      {country.name}
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
                   id={`tooltip-${country.id}`}
-                  className={`${country.tooltipBackground} absolute z-50 text-black p-4 rounded-lg shadow-lg w-60
-                  left-1/2 transform -translate-x-1/2 mt-2`}
-                  style={{ top: '100%' }}
+                  className={`${country.tooltipBackground} z-50 text-black p-4 rounded-lg shadow-lg w-60`}
+                  side="bottom"
+                  align="center"
                 >
                   <div className="flex flex-row items-center">
                     <div className="flex-grow">
@@ -282,15 +296,12 @@ function CountryBubble() {
                       </p>
                     </div>
                   </div>
-
-                  {/* 툴팁 위 화살표 */}
-                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 rotate-45 bg-inherit"></div>
-                </div>
-              )}
+                </TooltipContent>
+              </Tooltip>
             </div>
           ))}
         </div>
-      </>
+      </TooltipProvider>
     );
   };
 
