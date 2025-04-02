@@ -73,7 +73,9 @@ function DictHeader({
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
               />
             )}
-            <h1 className="text-[32px] font-[NanumSquareRoundEB] text-center">{title}</h1>
+            <h1 className="text-[20px] md:text-[32px] font-[NanumSquareRoundEB] text-center">
+              {title}
+            </h1>
           </>
         )}
 
@@ -91,12 +93,12 @@ function DictHeader({
       {/* 오른쪽 - 비교 가이드 버튼 있을 때 */}
       {showCompareGuide && (
         <button
-          className="absolute flex items-center right-4 px-3 py-2 text-[15px] bg-gray-200 text-gray-600
+          className="absolute flex items-center right-4 px-3 py-2 text-[13px] sm:text-[15px] bg-gray-200 text-gray-600
            hover:bg-gray-300 transition-colors rounded-lg cursor-pointer"
           onClick={handleGuideClick}
         >
-          <FontAwesomeIcon icon={faRectangleList} className="mr-1.5" />
-          <span className="font-[NanumSquareRound]">나라별 비교 가이드</span>
+          <FontAwesomeIcon icon={faRectangleList} className="mr-0.5 sm:mr-1.5" />
+          <span className="hidden sm:inline font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
     </header>
