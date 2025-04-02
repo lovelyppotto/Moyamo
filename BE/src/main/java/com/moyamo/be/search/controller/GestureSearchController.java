@@ -26,4 +26,10 @@ public class GestureSearchController {
         String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureName);
         return gestureSearchService.findGestureByNameAndCountry(normalizedGestureName, countryId);
     }
+
+    @GetMapping("/camera")
+    public ApiResponse<GestureSearchResponseDto> getGestureSearchResultByCamera(@RequestParam("gesture_label") String gestureLabel) {
+        String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureLabel);
+        return gestureSearchService.findGestureByLabel(normalizedGestureName, 0);
+    }
 }
