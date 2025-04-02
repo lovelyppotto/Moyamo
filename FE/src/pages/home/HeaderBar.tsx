@@ -16,7 +16,7 @@ function HeaderBar() {
   // 화면 크기에 따라 모바일 여부 감지
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 610);
     };
 
     checkIfMobile();
@@ -40,7 +40,7 @@ function HeaderBar() {
       {/* 로고 */}
       <button
         className="absolute cursor-pointer
-        left-[7%] top-[28px] sm:left-[6%] sm:top-[23px] md:left-[14.5%] md:top-[15px] lg:left-[13.5%] lg:top-[px]"
+        left-[7%] top-[28px] sm:left-[6%] sm:top-[23px] md:left-[14.5%] md:top-[17px] lg:left-[13.5%] lg:top-[px]"
       >
         <img
           src={logoSrc}
@@ -55,7 +55,7 @@ function HeaderBar() {
       <div className="w-full flex justify-center mt-11 mb-5 py-4 px-2 md:px-6">
         {/* 모바일 뷰 */}
         {isMobile ? (
-          <div className="w-[90%] flex items-center justify-between bg-white dark:bg-white/15 py-2 px-3 rounded-xl shadow-sm">
+          <div className="w-[90%] flex items-center justify-between bg-white dark:bg-white/15 px-3 rounded-xl shadow-sm">
             {/* 검색 아이콘 (모바일에서는 토글 형태) */}
             <button onClick={toggleSearch} className="text-gray-500 dark:text-white p-2">
               <svg
@@ -97,7 +97,7 @@ function HeaderBar() {
 
       {/* 모바일 검색창 (확장 시) */}
       {isMobile && isSearchActive && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 flex items-start justify-center pt-20">
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-30 z-50 flex items-start justify-center pt-20">
           <div className="w-[90%] bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
             <div className="flex items-center">
               <div className="flex-1">

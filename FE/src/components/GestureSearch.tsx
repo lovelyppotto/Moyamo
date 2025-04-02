@@ -85,6 +85,7 @@ function GestureSearchInput() {
           <div className="relative flex-1 min-w-[70%]">
             <input
               className="w-full h-10 px-2 
+              text-sm md:text-base
               border-b border-gray-400 focus:outline-none
               dark:border-d-txt-50/80
               dark:text-d-txt-50/90
