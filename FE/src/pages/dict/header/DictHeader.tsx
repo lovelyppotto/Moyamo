@@ -73,7 +73,9 @@ function DictHeader({
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
               />
             )}
-            <h1 className="text-[32px] font-[NanumSquareRoundEB] text-center">{title}</h1>
+            <h1 className="text-[26px] md:text-[32px] font-[NanumSquareRoundEB] text-center">
+              {title}
+            </h1>
           </>
         )}
 
