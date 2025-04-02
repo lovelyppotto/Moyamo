@@ -54,7 +54,7 @@ export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
 
       socket.current.onmessage = (event) => {
         try {
-          console.log("[🌐 웹소켓] 데이터 수신:", event.data);
+          // console.log("[🌐 웹소켓] 데이터 수신:", event.data);
           const response = JSON.parse(event.data);
           
           if (response.gesture) {

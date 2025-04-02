@@ -7,7 +7,7 @@ import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
   guidelineClassName?: string;
-  guideText?:string;
+  guideText?: string;
   // 연결 상태를 외부에서 제어할 수 있도록 추가
   onConnectionStatus?: (status: boolean) => void;
 }
@@ -63,6 +63,21 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
       disconnectWs();
     };
   }, [connectWs, disconnectWs]);
+
+  // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
+  useEffect(() => {
+    if (gesture) {
+      // 커스텀 이벤트 생성하여 제스처 데이터 전달
+      const gestureEvent = new CustomEvent('gesture-detected', {
+        detail: { gesture, confidence },
+      });
+
+      // 이벤트 발행
+      window.dispatchEvent(gestureEvent);
+
+      console.log(`[🔍 제스처 이벤트 발행] "${gesture}", "confidence": ${confidence}`);
+    }
+  }, [gesture, confidence]);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
@@ -211,7 +226,8 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
         </div>
       </div>
 
-      {/* 제스처 인식 결과 표시 (화면 상단에 표시) */}
+      {/* 이하 개발시 필요하면 주석 풀어서 사용, 최종적으로 삭제 에정 */}
+      {/* 제스처 인식 결과 표시 (화면 상단에 표시)
       {gesture && (
         <div className="absolute top-20 left-0 right-0 flex justify-center items-center">
           <div className="bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg font-bold">
@@ -219,28 +235,7 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
             {confidence !== null && <div className="mt-1">일치율: {confidence.toFixed(1)}%</div>}
           </div>
         </div>
-      )}
-
-      {/* 웹소켓 연결 상태 표시 */}
-      {wsStatus !== 'open' && (
-        <div className="absolute bottom-10 left-0 right-0 flex justify-center">
-          <div
-            className={`px-4 py-2 rounded-lg text-white text-sm ${
-              wsStatus === 'connecting'
-                ? 'bg-yellow-500'
-                : wsStatus === 'error'
-                  ? 'bg-red-500'
-                  : 'bg-gray-500'
-            }`}
-          >
-            {wsStatus === 'connecting'
-              ? '서버에 연결 중...'
-              : wsStatus === 'error'
-                ? '서버 연결 오류'
-                : '서버 연결 끊김'}
-          </div>
-        </div>
-      )}
+      )} */}
     </div>
   );
 };

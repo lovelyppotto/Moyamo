@@ -1,42 +1,171 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
 import WebCamera from './WebCamera';
 
+// 커스텀 이벤트 타입 정의
+interface GestureDetectedEvent extends CustomEvent {
+  detail: {
+    gesture: string;
+    confidence: number;
+  };
+}
+
 function SearchCameraModal() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [open, setOpen] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 타이머 끝난 후 로직
+  // 현재 감지된 제스처
+  const [currentGesture, setCurrentGesture] = useState<string | null>(null);
+  const [currentConfidence, setCurrentConfidence] = useState<number | null>(null);
+
+  const gestureFrequency = useRef<Record<string, number>>({});
+
+  // 제스처 감지를 위한 이벤트 리스너 추가 (WebCamera 컴포넌트와 통신)
+  useEffect(() => {
+    // WebCamera 컴포넌트에서 보내는 제스처 이벤트를 수신하는 커스텀 이벤트 리스너
+    const handleGestureDetected = (event: Event) => {
+      const gestureEvent = event as GestureDetectedEvent;
+
+      if (gestureEvent.detail && gestureEvent.detail.gesture) {
+        const { gesture, confidence } = gestureEvent.detail;
+
+        // 현재 감지된 제스처 업데이트
+        setCurrentGesture(gesture);
+        setCurrentConfidence(confidence);
+
+        // 카운트다운 중인 경우에만 히스토리에 기록
+        if (isCountingDown) {
+          gestureFrequency.current[gesture] = (gestureFrequency.current[gesture] || 0) + 1;
+          console.log(`[📊 제스처 빈도] ${gesture}: ${gestureFrequency.current[gesture]}회`);
+        }
+      }
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener('gesture-detected', handleGestureDetected);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      window.removeEventListener('gesture-detected', handleGestureDetected);
+    };
+  }, [isCountingDown]);
+
+  // 모달이 열리면 제스처 히스토리 초기화
+  useEffect(() => {
+    if (open) {
+      gestureFrequency.current = {};
+      setCurrentGesture(null);
+      setCurrentConfidence(null);
+    }
+  }, [open]);
+
+  // 타이머 종료 후 제스처 선택 및 페이지 이동
+  // 타이머 종료 후 제스처 선택 함수 수정
   const handleTimerEnd = () => {
-    navigate('/dictionary/detail');
+    // 감지된 제스처 개수 확인 (모든 빈도 합계)
+    const totalDetections = Object.values(gestureFrequency.current).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+    console.log(
+      `[📊 제스처 분석] 총 ${totalDetections}개의 제스처 감지, ${Object.keys(gestureFrequency.current).length}종류`
+    );
+
+    if (totalDetections === 0) {
+      console.log('[⚠️ 경고] 수집된 제스처가 없습니다');
+
+      // 현재 표시 중인 제스처가 있다면 그것을 사용
+      if (currentGesture) {
+        console.log(`[🔍 현재 제스처 사용] ${currentGesture}`);
+
+        // 페이지 이동
+        if (location.pathname.includes('/search')) {
+          window.location.href = `/search?gesture_name=${currentGesture}`;
+        } else {
+          navigate(`/search?gesture_name=${currentGesture}`);
+        }
+
+        // 모달 닫기
+        setTimeout(() => setOpen(false), 300);
+        return;
+      }
+
+      alert('인식된 제스처가 없습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    // 가장 빈번한 제스처 찾기
+    let mostFrequentGesture = '';
+    let maxCount = 0;
+
+    Object.entries(gestureFrequency.current).forEach(([gesture, count]) => {
+      console.log(
+        `[📊 제스처 빈도] ${gesture}: ${count}회 (${((count / totalDetections) * 100).toFixed(1)}%)`
+      );
+      if (count > maxCount) {
+        maxCount = count;
+        mostFrequentGesture = gesture;
+      }
+    });
+
+    const lastGesture = currentGesture; // 현재 표시 중인 제스처가 마지막 감지된 제스처
+
+    console.log(
+      `[📊 제스처 분석 결과] 최다 빈도: ${mostFrequentGesture} (${maxCount}회), 마지막: ${lastGesture}`
+    );
+
+    // 최종 제스처 선택 (주로 빈도가 가장 높은 제스처 사용)
+    const finalGesture = mostFrequentGesture || lastGesture;
+
+    console.log(`[🔍 검색 시작] 제스처: ${finalGesture}`);
+
+    // 페이지 이동
+    if (location.pathname.includes('/search')) {
+      window.location.href = `/search?gesture_name=${finalGesture}`;
+    } else {
+      navigate(`/search?gesture_name=${finalGesture}`);
+    }
+
+    // 모달 닫기
+    setTimeout(() => setOpen(false), 300);
   };
 
   // 카운트다운 타이머 시작
   const startCountdown = () => {
-    // 웹소켓이 연결되지 않았다면 카운트다운 시작하지 않음
     if (!isWebSocketConnected) {
-      console.log('[⚠️ 웹소켓 연결 확인 필요] 카운트다운을 시작할 수 없습니다.');
+      console.log('[⚠️ 경고] 웹소켓 연결이 되지 않았습니다');
       return;
     }
+
+    console.log('[⏱️ 카운트다운] 시작');
+
+    // 카운트다운 시작 시 제스처 히스토리 초기화
+    gestureFrequency.current = {};
 
     setIsCountingDown(true);
     setCountdown(3);
 
     timerRef.current = setInterval(() => {
       setCountdown((prev) => {
+        console.log(`[⏱️ 카운트다운] ${prev}초 남음, 현재 제스처: ${currentGesture || '없음'}`);
+
         if (prev <= 1) {
-          // 타이머 종료
           if (timerRef.current) {
             clearInterval(timerRef.current);
+            timerRef.current = null;
           }
           setIsCountingDown(false);
-          handleTimerEnd();
+
+          // 타이머 종료 후 제스처 선택하여 페이지 이동
+          setTimeout(() => handleTimerEnd(), 100);
           return 0;
         }
         return prev - 1;
@@ -44,36 +173,36 @@ function SearchCameraModal() {
     }, 1000);
   };
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // 타이머 정리
   useEffect(() => {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, []);
 
-  // 모달이 닫힐 때 타이머 정리
+  // 모달 닫힐 때 타이머 정리
   useEffect(() => {
     if (!open && timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
       setIsCountingDown(false);
     }
   }, [open]);
 
-  const handleCameraClick = (): void => {
-    console.log('[🎬 카메라 모달 열기]');
+  const handleCameraClick = () => {
     setOpen(true);
   };
 
-  const handleCaptureClick = (): void => {
-    console.log('[📸 캡처 버튼 클릭] 웹소켓 연결 상태:', isWebSocketConnected);
+  const handleCaptureClick = () => {
     startCountdown();
   };
 
   // WebSocket 연결 상태 콜백 핸들러
   const handleConnectionStatus = (status: boolean) => {
-    console.log('[🌐 WebSocket 연결 상태 변경]:', status);
+    console.log(`[🌐 WebSocket 연결 상태] ${status ? '연결됨' : '연결 안됨'}`);
     setIsWebSocketConnected(status);
   };
 
