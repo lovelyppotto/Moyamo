@@ -23,34 +23,38 @@ function Home() {
 
       <div
         className="flex-grow flex flex-col justify-center
-      px-16 dark:text-d-txt-50"
+      px-10 dark:text-d-txt-50"
       >
         <div
           className="flex flex-col item-center font-[DNFBitBitv2]
           text-3xl text-center "
         >
           {/* 첫 번째 줄 */}
-          <h1 className="md:text-4xl lg:text-5xl mb-1 md:mb-2 lg:mb-3">Unlock the world</h1>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl mb-1 sm:mb-3 md:mb-4">Unlock the world</h1>
 
           {/* 두 번째 줄 */}
-          <div className="flex items-center justify-center mb-1 md:mb-2 lg:mb-3 w-full">
-            <h1 className="md:text-4xl lg:text-5xl">through</h1>
+          <div className="flex items-center justify-center mb-1 sm:mb-3 md:mb-4 w-full">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl">through</h1>
             <img
               src={getIconImage('puzzle')}
               alt="pixel-puzzle"
-              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-1 sm:mx-2"
+              className="w-10 h-10 md:w-14 md:h-14 
+              lg:w-16 lg:h-16 xl:w-20 xl:h-20 mx-1 sm:mx-2"
             />
-            <h1 className="dark:text-d-txt-50 md:text-4xl lg:text-5xl">meaningful</h1>
+            <h1 className="dark:text-d-txt-50 text-2xl sm:text-4xl md:text-5xl xl:text-6xl">meaningful</h1>
           </div>
 
           {/* 세 번째 줄 */}
-          <div className="flex justify-center w-full mb-3 md:mb-4 lg:mb-5">
+          <div className="flex justify-center w-full sm:mb-3 md:mb-6">
             <div className="relative inline-flex">
               <div
                 className="flex bg-blue-300/60 dark:bg-blue-200 rounded-l-lg
-                px-5 pt-1 pb-2 md:pb-3 lg:pt-3 lg:pb-4"
+                px-3 pt-1 pb-1
+                sm:px-4 sm:pt-2 sm:pb-3
+                md:px-5 md:pt-2 md:pb-3 
+                lg:px-6 lg:pt-3 lg:pb-4"
               >
-                <h1 className="dark:text-black md:text-4xl lg:text-5xl mt-2">gestures</h1>
+                <h1 className="dark:text-black text-2xl sm:text-4xl md:text-5xl xl:text-6xl mb-1">gestures</h1>
               </div>
               {/* 오른쪽 태그 장식 */}
               <div className="flex">
@@ -64,8 +68,9 @@ function Home() {
           </div>
         </div>
         <p
-          className="text-md md:text-lg lg:text-xl
-          text-center font-[NanumSquareRoundB]"
+          className="text-sm sm:text-xl md:text-2xl
+          text-center font-[NanumSquareRoundB]
+          mt-3 md:mt-1"
         >
           의미있는 제스처를 통해 세상을 열어보세요
         </p>
