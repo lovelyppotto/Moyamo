@@ -2,7 +2,6 @@ import DictHeader from './DictHeader';
 import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
-import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 
 function CompareGuide() {
@@ -106,19 +105,21 @@ function CompareGuide() {
           <div className={gridLayoutClass}>
             {/* 국가별 제스처 의미 카드들 */}
             {gestureMeanings.map((meaning: MeaningItem, index: number) => {
-              // 국가 이름 파싱
-              const countryNames = meaning.countryName.split(',').map((name) => name.trim());
+              // 국가 이름, 이미지 URL 파싱
 
               // 국기 이미지 렌더링 - 모두 한 줄로 표시하고 크기 축소
+              const countryNames = meaning.countryName.split(',').map((name) => name.trim());
+              const countryImageUrls = meaning.countryImageUrl.split(',').map((url) => url.trim());
+
               const renderFlags = () => {
                 return (
                   <div className="flex justify-center flex-wrap gap-2 md:gap-3 mb-[4%]">
                     {countryNames.map((name, flagIndex) => {
-                      const countryCode = getCountryCode(name);
+                      const imageUrl = countryImageUrls[flagIndex] || countryImageUrls[0];
                       return (
                         <img
                           key={flagIndex}
-                          src={getFlagImage(countryCode)}
+                          src={imageUrl}
                           alt={`${name} flag`}
                           className="h-6 md:h-8 w-auto drop-shadow-nation"
                         />
@@ -129,7 +130,10 @@ function CompareGuide() {
               };
 
               return (
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 flex flex-col w-full">
+                <div
+                  key={`meaning-${index}`}
+                  className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 flex flex-col w-full"
+                >
                   <DictStatusLabel isPositive={meaning.isPositive} className="mb-6" />
                   {/* 국기 이미지 */}
                   {renderFlags()}

@@ -22,6 +22,7 @@ export const getCompareGuide = async (gestureId: number): Promise<CompareGuide> 
     meanings: data.data.meanings.map((meaning: MeaningApiItem) => ({
       countryId: meaning.country_id,
       countryName: meaning.country_name,
+      countryImageUrl: meaning.country_image_url,
       gestureMeaning: meaning.gesture_meaning,
       gestureSituation: meaning.gesture_situation,
       isPositive: meaning.is_positive,

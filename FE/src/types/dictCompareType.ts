@@ -7,6 +7,7 @@ export type CompareGuideResponse = {
     meanings: {
       country_id: number;
       country_name: string;
+      country_image_url: string;
       gesture_meaning: string;
       gesture_situation: string;
       is_positive: boolean;
@@ -18,6 +19,7 @@ export type CompareGuideResponse = {
 export interface MeaningItem {
   countryId: number;
   countryName: string;
+  countryImageUrl: string;
   gestureMeaning: string;
   gestureSituation: string;
   isPositive: boolean;
