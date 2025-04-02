@@ -3,9 +3,9 @@ import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icon
 import { useEffect, useState } from 'react';
 import { DictListCarousel } from './DictListCarousel';
 import DictMainImage from './MainGestureImage';
-import IconButton from '@/components/IconButton';
+import IconButton from '@/pages/dict/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import DictHeader from './DictHeader';
+import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
 
@@ -112,18 +112,18 @@ function Dictionary() {
       </div>
 
       {/* 메인 컨텐츠 컨테이너 */}
-      <div className="flex-1 flex flex-col font-[NanumSquareRound] container mx-auto px-2 sm:px-4 md:px-6 lg:px-16 xl:px-30 pb-4">
+      <div className="flex-1 flex flex-col font-[NanumSquareRound] container mx-auto px-2 md:px-8 lg:px-16 xl:px-24 2xl:px-4 pb-4 w-full max-w-6xl">
         {/* 메인 컨텐츠 영역 */}
-        <div className="flex-1 flex flex-col sm:flex-row items-center justify-between py-2 h-[70vh] sm:h-[60vh] md:h-[65vh]">
+        <div className="flex-1 flex flex-col sm:flex-row items-center justify-center py-2">
           {/* 제스처 이미지 컨테이너 */}
-          <div className="w-full sm:w-[85%] h-[80%] sm:h-full flex items-center justify-center">
+          <div className="w-full sm:w-[85%] lg:w-[60%] h-[80%] sm:h-full flex items-center justify-center">
             {currentGesture && (
               <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
             )}
           </div>
 
           {/* 아이콘 버튼 영역 */}
-          <div className="flex flex-row sm:flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 mt-4 sm:mt-0 sm:ml-4">
+          <div className="flex flex-row sm:flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-0">
             <IconButton
               icon={faHands}
               tooltipText="제스처 연습"
@@ -147,7 +147,7 @@ function Dictionary() {
         </div>
 
         {/* 캐러셀 영역 */}
-        <div className="h-[25vh] sm:h-[30vh] w-full">
+        <div className="h-[25vh] sm:h-[30vh] w-full mx-auto">
           <DictListCarousel
             gestures={currentGestures}
             onSelectGesture={handleSelectGesture}

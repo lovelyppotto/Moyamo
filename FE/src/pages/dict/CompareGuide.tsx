@@ -1,4 +1,4 @@
-import DictHeader from './DictHeader';
+import DictHeader from './header/DictHeader';
 import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
