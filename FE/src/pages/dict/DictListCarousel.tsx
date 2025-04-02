@@ -3,32 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { GestureItem } from '@/types/dictionaryType';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
-
-// 카드 컴포넌트 prop 타입
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-// 카드 컨텐츠 prop 타입
-interface CardContentProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-// 카드 컴포넌트
-const Card = ({ children, className = '' }: CardProps) => {
-  return (
-    <div className={`rounded-lg border border-gray-300 bg-white shadow-sm ${className}`}>
-      {children}
-    </div>
-  );
-};
-
-// 카드 컨텐츠
-const CardContent = ({ children, className = '' }: CardContentProps) => {
-  return <div className={`p-4 ${className}`}>{children}</div>;
-};
+import { cn } from '@/lib/utils';
 
 // 캐러셀 컴포넌트 프롭 타입
 interface DictListCarouselProps {
@@ -36,6 +11,50 @@ interface DictListCarouselProps {
   onSelectGesture?: (gestureId: number) => void;
   selectedCountry?: string;
 }
+
+// 제스처 카드 컴포넌트
+interface GestureCardProps {
+  gesture: GestureItem;
+  onClick: () => void;
+  hoverBorderClass: string;
+}
+
+const GestureCard = ({ gesture, onClick, hoverBorderClass }: GestureCardProps) => {
+  return (
+    <div
+      className={cn(
+        'h-full w-full rounded-lg border border-gray-300 overflow-hidden bg-white shadow-sm mx-auto',
+        'cursor-pointer transition-all duration-200 group',
+        hoverBorderClass
+      )}
+      onClick={onClick}
+    >
+      <div className="h-full flex flex-col">
+        {/* 이미지 영역 */}
+        <div className="flex-grow flex items-center justify-center p-2 sm:p-3">
+          {gesture.imageUrl ? (
+            <img
+              src={gesture.imageUrl}
+              alt={`${gesture.gestureTitle} 이미지`}
+              className="object-contain max-h-full max-w-full"
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center text-gray-400">
+              이미지 없음
+            </div>
+          )}
+        </div>
+
+        {/* 타이틀 영역 */}
+        <div className="w-full bg-gray-200 p-2 sm:p-[14px]">
+          <span className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
+            {gesture.gestureTitle}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export function DictListCarousel({
   gestures = [],
@@ -48,7 +67,7 @@ export function DictListCarousel({
   // 왼쪽으로 스크롤
   const scrollLeft = () => {
     if (scrollRef.current) {
-      const cardWidth = scrollRef.current.clientWidth / 3; // 화면에 보이는 카드 개수에 따라 조정
+      const cardWidth = scrollRef.current.clientWidth / 3;
       scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
     }
   };
@@ -56,7 +75,7 @@ export function DictListCarousel({
   // 오른쪽으로 스크롤
   const scrollRight = () => {
     if (scrollRef.current) {
-      const cardWidth = scrollRef.current.clientWidth / 3; // 화면에 보이는 카드 개수에 따라 조정
+      const cardWidth = scrollRef.current.clientWidth / 3;
       scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
     }
   };
@@ -66,6 +85,10 @@ export function DictListCarousel({
     if (onSelectGesture) {
       onSelectGesture(gestureId);
     }
+  };
+  const getBorderClass = (countryCode?: string) => {
+    const hoverClass = getHoverBorderClass(countryCode);
+    return hoverClass.replace('hover:', '');
   };
 
   return (
@@ -91,33 +114,13 @@ export function DictListCarousel({
         {gestures.map((gesture, index) => (
           <div
             key={`gesture-${gesture.gestureId || index}`}
-            className="flex-shrink-0 w-[80%] sm:w-[45%] md:w-[33%] lg:w-[25%] xl:w-[20%] snap-start px-2 h-full"
-            onClick={() => handleGestureClick(gesture.gestureId)}
+            className="flex-shrink-0 w-[60%] sm:w-[45%] md:w-[35%] lg:w-[30%] snap-start px-2 h-full"
           >
-            <Card
-              className={`flex flex-col cursor-pointer ${getHoverBorderClass(selectedCountry)} transition-colors h-full`}
-            >
-              <CardContent className="flex flex-col items-center p-2 sm:p-3 flex-grow">
-                <div className="flex items-center justify-center w-full h-full">
-                  {gesture.imageUrl ? (
-                    <img
-                      src={gesture.imageUrl}
-                      alt={`${gesture} image`}
-                      className="object-contain max-h-full max-w-full"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-gray-400">
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-              <div className="w-full bg-gray-200 p-2 sm:p-[14px]">
-                <span className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
-                  {gesture.gestureTitle}
-                </span>
-              </div>
-            </Card>
+            <GestureCard
+              gesture={gesture}
+              onClick={() => handleGestureClick(gesture.gestureId)}
+              hoverBorderClass={`hover:${getBorderClass(selectedCountry)}`}
+            />
           </div>
         ))}
       </div>
