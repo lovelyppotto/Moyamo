@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
 import WebCamera from './WebCamera';
+import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
 
 function SearchCameraModal() {
   const navigate = useNavigate();
@@ -11,29 +12,70 @@ function SearchCameraModal() {
   const [countdown, setCountdown] = useState(3);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [latestGesture, setLatestGesture] = useState<string | null>(null);
+
+  // 웹소켓 훅 사용
+  const { status, gesture, confidence, connect, disconnect } = useGestureWebSocket();
+
+  // 제스처 정보가 업데이트될 때마다 최신 제스처 저장
+  useEffect(() => {
+    if (gesture) {
+      console.log(`[🌐 제스처 감지] ${gesture}, 정확도: ${confidence}%`);
+      setLatestGesture(gesture);
+    }
+  }, [gesture, confidence]);
+
+  // 웹소켓 상태 관리
+  useEffect(() => {
+    const isConnected = status === 'open';
+    setIsWebSocketConnected(isConnected);
+    console.log(`[🌐 웹소켓 상태] ${status}`);
+  }, [status]);
+
+  // 모달이 열릴 때 웹소켓 연결 시작
+  useEffect(() => {
+    if (open) {
+      console.log('[🌐 웹소켓] 연결 시작');
+      connect();
+    } else {
+      console.log('[🌐 웹소켓] 연결 종료');
+      disconnect();
+    }
+
+    return () => {
+      disconnect();
+    };
+  }, [open, connect, disconnect]);
 
   // 타이머 끝난 후 로직
   const handleTimerEnd = () => {
-    navigate('/dictionary/detail');
+    console.log(`[🔍 타이머 종료] 현재 제스처: ${latestGesture || 'null'}`);
+
+    // 테스트를 위한 fallback - 실제 환경에서는 제거
+    const finalGesture = latestGesture || 'promise';
+
+    console.log(`[🔍 검색 시작] 제스처: ${finalGesture}`);
+    navigate(`/search?gesture_name=${finalGesture}`);
   };
 
   // 카운트다운 타이머 시작
   const startCountdown = () => {
-    // 웹소켓이 연결되지 않았다면 카운트다운 시작하지 않음
     if (!isWebSocketConnected) {
       console.log('[⚠️ 웹소켓 연결 확인 필요] 카운트다운을 시작할 수 없습니다.');
       return;
     }
 
+    console.log('[⏱️ 카운트다운] 시작');
     setIsCountingDown(true);
     setCountdown(3);
 
     timerRef.current = setInterval(() => {
       setCountdown((prev) => {
+        console.log(`[⏱️ 카운트다운] ${prev}초 남음`);
         if (prev <= 1) {
-          // 타이머 종료
           if (timerRef.current) {
             clearInterval(timerRef.current);
+            timerRef.current = null;
           }
           setIsCountingDown(false);
           handleTimerEnd();
@@ -49,6 +91,7 @@ function SearchCameraModal() {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, []);
@@ -57,6 +100,7 @@ function SearchCameraModal() {
   useEffect(() => {
     if (!open && timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
       setIsCountingDown(false);
     }
   }, [open]);
@@ -67,13 +111,13 @@ function SearchCameraModal() {
   };
 
   const handleCaptureClick = (): void => {
-    console.log('[📸 캡처 버튼 클릭] 웹소켓 연결 상태:', isWebSocketConnected);
+    console.log('[📸 캡처 버튼 클릭]');
     startCountdown();
   };
 
   // WebSocket 연결 상태 콜백 핸들러
   const handleConnectionStatus = (status: boolean) => {
-    console.log('[🌐 WebSocket 연결 상태 변경]:', status);
+    console.log(`[🌐 WebSocket 연결 상태 변경]: ${status}`);
     setIsWebSocketConnected(status);
   };
 
@@ -127,6 +171,16 @@ function SearchCameraModal() {
               </div>
             </div>
             <div className="h-2 bg-none"></div>
+
+            {/* 현재 인식된 제스처 표시 */}
+            {gesture && (
+              <div className="bg-gray-100 dark:bg-gray-800 py-2 px-4 text-center">
+                <span className="font-[NanumSquareRound]">
+                  인식된 제스처: <strong>{gesture}</strong>
+                  {confidence !== null && ` (정확도: ${confidence.toFixed(1)}%)`}
+                </span>
+              </div>
+            )}
 
             {/* 하단 버튼 영역 */}
             <div className="flex rounded-md justify-center py-1 bg-white dark:bg-gray-700">
