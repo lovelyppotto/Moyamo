@@ -1,4 +1,4 @@
-import DictHeader from './DictHeader';
+import DictHeader from './header/DictHeader';
 import '@/components/ui/scrollbar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
