@@ -26,14 +26,14 @@ function BaseDropdown({
   const defaultTrigger = (
     <div
       className={`flex items-center justify-between
-                min-w-[90px] md:min-w-[110px] lg:min-w-[130px] 
+                min-w-[80px] md:min-w-[110px] lg:min-w-[130px] 
                 w-auto whitespace-nowrap
                 bg-kr-300 rounded-md p-1 px-2
                 cursor-pointer relative
                 dark:bg-d-kr-700 dark:text-d-txt-50
                 ${className}`}
     >
-      <ChevronDown size={18} className="flex-shrink-0 ml-1 md:ml-2" />
+      <ChevronDown size={15} className="flex-shrink-0 md:ml-2" />
       <div className="flex-1 flex items-center justify-center">
         <span
           className="text-xs md:text-sm lg:text-base
