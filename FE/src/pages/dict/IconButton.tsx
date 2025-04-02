@@ -42,7 +42,7 @@ function IconButton({
       </button>
       {/* 아이콘 호버했을 때 툴팁 */}
       {showTooltip && (
-        <div className="absolute lg:left-full lg:ml-2 right-full mr-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-md px-4 py-2 flex items-center whitespace-nowrap z-10">
+        <div className="absolute sm:right-full sm:mr-1 xl:right-auto xl:left-full xl:ml-1 top-1/2 transform -translate-y-1/2 bg-white rounded-xl shadow-md px-4 py-2 flex items-center whitespace-nowrap z-10">
           <FontAwesomeIcon icon={faCircleInfo} className="mr-2 text-gray-700" />
           <span className="text-gray-700">
             {disabled ? `${tooltipText} (사용 불가)` : tooltipText}
