@@ -26,7 +26,7 @@ function SearchCameraModal() {
   const [currentGesture, setCurrentGesture] = useState<string | null>(null);
   const [currentConfidence, setCurrentConfidence] = useState<number | null>(null);
 
-  const gestureHistory = useRef<{ gesture: string; confidence: number }[]>([]);
+  const gestureFrequency = useRef<Record<string, number>>({});
 
   // 제스처 감지를 위한 이벤트 리스너 추가 (WebCamera 컴포넌트와 통신)
   useEffect(() => {
@@ -43,8 +43,8 @@ function SearchCameraModal() {
 
         // 카운트다운 중인 경우에만 히스토리에 기록
         if (isCountingDown) {
-          gestureHistory.current.push({ gesture, confidence });
-          console.log(`[📊 제스처 기록] 총 ${gestureHistory.current.length}개 수집됨`);
+          gestureFrequency.current[gesture] = (gestureFrequency.current[gesture] || 0) + 1;
+          console.log(`[📊 제스처 빈도] ${gesture}: ${gestureFrequency.current[gesture]}회`);
         }
       }
     };
@@ -61,23 +61,40 @@ function SearchCameraModal() {
   // 모달이 열리면 제스처 히스토리 초기화
   useEffect(() => {
     if (open) {
-      gestureHistory.current = [];
+      gestureFrequency.current = {};
       setCurrentGesture(null);
       setCurrentConfidence(null);
     }
   }, [open]);
 
   // 타이머 종료 후 제스처 선택 및 페이지 이동
+  // 타이머 종료 후 제스처 선택 함수 수정
   const handleTimerEnd = () => {
-    console.log(`[📊 제스처 분석] 총 ${gestureHistory.current.length}개의 제스처 수집됨`);
+    // 감지된 제스처 개수 확인 (모든 빈도 합계)
+    const totalDetections = Object.values(gestureFrequency.current).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+    console.log(
+      `[📊 제스처 분석] 총 ${totalDetections}개의 제스처 감지, ${Object.keys(gestureFrequency.current).length}종류`
+    );
 
-    if (gestureHistory.current.length === 0) {
+    if (totalDetections === 0) {
       console.log('[⚠️ 경고] 수집된 제스처가 없습니다');
 
       // 현재 표시 중인 제스처가 있다면 그것을 사용
       if (currentGesture) {
         console.log(`[🔍 현재 제스처 사용] ${currentGesture}`);
-        navigateToSearch(currentGesture);
+
+        // 페이지 이동
+        if (location.pathname.includes('/search')) {
+          window.location.href = `/search?gesture_name=${currentGesture}`;
+        } else {
+          navigate(`/search?gesture_name=${currentGesture}`);
+        }
+
+        // 모달 닫기
+        setTimeout(() => setOpen(false), 300);
         return;
       }
 
@@ -85,47 +102,40 @@ function SearchCameraModal() {
       return;
     }
 
-    // 제스처 빈도 계산
-    const gestureCounts: Record<string, number> = {};
-    gestureHistory.current.forEach((item) => {
-      gestureCounts[item.gesture] = (gestureCounts[item.gesture] || 0) + 1;
-    });
-
     // 가장 빈번한 제스처 찾기
     let mostFrequentGesture = '';
     let maxCount = 0;
 
-    Object.entries(gestureCounts).forEach(([g, count]) => {
-      console.log(`[📊 제스처 빈도] ${g}: ${count}회`);
+    Object.entries(gestureFrequency.current).forEach(([gesture, count]) => {
+      console.log(
+        `[📊 제스처 빈도] ${gesture}: ${count}회 (${((count / totalDetections) * 100).toFixed(1)}%)`
+      );
       if (count > maxCount) {
         maxCount = count;
-        mostFrequentGesture = g;
+        mostFrequentGesture = gesture;
       }
     });
 
-    const lastGesture = gestureHistory.current[gestureHistory.current.length - 1].gesture;
+    const lastGesture = currentGesture; // 현재 표시 중인 제스처가 마지막 감지된 제스처
 
-    console.log(`[📊 제스처 분석 결과] 최다 빈도: ${mostFrequentGesture}, 마지막: ${lastGesture}`);
+    console.log(
+      `[📊 제스처 분석 결과] 최다 빈도: ${mostFrequentGesture} (${maxCount}회), 마지막: ${lastGesture}`
+    );
 
     // 최종 제스처 선택 (주로 빈도가 가장 높은 제스처 사용)
     const finalGesture = mostFrequentGesture || lastGesture;
 
-    navigateToSearch(finalGesture);
-  };
-
-  // 검색 페이지로 이동
-  const navigateToSearch = (gesture: string) => {
-    console.log(`[🔍 검색 시작] 제스처: ${gesture}`);
-
-    // 모달 닫기
-    setTimeout(() => setOpen(false), 300);
+    console.log(`[🔍 검색 시작] 제스처: ${finalGesture}`);
 
     // 페이지 이동
     if (location.pathname.includes('/search')) {
-      window.location.href = `/search?gesture_name=${gesture}`;
+      window.location.href = `/search?gesture_name=${finalGesture}`;
     } else {
-      navigate(`/search?gesture_name=${gesture}`);
+      navigate(`/search?gesture_name=${finalGesture}`);
     }
+
+    // 모달 닫기
+    setTimeout(() => setOpen(false), 300);
   };
 
   // 카운트다운 타이머 시작
@@ -138,7 +148,7 @@ function SearchCameraModal() {
     console.log('[⏱️ 카운트다운] 시작');
 
     // 카운트다운 시작 시 제스처 히스토리 초기화
-    gestureHistory.current = [];
+    gestureFrequency.current = {};
 
     setIsCountingDown(true);
     setCountdown(3);

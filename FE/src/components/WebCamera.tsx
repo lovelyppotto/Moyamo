@@ -226,7 +226,7 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
         </div>
       </div>
 
-      {/* 제스처 인식 결과 표시 (화면 상단에 표시) */}
+      {/* 제스처 인식 결과 표시 (화면 상단에 표시)
       {gesture && (
         <div className="absolute top-20 left-0 right-0 flex justify-center items-center">
           <div className="bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg font-bold">
@@ -234,28 +234,7 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
             {confidence !== null && <div className="mt-1">일치율: {confidence.toFixed(1)}%</div>}
           </div>
         </div>
-      )}
-
-      {/* 웹소켓 연결 상태 표시 */}
-      {wsStatus !== 'open' && (
-        <div className="absolute bottom-10 left-0 right-0 flex justify-center">
-          <div
-            className={`px-4 py-2 rounded-lg text-white text-sm ${
-              wsStatus === 'connecting'
-                ? 'bg-yellow-500'
-                : wsStatus === 'error'
-                  ? 'bg-red-500'
-                  : 'bg-gray-500'
-            }`}
-          >
-            {wsStatus === 'connecting'
-              ? '서버에 연결 중...'
-              : wsStatus === 'error'
-                ? '서버 연결 오류'
-                : '서버 연결 끊김'}
-          </div>
-        </div>
-      )}
+      )} */}
     </div>
   );
 };
