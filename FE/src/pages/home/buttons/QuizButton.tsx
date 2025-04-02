@@ -17,13 +17,16 @@ function QuizButton() {
     >
       <div
         className="flex items-center justify-center relative
-            w-48 h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
+            w-35 h-18 sm:w-48 sm:h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
             bg-lavender-rose-300 dark:bg-lavender-rose-250
             rounded-full drop-shadow-basic"
       >
         <div
           className="relative 
-              ml-5 w-41 mb-18 md:w-50 md:mb-20 lg:w-55 lg:mb-25"
+              ml-5 
+              w-38 mb-14
+              sm:w-41 sm:mb-18
+              md:w-50 md:mb-20 lg:w-55 lg:mb-25"
         >
           <img
             src={getIconImage('quiz')}

@@ -225,7 +225,7 @@ function CountryBubble() {
 
     return (
       <TooltipProvider>
-        <div className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-8 pb-2">
+        <div className="flex flex-row flex-wrap justify-center gap-x-3 md:gap-x-5 gap-y-8 pb-2">
           {filteredCountries.map((country) => (
             <div key={country.id} className="relative inline-block">
               <Tooltip
@@ -248,7 +248,7 @@ function CountryBubble() {
                     }}
                   >
                     <div
-                      className={`w-13 h-13 xs:w-15 xs:h-15 sm:w-20 sm:h-20 rounded-full overflow-hidden
+                      className={`w-15 h-15 sm:w-22 sm:h-22 rounded-full overflow-hidden
                         border-2 ${
                           openTooltip === country.id
                             ? `${

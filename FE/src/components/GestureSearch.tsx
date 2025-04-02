@@ -100,7 +100,7 @@ function GestureSearchInput() {
         />
 
         {/* 검색창 */}
-        <div className="flex items-center w-full ml-2 mr-2">
+        <div className="flex items-center w-full ml-2">
           <div className="relative flex-1 min-w-[70%]">
             <input
               className="w-full h-10 px-2 
@@ -115,7 +115,7 @@ function GestureSearchInput() {
               onKeyDown={handleInputKeyDown}
             />
           </div>
-          <div className="ml-3 flex items-center justify-center">
+          <div className="ml-1 flex items-center justify-center">
             <SearchCameraModal />
           </div>
         </div>
