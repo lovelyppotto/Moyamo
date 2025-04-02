@@ -226,6 +226,7 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
         </div>
       </div>
 
+      {/* 이하 개발시 필요하면 주석 풀어서 사용, 최종적으로 삭제 에정 */}
       {/* 제스처 인식 결과 표시 (화면 상단에 표시)
       {gesture && (
         <div className="absolute top-20 left-0 right-0 flex justify-center items-center">
