@@ -11,6 +11,8 @@ import CompareGuide from './pages/dict/CompareGuide';
 import GestureDetail from './pages/dict/GestureDetail';
 import GesturePractice from './pages/dict/GesturePractice';
 import ModeToggle from './components/ModeToggle';
+import OfflineIndicator from './components/OfflineIndicator';
+import './pwa'
 
 const router = createBrowserRouter([
   {
@@ -74,7 +76,8 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="h-screen overflow-hidden relative">
+    <div className="h-[100dvh] overflow-hidden relative">
+      <OfflineIndicator />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="absolute bottom-4 left-4 z-50">
           <ModeToggle />
