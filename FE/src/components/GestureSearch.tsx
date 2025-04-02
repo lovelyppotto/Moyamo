@@ -70,7 +70,7 @@ function GestureSearchInput() {
         <FontAwesomeIcon
           icon={faMagnifyingGlass}
           size="lg"
-          className="mr-3 cursor-pointer"
+          className="mr-3 cursor-pointer text-gray-600 dark:text-white"
           onClick={executeSearch}
         />
         <BaseDropdown
