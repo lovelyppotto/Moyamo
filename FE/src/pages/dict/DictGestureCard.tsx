@@ -1,13 +1,14 @@
-import { cn } from '@/lib/utils';
 import { GestureItem } from '@/types/dictionaryType';
-// 제스처 카드 컴포넌트
-interface GestureCardProps {
+import { cn } from '@/lib/utils';
+
+// 제스처 카드 컴포넌트 프롭 타입
+interface DictGestureCardProps {
   gesture: GestureItem;
   onClick: () => void;
   hoverBorderClass: string;
 }
 
-const GestureCard = ({ gesture, onClick, hoverBorderClass }: GestureCardProps) => {
+export function DictGestureCard({ gesture, onClick, hoverBorderClass }: DictGestureCardProps) {
   return (
     <div
       className={cn(
@@ -42,4 +43,4 @@ const GestureCard = ({ gesture, onClick, hoverBorderClass }: GestureCardProps) =
       </div>
     </div>
   );
-};
+}
