@@ -12,6 +12,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico'],
+      filename: 'favicon/site.webmanifest',
       manifest: {
         name: 'Moyamo',
         short_name: 'Moyamo',
@@ -20,25 +21,44 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
+        start_url: '/', // start_url
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/favicon/web-app-manifest-192x192.png', // 경로 수정
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any', // purpose 추가
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/favicon/web-app-manifest-512x512.png', // 경로 수정
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any', // purpose 추가
           },
           {
-            src: 'maskable-icon-512x512.png',
+            src: '/favicon/maskable-icon-512x512.png', // 경로 확인 필요
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
           },
         ],
+        // 스크린샷 추가
+        screenshots: [
+          {
+            src: '/screenshots/desktop.png', // 데스크톱 스크린샷 이미지 경로
+            sizes: '1280x800',
+            type: 'image/png',
+            form_factor: 'wide', // 데스크톱용
+          },
+          {
+            src: '/screenshots/mobile.png', // 모바일 스크린샷 이미지 경로
+            sizes: '390x844',
+            type: 'image/png',
+            form_factor: 'narrow', // 모바일용
+          },
+        ],
       },
+      // workbox 설정은 그대로 유지
       workbox: {
         // 모든 앱 자산 캐싱
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,json,woff,woff2}'],
