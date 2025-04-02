@@ -99,9 +99,9 @@ function Dictionary() {
   };
 
   return (
-    <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
-      {/* 헤더 - 고정 높이 사용 */}
-      <div className="flex-none mb-[29px]">
+    <div className="flex flex-col min-h-screen w-full dark:bg-gray-900 dark:text-d-txt-50">
+      {/* 헤더 영역 */}
+      <div className="flex-none">
         <DictHeader
           showCountrySelector={true}
           selectedCountry={selectedCountry}
@@ -110,43 +110,44 @@ function Dictionary() {
           showCompareGuide={false}
         />
       </div>
-      {/* 로딩 페이지 */}
 
-      <div className="h-full flex-1 flex flex-col font-[NanumSquareRound] max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden">
+      {/* 메인 컨텐츠 컨테이너 */}
+      <div className="flex-1 flex flex-col font-[NanumSquareRound] container mx-auto px-2 sm:px-4 md:px-6 lg:px-16 xl:px-30 pb-4">
         {/* 메인 컨텐츠 영역 */}
-        <div className="h-[70%] flex justify-center items-center py-2">
-          {/* 메인 이미지 */}
-          <div className="relative flex-grow h-full flex items-center justify-center pr-5">
+        <div className="flex-1 flex flex-col sm:flex-row items-center justify-between py-2 h-[70vh] sm:h-[60vh] md:h-[65vh]">
+          {/* 제스처 이미지 컨테이너 */}
+          <div className="w-full sm:w-[85%] h-[80%] sm:h-full flex items-center justify-center">
             {currentGesture && (
               <DictMainImage gesture={currentGesture} countryCode={selectedCountry.code} />
             )}
-            {/* 아이콘 버튼 */}
-            <div className="w-auto h-full flex flex-col items-center justify- space-y-[30px] cursor-pointer">
-              <IconButton
-                icon={faHands}
-                tooltipText="제스처 연습"
-                onClick={handlePracticeButtonClick}
-                selectedCountry={selectedCountry.code}
-              />
-              <IconButton
-                icon={faMagnifyingGlassPlus}
-                tooltipText="자세히 보기"
-                onClick={handleDetailButtonClick}
-                selectedCountry={selectedCountry.code}
-              />
-              <IconButton
-                icon={faRectangleList}
-                tooltipText="나라별 비교 가이드"
-                onClick={handleGuideButtonClick}
-                selectedCountry={selectedCountry.code}
-                disabled={!currentGesture?.multipleGestures}
-              />
-            </div>
+          </div>
+
+          {/* 아이콘 버튼 영역 */}
+          <div className="flex flex-row sm:flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 mt-4 sm:mt-0 sm:ml-4">
+            <IconButton
+              icon={faHands}
+              tooltipText="제스처 연습"
+              onClick={handlePracticeButtonClick}
+              selectedCountry={selectedCountry.code}
+            />
+            <IconButton
+              icon={faMagnifyingGlassPlus}
+              tooltipText="자세히 보기"
+              onClick={handleDetailButtonClick}
+              selectedCountry={selectedCountry.code}
+            />
+            <IconButton
+              icon={faRectangleList}
+              tooltipText="나라별 비교 가이드"
+              onClick={handleGuideButtonClick}
+              selectedCountry={selectedCountry.code}
+              disabled={!currentGesture?.multipleGestures}
+            />
           </div>
         </div>
 
-        {/* 캐러셀 */}
-        <div className="h-[22%] w-full flex items-center">
+        {/* 캐러셀 영역 */}
+        <div className="h-[25vh] sm:h-[30vh] w-full">
           <DictListCarousel
             gestures={currentGestures}
             onSelectGesture={handleSelectGesture}
