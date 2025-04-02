@@ -48,9 +48,9 @@ function Home() {
             <div className="relative inline-flex">
               <div
                 className="flex bg-blue-300/60 dark:bg-blue-200 rounded-l-lg
-                px-5 pt-1 pb-2 md:pt-2 md:pb-3 lg:pt-3 lg:pb-4"
+                px-5 pt-1 pb-2 md:pb-3 lg:pt-3 lg:pb-4"
               >
-                <h1 className="dark:text-black md:text-4xl lg:text-5xl">gestures</h1>
+                <h1 className="dark:text-black md:text-4xl lg:text-5xl mt-2">gestures</h1>
               </div>
               {/* 오른쪽 태그 장식 */}
               <div className="flex">
