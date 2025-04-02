@@ -42,6 +42,7 @@ export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
     }
 
     try {
+      console.log("[🌐 웹소켓] 연결 시도 중...", SERVER_URL);
       setStatus('connecting');
       
       socket.current = new WebSocket(SERVER_URL);
@@ -53,6 +54,7 @@ export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
 
       socket.current.onmessage = (event) => {
         try {
+          // console.log("[🌐 웹소켓] 데이터 수신:", event.data);
           const response = JSON.parse(event.data);
           
           if (response.gesture) {

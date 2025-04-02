@@ -7,7 +7,7 @@ import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
   guidelineClassName?: string;
-  guideText?:string;
+  guideText?: string;
   // 연결 상태를 외부에서 제어할 수 있도록 추가
   onConnectionStatus?: (status: boolean) => void;
 }
@@ -63,6 +63,21 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
       disconnectWs();
     };
   }, [connectWs, disconnectWs]);
+
+  // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
+  useEffect(() => {
+    if (gesture) {
+      // 커스텀 이벤트 생성하여 제스처 데이터 전달
+      const gestureEvent = new CustomEvent('gesture-detected', {
+        detail: { gesture, confidence },
+      });
+
+      // 이벤트 발행
+      window.dispatchEvent(gestureEvent);
+
+      console.log(`[🔍 제스처 이벤트 발행] "${gesture}", "confidence": ${confidence}`);
+    }
+  }, [gesture, confidence]);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
