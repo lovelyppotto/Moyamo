@@ -11,7 +11,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
   const { getColorClass, getBorderColorClass } = useCountryStyles(); //useCountryStyles 훅 사용
 
   return (
-    <div className="rounded-2xl font-[NanumSquareRoundB] w-full h-full max-w-xl mx-auto flex flex-col">
+    <div className="rounded-2xl font-[NanumSquareRoundB] w-full h-full max-w-lg mx-auto flex flex-col">
       {/* 컨테이너 전체 */}
       <div className="w-full h-full flex flex-col">
         {/* 이미지 영역 - 비율 유지 */}
