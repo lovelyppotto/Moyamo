@@ -48,7 +48,7 @@ function DictHeader({
 
   // 비교 가이드 페이지로 이동
   const handleGuideClick = () => {
-    navigate('/dictionary/guide');
+    navigate(`/dictionary/compare?gesture_id=${gestureCompareInfo?.gestureId}`);
   };
 
   return (
