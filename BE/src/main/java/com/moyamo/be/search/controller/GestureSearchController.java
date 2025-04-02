@@ -2,6 +2,7 @@ package com.moyamo.be.search.controller;
 
 import com.moyamo.be.common.ApiResponse;
 import com.moyamo.be.search.dto.GestureSearchResponseDto;
+import com.moyamo.be.search.service.ElasticSearchService;
 import com.moyamo.be.search.service.GestureSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class GestureSearchController {
 
     private final GestureSearchService gestureSearchService;
+    private final ElasticSearchService elasticSearchService;
 
     @GetMapping
     public ApiResponse<GestureSearchResponseDto> getGestureSearchResult(@RequestParam("gesture_name") String gestureName,
                                                                         @RequestParam("country_id") Integer countryId) {
-        return gestureSearchService.findGestureByNameAndCountry(gestureName, countryId);
+        String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureName);
+        return gestureSearchService.findGestureByNameAndCountry(normalizedGestureName, countryId);
+    }
+
+    @GetMapping("/camera")
+    public ApiResponse<GestureSearchResponseDto> getGestureSearchResultByCamera(@RequestParam("gesture_label") String gestureLabel) {
+        String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureLabel);
+        return gestureSearchService.findGestureByLabel(normalizedGestureName, 0);
     }
 }

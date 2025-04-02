@@ -22,4 +22,12 @@ public interface GestureSearchRepository extends JpaRepository<CountryGesture, I
     List<CountryGesture> findGesturesByTitleAndCountry(@Param("gestureName") String gestureName,
                                                        @Param("countryId") int countryId);
 
+    @Query("SELECT cg FROM CountryGesture cg " +
+            "JOIN FETCH cg.gesture g " +
+            "JOIN FETCH cg.country c " +
+            "JOIN FETCH cg.gestureInfo gi " +
+            "WHERE g.gestureLabel = :gestureLabel " +
+            "AND (:countryId = 0 OR c.countryId = :countryId)")
+    List<CountryGesture> findGesturesByGestureLabelAndCountryId(@Param("gestureLabel") String gestureLabel,
+                                                        @Param("countryId") int countryId);
 }
