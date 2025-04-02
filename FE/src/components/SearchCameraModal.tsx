@@ -216,7 +216,7 @@ function SearchCameraModal() {
           bg-transparent border-none 
           cursor-pointer"
           >
-            <Camera className="w-6 h-6 cursor-pointer" />
+            <Camera className="w-6 h-6 cursor-pointer text-gray-600 dark:text-d-txt-50" />
           </button>
         </DialogTrigger>
         <DialogContent
