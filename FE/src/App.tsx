@@ -61,12 +61,12 @@ const router = createBrowserRouter([
         element: <Quiz />,
       },
       {
-        // 퀴즈 컨텐츠츠
+        // 퀴즈 컨텐츠
         path: 'quizcontent',
         element: <QuizContent />,
       },
       {
-        // 퀴즈 컨텐츠츠
+        // 퀴즈 컨텐츠
         path: 'modeltest',
         element: <ModelTest />,
       },
