@@ -1,3 +1,4 @@
+// 폰트 빠른 로딩 필요할 때 사용하는 컴포넌트
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 

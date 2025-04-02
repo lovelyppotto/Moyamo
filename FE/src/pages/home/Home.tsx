@@ -26,7 +26,7 @@ function Home() {
       px-16 dark:text-d-txt-50"
       >
         <div
-          className="flex flex-col item-center font-[DNFBitBitv2] 
+          className="flex flex-col item-center font-[DNFBitBitv2]
           text-3xl text-center "
         >
           {/* 첫 번째 줄 */}
