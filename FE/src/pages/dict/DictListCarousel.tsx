@@ -120,10 +120,10 @@ export function DictListCarousel({
         {/* 이전 버튼 - 모바일에서는 숨김 */}
         <button
           onClick={scrollToPrev}
-          className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
+          className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
           aria-label="이전"
         >
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
 
         {/* 카드 컨테이너 */}
@@ -161,10 +161,10 @@ export function DictListCarousel({
         {/* 다음 버튼 - 모바일에서는 숨김 */}
         <button
           onClick={scrollToNext}
-          className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
+          className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
           aria-label="다음"
         >
-          <FontAwesomeIcon icon={faChevronRight} />
+          <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </div>
     </div>
