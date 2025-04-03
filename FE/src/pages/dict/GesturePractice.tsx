@@ -70,6 +70,7 @@ function GesturePractice() {
               guidelineClassName="max-w-[500px] 
                 w-[48%] lg:w-[80%]
                 top-13  lg:top-22"
+              guideText="정확도 70% 이상 시 정답 표시"
             />
           )}
         </div>
