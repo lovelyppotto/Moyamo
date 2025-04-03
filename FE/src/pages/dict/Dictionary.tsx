@@ -1,6 +1,6 @@
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DictListCarousel } from './DictListCarousel';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/pages/dict/IconButton';
@@ -46,8 +46,20 @@ function Dictionary() {
     }
   }, [gestureData]);
 
-  // 현재 선택한 국가에 해당하는 제스처 목록
-  const currentGestures = gestureData?.gestures || [];
+  // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
+  const currentGestures = React.useMemo(() => {
+    if (!gestureData?.gestures) return [];
+
+    // 원본 배열을 복사해서 작업 (원본 데이터 유지)
+    const shuffledGestures = [...gestureData.gestures];
+
+    for (let i = shuffledGestures.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
+    }
+
+    return shuffledGestures;
+  }, [gestureData]);
 
   // 현재 선택된 제스처
   const currentGesture =
