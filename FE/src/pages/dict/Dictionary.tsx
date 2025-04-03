@@ -99,9 +99,9 @@ function Dictionary() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full dark:bg-gray-900 dark:text-d-txt-50">
+    <div className="flex flex-col h-screen w-full dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 영역 */}
-      <div className="flex-none">
+      <div className="h-[1/10]">
         <DictHeader
           showCountrySelector={true}
           selectedCountry={selectedCountry}
@@ -112,9 +112,9 @@ function Dictionary() {
       </div>
 
       {/* 메인 컨텐츠 컨테이너 */}
-      <div className="flex-1 flex flex-col font-[NanumSquareRound] container mx-auto px-2 md:px-8 lg:px-16 xl:px-24 2xl:px-4 pb-4 w-full max-w-6xl">
+      <div className="flex flex-col justify-evenly font-[NanumSquareRound] container mx-auto px-2 md:px-8 lg:px-16 xl:px-24 2xl:px-4 pb-4 w-full max-w-6xl h-full">
         {/* 메인 컨텐츠 영역 */}
-        <div className="flex-1 flex flex-col sm:flex-row items-center justify-center py-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center py-2">
           {/* 제스처 이미지 컨테이너 */}
           <div className="w-full sm:w-[85%] lg:w-[60%] h-[80%] sm:h-full flex items-center justify-center">
             {currentGesture && (
