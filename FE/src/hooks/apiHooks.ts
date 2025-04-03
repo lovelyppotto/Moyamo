@@ -98,9 +98,6 @@ export function useQuizQuestions(useCamera: boolean) {
     queryKey: ['quizQuestions', useCamera],
     queryFn: () => getQuizQuestions(useCamera),
     staleTime: 0, // 항상 새로운 데이터를 가져오도록 설정
-    cacheTime: 0, // 캐시를 바로 제거
-    refetchOnMount: true, // 컴포넌트가 마운트될 때마다 새로운 데이터 가져오기
-    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 리페치 비활성화
   });
 }
 
