@@ -57,7 +57,10 @@ export function useGesturesByCountry(countryId?: number) {
       return response;
     },
     enabled: !!countryId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    gcTime: 1000 * 60,
+    refetchOnMount: 'always',
+    retry: false,
   });
 }
 
