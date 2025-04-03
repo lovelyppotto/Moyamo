@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import WebCamera from '@/components/WebCamera';
+import CameraTimer from './CameraTimer';
 import { FrontendQuestionData } from '@/types/quizTypes';
 
 interface Answers3Props {
@@ -7,13 +9,25 @@ interface Answers3Props {
   onSelect: (answer: number | null) => void;
   isSelected: number | null;
   answerState: string;
+  onProgressStart: () => void;
 }
 
-const Answers3: React.FC<Answers3Props> = ({ onSelect, answer }) => {
+const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }) => {
+  const [showTimer, setShowTimer] = useState(true);
+
+  const handleTimerEnd = () => {
+    setShowTimer(false);
+    // 타이머가 끝나고 1초 후에 프로그레스 바 시작
+    setTimeout(() => {
+      onProgressStart();
+    }, 1000);
+  };
+
   return (
-    <div className="flex-col mt-[3vh] h-2/3 flex items-center">
+    <div className="flex-col mt-[3vh] h-2/3 flex items-center relative">
       <div className="flex justify-between items-center mb-[2vh]"></div>
       <WebCamera onGestureDetected={(gestureId: number) => onSelect(gestureId)} />
+      {showTimer && <CameraTimer onTimerEnd={handleTimerEnd} />}
     </div>
   );
 };
