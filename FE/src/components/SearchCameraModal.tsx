@@ -68,7 +68,6 @@ function SearchCameraModal() {
   }, [open]);
 
   // 타이머 종료 후 제스처 선택 및 페이지 이동
-  // 타이머 종료 후 제스처 선택 함수 수정
   const handleTimerEnd = () => {
     // 감지된 제스처 개수 확인 (모든 빈도 합계)
     const totalDetections = Object.values(gestureFrequency.current).reduce(
@@ -86,11 +85,11 @@ function SearchCameraModal() {
       if (currentGesture) {
         console.log(`[🔍 현재 제스처 사용] ${currentGesture}`);
 
-        // 페이지 이동
+        // 카메라 검색 API로 변경: gesture_name 대신 gesture_label 사용
         if (location.pathname.includes('/search')) {
-          window.location.href = `/search?gesture_name=${currentGesture}`;
+          window.location.href = `/search?gesture_label=${currentGesture}`;
         } else {
-          navigate(`/search?gesture_name=${currentGesture}`);
+          navigate(`/search?gesture_label=${currentGesture}`);
         }
 
         // 모달 닫기
@@ -129,9 +128,9 @@ function SearchCameraModal() {
 
     // 페이지 이동
     if (location.pathname.includes('/search')) {
-      window.location.href = `/search?gesture_name=${finalGesture}`;
+      window.location.href = `/search/camera?gesture_label=${finalGesture}`;
     } else {
-      navigate(`/search?gesture_name=${finalGesture}`);
+      navigate(`/search/camera?gesture_label=${finalGesture}`);
     }
 
     // 모달 닫기

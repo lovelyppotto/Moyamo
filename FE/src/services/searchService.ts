@@ -36,29 +36,64 @@ const getMockSearchResults = (gestureName: string, countryId?: number): GestureS
   });
 };
 
-
 //검색 API 호출 함수
 export const searchGestures = async (
   gestureName: string,
-  countryId?: number
+  countryId?: number,
+  isCameraSearch?: boolean
 ): Promise<GestureSearchResult[]> => {
+  // 파라미터로 받은 카메라 검색 여부가 없으면 URL에서 확인
+  if (isCameraSearch === undefined) {
+    const url = new URL(window.location.href);
+    const hasGestureLabel = url.searchParams.has('gesture_label');
+    const gestureLabel = url.searchParams.get('gesture_label') || '';
+    isCameraSearch = hasGestureLabel && gestureLabel.trim() !== '';
+  }
+
+  // 검색 파라미터 결정
+  let searchQuery = gestureName;
+  if (isCameraSearch) {
+    // URL에서 gesture_label 값을 가져와서 사용
+    const url = new URL(window.location.href);
+    const gestureLabel = url.searchParams.get('gesture_label') || '';
+    searchQuery = gestureLabel || gestureName;
+  }
+
   // 목 데이터 사용 여부 확인
   if (useMockData()) {
-    console.log('[개발 환경] 목 데이터 사용 중...');
+    console.log(
+      `[개발 환경] 목 데이터 사용 중... ${isCameraSearch ? '(카메라 검색)' : '(일반 검색)'}`
+    );
     // API 응답 딜레이 시뮬레이션
     await new Promise((resolve) => setTimeout(resolve, 300));
-    return getMockSearchResults(gestureName, countryId);
+    // 카메라 검색에 맞게 목 데이터 필터링
+    return getMockSearchResults(searchQuery, countryId);
   }
 
   // 실제 API 호출
-  console.log('[프로덕션 환경] 실제 API 호출 중...');
+  console.log(
+    `[프로덕션 환경] 실제 API 호출 중... ${isCameraSearch ? '(카메라 검색)' : '(일반 검색)'}`
+  );
   try {
-    const { data } = await apiClient.get<SearchResponse>('/api/search', {
-      params: {
-        gesture_name: gestureName,
+    let endpoint = '/api/search';
+    let params: Record<string, string | number | undefined> = {};
+
+    if (isCameraSearch) {
+      // 카메라 검색 API
+      endpoint = '/api/search/camera';
+      params = {
+        gesture_label: searchQuery,
         country_id: countryId,
-      },
-    });
+      };
+    } else {
+      // 일반 검색 API
+      params = {
+        gesture_name: searchQuery,
+        country_id: countryId,
+      };
+    }
+
+    const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
 
     // camelCase로 변환한 단일 결과를 배열로 감싸서 반환
     const result = {
@@ -76,16 +111,9 @@ export const searchGestures = async (
   } catch (error) {
     console.error('API 호출 실패, 목 데이터로 대체:', error);
     // API 호출 실패 시 목 데이터로 대체
-    return getMockSearchResults(gestureName, countryId);
+    return getMockSearchResults(searchQuery, countryId);
   }
 };
-
-// 제스처 상세 정보 조회 API
-// export const getGestureDetail = async (
-//   gestureId: number,
-//   countryId?: number,
-// ): Promise<GestureM
-
 
 // 목 데이터와 API 사용 모드 전환 함수 (개발 편의용)
 export const toggleMockDataMode = (useMock: boolean) => {

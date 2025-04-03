@@ -12,7 +12,7 @@ import GestureDetail from './pages/dict/GestureDetail';
 import GesturePractice from './pages/dict/GesturePractice';
 import ModeToggle from './components/ModeToggle';
 import OfflineIndicator from './components/OfflineIndicator';
-import './pwa'
+import './pwa';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +27,11 @@ const router = createBrowserRouter([
       {
         // 검색 결과
         path: 'search',
+        element: <Result />,
+      },
+      {
+        // 카메라 검색 결과
+        path: 'search/camera',
         element: <Result />,
       },
       {

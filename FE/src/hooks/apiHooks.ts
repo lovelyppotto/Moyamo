@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { searchGestures } from '@/services/searchService';
 
@@ -10,32 +11,31 @@ import { getTips } from '@/services/tipService';
 
 // 제스처 검색
 export function useGestureSearch(
-  gestureName: string,
+  searchTerm: string,
   countryId?: number,
   options = { enabled: true }
 ) {
-  const trimmedName = gestureName.trim();
-  const isValidQuery = !!trimmedName;
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
 
-  // // 개발용 로그
-  // if (process.env.NODE_ENV === 'development') {
-  //   console.log('검색 쿼리 파라미터:', {
-  //     gestureName: trimmedName,
-  //     countryId,
-  //     isEnabled: isValidQuery && options.enabled,
-  //   });
-  // }
+  // URL에서 카메라 검색 여부 확인
+  const isGestureLabel = params.has('gesture_label');
+  const gestureLabel = params.get('gesture_label') || '';
+
+  // 최종 검색어 결정 (카메라 라벨 우선)
+  const finalSearchTerm = isGestureLabel ? gestureLabel : searchTerm.trim();
+  const isValidQuery = !!finalSearchTerm;
 
   return useQuery({
-    queryKey: ['gestureName', trimmedName, countryId],
-    queryFn: () => searchGestures(trimmedName, countryId),
+    // 쿼리 키에 검색 유형 포함 (일반 검색 또는 카메라 검색)
+    queryKey: ['gestureName', finalSearchTerm, countryId, isGestureLabel ? 'camera' : 'text'],
+    queryFn: () => searchGestures(finalSearchTerm, countryId),
     // 검색어가 있고 enabled 옵션이 true일 때만 API 호출
     enabled: isValidQuery && options.enabled,
     staleTime: 5 * 60 * 1000,
     initialData: isValidQuery ? undefined : [],
   });
 }
-
 // 문화적 팁 가져오기
 export function useTips() {
   return useQuery({
