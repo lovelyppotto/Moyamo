@@ -5,7 +5,7 @@ import Answers3 from './Answers3.tsx';
 import PbNumber from './PbNumber.tsx';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { FrontendQuestionData } from '@/types/quizTypes';
 import Animation from './Animation.tsx';
 
@@ -31,19 +31,27 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const [showWrongImage, setShowWrongImage] = useState<boolean>(false);
   const [timer, setTimer] = useState(10000);
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
+  const [startProgress, setStartProgress] = useState(false);
 
-  function handleSelectAnswer(answer: number | null) {
+  useEffect(() => {
+    // CAMERA 타입이 아닌 경우 바로 프로그레스 시작
+    if (questionData.type !== 'CAMERA') {
+      setStartProgress(true);
+    }
+  }, [questionData.type]);
+
+  function handleSelectAnswer(selectedAnswer: number | null) {
     setAnswer({
-      selectedAnswer: answer,
+      selectedAnswer: selectedAnswer,
       isCorrect: null,
       answerState: 'answered',
     });
     let newTimer = 10000; //시간의 기본 최대값
     let newProgressClass = '';
-    if (answer !== null) {
+    if (selectedAnswer !== null) {
       newTimer = 1000;
     }
-    if (answer && answer.isCorrect !== null) {
+    if (answer.isCorrect !== null) {
       newTimer = 2000;
       newProgressClass = 'bg-gray-200';
     }
@@ -52,9 +60,9 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
-      const isCorrect = answer === questionData.answer.correctOptionId;
+      const isCorrect = selectedAnswer === questionData.answer.correctOptionId;
       setAnswer({
-        selectedAnswer: answer,
+        selectedAnswer: selectedAnswer,
         isCorrect,
         answerState: isCorrect ? 'correct' : 'wrong',
       });
@@ -72,7 +80,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
       }, 1000);
       // 다음 문제로 넘어가기 위한 타이머
       setTimeout(() => {
-        onSelectAnswer(answer);
+        onSelectAnswer(selectedAnswer);
       }, 400);
     }, 200);
   }
@@ -89,12 +97,12 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
           <PbNumber Index={Index} />
         </div>
         {/* 문제: 계속 이전의 progress값이 저장이 된다 */}
-        <Progress
+        {startProgress && <Progress
           key={timer}
           timeout={timer}
           onTimeout={handleSkipAnswer}
           className={progressClass}
-        />
+        />}
         <div className="flex justify-between items-center mt-[3vh]">
           <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%] dark:text-white">
             {`Q${Index + 1}. ${questionData.text}`}
@@ -108,6 +116,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
           </button>
         </div>
 
+        {/* form 태그 제거하고 직접 컴포넌트들 렌더링 */}
         {questionData.type === 'MEANING' && (
           <Answers
             options={questionData.options}
@@ -134,6 +143,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
             onSelect={handleSelectAnswer}
             isSelected={answer.selectedAnswer}
             answerState={answer.answerState}
+            onProgressStart={() => setStartProgress(true)}
           />
         )}
       </div>
