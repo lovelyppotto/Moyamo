@@ -25,9 +25,9 @@ function QuizProgress({ timeout = 0, onTimeout = () => {}, className = '' }: Qui
     if (timeout <= 0) return;
     const interval = setInterval(() => {
       setRemainingTime((prevRemainingTime) => {
-        return Math.max(0, prevRemainingTime - 100);
+        return Math.max(0, prevRemainingTime - 1000); //1초에 한번 줄어든다.
       });
-    }, 100);
+    }, 1000);
 
     return () => {
       clearInterval(interval);

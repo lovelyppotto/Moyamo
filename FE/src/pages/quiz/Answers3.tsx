@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import WebCamera from '@/components/WebCamera';
 import CameraTimer from './CameraTimer';
 import { FrontendQuestionData } from '@/types/quizTypes';
