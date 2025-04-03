@@ -16,6 +16,8 @@ function Layout() {
   const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
   const isResultPage = location.pathname === '/search';
+  const isCameraResultPage = location.pathname === '/search/camera';
+  const isAnyResultPage = isResultPage || isCameraResultPage; // 통합 검색 결과 페이지 여부
   const isQuizPage =
     location.pathname.startsWith('/quiz') || location.pathname.startsWith('/quizcontent');
 
@@ -44,10 +46,10 @@ function Layout() {
   };
 
   // 패딩 적용하지 않는 페이지
-  const noPaddingPage = isHomePage || isResultPage || isDictPage || isQuizPage;
+  const noPaddingPage = isHomePage || isAnyResultPage || isDictPage || isQuizPage;
 
   // Result 페이지와 Quiz 페이지는 배경색 적용 안 함
-  const bgStyle = isResultPage || isQuizPage ? {} : { backgroundColor: '#f5f5f5' };
+  const bgStyle = isAnyResultPage || isQuizPage ? {} : { backgroundColor: '#f5f5f5' };
 
   return (
     <div
@@ -55,8 +57,8 @@ function Layout() {
       style={bgStyle}
     >
       <FontPreloader />
-      {/* 뒤로 가기 버튼 - result, dict 페이지*/}
-      {isResultPage && (
+      {/* 뒤로 가기 버튼 - 모든 검색 결과 페이지에 적용 */}
+      {isAnyResultPage && (
         <button
           className="absolute cursor-pointer top-4 left-4 z-10 dark:text-white"
           onClick={handleBack}
