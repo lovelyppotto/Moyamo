@@ -1,12 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
+import { useQueryClient } from '@tanstack/react-query';
+
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
   title?: string; // 제목
@@ -30,8 +32,11 @@ function DictHeader({
   countryOptions = [],
 }: DictHeaderProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
   const getCountryCode = useCountryCode();
   const countryCode = getCountryCode(gestureCompareInfo?.countryName);
+
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
     if (onSelectCountry) {
@@ -43,6 +48,24 @@ function DictHeader({
 
   // 뒤로가기
   const handleGoBack = () => {
+    if (location.pathname.includes('/dictionary/detail')) {
+      const queryParams = new URLSearchParams(location.search);
+      const countryId = queryParams.get('country_id');
+
+      if (countryId) {
+        // 직접 캐시 제거
+        queryClient.removeQueries({
+          queryKey: ['gesturesByCountry', parseInt(countryId)],
+        });
+
+        // 이제 시간 값을 추가하여 강제로 새 페이지 요청
+        const timestamp = Date.now();
+        navigate(`/dictionary?country_id=${countryId}&t=${timestamp}`, { replace: true });
+        return; // 기존 history.back() 동작 중지
+      }
+    }
+
+    // 다른 경우에는 일반 뒤로가기 수행
     window.history.back();
   };
 
