@@ -33,12 +33,15 @@ const GesturePracticeCamera = ({
 
   // 정확도가 70% 이상인지 확인하는 상태
   const [isCorrect, setIsCorrect] = useState(false);
+  // 가이드라인 표시 상태
+  const [showGuideline, setShowGuideline] = useState(true);
 
   // 컴포넌트 상태 및 참조
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const resultsRef = useRef<HandLandmarkerResult | null>(null);
+  const correctTimeRef = useRef<NodeJS.Timeout | null>(null);
 
   // 부모 컴포넌트에 웹소켓 연결 상태 알림
   useEffect(() => {
@@ -66,6 +69,11 @@ const GesturePracticeCamera = ({
         cancelAnimationFrame(animationRef.current);
       }
 
+      // 타이머 정리
+      if (correctTimeRef.current) {
+        clearTimeout(correctTimeRef.current);
+      }
+
       // WebSocket 연결 해제
       disconnectWs();
     };
@@ -74,8 +82,24 @@ const GesturePracticeCamera = ({
   // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
   useEffect(() => {
     if (gesture && confidence !== null) {
-      // 정확도가 70% 이상인지 확인하여 상태 업데이트
-      setIsCorrect(confidence >= 70);
+      // 정확도가 70% 이상인지 확인
+      if (confidence >= 70) {
+        // 이전 타이머가 있으면 제거
+        if (correctTimeRef.current) {
+          clearTimeout(correctTimeRef.current);
+        }
+
+        // 정답 표시, 가이드라인 숨김 설정
+        setIsCorrect(true);
+        setShowGuideline(false);
+
+        // 1초 후 정답 표시 제거, 가이드라인 다시 표시
+        correctTimeRef.current = setTimeout(() => {
+          setIsCorrect(false);
+          setShowGuideline(true);
+          correctTimeRef.current = null;
+        }, 1000);
+      }
 
       // 커스텀 이벤트 생성하여 제스처 데이터 전달
       const gestureEvent = new CustomEvent('gesture-detected', {
@@ -88,9 +112,6 @@ const GesturePracticeCamera = ({
       console.log(
         `[🔍 제스처 이벤트 발행] "${gesture}", "confidence": ${confidence}, "correct": ${confidence >= 70}`
       );
-    } else {
-      // confidence가 null이면 정답 표시 해제
-      setIsCorrect(false);
     }
   }, [gesture, confidence]);
 
@@ -243,7 +264,7 @@ const GesturePracticeCamera = ({
             text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
             drop-shadow-basic"
           >
-            {guideText || '정확도 70% 이상 시 O 표시가 나타납니다.'}
+            {guideText}
           </p>
         </div>
       </div>
