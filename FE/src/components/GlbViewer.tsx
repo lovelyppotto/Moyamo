@@ -182,107 +182,31 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             gltf.animations.map((a) => a.name)
           );
 
-          // 각 Armature에 대한 애니메이션 찾기 및 적용
-          // Armature에 대한 믹서 생성
-          if (armature) {
-            mixer = new THREE.AnimationMixer(armature);
-
-            // 각 애니메이션에 대해 확인 - 첫 번째 아마추어
-            // 일단 모든 애니메이션 시도 (디버깅을 위해)
-            console.log('Trying to apply animations to Armature');
-
-            // 첫 번째로 ArmatureAction 애니메이션 시도
-            try {
-              const armatureAction = gltf.animations.find((a) => a.name === 'ArmatureAction');
-              if (armatureAction) {
-                const action = mixer.clipAction(armatureAction);
-                action.timeScale = 0.5;
-                action.play();
-                console.log(`Animation "${armatureAction.name}" successfully applied to Armature`);
-              } else {
-                console.log('No ArmatureAction found for Armature');
-              }
-            } catch (err) {
-              console.log(`Failed to apply ArmatureAction to Armature:`, err.message);
-            }
-
-            // 선택된 인덱스의 애니메이션도 시도
-            try {
-              const selectedAnimation = gltf.animations[index];
-              if (selectedAnimation && selectedAnimation.name !== 'ArmatureAction') {
-                const action = mixer.clipAction(selectedAnimation);
-                action.timeScale = 0.5;
-                action.play();
-                console.log(`Selected animation "${selectedAnimation.name}" applied to Armature`);
-              }
-            } catch (err) {
-              console.log(`Failed to apply selected animation to Armature:`, err.message);
-            }
-          }
-
-          // Armature001에 대한 믹서 생성
-          if (armature001) {
-            // 모델 전체에 대한 믹서 생성 (Armature001을 직접 타겟팅하는 대신)
-            mixer2 = new THREE.AnimationMixer(model);
-            console.log('Trying to apply animations to Armature001 (using model mixer)');
-
-            // "ArmatureAction.001" 또는 유사한 이름 찾기 시도
-            try {
-              // 이름이 "Armature001"을 포함하거나 ".001"로 끝나는 애니메이션 찾기
-              const armature001Animation = gltf.animations.find(
-                (a) =>
-                  a.name.includes('Armature001') ||
-                  a.name.endsWith('.001') ||
-                  a.name === 'ArmatureAction.001'
-              );
-
-              if (armature001Animation) {
-                const action = mixer2.clipAction(armature001Animation);
-                action.timeScale = 0.5;
-                action.play();
-                console.log(
-                  `Animation "${armature001Animation.name}" successfully applied to model for Armature001`
-                );
-              } else {
-                // 없다면 "Tepuk Tangan" 애니메이션 시도 (다양한 애니메이션 중 하나 선택)
-                const tepukAnimation = gltf.animations.find((a) => a.name === 'Tepuk Tangan');
-                if (tepukAnimation) {
-                  const action = mixer2.clipAction(tepukAnimation);
-                  action.timeScale = 0.5;
-                  action.play();
-                  console.log(`"Tepuk Tangan" animation applied to model for Armature001`);
-                } else {
-                  // 없다면 첫 번째 아마추어에 적용한 것과 다른 애니메이션 선택
-                  let alternativeAnimationIndex = (index + 1) % gltf.animations.length;
-                  const alternativeAnimation = gltf.animations[alternativeAnimationIndex];
-                  if (alternativeAnimation) {
-                    const action = mixer2.clipAction(alternativeAnimation);
-                    action.timeScale = 0.5;
-                    action.play();
-                    console.log(
-                      `Alternative animation "${alternativeAnimation.name}" applied to model for Armature001`
-                    );
-                  }
-                }
-              }
-            } catch (err) {
-              console.log(`Failed to apply animation to Armature001:`, err.message);
-            }
-          }
-
-          // 만약 둘 다 적용되지 않았다면, 기본 선택된 애니메이션을 모델 전체에 적용
-          const selectedAnimationIndex = Math.min(index || 0, gltf.animations.length - 1);
-          const selectedAnimation = gltf.animations[selectedAnimationIndex];
-
-          if (!mixer && !mixer2) {
-            console.log(
-              'No specific armature animations found, applying selected animation to entire model'
-            );
+          // 첫 번째 애니메이션 적용 (index = 0)
+          if (gltf.animations[0]) {
             mixer = new THREE.AnimationMixer(model);
-            const action = mixer.clipAction(selectedAnimation);
+            const action = mixer.clipAction(gltf.animations[0]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`Fallback: Animation "${selectedAnimation.name}" applied to entire model`);
+            console.log(`First animation applied: ${gltf.animations[0].name}`);
+          }
+
+          // 두 번째 애니메이션이 있다면 적용 (index = 1)
+          if (gltf.animations[1]) {
+            mixer2 = new THREE.AnimationMixer(model);
+            const action = mixer2.clipAction(gltf.animations[1]);
+            action.timeScale = 0.5;
+            action.play();
+            console.log(`Second animation applied: ${gltf.animations[1].name}`);
+          }
+
+          // 선택된 인덱스의 애니메이션이 아직 적용되지 않았다면 적용
+          if (index > 1 && gltf.animations[index] && !mixer && !mixer2) {
+            mixer = new THREE.AnimationMixer(model);
+            const action = mixer.clipAction(gltf.animations[index]);
+            action.timeScale = 0.5;
+            action.play();
+            console.log(`Selected animation applied: ${gltf.animations[index].name}`);
           }
         }
       },
