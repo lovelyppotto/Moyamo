@@ -1,6 +1,6 @@
 import { GlbViewer } from '../../components/GlbViewer';
 // GLTF/GLB 파일들을 직접 import
-import standingGlb from '@/assets/models/what.glb?url';
+import standingGlb from '@/assets/models/Standing1.glb?url';
 
 function ModelTest() {
   return (
