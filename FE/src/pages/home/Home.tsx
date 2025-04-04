@@ -30,22 +30,22 @@ function Home() {
           text-3xl text-center "
         >
           {/* 첫 번째 줄 */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-1 sm:mb-3">Unlock the world</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-1 sm:mb-2">Unlock the world</h1>
 
           {/* 두 번째 줄 */}
-          <div className="flex items-center justify-center mb-1 sm:mb-3 w-full">
+          <div className="flex items-center justify-center mb-1 sm:mb-2 w-full">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">through</h1>
             <img
               src={getIconImage('puzzle')}
               alt="pixel-puzzle"
-              className="w-10 h-10 md:w-14 md:h-14 
-              lg:w-16 lg:h-16 xl:w-20 xl:h-20 mx-1 sm:mx-2"
+              className="w-9 h-9 sm:w-14 sm:h-14 
+              lg:w-16 lg:h-16 xl:w-17 xl:h-17 mx-1 sm:mx-2"
             />
             <h1 className="dark:text-d-txt-50 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">meaningful</h1>
           </div>
 
           {/* 세 번째 줄 */}
-          <div className="flex justify-center w-full sm:mb-3 md:mb-4">
+          <div className="flex justify-center w-full sm:mb-2 md:mb-3">
             <div className="relative inline-flex">
               <div
                 className="flex bg-blue-300/60 dark:bg-blue-200 rounded-l-lg
