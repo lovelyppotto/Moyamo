@@ -99,29 +99,26 @@ const WebCamera = ({
   }, [wsStatus, onConnectionStatus]);
 
   // 컴포넌트 마운트 시 웹소켓 연결
-  useEffect(() => {
-    console.log('[🔍 WebCamera 컴포넌트 마운트]');
+useEffect(() => {
+  if (!isPaused) {
+    console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
+    
+    // 웹소켓 URL 확인
+    console.log('[🔍 웹소켓 URL]', import.meta.env.VITE_SERVER_STATIC_WS_URL);
 
-    // 약간의 지연 후 웹소켓 연결 시작
+    // 웹소켓 연결 시작 전에 약간의 지연
     const timer = setTimeout(() => {
       console.log('[🔍 웹소켓 연결 시작]');
       connectWs();
-    }, 500);
+    }, 1000); // 1초로 지연 시간 증가
 
     return () => {
-      console.log('[🔍 WebCamera 컴포넌트 언마운트]');
+      console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
       clearTimeout(timer);
-
-      // 애니메이션 정리
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-
-      // WebSocket 연결 해제
       disconnectWs();
     };
-  }, [connectWs, disconnectWs]);
+  }
+}, [connectWs, disconnectWs, isPaused]);
 
   // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
   useEffect(() => {
