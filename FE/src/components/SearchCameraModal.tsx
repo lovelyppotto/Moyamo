@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
+import { toast } from 'sonner';
 import WebCamera from './WebCamera';
 
 // 커스텀 이벤트 타입 정의
@@ -34,7 +35,7 @@ function SearchCameraModal() {
 
   const gestureFrequency = useRef<Record<string, number>>({});
 
-  // 제스처 감지를 위한 이벤트 리스너 추가 (WebCamera 컴포넌트와 통신)
+  // 제스처 감지를 위한 이벤트 리스너 (WebCamera 컴포넌트와 통신)
   useEffect(() => {
     // WebCamera 컴포넌트에서 보내는 제스처 이벤트를 수신하는 커스텀 이벤트 리스너
     const handleGestureDetected = (event: Event) => {
