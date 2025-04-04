@@ -19,7 +19,8 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     preparationCountdown,
     setGuideText,
     setErrorState,
-    resetGestureData
+    resetGestureData,
+    getMostFrequentGesture
   } = useGestureStore();
   
   const prepTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -37,6 +38,30 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
       timerRef.current = null;
     }
   }, []);
+  
+  // 제스처 결과 확인 함수
+  const checkGestureResult = useCallback(() => {
+    const detectedGesture = getMostFrequentGesture();
+    
+    if (detectedGesture) {
+      // 제스처 감지 성공
+      setGuideText('인식 완료!');
+      
+      // 타이머 완료 콜백 (성공 시)
+      setTimeout(onTimerComplete, 300);
+    } else {
+      // 제스처 감지 실패 - 여기서 가이드 텍스트를 명시적으로 업데이트
+      setGuideText('버튼을 눌러 다시 시도해 주세요');
+      setErrorState(true);
+      
+      toast.dismiss();
+      toast.error('제스처 인식 실패', {
+        description: '손이 인식되지 않았습니다. 다시 시도해 주세요.',
+        duration: 3000,
+        id: useGestureStore.getState().getUniqueToastId('gesture-recognition-failed'),
+      });
+    }
+  }, [getMostFrequentGesture, setGuideText, setErrorState, onTimerComplete]);
   
   // 준비 타이머에서 실제 타이머로 전환
   const startActualCountdown = useCallback(() => {
@@ -59,10 +84,9 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
         }
         
         setCountdownState(false);
-        setGuideText('인식 완료!');
         
-        // 타이머 완료 콜백
-        setTimeout(onTimerComplete, 300);
+        // 카운트다운 완료 후 제스처 결과 확인
+        checkGestureResult();
       }
     }, 1000);
   }, [
@@ -70,7 +94,7 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     setCountdownState, 
     setGuideText, 
     decrementCountdown, 
-    onTimerComplete
+    checkGestureResult
   ]);
   
   // 준비 타이머 시작

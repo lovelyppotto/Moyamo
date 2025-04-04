@@ -45,15 +45,7 @@ function SearchCameraModal() {
     const finalGesture = getMostFrequentGesture();
     
     if (!finalGesture) {
-      // 제스처 인식 실패 처리
-      toast.dismiss();
-      toast.error('제스처 인식에 실패했습니다', {
-        description: '손이 인식되지 않았습니다. 다시 시도해 주세요.',
-        duration: 3000,
-        id: getUniqueToastId('gesture-recognition-failed'),
-      });
-      
-      setErrorState(true);
+      // useGestureTimer에서 이미 실패 처리를 했기 때문에 여기서는 조기 반환만 함
       return;
     }
     
@@ -68,7 +60,7 @@ function SearchCameraModal() {
     
     // 모달 닫기
     setTimeout(() => setOpen(false), 300);
-  }, [getMostFrequentGesture, location.pathname, navigate, setErrorState]);
+  }, [getMostFrequentGesture, location.pathname, navigate]);
   
   // 제스처 타이머 설정
   const { startPreparationTimer, handleRetry } = useGestureTimer({
