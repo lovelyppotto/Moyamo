@@ -25,7 +25,6 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   const prepTimerRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  let lastToastTime = 0;
   let toastCount = 0;
   
   // 타이머 정리 함수
@@ -44,6 +43,11 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   // 제스처 결과 확인 함수
   const checkGestureResult = useCallback(() => {
     const detectedGesture = getMostFrequentGesture();
+    // 제스처 스토어에서 landmarks 정보 가져오기 추가
+    const { gestureFrequency } = useGestureStore.getState();
+    
+    // 손 감지 여부 확인 (gestureFrequency가 비어 있으면 손이 감지되지 않은 것)
+    const isHandDetected = Object.keys(gestureFrequency).length > 0;
     
     if (detectedGesture && detectedGesture !== "없음") {
       // 제스처 감지 성공 (유효한 제스처인 경우)
@@ -56,21 +60,24 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
       setGuideText('버튼을 눌러 다시 시도해 주세요');
       setErrorState(true);
       
-      // 현재 시간 가져오기
-      const now = Date.now();
-      
       // 토스트 카운터 증가 (매번 다른 ID 생성)
       toastCount++;
       
-      // 항상 새 토스트 생성 (이전 토스트 제거 없이)
-      toast.error('제스처 인식 실패', {
-        description: '유효한 제스처가 인식되지 않았습니다. 다시 시도해 주세요.',
-        duration: 3000,
-        id: `gesture-fail-${toastCount}-${now}`, // 항상 고유한 ID 생성
-      });
-      
-      // 시간 업데이트
-      lastToastTime = now;
+      if (!isHandDetected) {
+        // 손이 감지되지 않은 경우
+        toast.error('제스처 인식 실패', {
+          description: '손이 카메라에 인식되지 않았습니다. 손을 카메라 내부에 위치시켜 주세요.',
+          duration: 3000,
+          id: `hand-not-detected-${toastCount}-${Date.now()}`,
+        });
+      } else {
+        // 손은 감지되었지만 유효한 제스처가 아닌 경우
+        toast.error('제스처 인식 실패', {
+          description: '제스처를 인식할 수 없습니다. 다른 제스처로 다시 시도해 주세요.',
+          duration: 3000,
+          id: `invalid-gesture-${toastCount}-${Date.now()}`,
+        });
+      }
     }
   }, [getMostFrequentGesture, setGuideText, setErrorState, onTimerComplete]);
   
