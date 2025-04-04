@@ -48,7 +48,7 @@ function SearchCameraModal() {
         setCurrentGesture(gesture);
         setCurrentConfidence(confidence);
 
-        // 카운트다운 중인 경우에만 히스토리에 기록 (준비 중일 때는 기록하지 않음)
+        // 제스처 유지 카운트다운 중인 경우에만 히스토리에 기록
         if (isCountingDown) {
           gestureFrequency.current[gesture] = (gestureFrequency.current[gesture] || 0) + 1;
           console.log(`[📊 제스처 빈도] ${gesture}: ${gestureFrequency.current[gesture]}회`);
@@ -107,7 +107,10 @@ function SearchCameraModal() {
         return;
       }
 
-      alert('인식된 제스처가 없습니다. 다시 시도해주세요.');
+      toast.error("제스처 인식에 실패했습니다", {
+        description: "인식된 제스처가 업습니다. 다시 시도해 주세요.",
+        duration: 3000,
+      })
       return;
     }
 
