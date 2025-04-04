@@ -43,7 +43,6 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   // 제스처 결과 확인 함수
   const checkGestureResult = useCallback(() => {
     const detectedGesture = getMostFrequentGesture();
-    // 제스처 스토어에서 landmarks 정보 가져오기 추가
     const { gestureFrequency } = useGestureStore.getState();
     
     // 손 감지 여부 확인 (gestureFrequency가 비어 있으면 손이 감지되지 않은 것)
@@ -65,17 +64,19 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
       
       if (!isHandDetected) {
         // 손이 감지되지 않은 경우
-        toast.error('제스처 인식 실패', {
-          description: '손이 카메라에 인식되지 않았습니다. 손을 카메라 내부에 위치시켜 주세요.',
+        toast.warning('손 감지 경고', {
+          description: '손이 카메라에 인식되지 않았습니다. 손을 가이드라인 안에 위치시켜 주세요.',
           duration: 3000,
           id: `hand-not-detected-${toastCount}-${Date.now()}`,
+          icon: '🖐️', // 손 이모지 추가
         });
       } else {
         // 손은 감지되었지만 유효한 제스처가 아닌 경우
-        toast.error('제스처 인식 실패', {
+        toast.info('제스처 인식 정보', {
           description: '제스처를 인식할 수 없습니다. 다른 제스처로 다시 시도해 주세요.',
           duration: 3000,
           id: `invalid-gesture-${toastCount}-${Date.now()}`,
+          icon: '💬', // 정보 이모지 추가
         });
       }
     }
