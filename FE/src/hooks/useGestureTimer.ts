@@ -16,7 +16,6 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     setCountdownState,
     decrementPreparationCountdown,
     decrementCountdown,
-    preparationCountdown,
     setGuideText,
     setErrorState,
     resetGestureData,
@@ -25,6 +24,9 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   
   const prepTimerRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  let lastToastTime = 0;
+  let toastCount = 0;
   
   // 타이머 정리 함수
   const clearTimers = useCallback(() => {
@@ -54,12 +56,21 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
       setGuideText('버튼을 눌러 다시 시도해 주세요');
       setErrorState(true);
       
-      toast.dismiss();
+      // 현재 시간 가져오기
+      const now = Date.now();
+      
+      // 토스트 카운터 증가 (매번 다른 ID 생성)
+      toastCount++;
+      
+      // 항상 새 토스트 생성 (이전 토스트 제거 없이)
       toast.error('제스처 인식 실패', {
         description: '유효한 제스처가 인식되지 않았습니다. 다시 시도해 주세요.',
         duration: 3000,
-        id: useGestureStore.getState().getUniqueToastId('gesture-recognition-failed'),
+        id: `gesture-fail-${toastCount}-${now}`, // 항상 고유한 ID 생성
       });
+      
+      // 시간 업데이트
+      lastToastTime = now;
     }
   }, [getMostFrequentGesture, setGuideText, setErrorState, onTimerComplete]);
   
