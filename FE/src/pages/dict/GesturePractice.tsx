@@ -57,7 +57,10 @@ function GesturePractice() {
           onClick={toggleScreen}
         >
           {!showCamera ? (
-            <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
+            <div
+              className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3
+            rounded-lg drop-shadow-basic"
+            >
               <div className="text-8xl lg:text-9xl ">
                 <FontAwesomeIcon icon={faCamera} />
               </div>

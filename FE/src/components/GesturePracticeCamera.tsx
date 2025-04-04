@@ -206,7 +206,7 @@ const GesturePracticeCamera = ({
   }, [error]);
 
   return (
-    <div className="w-full h-full bg-white relative overflow-hidden">
+    <div className="w-full h-full bg-white relative overflow-hidden rounded-lg drop-shadow-basic">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
           <div className="text-white text-xl font-bold">모델 로딩 중...</div>
@@ -250,24 +250,26 @@ const GesturePracticeCamera = ({
       )}
 
       {/* 가이드라인 컨테이너 */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
-          {/* SVG 가이드라인 */}
-          <img
-            src="/images/guide-line.svg"
-            alt="카메라 가이드라인"
-            className={`absolute ${guidelineClassName}`}
-          />
-          {/* 안내 텍스트 - 위치 조정 */}
-          <p
-            className="absolute top-5 text-center
+      {showGuideline && (
+        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+          <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
+            {/* SVG 가이드라인 */}
+            <img
+              src="/images/guide-line.svg"
+              alt="카메라 가이드라인"
+              className={`absolute ${guidelineClassName}`}
+            />
+            {/* 안내 텍스트 - 위치 조정 */}
+            <p
+              className="absolute top-5 text-center
             text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
             drop-shadow-basic"
-          >
-            {guideText}
-          </p>
+            >
+              {guideText}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 개발용 제스처 인식 결과 표시 (주석 처리) */}
       {/* {gesture && (
