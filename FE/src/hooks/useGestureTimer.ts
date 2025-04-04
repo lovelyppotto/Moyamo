@@ -4,7 +4,7 @@ import { useGestureStore } from '@/stores/useGesturStore';
 
 interface UseGestureTimerProps {
   isOpen: boolean;
-  onTimerComplete: () => void;
+  onTimerComplete: (gesture: string) => void;  // 제스처 파라미터 추가
 }
 
 export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProps) => {
@@ -43,20 +43,20 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   const checkGestureResult = useCallback(() => {
     const detectedGesture = getMostFrequentGesture();
     
-    if (detectedGesture) {
-      // 제스처 감지 성공
+    if (detectedGesture && detectedGesture !== "없음") {
+      // 제스처 감지 성공 (유효한 제스처인 경우)
       setGuideText('인식 완료!');
       
       // 타이머 완료 콜백 (성공 시)
-      setTimeout(onTimerComplete, 300);
+      setTimeout(() => onTimerComplete(detectedGesture), 300);
     } else {
-      // 제스처 감지 실패 - 여기서 가이드 텍스트를 명시적으로 업데이트
+      // 제스처 감지 실패 또는 '없음' 제스처인 경우
       setGuideText('버튼을 눌러 다시 시도해 주세요');
       setErrorState(true);
       
       toast.dismiss();
       toast.error('제스처 인식 실패', {
-        description: '손이 인식되지 않았습니다. 다시 시도해 주세요.',
+        description: '유효한 제스처가 인식되지 않았습니다. 다시 시도해 주세요.',
         duration: 3000,
         id: useGestureStore.getState().getUniqueToastId('gesture-recognition-failed'),
       });

@@ -146,24 +146,34 @@ export const useGestureStore = create<GestureState>((set, get) => ({
 
   // 제스처 분석
   getMostFrequentGesture: () => {
-    const { gestureFrequency, currentGesture } = get();
-
+    const { gestureFrequency } = get();
+  
     // 감지된 제스처가 없는 경우
     if (Object.keys(gestureFrequency).length === 0) {
-      return currentGesture; // 현재 감지된 제스처 반환 (null일 수도 있음)
+      return null; // null 반환 (currentGesture 대신)
     }
-
+  
     // 가장 빈번한 제스처 찾기
     let mostFrequentGesture = '';
     let maxCount = 0;
-
+  
     Object.entries(gestureFrequency).forEach(([gesture, count]) => {
       if (count > maxCount) {
         maxCount = count;
         mostFrequentGesture = gesture;
       }
     });
-
-    return mostFrequentGesture || currentGesture;
+  
+    // 최소 인식 횟수 검증 (예: 2회 이상 인식된 경우만 유효하게 처리)
+    if (maxCount < 2) {
+      return null; // 인식 횟수가 적으면 null 반환
+    }
+  
+    // '없음'인 경우에도 null 반환
+    if (mostFrequentGesture === '없음') {
+      return null;
+    }
+  
+    return mostFrequentGesture || null; // currentGesture 대신 null 반환
   },
 }));

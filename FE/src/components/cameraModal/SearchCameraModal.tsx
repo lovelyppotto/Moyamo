@@ -33,34 +33,26 @@ function SearchCameraModal() {
     setWebSocketConnected,
     resetAllState,
     getMostFrequentGesture,
-    setErrorState,
-    getUniqueToastId
   } = useGestureStore();
-  
+
   // 제스처 이벤트 리스너 설정
   useGestureEvents({ isOpen: open });
   
   // 타이머 완료 후 처리 함수
-  const handleTimerComplete = useCallback(() => {
-    const finalGesture = getMostFrequentGesture();
-    
-    if (!finalGesture) {
-      // useGestureTimer에서 이미 실패 처리를 했기 때문에 여기서는 조기 반환만 함
-      return;
-    }
-    
-    console.log(`[🔍 검색 시작] 제스처: ${finalGesture}`);
+  const handleTimerComplete = useCallback((detectedGesture: string) => {
+    // 여기서는 이미 유효한 제스처만 전달받게 됨
+    console.log(`[🔍 검색 시작] 제스처: ${detectedGesture}`);
     
     // 페이지 이동
     if (location.pathname.includes('/search')) {
-      window.location.href = `/search/camera?gesture_label=${finalGesture}`;
+      window.location.href = `/search/camera?gesture_label=${detectedGesture}`;
     } else {
-      navigate(`/search/camera?gesture_label=${finalGesture}`);
+      navigate(`/search/camera?gesture_label=${detectedGesture}`);
     }
     
     // 모달 닫기
     setTimeout(() => setOpen(false), 300);
-  }, [getMostFrequentGesture, location.pathname, navigate]);
+  }, [location.pathname, navigate]);
   
   // 제스처 타이머 설정
   const { startPreparationTimer, handleRetry } = useGestureTimer({
