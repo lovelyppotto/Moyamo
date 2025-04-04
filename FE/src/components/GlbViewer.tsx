@@ -10,9 +10,15 @@ interface GlbViewerProps {
 
 export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    if (rendererRef.current) {
+      rendererRef.current.dispose();
+      containerRef.current.removeChild(rendererRef.current.domElement);
+    }
 
     // Scene 설정
     const scene = new THREE.Scene();
@@ -29,10 +35,11 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     scene.add(camera);
 
     // Renderer 설정
-    const renderer = new THREE.WebGLRenderer({
+    rendererRef.current = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
     });
+    const renderer = rendererRef.current;
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
     renderer.outputEncoding = THREE.sRGBEncoding; // sRGB 색상 공간 사용
@@ -70,11 +77,19 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     controls.minPolarAngle = Math.PI / 2; // 90도
     controls.maxPolarAngle = Math.PI / 2; // 90도
 
-    // 줌 비활성화 (선택적)
-    // controls.enableZoom = false;
+    // 크기 조절 관련 모든 기능 비활성화
+    controls.enableZoom = false;     // 마우스 휠 줌 비활성화
+    controls.enablePan = false;      // 패닝 비활성화
+    controls.mouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,      // 좌클릭은 회전만 가능
+      MIDDLE: null,                  // 휠클릭 비활성화
+      RIGHT: null                    // 우클릭 비활성화
+    };
 
     // Animation Mixer
     let mixer: THREE.AnimationMixer | null = null;
+    // 두 번째 믹서 추가
+    let mixer2: THREE.AnimationMixer | null = null;
 
     // GLB/GLTF 로더
     const loader = new GLTFLoader();
@@ -84,6 +99,22 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         console.log('Model loaded successfully:', gltf);
         const model = gltf.scene;
 
+        // 일반 설정 전에 애니메이션 복제 문제 디버깅
+        console.log('Animation cross-check:');
+        gltf.animations.forEach((anim, idx) => {
+          if (idx < 3) {
+            // 처음 3개만 간단히 확인
+            console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
+            console.log(`  UUID: ${anim.uuid}`);
+            console.log(`  Track count: ${anim.tracks.length}`);
+            if (anim.tracks.length > 0) {
+              console.log(`  First track: ${anim.tracks[0].name}`);
+              console.log(`  First track values length: ${anim.tracks[0].values.length}`);
+              console.log(`  First track times length: ${anim.tracks[0].times.length}`);
+            }
+          }
+        });
+
         // 모델 재질 설정 - 원래 재질이 더 잘 드러나도록 수정
         model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
@@ -92,7 +123,24 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
               child.material.roughness = 1.0; // 거칠기 증가 (덜 반짝이게)
               child.material.metalness = 0.1; // 금속성 감소
               child.material.envMapIntensity = 0.6; // 환경 맵 강도 감소
+            } else {
+              console.log('One or both armatures missing - falling back to standard animation');
+
+              // 일반적인 방식으로 애니메이션 적용
+              if (armature) {
+                mixer = new THREE.AnimationMixer(model);
+                const animation = gltf.animations[0];
+                const action = mixer.clipAction(animation);
+                action.timeScale = 0.5;
+                action.play();
+                console.log(`Animation "${animation.name}" applied to model for single armature`);
+              }
             }
+          }
+
+          // 디버깅: 모든 객체와 본 계층 구조 출력
+          if (child.name.includes('Armature') || child.type === 'Bone') {
+            console.log(`Found object: "${child.name}" (Type: ${child.type})`);
           }
         });
 
@@ -109,14 +157,133 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center.multiplyScalar(scale));
 
-        // 애니메이션 설정 - 속도를 3배 줄임
+        // Armature 찾기
+        let armature: THREE.Object3D | null = null;
+        let armature001: THREE.Object3D | null = null;
+
+        model.traverse((child) => {
+          if (child.name === 'Armature') {
+            armature = child;
+          } else if (child.name === 'Armature001') {
+            armature001 = child;
+          }
+        });
+
+        console.log(
+          'Armatures found:',
+          armature ? 'Armature OK' : 'No Armature',
+          armature001 ? 'Armature001 OK' : 'No Armature001'
+        );
+
+        // 애니메이션 처리
         if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(model);
-          const animation = gltf.animations[0]; // 첫 번째 애니메이션 사용
-          const action = mixer.clipAction(animation);
-          action.timeScale = 0.5; // 애니메이션 속도를 2배 줄임 (1/3)
-          action.play();
-          console.log('Animation loaded:', animation.name);
+          console.log(
+            'All animations:',
+            gltf.animations.map((a) => a.name)
+          );
+
+          // 각 Armature에 대한 애니메이션 찾기 및 적용
+          // Armature에 대한 믹서 생성
+          if (armature) {
+            mixer = new THREE.AnimationMixer(armature);
+
+            // 각 애니메이션에 대해 확인 - 첫 번째 아마추어
+            // 일단 모든 애니메이션 시도 (디버깅을 위해)
+            console.log('Trying to apply animations to Armature');
+
+            // 첫 번째로 ArmatureAction 애니메이션 시도
+            try {
+              const armatureAction = gltf.animations.find((a) => a.name === 'ArmatureAction');
+              if (armatureAction) {
+                const action = mixer.clipAction(armatureAction);
+                action.timeScale = 0.5;
+                action.play();
+                console.log(`Animation "${armatureAction.name}" successfully applied to Armature`);
+              } else {
+                console.log('No ArmatureAction found for Armature');
+              }
+            } catch (err) {
+              console.log(`Failed to apply ArmatureAction to Armature:`, err.message);
+            }
+
+            // 선택된 인덱스의 애니메이션도 시도
+            try {
+              const selectedAnimation = gltf.animations[index];
+              if (selectedAnimation && selectedAnimation.name !== 'ArmatureAction') {
+                const action = mixer.clipAction(selectedAnimation);
+                action.timeScale = 0.5;
+                action.play();
+                console.log(`Selected animation "${selectedAnimation.name}" applied to Armature`);
+              }
+            } catch (err) {
+              console.log(`Failed to apply selected animation to Armature:`, err.message);
+            }
+          }
+
+          // Armature001에 대한 믹서 생성
+          if (armature001) {
+            // 모델 전체에 대한 믹서 생성 (Armature001을 직접 타겟팅하는 대신)
+            mixer2 = new THREE.AnimationMixer(model);
+            console.log('Trying to apply animations to Armature001 (using model mixer)');
+
+            // "ArmatureAction.001" 또는 유사한 이름 찾기 시도
+            try {
+              // 이름이 "Armature001"을 포함하거나 ".001"로 끝나는 애니메이션 찾기
+              const armature001Animation = gltf.animations.find(
+                (a) =>
+                  a.name.includes('Armature001') ||
+                  a.name.endsWith('.001') ||
+                  a.name === 'ArmatureAction.001'
+              );
+
+              if (armature001Animation) {
+                const action = mixer2.clipAction(armature001Animation);
+                action.timeScale = 0.5;
+                action.play();
+                console.log(
+                  `Animation "${armature001Animation.name}" successfully applied to model for Armature001`
+                );
+              } else {
+                // 없다면 "Tepuk Tangan" 애니메이션 시도 (다양한 애니메이션 중 하나 선택)
+                const tepukAnimation = gltf.animations.find((a) => a.name === 'Tepuk Tangan');
+                if (tepukAnimation) {
+                  const action = mixer2.clipAction(tepukAnimation);
+                  action.timeScale = 0.5;
+                  action.play();
+                  console.log(`"Tepuk Tangan" animation applied to model for Armature001`);
+                } else {
+                  // 없다면 첫 번째 아마추어에 적용한 것과 다른 애니메이션 선택
+                  let alternativeAnimationIndex = (index + 1) % gltf.animations.length;
+                  const alternativeAnimation = gltf.animations[alternativeAnimationIndex];
+                  if (alternativeAnimation) {
+                    const action = mixer2.clipAction(alternativeAnimation);
+                    action.timeScale = 0.5;
+                    action.play();
+                    console.log(
+                      `Alternative animation "${alternativeAnimation.name}" applied to model for Armature001`
+                    );
+                  }
+                }
+              }
+            } catch (err) {
+              console.log(`Failed to apply animation to Armature001:`, err.message);
+            }
+          }
+
+          // 만약 둘 다 적용되지 않았다면, 기본 선택된 애니메이션을 모델 전체에 적용
+          const selectedAnimationIndex = Math.min(index || 0, gltf.animations.length - 1);
+          const selectedAnimation = gltf.animations[selectedAnimationIndex];
+
+          if (!mixer && !mixer2) {
+            console.log(
+              'No specific armature animations found, applying selected animation to entire model'
+            );
+            mixer = new THREE.AnimationMixer(model);
+            const action = mixer.clipAction(selectedAnimation);
+            action.timeScale = 0.5;
+            action.play();
+            console.log(`Fallback: Animation "${selectedAnimation.name}" applied to entire model`);
+          }
         }
       },
       (progress) => {
@@ -137,6 +304,21 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       // 애니메이션 업데이트
       if (mixer) {
         mixer.update(delta);
+        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
+        const frameCount = Math.floor(clock.getElapsedTime() * 60);
+        if (frameCount < 10) {
+          console.log(`Animation frame ${frameCount}: Mixer 1 update with delta ${delta}`);
+        }
+      }
+
+      // 두 번째 애니메이션 업데이트
+      if (mixer2) {
+        mixer2.update(delta);
+        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
+        const frameCount = Math.floor(clock.getElapsedTime() * 60);
+        if (frameCount < 10) {
+          console.log(`Animation frame ${frameCount}: Mixer 2 update with delta ${delta}`);
+        }
       }
 
       controls.update();
@@ -163,9 +345,14 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       if (mixer) {
         mixer.stopAllAction();
       }
-      renderer.dispose();
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (mixer2) {
+        mixer2.stopAllAction();
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+        if (containerRef.current) {
+          containerRef.current.removeChild(rendererRef.current.domElement);
+        }
       }
     };
   }, [url, index]);
