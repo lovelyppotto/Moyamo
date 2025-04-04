@@ -16,7 +16,6 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     setCountdownState,
     decrementPreparationCountdown,
     decrementCountdown,
-    preparationCountdown,
     setGuideText,
     setErrorState,
     resetGestureData,
@@ -25,6 +24,8 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   
   const prepTimerRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  let toastCount = 0;
   
   // 타이머 정리 함수
   const clearTimers = useCallback(() => {
@@ -42,6 +43,10 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
   // 제스처 결과 확인 함수
   const checkGestureResult = useCallback(() => {
     const detectedGesture = getMostFrequentGesture();
+    const { gestureFrequency } = useGestureStore.getState();
+    
+    // 손 감지 여부 확인 (gestureFrequency가 비어 있으면 손이 감지되지 않은 것)
+    const isHandDetected = Object.keys(gestureFrequency).length > 0;
     
     if (detectedGesture && detectedGesture !== "없음") {
       // 제스처 감지 성공 (유효한 제스처인 경우)
@@ -54,12 +59,26 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
       setGuideText('버튼을 눌러 다시 시도해 주세요');
       setErrorState(true);
       
-      toast.dismiss();
-      toast.error('제스처 인식 실패', {
-        description: '유효한 제스처가 인식되지 않았습니다. 다시 시도해 주세요.',
-        duration: 3000,
-        id: useGestureStore.getState().getUniqueToastId('gesture-recognition-failed'),
-      });
+      // 토스트 카운터 증가 (매번 다른 ID 생성)
+      toastCount++;
+      
+      if (!isHandDetected) {
+        // 손이 감지되지 않은 경우
+        toast.warning('손 감지 경고', {
+          description: '손이 카메라에 인식되지 않았습니다. 손을 가이드라인 안에 위치시켜 주세요.',
+          duration: 3000,
+          id: `hand-not-detected-${toastCount}-${Date.now()}`,
+          icon: '🖐️', // 손 이모지 추가
+        });
+      } else {
+        // 손은 감지되었지만 유효한 제스처가 아닌 경우
+        toast.info('제스처 인식 정보', {
+          description: '제스처를 인식할 수 없습니다. 다른 제스처로 다시 시도해 주세요.',
+          duration: 3000,
+          id: `invalid-gesture-${toastCount}-${Date.now()}`,
+          icon: '💬', // 정보 이모지 추가
+        });
+      }
     }
   }, [getMostFrequentGesture, setGuideText, setErrorState, onTimerComplete]);
   
