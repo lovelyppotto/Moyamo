@@ -33,15 +33,15 @@ function DictionaryButton() {
         >
           <div
             className="flex items-center justify-center relative
-            w-35 h-18 sm:w-48 sm:h-22 md:w-62 md:h-25 lg:w-70 lg:h-28
+            w-35 h-18 sm:w-48 sm:h-22 md:w-55 md:h-23 lg:w-65 lg:h-26
             bg-inch-worm-500 dark:bg-inch-worm-450
             rounded-full drop-shadow-basic"
           >
             <div className="relative mr-4
             w-38 mb-10
             sm:w-41 sm:mb-14
-            md:w-54 md:mb-16 
-            lg:w-64 lg:mb-20">
+            md:w-50 md:mb-16 
+            lg:w-60 lg:mb-18">
               {/* 책 이미지 */}
               <img src={getIconImage('dict')} alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
             </div>
