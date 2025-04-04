@@ -215,14 +215,18 @@ const WebCamera = ({ guidelineClassName, guideText, onConnectionStatus }: WebCam
             alt="카메라 가이드라인"
             className={`absolute ${guidelineClassName}`}
           />
-          {/* 안내 텍스트 - 위치 조정 */}
-          <p
-            className="absolute top-5 text-center
-            text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
-            drop-shadow-basic"
+          {/* 안내 텍스트 - 가시성 향상 */}
+          <div
+            className="absolute top-5 left-0 right-0 flex justify-center items-center"
           >
-            {guideText}
-          </p>
+            <p
+              className="bg-black/60 text-white px-4 py-2 rounded-lg
+              text-sm md:text-base font-[NanumSquareRoundEB] 
+              drop-shadow-lg"
+            >
+              {guideText}
+            </p>
+          </div>
         </div>
       </div>
 
