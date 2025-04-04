@@ -206,14 +206,19 @@ function GestureDetail() {
                 </ul>
               </div>
 
-              <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">TMI</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-                <ul className="text-lg space-y-3">
-                  {tmi.map((item, index) => (
-                    <li key={index}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
+              {/* tmi 없는 경우도 있음 */}
+              {tmi.length > 0 && (
+                <>
+                  <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">TMI</h2>
+                  <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
+                    <ul className="text-lg space-y-3">
+                      {tmi.map((item, index) => (
+                        <li key={index}>• {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

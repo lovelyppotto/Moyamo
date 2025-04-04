@@ -37,30 +37,31 @@ function Dictionary() {
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
 
+  
+  // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
+  const currentGestures = React.useMemo(() => {
+    if (!gestureData?.gestures) return [];
+    
+    // 원본 배열을 복사해서 작업 (원본 데이터 유지)
+    const shuffledGestures = [...gestureData.gestures];
+    
+    for (let i = shuffledGestures.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
+    }
+    
+    return shuffledGestures;
+  }, [gestureData]);
+  
   // API에서 제스처 데이터 가져오기
   useEffect(() => {
     // gestureData가 존재하고 gestures 배열이 있을 때만 처리
     if (gestureData?.gestures && gestureData.gestures.length > 0) {
       // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(gestureData.gestures[0].gestureId);
+      setSelectedGesture(currentGestures[0].gestureId);
     }
-  }, [gestureData]);
-
-  // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
-  const currentGestures = React.useMemo(() => {
-    if (!gestureData?.gestures) return [];
-
-    // 원본 배열을 복사해서 작업 (원본 데이터 유지)
-    const shuffledGestures = [...gestureData.gestures];
-
-    for (let i = shuffledGestures.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
-    }
-
-    return shuffledGestures;
-  }, [gestureData]);
-
+  }, [gestureData, currentGestures]);
+  
   // 현재 선택된 제스처
   const currentGesture =
     currentGestures.find((gesture) => gesture.gestureId === selectedGesture) ||
