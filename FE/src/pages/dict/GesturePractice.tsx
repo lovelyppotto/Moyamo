@@ -3,13 +3,14 @@ import DictHeader from './header/DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import WebCamera from '@/components/WebCamera';
+import GesturePracticeCamera from '../../components/GesturePracticeCamera';
 
 function GesturePractice() {
   const location = useLocation();
   const [showCamera, setShowCamera] = useState(false);
 
   const { gesture } = location.state || [];
+  console.log('연습페이지 제스처 : ', gesture);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
@@ -56,7 +57,10 @@ function GesturePractice() {
           onClick={toggleScreen}
         >
           {!showCamera ? (
-            <div className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3">
+            <div
+              className="flex flex-col items-center text-gray-400 font-[NanumSquareRoundB] text-center space-y-2 sm:space-y-3
+            rounded-lg drop-shadow-basic"
+            >
               <div className="text-8xl lg:text-9xl ">
                 <FontAwesomeIcon icon={faCamera} />
               </div>
@@ -66,10 +70,11 @@ function GesturePractice() {
               </p>
             </div>
           ) : (
-            <WebCamera
+            <GesturePracticeCamera
               guidelineClassName="max-w-[500px] 
-                w-[48%] lg:w-[80%]
-                top-13  lg:top-22"
+              w-[45%] lg:w-[80%]
+              top-12 lg:top-22"
+              guideText="정확도 70% 이상 시 O 표시가 나타납니다."
             />
           )}
         </div>
