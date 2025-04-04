@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -21,15 +22,15 @@ public class GestureSearchController {
     private final ElasticSearchService elasticSearchService;
 
     @GetMapping
-    public ApiResponse<GestureSearchResponseDto> getGestureSearchResult(@RequestParam("gesture_name") String gestureName,
-                                                                        @RequestParam("country_id") Integer countryId) {
+    public ApiResponse<List<GestureSearchResponseDto>> getGestureSearchResult(@RequestParam("gesture_name") String gestureName,
+                                                                              @RequestParam("country_id") Integer countryId) {
         String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureName);
         return gestureSearchService.findGestureByNameAndCountry(normalizedGestureName, countryId);
     }
 
     @GetMapping("/camera")
     public ApiResponse<GestureSearchResponseDto> getGestureSearchResultByCamera(@RequestParam("gesture_label") String gestureLabel) {
-        String normalizedGestureName = elasticSearchService.findRepresentativeSynonym(gestureLabel);
-        return gestureSearchService.findGestureByLabel(normalizedGestureName, 0);
+
+        return gestureSearchService.findGestureByLabel(gestureLabel, 0);
     }
 }
