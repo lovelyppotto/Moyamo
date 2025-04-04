@@ -3,13 +3,14 @@ import DictHeader from './header/DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import WebCamera from '@/components/WebCamera';
+import GesturePracticeCamera from './GesturePracticeCamera';
 
 function GesturePractice() {
   const location = useLocation();
   const [showCamera, setShowCamera] = useState(false);
 
   const { gesture } = location.state || [];
+  console.log('연습페이지 제스처 : ', gesture);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
@@ -66,10 +67,10 @@ function GesturePractice() {
               </p>
             </div>
           ) : (
-            <WebCamera
+            <GesturePracticeCamera
               guidelineClassName="max-w-[500px] 
-                w-[48%] lg:w-[80%]
-                top-13  lg:top-22"
+              w-[45%] lg:w-[80%]
+              top-12 lg:top-22"
               guideText="정확도 70% 이상 시 정답 표시"
             />
           )}
