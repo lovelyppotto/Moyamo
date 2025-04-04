@@ -248,7 +248,7 @@ function CountryBubble() {
                     }}
                   >
                     <div
-                      className={`w-15 h-15 sm:w-22 sm:h-22 rounded-full overflow-hidden
+                      className={`w-15 h-15 sm:w-20 sm:h-20 rounded-full overflow-hidden
                         border-2 ${
                           openTooltip === country.id
                             ? `${
@@ -285,7 +285,7 @@ function CountryBubble() {
                 </TooltipTrigger>
                 <TooltipContent
                   id={`tooltip-${country.id}`}
-                  className={`${country.tooltipBackground} z-50 text-black p-4 rounded-lg shadow-lg w-60`}
+                  className={`${country.tooltipBackground} z-50 text-black p-4 text-sm md:text-base rounded-lg shadow-lg w-60`}
                   side="bottom"
                   align="center"
                 >
