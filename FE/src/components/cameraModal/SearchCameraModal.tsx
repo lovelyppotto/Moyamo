@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
@@ -15,12 +15,12 @@ import CameraDialogContent from './CameraDialogContent';
 import CameraDialogFooter from './CameraDialogFooter';
 import ConnectionStatus from './ConnectionStatus';
 
-const SearchCameraModal: React.FC = () => {
+function SearchCameraModal() {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const mountCountRef = useRef<number>(0);
-
+  
   // Zustand 스토어에서 상태 가져오기
   const {
     guideText,
@@ -34,47 +34,48 @@ const SearchCameraModal: React.FC = () => {
     resetAllState,
     getMostFrequentGesture,
     setErrorState,
+    getUniqueToastId
   } = useGestureStore();
-
+  
   // 제스처 이벤트 리스너 설정
   useGestureEvents({ isOpen: open });
-
+  
   // 타이머 완료 후 처리 함수
   const handleTimerComplete = useCallback(() => {
     const finalGesture = getMostFrequentGesture();
-
+    
     if (!finalGesture) {
       // 제스처 인식 실패 처리
       toast.dismiss();
       toast.error('제스처 인식에 실패했습니다', {
         description: '손이 인식되지 않았습니다. 다시 시도해 주세요.',
         duration: 3000,
-        id: 'gesture-recognition-failed',
+        id: getUniqueToastId('gesture-recognition-failed'),
       });
-
+      
       setErrorState(true);
       return;
     }
-
+    
     console.log(`[🔍 검색 시작] 제스처: ${finalGesture}`);
-
+    
     // 페이지 이동
     if (location.pathname.includes('/search')) {
       window.location.href = `/search/camera?gesture_label=${finalGesture}`;
     } else {
       navigate(`/search/camera?gesture_label=${finalGesture}`);
     }
-
+    
     // 모달 닫기
     setTimeout(() => setOpen(false), 300);
   }, [getMostFrequentGesture, location.pathname, navigate, setErrorState]);
-
+  
   // 제스처 타이머 설정
   const { startPreparationTimer, handleRetry } = useGestureTimer({
     isOpen: open,
-    onTimerComplete: handleTimerComplete,
+    onTimerComplete: handleTimerComplete
   });
-
+  
   // 컴포넌트 마운트 시 한 번만 실행
   useEffect(() => {
     mountCountRef.current += 1;
@@ -86,7 +87,7 @@ const SearchCameraModal: React.FC = () => {
       toast.dismiss();
     };
   }, []);
-
+  
   // 모달이 열리면 모든 상태 초기화
   useEffect(() => {
     if (open) {
@@ -95,12 +96,12 @@ const SearchCameraModal: React.FC = () => {
       console.log('[🔄️ 모달 열림] 상태 초기화 완료');
     }
   }, [open, resetAllState]);
-
+  
   // 카메라 버튼 클릭 핸들러
   const handleCameraClick = () => {
     setOpen(true);
   };
-
+  
   // 촬영 버튼 클릭 핸들러
   const handleCaptureClick = () => {
     if (isErrorToastShown) {
@@ -109,16 +110,13 @@ const SearchCameraModal: React.FC = () => {
       startPreparationTimer();
     }
   };
-
+  
   // 웹소켓 연결 상태 콜백 핸들러
-  const handleConnectionStatus = useCallback(
-    (status: boolean) => {
-      console.log(`[🌐 WebSocket 연결 상태] ${status ? '연결됨' : '연결 안됨'}`);
-      setWebSocketConnected(status);
-    },
-    [setWebSocketConnected]
-  );
-
+  const handleConnectionStatus = useCallback((status: boolean) => {
+    console.log(`[🌐 WebSocket 연결 상태] ${status ? '연결됨' : '연결 안됨'}`);
+    setWebSocketConnected(status);
+  }, [setWebSocketConnected]);
+  
   // Dialog가 닫힐 때 호출되는 함수
   const handleDialogOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -128,7 +126,7 @@ const SearchCameraModal: React.FC = () => {
       toast.dismiss();
     }
   };
-
+  
   return (
     <>
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
@@ -142,7 +140,7 @@ const SearchCameraModal: React.FC = () => {
             <Camera className="w-6 h-6 cursor-pointer text-gray-600 dark:text-d-txt-50" />
           </button>
         </DialogTrigger>
-
+        
         <DialogContent
           className="p-0 w-[95vw] sm:w-[450px] max-w-[500px] max-h-[90vh]
           rounded-2xl border-none
@@ -153,18 +151,18 @@ const SearchCameraModal: React.FC = () => {
           <div className="flex flex-col rounded-2xl overflow-hidden">
             {/* 헤더 부분 */}
             <CameraDialogHeader />
-
+            
             {/* 카메라 영역 */}
-            <CameraDialogContent
+            <CameraDialogContent 
               open={open}
               guideText={guideText}
               onConnectionStatus={handleConnectionStatus}
             />
-
+            
             <div className="h-2 bg-none"></div>
 
             {/* 하단 버튼 영역 */}
-            <CameraDialogFooter
+            <CameraDialogFooter 
               isPreparingGesture={isPreparingGesture}
               isCountingDown={isCountingDown}
               preparationCountdown={preparationCountdown}
@@ -175,7 +173,10 @@ const SearchCameraModal: React.FC = () => {
             />
 
             {/* 연결 상태 표시 */}
-            <ConnectionStatus isWebSocketConnected={isWebSocketConnected} isOpen={open} />
+            <ConnectionStatus 
+              isWebSocketConnected={isWebSocketConnected} 
+              isOpen={open} 
+            />
           </div>
         </DialogContent>
       </Dialog>
