@@ -14,7 +14,10 @@ function SearchResultsList({ results, onFlagClick }: SearchResultsListProps) {
       <div className="flex-1 overflow-y-auto">
         {results.length === 0 ? (
           <div className="text-center">
-            <p className="text-xl text-gray-600 dark:text-d-txt-50/70">검색 결과가 없습니다.</p>
+            <p className="text-base md:text-lg font-[NanumSquareRound]
+            text-gray-600 dark:text-d-txt-50/70">
+              검색 결과가 없습니다.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 pb-4 px-4">

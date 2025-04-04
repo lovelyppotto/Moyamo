@@ -68,10 +68,10 @@ function Result() {
       {/* 타이틀 영역 - 고정 부분 */}
       <div
         className="flex items-center justify-center 
-        mx-auto w-[60%] md:w-[40%] lg:w-[30%] xl:w-[25%] py-2 pb-5"
+        mx-auto w-[70%] md:w-[40%] lg:w-[30%] xl:w-[25%] py-2 pb-5"
       >
         <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
-        <h2 className="text-2xl font-[DNFBitBitv2] dark:text-d-txt-50 px-4">RESULTS</h2>
+        <h2 className="text-lg md:text-2xl font-[DNFBitBitv2] dark:text-d-txt-50 px-4">RESULTS</h2>
         <div className="flex-grow h-0 border-t-2 border-dashed border-gray-400 dark:border-d-txt-50/50 mx-4"></div>
       </div>
 
