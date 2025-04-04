@@ -3,7 +3,7 @@ import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icon
 import React, { useEffect, useState } from 'react';
 import { DictListCarousel } from './DictListCarousel';
 import DictMainImage from './MainGestureImage';
-import IconButton from '@/pages/dict/IconButton';
+import IconButton from '@/components/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';

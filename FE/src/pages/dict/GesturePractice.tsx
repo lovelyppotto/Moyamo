@@ -3,7 +3,7 @@ import DictHeader from './header/DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import GesturePracticeCamera from './GesturePracticeCamera';
+import GesturePracticeCamera from '../../components/GesturePracticeCamera';
 
 function GesturePractice() {
   const location = useLocation();
@@ -71,7 +71,7 @@ function GesturePractice() {
               guidelineClassName="max-w-[500px] 
               w-[45%] lg:w-[80%]
               top-12 lg:top-22"
-              guideText="정확도 70% 이상 시 정답 표시"
+              guideText="정확도 70% 이상 시 O 표시가 나타납니다."
             />
           )}
         </div>
