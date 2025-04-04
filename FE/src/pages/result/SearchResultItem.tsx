@@ -26,14 +26,14 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
     <div className="my-2">
       <div className="flex items-center">
         {/* 이미지 컨테이너 */}
-        <div className="flex w-28 h-28 justify-center items-center mr-2 flex-shrink-0">
+        <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0">
           <img
             src={result.gestureImage}
             alt={result.gestureName}
             className="h-full object-cover rounded-md"
           />
         </div>
-        {/* 제스처 설명 - 말풍선 스타일 */}
+        {/* 제스처 설명 */}
         <div className="flex-1 ml-4 relative">
           <div
             className="relative rounded-lg shadow-md p-6
@@ -57,7 +57,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
             {/* 제목 */}
             <div className="flex justify-between items-start mb-1 relative z-10">
               <h3
-                className="text-3xl font-bold font-[NanumSquareRoundEB] text-gray-900
+                className="text-xl md:text-3xl font-bold font-[NanumSquareRoundEB] text-gray-900
                 dark:text-d-txt-50"
               >
                 {result.gestureName}
@@ -85,7 +85,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
             {/* 설명 텍스트 */}
             <p
               className="relative z-10 
-            text-lg text-gray-700 font-[NanumSquareRound]
+            text-base md:text-lg text-gray-700 font-[NanumSquareRound]
             dark:text-d-txt-50"
             >
               {result.meanings[0]?.meaning}
