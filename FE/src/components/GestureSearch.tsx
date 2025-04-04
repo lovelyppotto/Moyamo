@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '../pages/home/dropdowns/BaseDropdown';
-import SearchCameraModal from './SearchCameraModal';
+import SearchCameraModal from './cameraModal/SearchCameraModal';
 import { useSearchStore } from '../stores/useSearchStore';
 import { useGestureSearch } from '@/hooks/apiHooks';
 

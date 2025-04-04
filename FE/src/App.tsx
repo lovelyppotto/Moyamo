@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div className="h-[100dvh] overflow-hidden relative">
+      <Toaster />
       <OfflineIndicator />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="absolute bottom-4 left-4 z-50">
