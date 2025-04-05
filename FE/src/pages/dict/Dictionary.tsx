@@ -37,22 +37,21 @@ function Dictionary() {
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
 
-  
   // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
   const currentGestures = React.useMemo(() => {
     if (!gestureData?.gestures) return [];
-    
+
     // 원본 배열을 복사해서 작업 (원본 데이터 유지)
     const shuffledGestures = [...gestureData.gestures];
-    
+
     for (let i = shuffledGestures.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
     }
-    
+
     return shuffledGestures;
   }, [gestureData]);
-  
+
   // API에서 제스처 데이터 가져오기
   useEffect(() => {
     // gestureData가 존재하고 gestures 배열이 있을 때만 처리
@@ -61,7 +60,7 @@ function Dictionary() {
       setSelectedGesture(currentGestures[0].gestureId);
     }
   }, [gestureData, currentGestures]);
-  
+
   // 현재 선택된 제스처
   const currentGesture =
     currentGestures.find((gesture) => gesture.gestureId === selectedGesture) ||
@@ -76,7 +75,7 @@ function Dictionary() {
   const handleSelectCountry = (country: Country) => {
     setSelectedCountry(country);
     // 다른 국가 선택 시 URL 파라미터 업데이트
-    navigate(`/dictionary?country_id=${country.id}`, { replace: true });
+    navigate(`/dictionary?country_id=${country.id}`);
   };
 
   // 제스처 연습으로 이동
@@ -95,10 +94,7 @@ function Dictionary() {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
     navigate(
-      `/dictionary/detail?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`,
-      {
-        replace: true,
-      }
+      `/dictionary/detail?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`
     );
   };
 
@@ -106,9 +102,7 @@ function Dictionary() {
   const handleGuideButtonClick = () => {
     if (!currentGesture) return;
 
-    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`, {
-      replace: true,
-    });
+    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`);
   };
 
   return (
