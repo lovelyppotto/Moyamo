@@ -74,7 +74,8 @@ function GesturePractice() {
               guidelineClassName="max-w-[500px] 
               w-[45%] lg:w-[80%]
               top-12 lg:top-22"
-              guideText="정확도 70% 이상 시 O 표시가 나타납니다."
+              guideText="정확도 70% 이상 시 ○표시가 나타납니다."
+              gestureLabel={gesture.gestureLabel}
             />
           )}
         </div>
@@ -82,5 +83,4 @@ function GesturePractice() {
     </div>
   );
 }
-
 export default GesturePractice;
