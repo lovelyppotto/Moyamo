@@ -10,12 +10,14 @@ interface GesturePracticeCameraProps {
   guideText?: string;
   // 연결 상태를 외부에서 제어할 수 있도록 추가
   onConnectionStatus?: (status: boolean) => void;
+  gestureLabel?: string;
 }
 
 const GesturePracticeCamera = ({
   guidelineClassName,
   guideText,
   onConnectionStatus,
+  gestureLabel,
 }: GesturePracticeCameraProps) => {
   // 웹소켓 서비스 사용
   const {
@@ -82,8 +84,8 @@ const GesturePracticeCamera = ({
   // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
   useEffect(() => {
     if (gesture && confidence !== null) {
-      // 정확도가 70% 이상인지 확인
-      if (confidence >= 70) {
+      // 수정된 부분: gestureLabel과 gesture가 일치하고, 정확도가 70% 이상인 경우에만 정답 처리
+      if (confidence >= 70 && gestureLabel === gesture) {
         // 이전 타이머가 있으면 제거
         if (correctTimeRef.current) {
           clearTimeout(correctTimeRef.current);
@@ -110,10 +112,10 @@ const GesturePracticeCamera = ({
       window.dispatchEvent(gestureEvent);
 
       console.log(
-        `[🔍 제스처 이벤트 발행] "${gesture}", "confidence": ${confidence}, "correct": ${confidence >= 70}`
+        `[🔍 제스처 이벤트 발행] "${gesture}", "confidence": ${confidence}, "correct": ${confidence >= 70 && gestureLabel === gesture}, "expected": ${gestureLabel}`
       );
     }
-  }, [gesture, confidence]);
+  }, [gesture, confidence, gestureLabel]);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
@@ -242,7 +244,7 @@ const GesturePracticeCamera = ({
         style={{ transform: 'scaleX(-1)' }}
       />
 
-      {/* 정확도 70% 이상일 때 정답 표시 */}
+      {/* 정확도 70% 이상이고 gestureLabel과 일치할 때만 정답 표시 */}
       {isCorrect && (
         <div className="absolute flex justify-center items-center top-16 left-4 lg:top-25 lg:right-4 z-10">
           <img src="/images/correct_mark.svg" alt="correct_mark" className="w-[40%] lg:w-[76%]" />
