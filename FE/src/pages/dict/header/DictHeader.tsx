@@ -48,24 +48,6 @@ function DictHeader({
 
   // 뒤로가기
   const handleGoBack = () => {
-    if (location.pathname.includes('/dictionary/detail')) {
-      const queryParams = new URLSearchParams(location.search);
-      const countryId = queryParams.get('country_id');
-
-      if (countryId) {
-        // 직접 캐시 제거
-        queryClient.removeQueries({
-          queryKey: ['gesturesByCountry', parseInt(countryId)],
-        });
-
-        // 이제 시간 값을 추가하여 강제로 새 페이지 요청
-        const timestamp = Date.now();
-        navigate(`/dictionary?country_id=${countryId}&t=${timestamp}`, { replace: true });
-        return; // 기존 history.back() 동작 중지
-      }
-    }
-
-    // 다른 경우에는 일반 뒤로가기 수행
     window.history.back();
   };
 
