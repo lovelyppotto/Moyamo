@@ -21,11 +21,13 @@ pipeline {
                 dir('FE') {
                     withCredentials([
                         string(credentialsId: 'VITE_API_BASE_URL', variable: 'VITE_API_BASE_URL'),
-                        string(credentialsId: 'VITE_SERVER_STATIC_WS_URL', variable: 'VITE_SERVER_STATIC_WS_URL')
+                        string(credentialsId: 'VITE_SERVER_STATIC_WS_URL', variable: 'VITE_SERVER_STATIC_WS_URL'),
+                        string(credentialsId: 'VITE_SERVER_DYNAMIC_WS_URL', variable: 'VITE_SERVER_DYNAMIC_WS_URL')
                     ]) {
                         sh """
                             echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" > .env
                             echo "VITE_SERVER_STATIC_WS_URL=${VITE_SERVER_STATIC_WS_URL}" >> .env
+                            echo "VITE_SERVER_DYNAMIC_WS_URL=${VITE_SERVER_DYNAMIC_WS_URL}" >> .env
                         """
                     }
                 }
