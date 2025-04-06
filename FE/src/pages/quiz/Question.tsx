@@ -112,6 +112,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
           <Progress
             key={timer}
             timeout={timer}
+            startProgress={startProgress}
             onTimeout={handleSkipAnswer}
             className={progressClass}
           />
