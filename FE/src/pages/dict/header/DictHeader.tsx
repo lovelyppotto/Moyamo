@@ -8,6 +8,7 @@ import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
 import { useQueryClient } from '@tanstack/react-query';
+import DarkModeLottie from '@/components/DarkModeLottie';
 
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
@@ -99,13 +100,16 @@ function DictHeader({
       {showCompareGuide && (
         <button
           className="absolute flex items-center right-4 px-3 py-2 text-[13px] sm:text-[15px] bg-gray-200 text-gray-600
-           hover:bg-gray-300 transition-colors rounded-lg cursor-pointer"
+           hover:bg-gray-300 transition-colors rounded-xl cursor-pointer mr-18 lg:mr-20"
           onClick={handleGuideClick}
         >
           <FontAwesomeIcon icon={faRectangleList} className="mr-0.5 sm:mr-1.5" />
           <span className="hidden sm:inline font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
+      <div className="ml-2">
+        <DarkModeLottie />
+      </div>
     </header>
   );
 }
