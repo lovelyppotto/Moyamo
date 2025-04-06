@@ -61,6 +61,7 @@ public class QuizService {
         Answer answerEntity = question.getAnswer();
         AnswerDto answerDto = null;
         String gestureUrl = null;
+        String gestureType = null;
         if (answerEntity != null) {
             if (question.getQuestionType() == QuestionType.MEANING) {
                 answerDto = new AnswerDto(
@@ -81,6 +82,7 @@ public class QuizService {
                         null,
                         answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureLabel() : null
                 );
+                gestureType = answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureType() : null;
             }
         }
 
@@ -88,6 +90,7 @@ public class QuizService {
                 question.getQuestionId(),
                 question.getQuestionText(),
                 question.getQuestionType().name(),
+                gestureType,
                 gestureUrl,
                 optionDtos,
                 answerDto

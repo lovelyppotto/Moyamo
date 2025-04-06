@@ -19,4 +19,7 @@ public class Gesture {
 
     @Column(name = "gesture_label")
     private String gestureLabel;
+
+    @Column(name = "gesture_type")
+    private String gestureType;
 }
