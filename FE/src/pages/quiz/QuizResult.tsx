@@ -1,30 +1,22 @@
 import { faHouse, faBackward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useQuizQuestions } from '@/hooks/apiHooks';
+import { useNavigate } from 'react-router-dom';
 
 interface QuizResultProps {
-  userAnswers: (number | null)[];
+  userAnswers: (boolean | null)[];
 }
 
 function QuizResult({ userAnswers }: QuizResultProps): JSX.Element {
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const useCamera = queryParams.get('useCamera') === 'true';
-
-  const { data: quizData } = useQuizQuestions(useCamera);
 
   const handleQuiz = () => {
-    navigate(`/quiz${location.search}`);
+    navigate(`/quiz`);
   };
   const handleHome = () => {
     navigate('/');
   };
 
-  const isCorrectAnswers = userAnswers.filter(
-    (answer, index) => quizData && answer === quizData[index].answer.correctOptionId
-  );
+  const isCorrectAnswers = userAnswers.filter((answer) => answer === true);
   const isCorrectNumber = isCorrectAnswers.length;
 
   let starImage = '/images/star0.png';
@@ -38,10 +30,6 @@ function QuizResult({ userAnswers }: QuizResultProps): JSX.Element {
     starImage = '/images/star4.png';
   } else if (isCorrectNumber === 5) {
     starImage = '/images/star5.png';
-  }
-
-  if (!quizData) {
-    return <div>로딩 중...</div>;
   }
 
   return (

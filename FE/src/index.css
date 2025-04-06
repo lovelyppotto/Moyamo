@@ -151,9 +151,7 @@
 
   /* quiz mode */
   --color-correct-300: #00b60f;
-  /* --color-wrong-300: #ff4736; */
-  --color-wrong-300: gray;
-  --color-answered-300: #5151cf;
+  --color-wrong-300: #ff4736;
   --color-unselected-300: #ffffff;
 
   /* drop shadow */
@@ -167,9 +165,10 @@
 /* 던파 비트비트체 2 */
 @font-face {
   font-family: 'DNFBitBitv2';
-  src: url('/fonts/DNFBitBitv2.woff2') format('woff2'),
-      url('/fonts/DNFBitBitv2.woff') format('woff'),
-      url('/fonts/DNFBitBitv2.otf') format('opentype');
+  src:
+    url('/fonts/DNFBitBitv2.woff2') format('woff2'),
+    url('/fonts/DNFBitBitv2.woff') format('woff'),
+    url('/fonts/DNFBitBitv2.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
