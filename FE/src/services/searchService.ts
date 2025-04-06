@@ -95,19 +95,20 @@ export const searchGestures = async (
 
     const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
 
-    // camelCase로 변환한 단일 결과를 배열로 감싸서 반환
-    const result = {
-      gestureId: data.data.gesture_id,
-      gestureName: data.data.gesture_name,
-      gestureImage: data.data.gesture_image,
-      meanings: data.data.meanings.map((m: ApiMeaning) => ({
+    // data가 이제 배열이므로, 각 항목을 변환하여 반환
+    const result = data.data.map((item) => ({
+      gestureId: item.gesture_id,
+      gestureName: item.gesture_name,
+      gestureImage: item.gesture_image,
+      meanings: item.meanings.map((m: ApiMeaning) => ({
         countryId: m.country_id,
         imageUrl: m.image_url,
         countryName: m.country_name,
         meaning: m.meaning,
       })),
-    };
-    return [result]; // 배열로 반환
+    }));
+    
+    return result;
   } catch (error) {
     console.error('API 호출 실패, 목 데이터로 대체:', error);
     // API 호출 실패 시 목 데이터로 대체
