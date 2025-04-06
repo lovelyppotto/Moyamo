@@ -28,6 +28,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const [timer, setTimer] = useState(10000);
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
   const [startProgress, setStartProgress] = useState(false);
+  const [isTimeOut, setIsTimedOut] = useState(false);
 
   useEffect(() => {
     // CAMERA 타입이 아닌 경우 바로 프로그레스 시작
@@ -76,7 +77,10 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     }, 200);
   }
 
-  const handleSkipAnswer = useCallback((): void => handleSelectAnswer(null), [handleSelectAnswer]);
+  const handleSkipAnswer = useCallback((): void => {
+    setIsTimedOut(true);
+    handleSelectAnswer(null);
+  }, [handleSelectAnswer]);
 
   return (
     <div className="h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
@@ -118,6 +122,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
                 quizImage={questionData.gestureUrl}
+                isTimeOut={isTimeOut}
               />
             )}
             {questionData.type === 'GESTURE' && (
@@ -125,6 +130,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
+                isTimeOut={isTimeOut}
               />
             )}
             {questionData.type === 'CAMERA' && (

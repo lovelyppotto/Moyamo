@@ -12,9 +12,10 @@ interface Answers2Props {
   options: FrontendQuestionData['options'];
   answer: FrontendQuestionData['answer'];
   onSelect: (answer: boolean) => void;
+  isTimeOut?: boolean;
 }
 
-const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect }) => {
+const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOut = false }) => {
   const shuffledAnswers = useRef<FrontendQuestionData['options'] | null>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
@@ -27,11 +28,20 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect }) => {
   }
 
   const getButtonColor = (optionId: number): string => {
+    if (isTimeOut) {
+      // 정답은 초록색으로 표시
+      if (answer?.correctOptionId === optionId) {
+        return 'bg-[var(--color-correct-300)] text-white';
+      }
+      // 나머지는 회색으로 표시
+      return 'bg-gray-200';
+    }
     if (!clicked) {
       return 'bg-[var(--color-unselected-300)]';
     }
 
     const isCorrect = answer?.correctOptionId === optionId;
+
     if (!isCorrect && selectedOptionId !== optionId) {
       return 'bg-gray-200';
     }
