@@ -32,7 +32,6 @@ function SearchCameraModal() {
     isWebSocketConnected,
     setWebSocketConnected,
     resetAllState,
-    getMostFrequentGesture,
   } = useGestureStore();
 
   // 제스처 이벤트 리스너 설정
