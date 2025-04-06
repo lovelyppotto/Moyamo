@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import WebCamera from '@/components/WebCamera';
 import CameraTimer from './CameraTimer';
 import { FrontendQuestionData } from '@/types/quizTypes';
@@ -24,10 +24,11 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
   };
 
   return (
-    <div className="flex-col mt-[3vh] h-2/3 flex items-center relative">
-      <div className="flex justify-between items-center mb-[2vh]"></div>
-      <WebCamera onGestureDetected={(gestureId: number) => onSelect(gestureId)} />
-      {showTimer && <CameraTimer onTimerEnd={handleTimerEnd} />}
+    <div className="flex justify-center relative h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
+      <div className="h-1/3 sm:h-1/2  w-auto aspect-square ">
+        <WebCamera onGestureDetected={(gestureId: number) => onSelect(gestureId)} />
+        {showTimer && <CameraTimer onTimerEnd={handleTimerEnd} />}
+      </div>
     </div>
   );
 };

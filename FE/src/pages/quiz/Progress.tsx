@@ -6,9 +6,15 @@ interface QuizProgressProps {
   timeout?: number;
   onTimeout?: () => void;
   className?: string;
+  startProgress?: boolean;
 }
 
-function QuizProgress({ timeout = 0, onTimeout = () => {}, className = '' }: QuizProgressProps) {
+function QuizProgress({
+  timeout = 0,
+  onTimeout = () => {},
+  className = '',
+  startProgress = false,
+}: QuizProgressProps) {
   const [remainingTime, setRemainingTime] = useState<number>(timeout);
 
   useEffect(() => {
@@ -22,7 +28,7 @@ function QuizProgress({ timeout = 0, onTimeout = () => {}, className = '' }: Qui
   }, [timeout, onTimeout]);
 
   useEffect(() => {
-    if (timeout <= 0) return;
+    if (timeout <= 0 || !startProgress) return; //  timeout이 0 이하 혹은 startProgress가 false이면 아무것도 하지 않음
     const interval = setInterval(() => {
       setRemainingTime((prevRemainingTime) => {
         return Math.max(0, prevRemainingTime - 1000); //1초에 한번 줄어든다.
@@ -32,7 +38,7 @@ function QuizProgress({ timeout = 0, onTimeout = () => {}, className = '' }: Qui
     return () => {
       clearInterval(interval);
     }; // 클린업 함수: Effect함수 작동 전, 컴포넌트가 DOM으로부터 삭제될 때 실행
-  }, [timeout]);
+  }, [timeout, startProgress]);
 
   const progressPercent = timeout > 0 ? (remainingTime / timeout) * 100 : 0;
 
