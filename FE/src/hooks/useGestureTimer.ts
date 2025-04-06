@@ -67,6 +67,7 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
         toast.warning('손 감지 경고', {
           description: '손이 카메라에 인식되지 않았습니다. 손을 가이드라인 안에 위치시켜 주세요.',
           duration: 3000,
+          position: 'top-right',
           id: `hand-not-detected-${toastCount}-${Date.now()}`,
           icon: '🖐️', // 손 이모지 추가
         });
@@ -75,6 +76,7 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
         toast.info('제스처 인식 정보', {
           description: '제스처를 인식할 수 없습니다. 다른 제스처로 다시 시도해 주세요.',
           duration: 3000,
+          position: 'top-right',
           id: `invalid-gesture-${toastCount}-${Date.now()}`,
           icon: '💬', // 정보 이모지 추가
         });

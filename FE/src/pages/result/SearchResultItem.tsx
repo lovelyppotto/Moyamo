@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { GestureSearchResult } from '@/types/searchGestureType';
 
 interface SearchResultItemProps {
@@ -8,19 +9,32 @@ interface SearchResultItemProps {
 
 function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
+  const DETAIL_AVAILABLE_COUNTRYS = [1, 2, 3, 4, 5]
 
   // 제스처 상세 페이지로 이동
-  const handleFlagClick = (countryId: number) => {
-    // 같은 국가 클릭시 초기화, 다른 국가 클릭시 해당 국가로 변경
-    setSelectedCountryId(selectedCountryId === countryId ? null : countryId);
+  const handleFlagClick = (countryId: number, countryName: string) => {
+    // 사용 가능한 국가인지 확인
+    const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(countryId);
 
-    // 상위 컴포넌트의 핸들러가 있으면 호출
-    if (onFlagClick) {
-      onFlagClick(countryId, result.gestureName);
+    if (isAvailable) {
+      // 같은 국가 클릭시 초기화, 다른 국가 클릭시 해당 국가로 변경
+      setSelectedCountryId(selectedCountryId === countryId ? null : countryId);
+
+      // 상위 컴포넌트의 핸들러가 있으면 호출
+      if (onFlagClick) {
+        onFlagClick(countryId, result.gestureName);
+      }
+    } else {
+      // 비활성화된 국가일 경우 Sonner 토스트 메시지 표시
+      toast.warning(`${countryName}의 상세 정보는 현재 제공되지 않습니다.`, {
+        description: '다른 국가를 선택해 주세요.',
+        position: 'top-right',
+        duration: 3000,
+        icon: '🌏',
+      });
     }
   };
-
-  console.log('렌더링된 결과:', result.gestureName, 'gestureId:', result.gestureId);
+  // console.log('렌더링된 결과:', result.gestureName, 'gestureId:', result.gestureId);
 
   return (
     <div className="my-2">
@@ -71,20 +85,36 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
 
               {/* 국가 플래그 영역 */}
               <div className="flex items-center space-x-2">
-                {result.meanings.map((meaning) => (
-                  <React.Fragment key={meaning.countryId}>
-                    <div className="relative group">
-                      <img
-                        src={meaning.imageUrl}
-                        alt={meaning.countryName}
-                        className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover drop-shadow-nation hover:scale-110 transition-transform cursor-pointer
-                          ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
-                        onClick={() => handleFlagClick(meaning.countryId)}
-                        title={`${meaning.countryName}의 의미: ${meaning.meaning}`}
-                      />
-                    </div>
-                  </React.Fragment>
-                ))}
+                {result.meanings.map((meaning) => {
+                  const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
+                  
+                  return (
+                    <React.Fragment key={meaning.countryId}>
+                      <div className="relative group">
+                        <img
+                          src={meaning.imageUrl}
+                          alt={meaning.countryName}
+                          className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
+                            ${isAvailable 
+                              ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer' 
+                              : 'opacity-50 grayscale cursor-not-allowed'
+                            }
+                            ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                          onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
+                          title={isAvailable
+                            ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                            : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
+                          }
+                        />
+                        {!isAvailable && (
+                          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 whitespace-nowrap hidden group-hover:block">
+                            정보 없음
+                          </span>
+                        )}
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
               </div>
             </div>
 
