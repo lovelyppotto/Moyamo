@@ -11,9 +11,16 @@ interface AnswersProps {
   answer: FrontendQuestionData['answer'];
   onSelect: (answer: boolean) => void;
   quizImage: string | null;
+  isTimeOut?: boolean;
 }
 
-const Answers: React.FC<AnswersProps> = ({ options, answer, onSelect, quizImage }) => {
+const Answers: React.FC<AnswersProps> = ({
+  options,
+  answer,
+  onSelect,
+  quizImage,
+  isTimeOut = false,
+}) => {
   const shuffledAnswers = useRef<FrontendQuestionData['options'] | null>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
@@ -26,15 +33,21 @@ const Answers: React.FC<AnswersProps> = ({ options, answer, onSelect, quizImage 
   }
 
   const getButtonColor = (optionId: number): string => {
+    if (isTimeOut) {
+      if (answer?.correctOptionId === optionId) {
+        return 'bg-[var(--color-correct-300)] text-white';
+      }
+      return 'bg-gray-200';
+    }
     if (!clicked) {
       return 'bg-[var(--color-unselected-300)]';
     }
 
     const isCorrect = answer?.correctOptionId === optionId;
+
     if (!isCorrect && selectedOptionId !== optionId) {
       return 'bg-gray-200';
     }
-    // 정답이면 초록색, 오답이면 빨간색 반환
     return isCorrect
       ? 'bg-[var(--color-correct-300)] text-white'
       : 'bg-[var(--color-wrong-300)] text-white';
