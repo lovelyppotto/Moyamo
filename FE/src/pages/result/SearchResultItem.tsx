@@ -27,11 +27,17 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
       <div className="flex items-center">
         {/* 이미지 컨테이너 */}
         <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0">
-          <img
-            src={result.gestureImage}
-            alt={result.gestureName}
-            className="h-full object-cover rounded-md"
-          />
+          {result.gestureImage ? (
+            <img
+              src={result.gestureImage}
+              alt={result.gestureName}
+              className="h-full object-cover rounded-md"
+            />
+          ) : (
+            <div className="h-full w-full bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+              <span className="text-gray-500 dark:text-gray-300 text-xs md:text-sm text-center">이미지 준비 중</span>
+            </div>
+          )}
         </div>
         {/* 제스처 설명 */}
         <div className="flex-1 ml-4 relative">
