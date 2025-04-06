@@ -36,6 +36,7 @@ public class DictionaryService {
                             cg.getGesture().getImageUrl(),
                             cg.getGestureInfo().getGestureTitle(),
                             cg.getGesture().getGestureLabel(),
+                            cg.getGesture().getGestureType(),
                             multiple
                     );
                 })
