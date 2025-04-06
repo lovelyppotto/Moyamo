@@ -82,7 +82,7 @@ public class QuizService {
                         null,
                         answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureLabel() : null
                 );
-                gestureType = answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureType() : null;
+                gestureType = answerEntity.getGesture() != null ? answerEntity.getGesture().getGestureType().name() : null;
             }
         }
 
