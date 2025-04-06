@@ -69,6 +69,7 @@ public class DictionaryService {
                 country.getCountryName(),
                 country.getImageUrl(),
                 gesture.getGestureLabel(),
+                gesture.getGestureType(),
 
                 cg.getMeaningId(),
                 gesture.getGestureId(),

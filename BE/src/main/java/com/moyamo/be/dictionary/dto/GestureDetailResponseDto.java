@@ -1,6 +1,8 @@
 package com.moyamo.be.dictionary.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.moyamo.be.dictionary.entity.Gesture;
+import com.moyamo.be.dictionary.entity.GestureType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +14,7 @@ public class GestureDetailResponseDto {
     private String country_name;
     private String image_url;
     private String gesture_label;
+    private GestureType gesture_type;
 
     private int meaning_id;
     private int gesture_id;
