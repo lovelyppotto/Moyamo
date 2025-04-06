@@ -1,7 +1,7 @@
 export interface Meanings {
   countryId: number;
-  countryName: string;
   imageUrl?: string;
+  countryName: string;
   meaning: string;
 }
 export interface ApiMeaning {
@@ -13,7 +13,7 @@ export interface ApiMeaning {
 export interface GestureSearchResult {
   gestureId: number;
   gestureName: string;
-  gestureImage: string;
+  gestureImage: string | null;
   meanings: Meanings[];
 }
 
@@ -26,5 +26,5 @@ export interface SearchResponse {
     gesture_name: string;
     gesture_image: string;
     meanings: ApiMeaning[];
-  };
+  }[];
 }
