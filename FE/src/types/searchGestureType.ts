@@ -28,3 +28,14 @@ export interface SearchResponse {
     meanings: ApiMeaning[];
   }[];
 }
+
+// 카메라 검색용
+export interface SearchResponseSingle {
+  status: number;
+  data: {
+    gesture_id: number;
+    gesture_name: string;
+    gesture_image: string | null;
+    meanings: ApiMeaning[];
+  };
+}
