@@ -122,7 +122,7 @@ const GesturePracticeCamera = ({
   const calculateMostFrequentGesture = useCallback((frames: GestureFrame[]) => {
     if (frames.length === 0) return null;
 
-    // 충분한 신뢰도(70% 이상)를 가진 프레임만 필터링
+    // 70% 이상 프레임만 필터링
     const confidentFrames = frames.filter((frame) => frame.confidence >= 70);
 
     if (confidentFrames.length === 0) return null;
@@ -320,7 +320,7 @@ const GesturePracticeCamera = ({
   }, [error]);
 
   return (
-    <div className="w-full bg-white relative overflow-hidden rounded-lg drop-shadow-basic flex flex-col">
+    <div className="w-full bg-white relative overflow-hidden rounded-lg drop-shadow-basic">
       <div className="relative w-full h-full aspect-square">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
@@ -377,8 +377,8 @@ const GesturePracticeCamera = ({
               {/* 안내 텍스트 - 위치 조정 */}
               <p
                 className="absolute top-5 text-center
-              text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
-              drop-shadow-basic"
+                text-sm md:text-lg xl:text-xl font-[NanumSquareRoundEB] text-white
+                drop-shadow-basic"
               >
                 {guideText}
               </p>
@@ -386,26 +386,20 @@ const GesturePracticeCamera = ({
           </div>
         )}
 
-        {/* 카메라 비활성화 시 오버레이 */}
+        {/* 카메라 비활성화 시 오버레이 및 다시하기 버튼 */}
         {!cameraActive && (
-          <div className="absolute inset-0 bg-black/50 flex justify-center items-center">
-            <div className="text-white text-xl font-bold text-center"></div>
+          <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center z-20">
+            <div className="text-white text-xl font-bold text-center mb-6"></div>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-colors"
+              onClick={handleRestart}
+            >
+              <FontAwesomeIcon icon={faRotateRight} className="mr-0.5 sm:mr-1.5" />
+              <span> 다시 연습하기</span>
+            </button>
           </div>
         )}
       </div>
-
-      {/* 다시하기 버튼 */}
-      {!cameraActive && (
-        <div className="w-full py-4 px-4 flex justify-center">
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-md transition-colors"
-            onClick={handleRestart}
-          >
-            <FontAwesomeIcon icon={faRotateRight} />
-            다시 연습하기
-          </button>
-        </div>
-      )}
     </div>
   );
 };
