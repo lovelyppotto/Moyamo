@@ -3,11 +3,9 @@ import { useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import Question from './Question.tsx';
 import { useQuizQuestions } from '@/hooks/apiHooks';
-// import { FrontendQuestionData } from '@/types/quizTypes';
 
 function Quiz() {
-  const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
-  // const [useCamera, setUseCamera] = useState<boolean>(false);
+  const [userAnswers, setUserAnswers] = useState<(boolean | null)[]>([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const useCamera = queryParams.get('useCamera') === 'true';
@@ -18,8 +16,9 @@ function Quiz() {
 
   const quizIsComplete = quizData && activeQuestionIndex === quizData.length; // 확인하기
 
-  const handleSelectAnswer = useCallback((selectedAnswer: number | null): void => {
-    setUserAnswers((prevUserAnswers) => [...prevUserAnswers, selectedAnswer]);
+  const handleSelectAnswer = useCallback((selectedAnswer: boolean | null): void => {
+    const newAnswers = setUserAnswers((prevUserAnswers) => [...prevUserAnswers, selectedAnswer]);
+    console.log('New answers:', newAnswers);
   }, []);
 
   if (isLoading) {

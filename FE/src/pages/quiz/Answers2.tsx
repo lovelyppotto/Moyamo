@@ -4,79 +4,49 @@
  */
 //옳바른 제스처를 선택하는 컴포넌트입니다.
 //수정: img를 받아와서 답 칸에 적어야 합니다. ->
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { GlbViewer } from '@/components/GlbViewer';
 import { FrontendQuestionData } from '@/types/quizTypes';
 
 interface Answers2Props {
   options: FrontendQuestionData['options'];
   answer: FrontendQuestionData['answer'];
-  onSelect: (answer: number | null) => void;
-  isSelected: number | null;
-  answerState: string;
+  onSelect: (answer: boolean) => void;
 }
 
-const Answers2: React.FC<Answers2Props> = ({
-  options,
-  answer,
-  onSelect,
-  isSelected,
-  answerState,
-}) => {
+const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect }) => {
   const shuffledAnswers = useRef<FrontendQuestionData['options'] | null>(null);
+  const [clicked, setClicked] = useState<boolean>(false);
+  const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
+  const baseButtonClass =
+    'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
 
   if (!shuffledAnswers.current) {
     shuffledAnswers.current = [...options];
     shuffledAnswers.current.sort(() => Math.random() - 0.5);
   }
 
-  /**
-   * 답변 아이템의 CSS 클래스를 결정하는 함수
-   */
-  const getCssClass = (optionId: number): string => {
-    const baseClass =
-      'flex flex-col items-center justify-around p-4 w-[45%] h-[80%] rounded-xl drop-shadow-quiz-box sm:text-sm md:text-xl lg:text-2xl font-[NanumSquareRoundB] cursor-pointer';
-
-    const isThisAnswerSelected = optionId === isSelected;
-    const unSelected = optionId !== isSelected;
-    const isCorrectAnswer = answer?.correctOptionId === optionId;
-
-    let colorClass = 'bg-white';
-
-    if (!answer) {
-      return `${baseClass} ${colorClass}`;
+  const getButtonColor = (optionId: number): string => {
+    if (!clicked) {
+      return 'bg-[var(--color-unselected-300)]';
     }
 
-    if (answerState === 'answered' && isThisAnswerSelected) {
-      // 사용자가 선택한 답변 (정답 확인 전, 기본색상)
-      colorClass = 'bg-[var(--color-answered-300)] text-white';
-    } else if (answerState === 'correct' && isThisAnswerSelected) {
-      // 사용자가 선택한 답변이 정답일 때(연두색)
-      colorClass = 'bg-[var(--color-correct-300)] text-white';
-    } else if (answerState === 'correct' && unSelected) {
-      // 사용자가 오답을 선택했을 때 정답 표시
-      colorClass = 'bg-gray-200 text-white';
-    } else if (answerState === 'wrong' && isThisAnswerSelected) {
-      // 사용자가 선택한 답변이 오답일 때(빨간색)
-      colorClass = 'bg-[var(--color-wrong-300)] text-white';
-    } else if (answerState === 'wrong' && isCorrectAnswer) {
-      // 사용자가 오답을 선택했을 때 정답 표시
-      colorClass = 'bg-[var(--color-correct-300)] text-white';
-    } else if (answerState === 'wrong' && unSelected) {
-      // 사용자가 오답을 선택했을 때 정답 표시
-      colorClass = 'bg-gray-200 text-white';
-    } else if (answerState === 'correct' && unSelected) {
-      // 사용자가 오답을 선택했을 때 정답 표시
-      colorClass = 'bg-gray-200 text-white';
+    const isCorrect = answer?.correctOptionId === optionId;
+    if (!isCorrect && selectedOptionId !== optionId) {
+      return 'bg-gray-200';
     }
-
-    return `${baseClass} ${colorClass}`;
+    // 정답이면 초록색, 오답이면 빨간색 반환
+    return isCorrect
+      ? 'bg-[var(--color-correct-300)] text-white'
+      : 'bg-[var(--color-wrong-300)] text-white';
   };
 
-  // 옵션이나 답변이 없는 경우 처리
-  if (!options.length || !answer) {
-    return null;
-  }
+  const handleClick = (optionId: number): void => {
+    const isCorrect = answer?.correctOptionId === optionId;
+    setClicked(true);
+    onSelect(isCorrect);
+    setSelectedOptionId(optionId);
+  };
 
   return (
     <div className="h-screen flex flex-col px-4 pt-[3vh]">
@@ -85,9 +55,9 @@ const Answers2: React.FC<Answers2Props> = ({
           <div className="flex justify-between h-[44%]">
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[0].id)}
-              disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![0].id)}
+              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[0].id)}`}
+              onClick={() => handleClick(shuffledAnswers.current![0].id)}
+              disabled={clicked}
             >
               <p className="text-2xl">①</p>
               {shuffledAnswers.current[0].gestureImage && (
@@ -99,9 +69,9 @@ const Answers2: React.FC<Answers2Props> = ({
 
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[1].id)}
-              disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![1].id)}
+              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[1].id)}`}
+              onClick={() => handleClick(shuffledAnswers.current![1].id)}
+              disabled={clicked}
             >
               <p className="text-2xl">②</p>
               {shuffledAnswers.current[1].gestureImage && (
@@ -114,9 +84,9 @@ const Answers2: React.FC<Answers2Props> = ({
           <div className="flex justify-between  h-[44%]">
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[2].id)}
-              disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![2].id)}
+              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[2].id)}`}
+              onClick={() => handleClick(shuffledAnswers.current![2].id)}
+              disabled={clicked}
             >
               <p className="text-2xl">③</p>
               {shuffledAnswers.current[2].gestureImage && (
@@ -127,9 +97,9 @@ const Answers2: React.FC<Answers2Props> = ({
             </button>
             <button
               type="button"
-              className={getCssClass(shuffledAnswers.current[3].id)}
-              disabled={answerState !== ''}
-              onClick={() => onSelect(shuffledAnswers.current![3].id)}
+              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[3].id)}`}
+              onClick={() => handleClick(shuffledAnswers.current![3].id)}
+              disabled={clicked}
             >
               <p className="text-2xl">④</p>
               {shuffledAnswers.current[3].gestureImage && (

@@ -11,21 +11,17 @@ import Animation from './Animation.tsx';
 
 interface ResultProps {
   Index: number;
-  onSelectAnswer: (answer: number | null) => void;
+  onSelectAnswer: (answer: boolean | null) => void;
   questionData: FrontendQuestionData;
 }
 
 interface AnswerState {
-  selectedAnswer: number | null;
   isCorrect: boolean | null;
-  answerState: string;
 }
 
 function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Element {
   const [answer, setAnswer] = useState<AnswerState>({
-    selectedAnswer: null,
     isCorrect: null,
-    answerState: '',
   });
   const [showCorrectImage, setShowCorrectImage] = useState<boolean>(false);
   const [showWrongImage, setShowWrongImage] = useState<boolean>(false);
@@ -42,18 +38,14 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     }
   }, [questionData.type]);
 
-  function handleSelectAnswer(selectedAnswer: number | null) {
+  function handleSelectAnswer(isCorrect: boolean | null) {
     setAnswer({
-      selectedAnswer: selectedAnswer,
-      isCorrect: null,
-      answerState: 'answered',
+      isCorrect: isCorrect,
     });
     let newTimer = 10000; //시간의 기본 최대값
     let newProgressClass = '';
-    if (selectedAnswer !== null) {
-      newTimer = 1000;
-    }
-    if (answer.isCorrect !== null) {
+
+    if (isCorrect == null) {
       newTimer = 2000;
       newProgressClass = 'bg-gray-200';
     }
@@ -62,11 +54,8 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
-      const isCorrect = selectedAnswer === questionData.answer.correctOptionId;
       setAnswer({
-        selectedAnswer: selectedAnswer,
-        isCorrect,
-        answerState: isCorrect ? 'correct' : 'wrong',
+        isCorrect: isCorrect,
       });
       // 정답 여부에 따라 이미지 표시
       if (isCorrect) {
@@ -82,7 +71,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
       }, 1000);
       // 다음 문제로 넘어가기 위한 타이머
       setTimeout(() => {
-        onSelectAnswer(selectedAnswer);
+        onSelectAnswer(isCorrect);
       }, 400);
     }, 200);
   }
@@ -128,8 +117,6 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
-                isSelected={answer.selectedAnswer}
-                answerState={answer.answerState}
                 quizImage={questionData.gestureUrl}
               />
             )}
@@ -138,8 +125,6 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
-                isSelected={answer.selectedAnswer}
-                answerState={answer.answerState}
               />
             )}
             {questionData.type === 'CAMERA' && (
@@ -147,8 +132,6 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
-                isSelected={answer.selectedAnswer}
-                answerState={answer.answerState}
                 onProgressStart={() => setStartProgress(true)}
               />
             )}
