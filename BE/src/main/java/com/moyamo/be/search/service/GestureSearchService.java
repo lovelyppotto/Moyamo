@@ -3,6 +3,7 @@ package com.moyamo.be.search.service;
 import com.moyamo.be.common.ApiResponse;
 import com.moyamo.be.dictionary.entity.CountryGesture;
 import com.moyamo.be.dictionary.entity.Gesture;
+import com.moyamo.be.dictionary.entity.GestureInfo;
 import com.moyamo.be.search.dto.GestureSearchResponseDto;
 import com.moyamo.be.search.repository.GestureSearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,13 @@ public class GestureSearchService {
 
         for (CountryGesture cg : countryGestures) {
             Gesture gesture = cg.getGesture();
+            GestureInfo gestureInfo = cg.getGestureInfo();
             int gestureId = gesture.getGestureId();
 
             // gesture_id가 없으면 새로 추가
             responseMap.putIfAbsent(gestureId, new GestureSearchResponseDto(
                     gesture.getGestureId(),
-                    gesture.getGestureLabel(),
+                    gestureInfo.getGestureTitle(),
                     gesture.getImageUrl(),
                     new ArrayList<>()
             ));
