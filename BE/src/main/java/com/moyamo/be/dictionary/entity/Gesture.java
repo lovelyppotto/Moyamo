@@ -20,6 +20,7 @@ public class Gesture {
     @Column(name = "gesture_label")
     private String gestureLabel;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gesture_type")
-    private String gestureType;
+    private GestureType gestureType;
 }
