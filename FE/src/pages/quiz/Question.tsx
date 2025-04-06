@@ -37,8 +37,18 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     // CAMERA 타입이 아닌 경우 바로 프로그레스 시작
     if (questionData.type !== 'CAMERA') {
       setStartProgress(true);
+    } else {
+      setStartProgress(false);
     }
   }, [questionData.type]);
+
+  useEffect(() => {
+    if (startProgress) {
+      setProgressClass('bg-[var(--color-kr-600)]');
+    } else {
+      setProgressClass('bg-gray-200');
+    }
+  }, [startProgress]);
 
   function handleSelectAnswer(selectedAnswer: number | null) {
     setAnswer({
@@ -47,16 +57,16 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
       answerState: 'answered',
     });
     let newTimer = 10000; //시간의 기본 최대값
-    let newProgressClass = '';
+    let newStartProgress = startProgress;
     if (selectedAnswer !== null) {
       newTimer = 1000;
     }
     if (answer.isCorrect !== null) {
       newTimer = 2000;
-      newProgressClass = 'bg-gray-200';
+      newStartProgress = false;
     }
     setTimer(newTimer);
-    setProgressClass(newProgressClass);
+    setStartProgress(newStartProgress);
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
@@ -98,14 +108,14 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
             <PbNumber Index={Index} />
           </div>
           {/* 문제: 계속 이전의 progress값이 저장이 된다 */}
-          {startProgress && (
-            <Progress
-              key={timer}
-              timeout={timer}
-              onTimeout={handleSkipAnswer}
-              className={progressClass}
-            />
-          )}
+
+          <Progress
+            key={timer}
+            timeout={timer}
+            onTimeout={handleSkipAnswer}
+            className={progressClass}
+          />
+
           <div className="flex justify-between items-center mt-[3vh]">
             <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%] dark:text-white">
               {`Q${Index + 1}. ${questionData.text}`}
