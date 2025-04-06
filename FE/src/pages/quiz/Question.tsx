@@ -42,14 +42,6 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     }
   }, [questionData.type]);
 
-  useEffect(() => {
-    if (startProgress) {
-      setProgressClass('bg-[var(--color-kr-600)]');
-    } else {
-      setProgressClass('bg-gray-200');
-    }
-  }, [startProgress]);
-
   function handleSelectAnswer(selectedAnswer: number | null) {
     setAnswer({
       selectedAnswer: selectedAnswer,
@@ -57,16 +49,16 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
       answerState: 'answered',
     });
     let newTimer = 10000; //시간의 기본 최대값
-    let newStartProgress = startProgress;
+    let newProgressClass = '';
     if (selectedAnswer !== null) {
       newTimer = 1000;
     }
     if (answer.isCorrect !== null) {
       newTimer = 2000;
-      newStartProgress = false;
+      newProgressClass = 'bg-gray-200';
     }
     setTimer(newTimer);
-    setStartProgress(newStartProgress);
+    setProgressClass(newProgressClass);
 
     // 1초 후 정답 여부 확인
     setTimeout(() => {
