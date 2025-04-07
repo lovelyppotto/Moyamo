@@ -1,9 +1,6 @@
 package com.moyamo.be.dictionary.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Table(name = "gestures")
 public class Gesture {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gesture_id")
     private Integer gestureId;
 
@@ -21,4 +19,8 @@ public class Gesture {
 
     @Column(name = "gesture_label")
     private String gestureLabel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gesture_type")
+    private GestureType gestureType;
 }

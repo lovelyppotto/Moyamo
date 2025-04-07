@@ -1,3 +1,5 @@
+def shouldBuild = false
+
 pipeline {
     agent any
 
@@ -18,7 +20,25 @@ pipeline {
             }
         }
 
+        stage('Check BE Directory Changes') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (changes.readLines().any { it.startsWith("BE/") }) {
+                        echo "BE 디렉토리 변경 감지됨! 계속 진행"
+                        shouldBuild = true
+                    } else {
+                        echo "BE 디렉토리 변경 없음! 이후 단계 모두 스킵"
+                        shouldBuild = false
+                    }
+                }
+            }
+        }
+
         stage('Build & Push Docker Image') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     sh """
@@ -28,8 +48,6 @@ pipeline {
 
                         echo "Building Docker Image..."
                         docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-
-                        echo "Logging into Docker Hub..."
                     """
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
                         docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
@@ -39,6 +57,9 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     withCredentials([
@@ -53,17 +74,15 @@ pipeline {
                         sshagent(credentials: [SSH_CREDENTIAL]) {
                             sh """
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
-                                    docker stop moyamo-be || true
-                                    docker rm moyamo-be || true
-                                    docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
-                                    docker run -d --name moyamo-be --network=host -p ${APP_PORT}:${APP_PORT} \
-                                        -e DB_URL="${DB_URL}" \
-                                        -e DB_USERNAME="${DB_USERNAME}" \
-                                        -e DB_PASSWORD="${DB_PASSWORD}" \
-                                        -e AWS_ACCESS_KEY="${AWS_ACCESS_KEY}" \
-                                        -e AWS_SECRET_KEY="${AWS_SECRET_KEY}" \
-                                        -e S3_BUCKET_NAME="${S3_BUCKET_NAME}" \
-                                        ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                    mkdir -p /home/ubuntu/moyamo-be &&
+                                    sudo chown -R ${SSH_USER}:${SSH_USER} /home/ubuntu/moyamo-be
+                                '
+                                scp -o StrictHostKeyChecking=no -r BE/* ${SSH_USER}@${EC2_IP}:/home/ubuntu/moyamo-be/
+                                ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
+                                    cd /home/ubuntu/moyamo-be &&
+                                    docker-compose down || true &&
+                                    docker-compose pull &&
+                                    docker-compose up -d
                                 '
                             """
                         }
@@ -73,6 +92,9 @@ pipeline {
         }
 
         stage('Notify Success') {
+            when {
+                expression { return shouldBuild }
+            }
             steps {
                 script {
                     def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
@@ -87,7 +109,6 @@ pipeline {
                             "text": ":rocket: **BE 배포 완료!**\\n\\n:label: 브랜치: be/develop\\n:package: 도커 이미지: ${DOCKER_IMAGE}:${DOCKER_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: <${BUILD_URL}|빌드 상세 보기>"
                         }
                         """
-
                         sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' \"$WEBHOOK_BE\""
                         sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' \"$WEBHOOK_FE\""
                     }

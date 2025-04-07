@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  static-gesture:
+    image: sseon701/moyamo-ai-static-gesture:latest
+    container_name: static-gesture
+    ports:
+      - "8010:8000"
+    restart: always
+    networks:
+      - nginx_jenkins_network
+
+  dynamic-gesture:
+    image: sseon701/moyamo-ai-dynamic-gesture:latest
+    container_name: dynamic-gesture
+    ports:
+      - "8011:8000"
+    restart: always
+    networks:
+      - nginx_jenkins_network
+
+  complex-gesture:
+    image: sseon701/moyamo-ai-complex-gesture:latest
+    container_name: complex-gesture
+    ports:
+      - "8012:8000"
+    restart: always
+    networks:
+      - nginx_jenkins_network
+
+networks:
+  nginx_jenkins_network:
+    external: true
