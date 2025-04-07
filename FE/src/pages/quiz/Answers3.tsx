@@ -67,3 +67,6 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
 };
 
 export default Answers3;
+
+//고칠 부분: 감지된 제스처: 없음, 신뢰도: 52.3 -> 얼마 안 지나서 바로 멈춤. PROGRESS 시작된건가? 2개만 받고 끝남?2번째 문제여도 끝남'''
+//RESULT에 VERY GOOD, 버튼 돌아가기 아이콘콘
