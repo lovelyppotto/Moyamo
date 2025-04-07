@@ -18,7 +18,7 @@ function LoadingPage({ minDuration = 1000, size = 200, onComplete }: LoadingPage
   }, [minDuration, onComplete]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f5f5f5] dark:bg-gray-900 dark:text-d-txt-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f5f5f5] dark:bg-gray-900">
       <Lottie
         animationData={loadingAnimation}
         loop={true}
