@@ -229,7 +229,7 @@ function GestureSearchInput() {
           className="absolute mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg search-results
         w-[66%] sm:w-[80%] md:w-[60%] lg:w-[73%] xl:w-[80%]
         left-20 md:left-35 lg:left-42 xl:left-40
-        drop-shadow-basic"
+        drop-shadow-basic overflow-hidden"
           style={{ zIndex: 9999 }}
         >
           {isLoading ? (
@@ -239,7 +239,9 @@ function GestureSearchInput() {
               {searchResults.map((result, index) => (
                 <div
                   key={result.gestureId || index}
-                  className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  className="px-4 py-2 
+                  hover:bg-gray-100 dark:hover:bg-gray-700 
+                  cursor-pointer"
                   onClick={() => {
                     setSearchTerm(result.gestureName);
                     setShowResults(false);
