@@ -7,8 +7,6 @@ import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
-import DarkModeLottie from '@/components/DarkModeLottie';
-import { useTheme } from '@/components/theme-provider';
 
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
@@ -35,7 +33,6 @@ function DictHeader({
   const navigate = useNavigate();
   const getCountryCode = useCountryCode();
   const countryCode = getCountryCode(gestureCompareInfo?.countryName);
-  const { theme } = useTheme();
 
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
@@ -48,7 +45,15 @@ function DictHeader({
 
   // 뒤로가기
   const handleGoBack = () => {
-    window.history.back();
+    // 현재 URL 확인
+    const currentPath = window.location.pathname;
+
+    // Dictionary 메인 페이지(목록 페이지)인 경우 홈으로 이동
+    if (currentPath === '/dictionary') {
+      navigate('/');
+    } else {
+      window.history.back();
+    }
   };
 
   // 비교 가이드 페이지로 이동
@@ -106,9 +111,6 @@ function DictHeader({
           <span className="hidden sm:inline font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
-      {/* <div className="ml-2">
-        <DarkModeLottie />
-      </div> */}
     </header>
   );
 }
