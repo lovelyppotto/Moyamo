@@ -1,14 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
-import { useQueryClient } from '@tanstack/react-query';
 import DarkModeLottie from '@/components/DarkModeLottie';
+import { useTheme } from '@/components/theme-provider';
 
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
@@ -33,10 +33,9 @@ function DictHeader({
   countryOptions = [],
 }: DictHeaderProps) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryClient = useQueryClient();
   const getCountryCode = useCountryCode();
   const countryCode = getCountryCode(gestureCompareInfo?.countryName);
+  const { theme } = useTheme();
 
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
@@ -107,9 +106,9 @@ function DictHeader({
           <span className="hidden sm:inline font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
-      <div className="ml-2">
+      {/* <div className="ml-2">
         <DarkModeLottie />
-      </div>
+      </div> */}
     </header>
   );
 }
