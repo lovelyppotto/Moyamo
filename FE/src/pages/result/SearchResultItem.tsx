@@ -49,7 +49,7 @@ function SearchResultItem({
   // 카메라 검색 모드일 때의 레이아웃
   if (searchType === 'camera') {
     return (
-      <div className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+      <div className="py-5 px-7 bg-white dark:bg-gray-700 rounded-lg shadow-md">
         <div className="flex justify-between items-center">
           {/* 제목 대신 첫 번째 의미를 표시 */}
           <h3 className="text-lg md:text-xl font-bold font-[NanumSquareRoundEB] text-gray-900 dark:text-d-txt-50">
@@ -57,7 +57,7 @@ function SearchResultItem({
           </h3>
           
           {/* 국가 플래그 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             {result.meanings.map((meaning) => {
               const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
               
@@ -66,7 +66,7 @@ function SearchResultItem({
                   <img
                     src={meaning.imageUrl}
                     alt={meaning.countryName}
-                    className={`w-6 h-4 md:w-12 md:h-6 object-cover 
+                    className={`w-6 h-4 md:w-14 md:h-9 object-cover
                       ${isAvailable 
                         ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer' 
                         : 'opacity-50 grayscale cursor-not-allowed'
