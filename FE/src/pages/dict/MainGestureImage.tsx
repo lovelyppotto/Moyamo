@@ -1,5 +1,6 @@
 import { GestureItem } from '@/types/dictionaryType';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
+import { GlbViewer } from '@/components/GlbViewer';
 
 // 메인 이미지 컴포넌트 Props 타입
 type MainGestureImageProps = {
@@ -19,11 +20,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
           className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getBorderColorClass(countryCode)} w-full aspect-[16/9]`}
         >
           {gesture.imageUrl ? (
-            <img
-              src={gesture.imageUrl}
-              alt={`${gesture.gestureTitle} image`}
-              className="max-h-[80%] max-w-[80%] object-contain"
-            />
+            <GlbViewer url={gesture.imageUrl} />
           ) : (
             <div className="text-gray-400 flex items-center justify-center h-full w-full text-center px-4">
               <p className="text-lg sm:text-xl">이미지가 없습니다</p>
