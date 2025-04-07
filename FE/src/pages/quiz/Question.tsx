@@ -43,7 +43,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     setAnswer({
       isCorrect: isCorrect,
     });
-    let newTimer = 10000; //시간의 기본 최대값
+    let newTimer = questionData.type === 'CAMERA' ? 30000 : 10000; //시간의 기본 최대값
     let newProgressClass = '';
 
     if (isCorrect == null) {

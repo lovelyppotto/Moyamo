@@ -11,6 +11,7 @@ interface WebCameraProps {
   // 연결 상태를 외부에서 제어할 수 있도록 추가
   onConnectionStatus?: (status: boolean) => void;
   isPaused?: boolean;
+  onGesture?: (gesture: string, confidence: number) => void;
 }
 
 const WebCamera = ({
@@ -18,6 +19,7 @@ const WebCamera = ({
   guideText,
   onConnectionStatus,
   isPaused = false,
+  onGesture,
 }: WebCameraProps) => {
   // 웹소켓 서비스 사용
   const {
@@ -99,26 +101,26 @@ const WebCamera = ({
   }, [wsStatus, onConnectionStatus]);
 
   // 컴포넌트 마운트 시 웹소켓 연결
-useEffect(() => {
-  if (!isPaused) {
-    console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
-    
-    // 웹소켓 URL 확인
-    console.log('[🔍 웹소켓 URL]', import.meta.env.VITE_SERVER_STATIC_WS_URL);
+  useEffect(() => {
+    if (!isPaused) {
+      console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
 
-    // 웹소켓 연결 시작 전에 약간의 지연
-    const timer = setTimeout(() => {
-      console.log('[🔍 웹소켓 연결 시작]');
-      connectWs();
-    }, 1000); // 1초로 지연 시간 증가
+      // 웹소켓 URL 확인
+      console.log('[🔍 웹소켓 URL]', import.meta.env.VITE_SERVER_STATIC_WS_URL);
 
-    return () => {
-      console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
-      clearTimeout(timer);
-      disconnectWs();
-    };
-  }
-}, [connectWs, disconnectWs, isPaused]);
+      // 웹소켓 연결 시작 전에 약간의 지연
+      const timer = setTimeout(() => {
+        console.log('[🔍 웹소켓 연결 시작]');
+        connectWs();
+      }, 1000); // 1초로 지연 시간 증가
+
+      return () => {
+        console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
+        clearTimeout(timer);
+        disconnectWs();
+      };
+    }
+  }, [connectWs, disconnectWs, isPaused]);
 
   // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
   useEffect(() => {
@@ -135,10 +137,14 @@ useEffect(() => {
 
         // 이벤트 발행
         window.dispatchEvent(gestureEvent);
+        if (onGesture) {
+          onGesture(gesture, confidence || 0);
+        }
+
         lastEventTimeRef.current = now;
       }
     }
-  }, [gesture, confidence, isPaused]);
+  }, [gesture, confidence, isPaused, onGesture]);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
