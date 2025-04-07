@@ -16,10 +16,10 @@ app.add_middleware(
 )
 
 # ✅ 클래스 라벨 로딩
-label_classes = np.load("models/label_classes_v1.npy")
+label_classes = np.load("models/label_classes_mk2.npy")
 
 # ✅ TFLite 모델 로딩
-interpreter = Interpreter(model_path="models/static_gesture_conv1d_v1_model.tflite")
+interpreter = Interpreter(model_path="models/static_gesture_mk2_model.tflite")
 interpreter.allocate_tensors()
 
 # 입력/출력 텐서 정보 추출
