@@ -52,7 +52,7 @@ def predict(input_vector: np.ndarray) -> tuple[str, float]:
 
 
 # ✅ WebSocket 실시간 추론 엔드포인트
-@app.websocket("/ws/static-gesture/predict")
+@app.websocket("/ws/predict")
 async def predict_ws(websocket: WebSocket):
     await websocket.accept()
     print("[✅ 연결됨] 클라이언트 WebSocket 접속")

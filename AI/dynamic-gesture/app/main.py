@@ -38,7 +38,7 @@ def predict(input_vector: np.ndarray) -> tuple[str, float]:
         return "none", confidence * 100
     return label_classes[label_idx], confidence * 100
 
-@app.websocket("/ws/dynamic-gesture/predict")
+@app.websocket("/ws/predict")
 async def ws_predict(websocket: WebSocket):
     await websocket.accept()
     print("[✅ 연결됨] 클라이언트 WebSocket 접속")
