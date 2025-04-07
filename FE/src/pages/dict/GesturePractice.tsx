@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import GesturePracticeCamera from '../../components/GesturePracticeCamera';
+import { GlbViewer } from '@/components/GlbViewer';
 
 function GesturePractice() {
   const location = useLocation();
@@ -49,11 +50,12 @@ function GesturePractice() {
             className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic 
           flex justify-center items-center p-3"
           >
-            <img
+            {/* <img
               src={gesture.imageUrl}
               alt={`${gesture.gestureTitle} image`}
               className="w-[90%] h-[90%] lg:w-[80%] lg:h-[80%] object-contain"
-            />
+            /> */}
+            <GlbViewer url={gesture.imageUrl} />
           </div>
         </div>
 
