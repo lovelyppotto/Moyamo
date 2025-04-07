@@ -30,6 +30,10 @@ public class GestureSearchService {
         }
 
         // gesture_id 별로 그룹화
+        return getListApiResponse(countryGestures);
+    }
+
+    private ApiResponse<List<GestureSearchResponseDto>> getListApiResponse(List<CountryGesture> countryGestures) {
         Map<Integer, GestureSearchResponseDto> responseMap = new HashMap<>();
 
         for (CountryGesture cg : countryGestures) {
@@ -64,28 +68,6 @@ public class GestureSearchService {
             return null;
         }
 
-        Map<Integer, GestureSearchResponseDto> responseMap = new HashMap<>();
-
-        for (CountryGesture cg : countryGestures) {
-            Gesture gesture = cg.getGesture();
-            GestureInfo gestureInfo = cg.getGestureInfo();
-            int gestureId = gesture.getGestureId();
-
-            responseMap.putIfAbsent(gestureId, new GestureSearchResponseDto(
-                    gesture.getGestureId(),
-                    gestureInfo.getGestureTitle(),
-                    gesture.getImageUrl(),
-                    new ArrayList<>()
-            ));
-
-            responseMap.get(gestureId).getMeanings().add(new GestureSearchResponseDto.Meaning(
-                    cg.getCountry().getCountryId(),
-                    cg.getCountry().getImageUrl(),
-                    cg.getCountry().getCountryName(),
-                    cg.getGestureInfo().getGestureMeaning()
-            ));
-        }
-
-        return new ApiResponse<>(200, new ArrayList<>(responseMap.values()));
+        return getListApiResponse(countryGestures);
     }
 }
