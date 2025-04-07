@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
@@ -106,9 +106,9 @@ function DictHeader({
           <span className="hidden sm:inline font-[NanumSquareRound]">나라별 비교 가이드</span>
         </button>
       )}
-      <div className="ml-2">
+      {/* <div className="ml-2">
         <DarkModeLottie />
-      </div>
+      </div> */}
     </header>
   );
 }
