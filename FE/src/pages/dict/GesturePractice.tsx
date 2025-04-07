@@ -1,21 +1,28 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GesturePracticeCamera from '../../components/GesturePracticeCamera';
 
 function GesturePractice() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showCamera, setShowCamera] = useState(false);
-
   const { gesture } = location.state || [];
-  console.log('연습페이지 제스처 : ', gesture);
+
+  // gesture 없으면 에러 페이지로 이동
+  useEffect(() => {
+    if (!gesture) {
+      navigate('/error');
+    }
+  }, [gesture, navigate]);
 
   // 카메라 버튼 클릭 시 카메라로 전환
   const toggleScreen = () => {
     setShowCamera(!showCamera);
   };
+
   return (
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
