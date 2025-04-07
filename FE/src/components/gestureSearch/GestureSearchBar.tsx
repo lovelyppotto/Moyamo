@@ -216,7 +216,9 @@ function GestureSearchBar({
           />
           {/* 카메라 검색일 때 표시 */}
           {isCameraSearch && (
-            <div className="absolute right-2 top-2 text-xs text-blue-500 dark:text-blue-300">
+            <div className="absolute right-4 top-3 font-[NanumSquareRound] text-xs 
+            text-kr-700 dark:text-d-txt-50/70"
+            >
               카메라 검색
             </div>
           )}
