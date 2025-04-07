@@ -39,7 +39,7 @@ const GesturePracticeCamera = ({
           setShowGuideline(false);
           setCameraActive(false);
 
-          // 1초 후에 정답 표시 숨기고 다시하기 버튼 표시
+          // 1.5초 후에 정답 표시 숨기고 다시하기 버튼 표시
           if (correctTimeRef.current) {
             clearTimeout(correctTimeRef.current);
           }
