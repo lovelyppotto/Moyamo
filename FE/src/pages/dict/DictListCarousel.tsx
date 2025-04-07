@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { GestureItem } from '@/types/dictionaryType';
@@ -27,6 +27,73 @@ export function DictListCarousel({
   const [startX, setStartX] = useState(0);
   const [startScrollLeft, setStartScrollLeft] = useState(0);
 
+  // 현재 보이는 카드 인덱스 범위
+  const [visibleIndexes, setVisibleIndexes] = useState<number[]>([]);
+
+  // 초기에 처음 보이는 카드들 로드 (기본으로 0, 1, 2 인덱스)
+  useEffect(() => {
+    // 기본 화면에 보이는 카드 인덱스 설정
+    const initialVisible = [];
+    const viewportWidth = window.innerWidth;
+    let visibleCount = 1;
+
+    if (viewportWidth >= 1024) {
+      visibleCount = 3;
+    } else if (viewportWidth >= 640) {
+      visibleCount = 2;
+    }
+
+    for (let i = 0; i < Math.min(visibleCount, gestures.length); i++) {
+      initialVisible.push(i);
+    }
+    setVisibleIndexes(initialVisible);
+  }, [gestures.length]);
+
+  // 스크롤 위치에 따라 보이는 카드 업데이트
+  const updateVisibleCards = () => {
+    if (!scrollRef.current) return;
+
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const containerWidth = scrollRef.current.clientWidth;
+
+    // 카드 너비 계산
+    let cardWidth = containerWidth;
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 1024) {
+      cardWidth = containerWidth / 3;
+    } else if (viewportWidth >= 640) {
+      cardWidth = containerWidth / 2;
+    }
+
+    // 현재 보이는 첫 번째 카드 인덱스 계산
+    const firstVisibleIndex = Math.floor(scrollLeft / cardWidth);
+
+    // 보이는 카드 개수 계산
+    let visibleCount = 1;
+    if (viewportWidth >= 1024) {
+      visibleCount = 3;
+    } else if (viewportWidth >= 640) {
+      visibleCount = 2;
+    }
+
+    // 미리 로딩할 추가 카드 설정 (앞뒤로 1개씩)
+    const newVisibleIndexes: number[] = []; // 명시적으로 number[] 타입 지정
+    for (
+      let i = Math.max(0, firstVisibleIndex - 1);
+      i < Math.min(firstVisibleIndex + visibleCount + 1, gestures.length);
+      i++
+    ) {
+      newVisibleIndexes.push(i);
+    }
+
+    setVisibleIndexes((prev) => {
+      // 이전에 보이지 않던 새로운 인덱스만 추가
+      const combined = [...new Set([...prev, ...newVisibleIndexes])];
+      return combined;
+    });
+  };
+
   // 왼쪽으로 스크롤
   const scrollToPrev = () => {
     if (scrollRef.current) {
@@ -44,6 +111,9 @@ export function DictListCarousel({
 
       const scrollAmount = scrollRef.current.clientWidth / cardCount;
       scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+
+      // 스크롤 완료 후 보이는 카드 업데이트
+      setTimeout(updateVisibleCards, 500);
     }
   };
 
@@ -64,8 +134,27 @@ export function DictListCarousel({
 
       const scrollAmount = scrollRef.current.clientWidth / cardCount;
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+
+      // 스크롤 완료 후 보이는 카드 업데이트
+      setTimeout(updateVisibleCards, 500);
     }
   };
+
+  // 스크롤 이벤트 리스너 추가
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener('scroll', updateVisibleCards);
+      // 초기 로드 시 보이는 카드 업데이트
+      updateVisibleCards();
+    }
+
+    return () => {
+      if (scrollElement) {
+        scrollElement.removeEventListener('scroll', updateVisibleCards);
+      }
+    };
+  }, []);
 
   // 제스처 클릭 핸들러
   const handleGestureClick = (gestureId: number) => {
@@ -100,10 +189,12 @@ export function DictListCarousel({
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    updateVisibleCards(); // 드래그 종료 후 보이는 카드 업데이트
   };
 
   const handleMouseLeave = () => {
     setIsDragging(false);
+    updateVisibleCards(); // 드래그 종료 후 보이는 카드 업데이트
   };
 
   // 클릭 이벤트가 드래그 중에 발생하지 않도록 처리
@@ -153,6 +244,7 @@ export function DictListCarousel({
                 gesture={gesture}
                 onClick={() => !isDragging && handleGestureClick(gesture.gestureId)}
                 hoverBorderClass={`hover:${getBorderClass(selectedCountry)}`}
+                isVisible={visibleIndexes.includes(index)} // 현재 보이는지 여부 전달
               />
             </div>
           ))}
