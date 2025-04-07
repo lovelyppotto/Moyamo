@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '@/pages/home/dropdowns/BaseDropdown';
 import SearchCameraModal from '../cameraModal/SearchCameraModal';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -27,25 +25,10 @@ function GestureSearchBar({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountryName, setSelectedCountryName] = useState('전체');
   const [countryId, setCountryId] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [isCameraSearch, setIsCameraSearch] = useState(propIsCameraSearch);
   const [hasShownToast, setHasShownToast] = useState(false); // 중복 알림 방지
 
   const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
-
-  // 화면 크기에 따라 모바일 여부 감지
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => {
-      window.removeEventListener('resize', checkScreenSize);
-    };
-  }, []);
 
   // URL에서 검색어와 국가 정보 가져오기
   useEffect(() => {
@@ -204,16 +187,6 @@ function GestureSearchBar({
 
   return (
     <div className="flex items-center flex-1">
-      {/* 모바일이 아닐 때만 검색 아이콘 표시 */}
-      {!isMobile && (
-        <FontAwesomeIcon
-          icon={faMagnifyingGlass}
-          size="lg"
-          className="mr-3 cursor-pointer text-gray-600 dark:text-white"
-          onClick={executeSearch}
-        />
-      )}
-
       <BaseDropdown
         selected={selectedCountryName}
         options={countries}
@@ -223,7 +196,10 @@ function GestureSearchBar({
 
       {/* 검색창 */}
       <div className="flex items-center w-full ml-2">
-        <div className="relative flex-1 min-w-[70%]" ref={searchInputRef}>
+        <div
+          className="relative flex-1 max-w-[880px] min-w-[120px]" // 너비를 제한
+          ref={searchInputRef}
+        >
           <input
             className="w-full h-10 px-2 
             text-xs sm:text-sm mb:text-base lg:text-md
@@ -238,7 +214,9 @@ function GestureSearchBar({
           />
           {/* 카메라 검색일 때 표시 */}
           {isCameraSearch && (
-            <div className="absolute right-2 top-2 text-xs text-blue-500 dark:text-blue-300">
+            <div className="absolute right-4 top-3 font-[NanumSquareRound] text-xs 
+            text-kr-700 dark:text-d-txt-50/70"
+            >
               카메라 검색
             </div>
           )}
