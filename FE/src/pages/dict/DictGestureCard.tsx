@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { GestureItem } from '@/types/dictionaryType';
 import { cn } from '@/lib/utils';
 import { GlbViewer } from '@/components/GlbViewer';
@@ -7,11 +8,49 @@ interface DictGestureCardProps {
   gesture: GestureItem;
   onClick: () => void;
   hoverBorderClass: string;
+  isVisible?: boolean; // 가시성 여부를 위한 새 prop
 }
 
-export function DictGestureCard({ gesture, onClick, hoverBorderClass }: DictGestureCardProps) {
+export function DictGestureCard({
+  gesture,
+  onClick,
+  hoverBorderClass,
+  isVisible = false, // 기본값은 false로 설정
+}: DictGestureCardProps) {
+  const [shouldLoad, setShouldLoad] = useState(isVisible);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // isVisible prop이 true로 변경되면 로딩 시작
+    if (isVisible && !shouldLoad) {
+      setShouldLoad(true);
+    }
+  }, [isVisible, shouldLoad]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !shouldLoad) {
+          setShouldLoad(true);
+        }
+      },
+      { threshold: 0.1 } // 10%만 보여도 로딩 시작
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [shouldLoad]);
+
   return (
     <div
+      ref={cardRef}
       className={cn(
         'h-full w-full rounded-lg border border-gray-300 overflow-hidden bg-white shadow-sm mx-auto',
         'cursor-pointer transition-all duration-200 group',
@@ -23,12 +62,13 @@ export function DictGestureCard({ gesture, onClick, hoverBorderClass }: DictGest
         {/* 이미지 영역 */}
         <div className="flex-grow flex items-center justify-center p-2 sm:p-3">
           {gesture.imageUrl ? (
-            // <img
-            //   src={gesture.imageUrl}
-            //   alt={`${gesture.gestureTitle} 이미지`}
-            //   className="object-contain max-h-full max-w-full"
-            // />
-            <GlbViewer url={gesture.imageUrl} />
+            shouldLoad ? (
+              <GlbViewer url={gesture.imageUrl} />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-gray-400">
+                로딩 중...
+              </div>
+            )
           ) : (
             <div className="h-full w-full flex items-center justify-center text-gray-400">
               이미지 없음
