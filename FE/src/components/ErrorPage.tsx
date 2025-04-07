@@ -26,13 +26,13 @@ function ErrorPage() {
       </div>
       <div className="flex flex-row gap-8 sm:gap-10 lg:gap-14">
         <button
-          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
+          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
           onClick={handleHomeClick}
         >
           Home
         </button>
         <button
-          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
+          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
           onClick={handleBackClick}
         >
           BACK
