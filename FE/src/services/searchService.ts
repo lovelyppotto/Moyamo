@@ -1,4 +1,4 @@
-import { SearchResponse, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
+import { SearchResponse, SearchResponseSingle, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/data/resultMock';
 
@@ -107,24 +107,43 @@ export const searchGestures = async (
         country_id: countryId,
       };
     }
-  
-    // 두 API 모두 같은 형태의 응답을 반환한다면 하나의 처리 로직으로 통일
-    const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
-    
-    // 배열을 변환
-    const result = data.data.map((item) => ({
-      gestureId: item.gesture_id,
-      gestureName: item.gesture_name,
-      gestureImage: item.gesture_image,
-      meanings: item.meanings.map((m: ApiMeaning) => ({
-        countryId: m.country_id,
-        imageUrl: m.image_url,
-        countryName: m.country_name,
-        meaning: m.meaning,
-      })),
-    }));
-    
-    return result;
+
+    if (isCameraSearch) {
+      const { data } = await apiClient.get<SearchResponseSingle>(endpoint, { params });
+      
+      // 단일 객체를 변환
+      const singleResult: GestureSearchResult = {
+        gestureId: data.data.gesture_id,
+        gestureName: data.data.gesture_name,
+        gestureImage: data.data.gesture_image,
+        meanings: data.data.meanings.map((m: ApiMeaning) => ({
+          countryId: m.country_id,
+          imageUrl: m.image_url,
+          countryName: m.country_name,
+          meaning: m.meaning,
+        })),
+      };
+      
+      return [singleResult]; // 배열로 변환하여 반환
+    } else {
+      // 일반 검색은 배열 타입으로 처리
+      const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
+      
+      // 배열을 변환
+      const result = data.data.map((item) => ({
+        gestureId: item.gesture_id,
+        gestureName: item.gesture_name,
+        gestureImage: item.gesture_image,
+        meanings: item.meanings.map((m: ApiMeaning) => ({
+          countryId: m.country_id,
+          imageUrl: m.image_url,
+          countryName: m.country_name,
+          meaning: m.meaning,
+        })),
+      }));
+      
+      return result;
+    }
   } catch (error) {
     console.error('API 호출 실패:', error);
 
