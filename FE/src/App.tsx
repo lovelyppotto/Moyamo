@@ -14,6 +14,7 @@ import GesturePractice from './pages/dict/GesturePractice';
 import ModeToggle from './components/ModeToggle';
 import OfflineIndicator from './components/OfflineIndicator';
 import './pwa';
+import ErrorPage from './components/ErrorPage';
 
 const router = createBrowserRouter([
   {
@@ -75,6 +76,11 @@ const router = createBrowserRouter([
         // 퀴즈 컨텐츠
         path: 'modeltest',
         element: <ModelTest />,
+      },
+      // 에러페이지
+      {
+        path: 'error',
+        element: <ErrorPage />,
       },
     ],
   },
