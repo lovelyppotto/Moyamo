@@ -3,11 +3,9 @@ import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
 import ErrorPage from '@/components/ErrorPage';
+import { GlbViewer } from '@/components/GlbViewer';
 
 function CompareGuide() {
-  // 이미지 제대로 들어오면 삭제!!!!
-  const defaultImagePath = '/images/gestures/cross-finger.png';
-
   // URL 쿼리 파라미터에서 gesture_id 추출
   const searchParams = new URLSearchParams(location.search);
   const gestureIdParam = searchParams.get('gesture_id');
@@ -85,11 +83,12 @@ function CompareGuide() {
         {/* 메인 이미지 */}
         <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[4%] lg:mb-[3%]">
           <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
-            <img
+            {/* <img
               src={currentGestureData.imageUrl || defaultImagePath}
               alt="compare guide image"
               className="w-[90%] h-[90%] object-contain"
-            />
+            /> */}
+            <GlbViewer url={`${currentGestureData?.imageUrl}`} />
           </div>
         </div>
 
