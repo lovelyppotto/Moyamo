@@ -154,7 +154,7 @@ function Dictionary() {
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 
-  // 모든 훅 선언 후 조건부 렌더링
+  // 로딩 상태 확인
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
@@ -165,7 +165,7 @@ function Dictionary() {
 
   // 에러 상태 확인
   if (isError || !gestureData) {
-    return <ErrorPage />;
+    navigate('/error');
   }
 
   return (
