@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
 import { useGestureDetail } from '@/hooks/apiHooks';
 import { useCountryCode } from '@/hooks/useCountryCode';
+import ErrorPage from '@/components/ErrorPage';
 
 function GestureDetail() {
   // 이미지 제대로 들어오면 삭제!!!!
@@ -33,9 +34,7 @@ function GestureDetail() {
 
   // 에러 상태 확인
   if (isError || !gestureData) {
-    return (
-      <div className="h-screen flex items-center justify-center">데이터를 불러올 수 없습니다.</div>
-    );
+    return <ErrorPage />;
   }
 
   // '사용 상황' 데이터 파싱
