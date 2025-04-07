@@ -18,18 +18,6 @@ function Dictionary() {
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
 
-  useEffect(() => {
-    const countryIdParam = queryParams.get('country_id');
-
-    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
-    if (countryIdParam !== null) {
-      const parsedId = parseInt(countryIdParam);
-      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
-        navigate('/');
-      }
-    }
-  }, []);
-
   // 국가 목록
   const countryOptions: Country[] = [
     { code: 'kr', name: '한국', id: 1 },
@@ -51,19 +39,16 @@ function Dictionary() {
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
 
-  // 로딩 상태 확인 - 로딩 페이지 구현 필요
-  if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
-        로딩 중...
-      </div>
-    );
-  }
-
-  // 에러 상태 확인
-  if (isError || !gestureData) {
-    return <ErrorPage />;
-  }
+  // 유효성 검사
+  useEffect(() => {
+    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
+    if (countryIdParam !== null) {
+      const parsedId = parseInt(countryIdParam);
+      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
+        navigate('/');
+      }
+    }
+  }, [countryIdParam, navigate]); // 의존성 배열에 navigate 추가
 
   // 제스처 데이터 섞기 및 초기 선택 제스처 설정
   useEffect(() => {
@@ -168,6 +153,20 @@ function Dictionary() {
 
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
+
+  // 모든 훅 선언 후 조건부 렌더링
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
+        로딩 중...
+      </div>
+    );
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return <ErrorPage />;
+  }
 
   return (
     <div className="flex flex-col h-screen w-full dark:bg-gray-900 dark:text-d-txt-50">
