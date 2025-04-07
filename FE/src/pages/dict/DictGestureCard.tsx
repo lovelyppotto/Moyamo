@@ -1,5 +1,6 @@
 import { GestureItem } from '@/types/dictionaryType';
 import { cn } from '@/lib/utils';
+import { GlbViewer } from '@/components/GlbViewer';
 
 // 제스처 카드 컴포넌트 프롭 타입
 interface DictGestureCardProps {
@@ -22,11 +23,12 @@ export function DictGestureCard({ gesture, onClick, hoverBorderClass }: DictGest
         {/* 이미지 영역 */}
         <div className="flex-grow flex items-center justify-center p-2 sm:p-3">
           {gesture.imageUrl ? (
-            <img
-              src={gesture.imageUrl}
-              alt={`${gesture.gestureTitle} 이미지`}
-              className="object-contain max-h-full max-w-full"
-            />
+            // <img
+            //   src={gesture.imageUrl}
+            //   alt={`${gesture.gestureTitle} 이미지`}
+            //   className="object-contain max-h-full max-w-full"
+            // />
+            <GlbViewer url={gesture.imageUrl} />
           ) : (
             <div className="h-full w-full flex items-center justify-center text-gray-400">
               이미지 없음

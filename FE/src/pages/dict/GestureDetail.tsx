@@ -5,11 +5,9 @@ import { useCountryStyles } from '@/hooks/useCountryStyles';
 import { useGestureDetail } from '@/hooks/apiHooks';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import ErrorPage from '@/components/ErrorPage';
+import { GlbViewer } from '@/components/GlbViewer';
 
 function GestureDetail() {
-  // 이미지 제대로 들어오면 삭제!!!!
-  const defaultImagePath = '/images/gestures/cross-finger.png';
-
   const location = useLocation();
   const navigate = useNavigate();
   const { getColorClass, getHoverClass } = useCountryStyles(); //useCountryStyles 훅 사용
@@ -161,11 +159,12 @@ function GestureDetail() {
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               {/* 이미지 크기 조정: md일 때 너비를 75%로 증가, 높이도 조정 */}
-              <img
+              {/* <img
                 src={gestureData.gestureImage || defaultImagePath}
                 alt={`${gestureData.gestureTitle} image`}
                 className="p-2 w-[25%] md:w-[80%] h-auto max-h-[90%] object-contain"
-              />
+              /> */}
+              <GlbViewer url={`${gestureData?.gestureImage}`} />
             </div>
           </div>
 
