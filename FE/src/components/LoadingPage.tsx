@@ -3,7 +3,7 @@ import Lottie from 'lottie-react';
 import loadingAnimation from '../assets/lottie/loading.json';
 
 interface LoadingPageProps {
-  minDuration?: number; // 최소 표시 시간(밀리초)
+  minDuration?: number; // 최소 표시 시간
   size?: number; // 애니메이션 크기
   onComplete?: () => void; // 완료 콜백
 }
