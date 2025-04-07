@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { GestureSearchResult } from '@/types/searchGestureType';
-import { GlbViewer } from '@/components/GlbViewer'; // GlbViewer 컴포넌트 가져오기
+import { GlbViewer } from '@/components/GlbViewer';
 
 interface SearchResultItemProps {
   result: GestureSearchResult;
   onFlagClick?: (countryId: number, gestureName: string) => void;
+  index?: number; // 인덱스 (선택적)
+  searchType?: 'text' | 'camera'; // 검색 유형
 }
 
-function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
+function SearchResultItem({ 
+  result, 
+  onFlagClick, 
+  searchType = 'text' // 기본값은 일반 텍스트 검색
+}: SearchResultItemProps) {
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
+  // 5개 국가만 상세 페이지 사용 가능
   const DETAIL_AVAILABLE_COUNTRYS = [1, 2, 3, 4, 5];
 
   // 제스처 상세 페이지로 이동
@@ -36,9 +43,52 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
     }
   };
 
-  // GLB 모델인지 확인 (URL이 .glb로 끝나는지 확인)
+  // GLB 모델인지 확인
   const isGlbModel = result.gestureImage && result.gestureImage.toLowerCase().endsWith('.glb');
 
+  // 카메라 검색 모드일 때의 레이아웃
+  if (searchType === 'camera') {
+    return (
+      <div className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+        <div className="flex justify-between items-center">
+          {/* 제목 대신 첫 번째 의미를 표시 */}
+          <h3 className="text-lg md:text-xl font-bold font-[NanumSquareRoundEB] text-gray-900 dark:text-d-txt-50">
+            {result.meanings[0]?.meaning || result.gestureName}
+          </h3>
+          
+          {/* 국가 플래그 */}
+          <div className="flex items-center space-x-2">
+            {result.meanings.map((meaning) => {
+              const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
+              
+              return (
+                <div key={meaning.countryId} className="relative group">
+                  <img
+                    src={meaning.imageUrl}
+                    alt={meaning.countryName}
+                    className={`w-6 h-4 md:w-12 md:h-6 object-cover 
+                      ${isAvailable 
+                        ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer' 
+                        : 'opacity-50 grayscale cursor-not-allowed'
+                      }
+                      ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                    onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
+                    title={
+                      isAvailable
+                        ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                        : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 일반 검색 모드일 때의 기존 레이아웃
   return (
     <div className="my-2">
       <div className="flex items-center">
@@ -66,7 +116,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
           )}
         </div>
 
-        {/* 제스처 설명 (이전과 동일) */}
+        {/* 제스처 설명 */}
         <div className="flex-1 ml-4 relative">
           <div
             className="relative rounded-lg shadow-md p-6
@@ -102,32 +152,25 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
                   const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
 
                   return (
-                    <React.Fragment key={meaning.countryId}>
-                      <div className="relative group">
-                        <img
-                          src={meaning.imageUrl}
-                          alt={meaning.countryName}
-                          className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
-                            ${
-                              isAvailable
-                                ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer'
-                                : 'opacity-50 grayscale cursor-not-allowed'
-                            }
-                            ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
-                          onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
-                          title={
+                    <div key={meaning.countryId} className="relative group">
+                      <img
+                        src={meaning.imageUrl}
+                        alt={meaning.countryName}
+                        className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
+                          ${
                             isAvailable
-                              ? `${meaning.countryName}의 의미: ${meaning.meaning}`
-                              : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
+                              ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer'
+                              : 'opacity-50 grayscale cursor-not-allowed'
                           }
-                        />
-                        {!isAvailable && (
-                          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 whitespace-nowrap hidden group-hover:block">
-                            정보 없음
-                          </span>
-                        )}
-                      </div>
-                    </React.Fragment>
+                          ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
+                        onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
+                        title={
+                          isAvailable
+                            ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                            : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
+                        }
+                      />
+                    </div>
                   );
                 })}
               </div>

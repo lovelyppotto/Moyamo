@@ -1,13 +1,22 @@
-import { GestureSearchResult } from '@/types/searchGestureType.ts';
-import SearchResultItem from './SearchResultItem.tsx';
 
+import { GestureSearchResult } from '@/types/searchGestureType';
+import SearchResultItem from './SearchResultItem';
 
 interface SearchResultsListProps {
   results: GestureSearchResult[];
   onFlagClick?: (countryId: number, gestureName: string) => void;
+  searchType?: 'text' | 'camera'; // 검색 유형
 }
 
-function SearchResultsList({ results, onFlagClick }: SearchResultsListProps) {
+function SearchResultsList({ 
+  results, 
+  onFlagClick,
+  searchType = 'text' // 기본값은 텍스트 검색
+}: SearchResultsListProps) {
+  // URL을 확인하여 카메라 검색 페이지인지 자동으로 감지
+  const isCameraSearch = searchType === 'camera' || window.location.pathname.includes('/search/camera');
+  const finalSearchType = isCameraSearch ? 'camera' : 'text';
+  
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       {/* 결과 리스트 컨테이너 (스크롤) */}
@@ -21,14 +30,20 @@ function SearchResultsList({ results, onFlagClick }: SearchResultsListProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 pb-4 px-4">
-            {results.map((result) => (
-              <SearchResultItem key={result.gestureId} result={result} onFlagClick={onFlagClick} />
+            {results.map((result, index) => (
+              <SearchResultItem 
+                key={`${result.gestureId}-${index}`}
+                result={result} 
+                onFlagClick={onFlagClick} 
+                index={index}
+                searchType={finalSearchType}
+              />
             ))}
           </div>
         )}
       </div>
     </div>
   );
-};
+}
 
 export default SearchResultsList;
