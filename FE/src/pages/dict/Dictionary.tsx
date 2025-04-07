@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
+import ErrorPage from '@/components/ErrorPage';
 
 function Dictionary() {
   const navigate = useNavigate();
@@ -47,7 +48,21 @@ function Dictionary() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
-  const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
+  const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
+
+  // 로딩 상태 확인 - 로딩 페이지 구현 필요
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
+        로딩 중...
+      </div>
+    );
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return <ErrorPage />;
+  }
 
   // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
   const currentGestures = React.useMemo(() => {
@@ -145,7 +160,7 @@ function Dictionary() {
     // gesture_id 유효성 검사
     const gestureId = currentGesture.gestureId;
     if (isNaN(Number(gestureId)) || Number(gestureId) < 1) {
-      console.error('유효하지 않은 제스처 ID');
+      navigate('/');
       return;
     }
 
