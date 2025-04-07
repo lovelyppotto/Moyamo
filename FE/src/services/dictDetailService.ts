@@ -22,6 +22,7 @@ export const getGestureDetail = async (
     countryName: data.data.country_name,
     imageUrl: data.data.image_url,
     gestureLabel: data.data.gesture_label,
+    gestureType: data.data.gesture_type,
     meaningId: data.data.meaning_id,
     gestureId: data.data.gesture_id,
     gestureImage: data.data.gesture_image,
