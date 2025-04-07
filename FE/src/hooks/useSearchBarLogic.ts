@@ -88,11 +88,12 @@ export const useSearchBarLogic = () => {
     updateUrlOnInputChange(newValue);
 
     // 자동 검색 실행 (실시간 검색) - 명시적인 refetch 추가
-    if (newValue.trim() !== '') {
-      // refetch 직접 호출
-      refetch();
-    }
-  };
+  if (newValue.trim() !== '') {
+    // refetch 직접 호출
+    refetch();
+  }
+};
+
 
   // 키 입력 핸들러
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
