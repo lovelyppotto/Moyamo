@@ -20,7 +20,7 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
   const [clicked, setClicked] = useState<boolean>(false);
   const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
   const baseButtonClass =
-    'flex items-center p-[2vh] w-full h-[22%] mb-[2vh] rounded-xl drop-shadow-quiz-box  sm:text-sm md:text-3xl lg:text-4xl font-[NanumSquareRoundB] cursor-pointer';
+    'flex items-center justify-center w-full h-full rounded-xl drop-shadow-quiz-box sm:text-sm md:text-xl lg:text-2xl font-[NanumSquareRoundB] cursor-pointer hover:brightness-95 transition-all';
 
   if (!shuffledAnswers.current) {
     shuffledAnswers.current = [...options];
@@ -59,67 +59,77 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
   };
 
   return (
-    <div className="h-screen flex flex-col px-4 pt-[3vh]">
+    <div className="w-full h-[50vh] p-4">
       {shuffledAnswers.current && (
-        <>
-          <div className="flex justify-between h-[44%]">
-            <button
-              type="button"
-              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[0].id)}`}
-              onClick={() => handleClick(shuffledAnswers.current![0].id)}
-              disabled={clicked}
-            >
-              <p className="text-2xl">①</p>
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full h-full">
+          {/* 첫 번째 버튼 */}
+          <button
+            type="button"
+            className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[0].id)}`}
+            onClick={() => handleClick(shuffledAnswers.current![0].id)}
+            disabled={clicked}
+          >
+            <div className="flex flex-col items-center justify-center w-full h-full p-2">
+              <p className="text-2xl mb-2">①</p>
               {shuffledAnswers.current[0].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[0].gestureImage} />
                 </div>
               )}
-            </button>
+            </div>
+          </button>
 
-            <button
-              type="button"
-              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[1].id)}`}
-              onClick={() => handleClick(shuffledAnswers.current![1].id)}
-              disabled={clicked}
-            >
-              <p className="text-2xl">②</p>
+          {/* 두 번째 버튼 */}
+          <button
+            type="button"
+            className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[1].id)}`}
+            onClick={() => handleClick(shuffledAnswers.current![1].id)}
+            disabled={clicked}
+          >
+            <div className="flex flex-col items-center justify-center w-full h-full p-2">
+              <p className="text-2xl mb-2">②</p>
               {shuffledAnswers.current[1].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[1].gestureImage} />
                 </div>
               )}
-            </button>
-          </div>
-          <div className="flex justify-between  h-[44%]">
-            <button
-              type="button"
-              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[2].id)}`}
-              onClick={() => handleClick(shuffledAnswers.current![2].id)}
-              disabled={clicked}
-            >
-              <p className="text-2xl">③</p>
+            </div>
+          </button>
+
+          {/* 세 번째 버튼 */}
+          <button
+            type="button"
+            className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[2].id)}`}
+            onClick={() => handleClick(shuffledAnswers.current![2].id)}
+            disabled={clicked}
+          >
+            <div className="flex flex-col items-center justify-center w-full h-full p-2">
+              <p className="text-2xl mb-2">③</p>
               {shuffledAnswers.current[2].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[2].gestureImage} />
                 </div>
               )}
-            </button>
-            <button
-              type="button"
-              className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[3].id)}`}
-              onClick={() => handleClick(shuffledAnswers.current![3].id)}
-              disabled={clicked}
-            >
-              <p className="text-2xl">④</p>
+            </div>
+          </button>
+
+          {/* 네 번째 버튼 */}
+          <button
+            type="button"
+            className={`${baseButtonClass} ${getButtonColor(shuffledAnswers.current[3].id)}`}
+            onClick={() => handleClick(shuffledAnswers.current![3].id)}
+            disabled={clicked}
+          >
+            <div className="flex flex-col items-center justify-center w-full h-full p-2">
+              <p className="text-2xl mb-2">④</p>
               {shuffledAnswers.current[3].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[3].gestureImage} />
                 </div>
               )}
-            </button>
-          </div>
-        </>
+            </div>
+          </button>
+        </div>
       )}
     </div>
   );

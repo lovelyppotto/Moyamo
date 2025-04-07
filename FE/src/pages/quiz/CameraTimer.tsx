@@ -26,8 +26,7 @@ function CameraTimer({ onTimerEnd }: CameraTimerProps) {
   return (
     <div className="h-full  bg-black/50 z-50 ">
       <div className="flex-col justify-center items-center text-white text-center">
-        <p className="text-3xl font-bold mb-4">{countdown}초 후 시작합니다</p>
-        <p className="text-xl">카메라를 준비해 주세요!</p>
+        <p className="text-3xl font-bold mb-4">{countdown}초</p>
       </div>
     </div>
   );
