@@ -5,16 +5,23 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 interface GlbViewerProps {
   url: string;
-  index?: number;
+  animationIndex?: number;
 }
 
-export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
+export function GlbViewer({ url, animationIndex = 0 }: GlbViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+  const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  const modelRef = useRef<THREE.Object3D | null>(null);
 
+  // 씬, 카메라, 렌더러 초기화 및 모델 로드
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
+    // 기존 렌더러 정리
     if (rendererRef.current) {
       rendererRef.current.dispose();
       containerRef.current.removeChild(rendererRef.current.domElement);
@@ -22,6 +29,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
 
     // Scene 설정
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
 
     // Camera 설정
     const camera = new THREE.PerspectiveCamera(
@@ -30,7 +38,8 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       0.1,
       1000
     );
-    camera.position.y = 0; // 1.5에서 0으로 변경하여 정면에서 보도록 조정
+    cameraRef.current = camera;
+    camera.position.y = 0;
     camera.position.z = 2.5;
     scene.add(camera);
 
@@ -43,26 +52,24 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping; // 톤 매핑 추가
-    renderer.toneMappingExposure = 1.5; // 노출 증가 (1.0에서 1.5로 변경)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.5;
     containerRef.current.appendChild(renderer.domElement);
 
-    // Light 설정 - 더 밝고 따뜻한 조명으로 변경
-    const ambientLight = new THREE.AmbientLight('#fff9e6', 0.8); // 따뜻한 색상, 강도 증가
+    // Light 설정
+    const ambientLight = new THREE.AmbientLight('#fff9e6', 0.8);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight('#ffe0b3', 1.2); // 따뜻한 톤의 주 조명, 강도 증가
+    const directionalLight = new THREE.DirectionalLight('#ffe0b3', 1.2);
     directionalLight.position.x = 1;
     directionalLight.position.z = 1;
     scene.add(directionalLight);
 
-    // 추가 조명으로 부드러운 채우기 조명 추가
     const fillLight = new THREE.DirectionalLight('#ffefcf', 0.8);
     fillLight.position.x = -1;
     fillLight.position.z = 1;
     scene.add(fillLight);
 
-    // 뒷면 조명 추가
     const backLight = new THREE.DirectionalLight('#ffeedd', 0.9);
     backLight.position.z = -2;
     backLight.position.y = 1;
@@ -70,81 +77,126 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
 
     // Controls 설정 - 좌우로만 회전 가능하도록 제한
     const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = controls;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-
-    // 상하 회전 제한 (좌우만 회전 가능하도록)
-    controls.minPolarAngle = Math.PI / 2; // 90도
-    controls.maxPolarAngle = Math.PI / 2; // 90도
-
-    // 크기 조절 관련 모든 기능 비활성화
-    controls.enableZoom = false;     // 마우스 휠 줌 비활성화
-    controls.enablePan = false;      // 패닝 비활성화
+    controls.minPolarAngle = Math.PI / 2;
+    controls.maxPolarAngle = Math.PI / 2;
+    controls.enableZoom = false;
+    controls.enablePan = false;
     controls.mouseButtons = {
-      LEFT: THREE.MOUSE.ROTATE,      // 좌클릭은 회전만 가능
-      MIDDLE: null,                  // 휠클릭 비활성화
-      RIGHT: null                    // 우클릭 비활성화
+      LEFT: THREE.MOUSE.ROTATE,
+      MIDDLE: null,
+      RIGHT: null,
     };
 
-    // Animation Mixer
-    let mixer: THREE.AnimationMixer | null = null;
-    // 두 번째 믹서 추가
-    let mixer2: THREE.AnimationMixer | null = null;
+    // 애니메이션 루프
+    const clock = new THREE.Clock();
+
+    function draw() {
+      const delta = clock.getDelta();
+
+      // 애니메이션 업데이트 - 단일 믹서만 사용
+      if (mixerRef.current) {
+        mixerRef.current.update(delta);
+      }
+
+      if (controlsRef.current) {
+        controlsRef.current.update();
+      }
+
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // 리사이즈 핸들러
+    function handleResize() {
+      if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+
+      cameraRef.current.aspect =
+        containerRef.current.clientWidth / containerRef.current.clientHeight;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(
+        containerRef.current.clientWidth,
+        containerRef.current.clientHeight
+      );
+
+      if (sceneRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    draw();
+
+    // 클린업
+    return () => {
+      window.removeEventListener('resize', handleResize);
+
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+        if (containerRef.current) {
+          containerRef.current.removeChild(rendererRef.current.domElement);
+        }
+      }
+
+      if (mixerRef.current) {
+        mixerRef.current.stopAllAction();
+        mixerRef.current = null;
+      }
+
+      // 모델 제거
+      if (modelRef.current && sceneRef.current) {
+        sceneRef.current.remove(modelRef.current);
+        modelRef.current = null;
+      }
+    };
+  }, []);
+
+  // GLB 모델 로드 - URL이 변경될 때마다 다시 로드
+  useEffect(() => {
+    if (!sceneRef.current) return;
+
+    // 기존 모델 및 애니메이션 정리
+    if (modelRef.current && sceneRef.current) {
+      sceneRef.current.remove(modelRef.current);
+      modelRef.current = null;
+    }
+
+    if (mixerRef.current) {
+      mixerRef.current.stopAllAction();
+      mixerRef.current = null;
+    }
 
     // GLB/GLTF 로더
     const loader = new GLTFLoader();
+
     loader.load(
       url,
       (gltf) => {
         console.log('Model loaded successfully:', gltf);
-        const model = gltf.scene;
-
-        // 일반 설정 전에 애니메이션 복제 문제 디버깅
-        console.log('Animation cross-check:');
+        console.log('Animations available:', gltf.animations.length);
         gltf.animations.forEach((anim, idx) => {
-          if (idx < 3) {
-            // 처음 3개만 간단히 확인
-            console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
-            console.log(`  UUID: ${anim.uuid}`);
-            console.log(`  Track count: ${anim.tracks.length}`);
-            if (anim.tracks.length > 0) {
-              console.log(`  First track: ${anim.tracks[0].name}`);
-              console.log(`  First track values length: ${anim.tracks[0].values.length}`);
-              console.log(`  First track times length: ${anim.tracks[0].times.length}`);
-            }
-          }
+          console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
         });
 
-        // 모델 재질 설정 - 원래 재질이 더 잘 드러나도록 수정
+        const model = gltf.scene;
+        modelRef.current = model;
+
+        // 모델 재질 설정
         model.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            if (child.material) {
-              // 금속성과 거칠기를 원본 느낌이 더 살도록 조정
-              child.material.roughness = 1.0; // 거칠기 증가 (덜 반짝이게)
-              child.material.metalness = 0.1; // 금속성 감소
-              child.material.envMapIntensity = 0.6; // 환경 맵 강도 감소
-            } else {
-              console.log('One or both armatures missing - falling back to standard animation');
-
-              // 일반적인 방식으로 애니메이션 적용
-              if (armature) {
-                mixer = new THREE.AnimationMixer(model);
-                const animation = gltf.animations[0];
-                const action = mixer.clipAction(animation);
-                action.timeScale = 0.5;
-                action.play();
-                console.log(`Animation "${animation.name}" applied to model for single armature`);
-              }
-            }
-          }
-
-          // 디버깅: 모든 객체와 본 계층 구조 출력
-          if (child.name.includes('Armature') || child.type === 'Bone') {
-            console.log(`Found object: "${child.name}" (Type: ${child.type})`);
+          if (child instanceof THREE.Mesh && child.material) {
+            child.material.roughness = 1.0;
+            child.material.metalness = 0.1;
+            child.material.envMapIntensity = 0.6;
           }
         });
 
-        scene.add(model);
+        // 씬에 모델 추가
+        sceneRef.current?.add(model);
 
         // 모델 크기 자동 조정
         const box = new THREE.Box3().setFromObject(model);
@@ -157,57 +209,28 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center.multiplyScalar(scale));
 
-        // Armature 찾기
-        let armature: THREE.Object3D | null = null;
-        let armature001: THREE.Object3D | null = null;
-
-        model.traverse((child) => {
-          if (child.name === 'Armature') {
-            armature = child;
-          } else if (child.name === 'Armature001') {
-            armature001 = child;
-          }
-        });
-
-        console.log(
-          'Armatures found:',
-          armature ? 'Armature OK' : 'No Armature',
-          armature001 ? 'Armature001 OK' : 'No Armature001'
-        );
-
-        // 애니메이션 처리
+        // 애니메이션 처리 - 단일 믹서만 사용
         if (gltf.animations && gltf.animations.length > 0) {
+          // 선택된 애니메이션 인덱스가 유효한지 확인
+          let selectedAnimIndex = 0;
+          if (animationIndex >= 0 && animationIndex < gltf.animations.length) {
+            selectedAnimIndex = animationIndex;
+          }
+
           console.log(
-            'All animations:',
-            gltf.animations.map((a) => a.name)
+            `Using animation index ${selectedAnimIndex}: ${gltf.animations[selectedAnimIndex]?.name || 'unnamed'}`
           );
 
-          // 첫 번째 애니메이션 적용 (index = 0)
-          if (gltf.animations[0]) {
-            mixer = new THREE.AnimationMixer(model);
-            const action = mixer.clipAction(gltf.animations[0]);
-            action.timeScale = 0.5;
-            action.play();
-            console.log(`First animation applied: ${gltf.animations[0].name}`);
-          }
+          // 단일 믹서 사용
+          mixerRef.current = new THREE.AnimationMixer(model);
 
-          // 두 번째 애니메이션이 있다면 적용 (index = 1)
-          if (gltf.animations[1]) {
-            mixer2 = new THREE.AnimationMixer(model);
-            const action = mixer2.clipAction(gltf.animations[1]);
-            action.timeScale = 0.5;
-            action.play();
-            console.log(`Second animation applied: ${gltf.animations[1].name}`);
-          }
+          // 선택된 애니메이션만 재생
+          const action = mixerRef.current.clipAction(gltf.animations[selectedAnimIndex]);
+          action.timeScale = 0.5;
+          action.play();
 
-          // 선택된 인덱스의 애니메이션이 아직 적용되지 않았다면 적용
-          if (index > 1 && gltf.animations[index] && !mixer && !mixer2) {
-            mixer = new THREE.AnimationMixer(model);
-            const action = mixer.clipAction(gltf.animations[index]);
-            action.timeScale = 0.5;
-            action.play();
-            console.log(`Selected animation applied: ${gltf.animations[index].name}`);
-          }
+          // 두 개의 애니메이션 모델인 경우에는 모델의 특정 부분만 애니메이션 적용 가능 (선택 사항)
+          // 여기서는 사용하지 않음
         }
       },
       (progress) => {
@@ -219,67 +242,17 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       }
     );
 
-    // 애니메이션 루프
-    const clock = new THREE.Clock();
-
-    function draw() {
-      const delta = clock.getDelta();
-
-      // 애니메이션 업데이트
-      if (mixer) {
-        mixer.update(delta);
-        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
-        const frameCount = Math.floor(clock.getElapsedTime() * 60);
-        if (frameCount < 10) {
-          console.log(`Animation frame ${frameCount}: Mixer 1 update with delta ${delta}`);
-        }
-      }
-
-      // 두 번째 애니메이션 업데이트
-      if (mixer2) {
-        mixer2.update(delta);
-        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
-        const frameCount = Math.floor(clock.getElapsedTime() * 60);
-        if (frameCount < 10) {
-          console.log(`Animation frame ${frameCount}: Mixer 2 update with delta ${delta}`);
-        }
-      }
-
-      controls.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(draw);
-    }
-
-    // 리사이즈 핸들러
-    function handleResize() {
-      if (!containerRef.current) return;
-
-      camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-      renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', handleResize);
-    draw();
-
-    // 클린업
     return () => {
-      window.removeEventListener('resize', handleResize);
-      if (mixer) {
-        mixer.stopAllAction();
+      // URL이 변경될 때 클린업
+      if (modelRef.current && sceneRef.current) {
+        sceneRef.current.remove(modelRef.current);
       }
-      if (mixer2) {
-        mixer2.stopAllAction();
-      }
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-        if (containerRef.current) {
-          containerRef.current.removeChild(rendererRef.current.domElement);
-        }
+
+      if (mixerRef.current) {
+        mixerRef.current.stopAllAction();
       }
     };
-  }, [url, index]);
+  }, [url, animationIndex]);
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 }
