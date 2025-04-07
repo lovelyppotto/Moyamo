@@ -65,6 +65,8 @@ export default defineConfig({
 
         // 오프라인 페이지 설정
         navigateFallback: '/offline.html',
+        
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
 
         // 런타임 캐싱 설정
         runtimeCaching: [
