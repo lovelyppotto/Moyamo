@@ -24,14 +24,13 @@ function CameraTimer({ onTimerEnd }: CameraTimerProps) {
   }, [onTimerEnd]);
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="text-white text-center">
+    <div className="h-full  bg-black/50 z-50 ">
+      <div className="flex-col justify-center items-center text-white text-center">
         <p className="text-3xl font-bold mb-4">{countdown}초 후 시작합니다</p>
-        <p className="text-xl">카메라를 향해 제스처를 취해주세요!</p>
+        <p className="text-xl">카메라를 준비해 주세요!</p>
       </div>
     </div>
   );
 }
 
 export default CameraTimer;
-

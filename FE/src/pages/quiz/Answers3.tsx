@@ -28,9 +28,15 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
 
   return (
     <div className="flex justify-center relative h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
-      <div className="h-1/3 sm:h-1/2  w-auto aspect-square ">
-        <WebCamera onGestureDetected={(gestureId: number) => handleAnswer(gestureId)} />
-        {showTimer && <CameraTimer onTimerEnd={handleTimerEnd} />}
+      <div className="h-1/3 sm:h-1/2  w-auto aspect-square relative">
+        {showTimer && (
+          <div className="absolute inset-0 z-10">
+            <CameraTimer onTimerEnd={handleTimerEnd} />
+          </div>
+        )}
+        <div className="absolute inset-0">
+          <WebCamera onGestureDetected={(gestureId: number) => handleAnswer(gestureId)} />
+        </div>
       </div>
     </div>
   );
