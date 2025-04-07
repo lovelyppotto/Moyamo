@@ -5,8 +5,6 @@ import { MeaningItem } from '../../types/dictCompareType';
 import { useCountryCode } from '@/hooks/useCountryCode';
 
 function CompareGuide() {
-  const getCountryCode = useCountryCode();
-
   // 이미지 제대로 들어오면 삭제!!!!
   const defaultImagePath = '/images/gestures/cross-finger.png';
 
