@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import DarkModeLottie from './DarkModeLottie';
-import GestureSearchInput from '../../components/GestureSearch';
+import GestureSearchInput from '../../components/gestureSearch/GestureSearch';
 import { getLogoImage } from '@/utils/imageUtils';
 
 // 메인 HeaderBar 컴포넌트

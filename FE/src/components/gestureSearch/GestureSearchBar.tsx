@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import BaseDropdown from '@/pages/home/dropdowns/BaseDropdown';
-import SearchCameraModal from './cameraModal/SearchCameraModal';
+import SearchCameraModal from '../cameraModal/SearchCameraModal';
 import { useSearchBarLogic } from '@/hooks/useSearchBarLogic';
 
 interface SearchBarProps {
@@ -55,6 +55,12 @@ export function GestureSearchBar({ searchInputRef, isCameraSearch }: SearchBarPr
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
           />
+          {/* 카메라 검색일 때 표시 */}
+          {isCameraSearch && (
+            <div className="absolute right-2 top-2 text-xs text-blue-500 dark:text-blue-300">
+              카메라 검색
+            </div>
+          )}
         </div>
         <div className="ml-1 flex items-center justify-center">
           <SearchCameraModal />

@@ -1,13 +1,15 @@
+// hooks/useSearchBarLogic.ts
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useSearchStore } from '@/stores/useSearchStore';
+import { useLocation } from 'react-router-dom';
+import { useSearchStore } from '../stores/useSearchStore';
 import { getCountryId } from '@/utils/countryUtils';
-import { useSearchNavigation } from '@/hooks/useSearchNavigation';
-import { useGestureSearch } from '@/hooks/apiHooks';
+import { useSearchNavigation } from './useSearchNavigation';
+import { useGestureSearch } from './apiHooks';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useSearchBarLogic = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { searchTerm, setSearchTerm, searchCountry, setSearchCountry } = useSearchStore();
 
   const [selectedCountryName, setSelectedCountryName] = useState('전체');
@@ -23,18 +25,34 @@ export const useSearchBarLogic = () => {
   const { handleSearch, updateUrlOnInputChange, updateUrlOnCountrySelect } =
     useSearchNavigation(setSelectedCountryName);
 
-  // URL에서 gesture_label 파라미터 확인 및 검색어 설정
+  // URL에서 제스처 검색 모드 확인 및 검색어 설정
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const gestureLabel = url.searchParams.get('gesture_label');
+    const params = new URLSearchParams(location.search);
+    const gestureLabel = params.get('gesture_label');
+    const gestureName = params.get('gesture_name');
+    const isInCameraSearchPath = location.pathname === '/search/camera';
 
-    if (gestureLabel) {
-      setSearchTerm(gestureLabel);
+    // 카메라 검색 모드 확인 (URL 경로 또는 gesture_label 파라미터)
+    if (isInCameraSearchPath || gestureLabel) {
+      // 카메라 검색 모드 설정
       setIsCameraSearch(true);
+
+      // 검색어 설정 (gesture_label 또는 gesture_name)
+      if (gestureLabel) {
+        setSearchTerm(gestureLabel);
+      } else if (gestureName) {
+        setSearchTerm(gestureName);
+      }
     } else {
+      // 일반 검색 모드
       setIsCameraSearch(false);
+
+      // 검색어 설정 (gesture_name)
+      if (gestureName) {
+        setSearchTerm(gestureName);
+      }
     }
-  }, [location.search, setSearchTerm]);
+  }, [location.pathname, location.search, setSearchTerm]);
 
   // 화면 크기에 따라 모바일 여부 감지
   useEffect(() => {
@@ -55,39 +73,35 @@ export const useSearchBarLogic = () => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
 
-    // 사용자가 입력을 시작하면 카메라 검색 모드 확인
-    const url = new URL(window.location.href);
-    const hasCameraParam = url.searchParams.has('gesture_label');
+    // 카메라 검색 모드 확인
+    const params = new URLSearchParams(location.search);
+    const hasCameraParam = params.has('gesture_label');
+    const isInCameraSearchPath = location.pathname === '/search/camera';
 
-    // 카메라 검색 모드에서 첫 입력 시에만 파라미터 제거
-    if (hasCameraParam && location.pathname === '/search') {
-      const params = new URLSearchParams(location.search);
-      params.delete('gesture_label');
-
-      // 이전 검색어 파라미터는 유지 (실시간 검색을 위해)
-      // 새로운 URL로 이동
-      window.history.replaceState({}, '', `/search?${params.toString()}`);
-
-      // 카메라 검색 모드 해제 (상태만 변경)
+    // 카메라 검색 모드에서 사용자 직접 입력 시
+    if (hasCameraParam || isInCameraSearchPath || isCameraSearch) {
+      // 카메라 검색 모드 해제 상태로 설정 (UI 상태만 변경)
       setIsCameraSearch(false);
     }
 
-    // 기존 입력 처리 로직은 그대로 유지 (실시간 검색 위해)
+    // URL 업데이트 및 필요시 쿼리 무효화
     updateUrlOnInputChange(newValue);
+
+    // 자동 검색 실행 (실시간 검색) - 명시적인 refetch 추가
+    if (newValue.trim() !== '') {
+      // refetch 직접 호출
+      refetch();
+    }
   };
 
   // 키 입력 핸들러
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      // 카메라 검색 모드였다면 해제
-      if (isCameraSearch) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('gesture_label');
-        url.searchParams.set('gesture_name', searchTerm);
-        navigate(url.pathname + url.search, { replace: true });
-        setIsCameraSearch(false);
+      // 검색어가 있을 때만 검색 실행
+      if (searchTerm.trim()) {
+        // 검색 실행 (항상 /search 경로로 이동)
+        handleSearch();
       }
-      handleSearch();
     }
   };
 
@@ -97,39 +111,31 @@ export const useSearchBarLogic = () => {
     setSearchCountry(countryId);
     setSelectedCountryName(country);
 
-    // 카메라 검색 모드였다면 해제하고 일반 검색으로 전환
+    // 국가 선택 시 URL 업데이트
+    updateUrlOnCountrySelect(countryId);
+
+    // 카메라 검색 모드였다면 해제 (UI 상태만 변경)
     if (isCameraSearch) {
-      const url = new URL(window.location.href);
-      if (url.searchParams.has('gesture_label')) {
-        const currentTerm = searchTerm;
-        url.searchParams.delete('gesture_label');
-        if (currentTerm) {
-          url.searchParams.set('gesture_name', currentTerm);
-        }
-        // URL 업데이트 (브라우저 히스토리 변경)
-        navigate(url.pathname + url.search, { replace: true });
-        setIsCameraSearch(false);
-      }
+      setIsCameraSearch(false);
     }
 
-    updateUrlOnCountrySelect(countryId);
+    // 검색어가 있을 때 자동으로 검색 실행
+    if (searchTerm.trim() !== '') {
+      refetch();
+    }
   };
 
   // 검색 실행 핸들러
   const executeSearch = () => {
     // 카메라 검색 모드였다면 해제
     if (isCameraSearch) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('gesture_label');
-      if (searchTerm) {
-        url.searchParams.set('gesture_name', searchTerm);
-      }
-      navigate(url.pathname + url.search, { replace: true });
       setIsCameraSearch(false);
     }
 
-    refetch();
-    handleSearch();
+    // 검색어가 있을 때만 검색 실행
+    if (searchTerm.trim()) {
+      handleSearch();
+    }
   };
 
   return {
@@ -141,5 +147,6 @@ export const useSearchBarLogic = () => {
     handleInputKeyDown,
     handleCountrySelect,
     executeSearch,
+    isCameraSearch,
   };
 };
