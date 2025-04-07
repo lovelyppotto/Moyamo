@@ -3,6 +3,7 @@ package com.moyamo.be.search.service;
 import com.moyamo.be.common.ApiResponse;
 import com.moyamo.be.dictionary.entity.CountryGesture;
 import com.moyamo.be.dictionary.entity.Gesture;
+import com.moyamo.be.dictionary.entity.GestureInfo;
 import com.moyamo.be.search.dto.GestureSearchResponseDto;
 import com.moyamo.be.search.repository.GestureSearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,13 @@ public class GestureSearchService {
 
         for (CountryGesture cg : countryGestures) {
             Gesture gesture = cg.getGesture();
+            GestureInfo gestureInfo = cg.getGestureInfo();
             int gestureId = gesture.getGestureId();
 
             // gesture_id가 없으면 새로 추가
             responseMap.putIfAbsent(gestureId, new GestureSearchResponseDto(
                     gesture.getGestureId(),
-                    gesture.getGestureLabel(),
+                    gestureInfo.getGestureTitle(),
                     gesture.getImageUrl(),
                     new ArrayList<>()
             ));
@@ -55,30 +57,35 @@ public class GestureSearchService {
         return new ApiResponse<>(200, new ArrayList<>(responseMap.values()));
     }
 
-    public ApiResponse<GestureSearchResponseDto> findGestureByLabel(String gestureLabel, Integer countryId) {
+    public ApiResponse<List<GestureSearchResponseDto>> findGestureByLabel(String gestureLabel, Integer countryId) {
         List<CountryGesture> countryGestures = gestureSearchRepository.findGesturesByGestureLabelAndCountryId(gestureLabel, countryId);
 
         if (countryGestures.isEmpty()) {
             return null;
         }
 
-        Gesture gesture = countryGestures.get(0).getGesture();
+        Map<Integer, GestureSearchResponseDto> responseMap = new HashMap<>();
 
-        List<GestureSearchResponseDto.Meaning> meanings = countryGestures.stream()
-                .map(cg -> new GestureSearchResponseDto.Meaning(
-                        cg.getCountry().getCountryId(),
-                        cg.getCountry().getImageUrl(),
-                        cg.getCountry().getCountryName(),
-                        cg.getGestureInfo().getGestureMeaning()))
-                .collect(Collectors.toList());
+        for (CountryGesture cg : countryGestures) {
+            Gesture gesture = cg.getGesture();
+            GestureInfo gestureInfo = cg.getGestureInfo();
+            int gestureId = gesture.getGestureId();
 
-        GestureSearchResponseDto gestureSearchResponseDto = new GestureSearchResponseDto(
-                gesture.getGestureId(),
-                gesture.getGestureLabel(),
-                gesture.getImageUrl(),
-                meanings
-        );
+            responseMap.putIfAbsent(gestureId, new GestureSearchResponseDto(
+                    gesture.getGestureId(),
+                    gestureInfo.getGestureTitle(),
+                    gesture.getImageUrl(),
+                    new ArrayList<>()
+            ));
 
-        return new ApiResponse<>(200, gestureSearchResponseDto);
+            responseMap.get(gestureId).getMeanings().add(new GestureSearchResponseDto.Meaning(
+                    cg.getCountry().getCountryId(),
+                    cg.getCountry().getImageUrl(),
+                    cg.getCountry().getCountryName(),
+                    cg.getGestureInfo().getGestureMeaning()
+            ));
+        }
+
+        return new ApiResponse<>(200, new ArrayList<>(responseMap.values()));
     }
 }

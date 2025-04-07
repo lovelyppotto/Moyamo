@@ -29,7 +29,7 @@ public class GestureSearchController {
     }
 
     @GetMapping("/camera")
-    public ApiResponse<GestureSearchResponseDto> getGestureSearchResultByCamera(@RequestParam("gesture_label") String gestureLabel) {
+    public ApiResponse<List<GestureSearchResponseDto>> getGestureSearchResultByCamera(@RequestParam("gesture_label") String gestureLabel) {
 
         return gestureSearchService.findGestureByLabel(gestureLabel, 0);
     }
