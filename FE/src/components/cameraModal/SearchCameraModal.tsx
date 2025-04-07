@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useGestureStore } from '@/stores/useGesturStore';
 import { useGestureEvents } from '@/hooks/useGestureEvents';
 import { useGestureTimer } from '@/hooks/useGestureTimer';
+import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 
 // 컴포넌트
 import CameraDialogHeader from './CameraDialogHeader';
@@ -37,27 +38,8 @@ function SearchCameraModal() {
   // 제스처 이벤트 리스너 설정
   useGestureEvents({ isOpen: open });
   
-  // 타이머 완료 후 처리 함수
-  const handleTimerComplete = useCallback((detectedGesture: string) => {
-    // 여기서는 이미 유효한 제스처만 전달받게 됨
-    console.log(`[🔍 검색 시작] 제스처: ${detectedGesture}`);
-    
-    // 페이지 이동
-    if (location.pathname.includes('/search')) {
-      window.location.href = `/search/camera?gesture_label=${detectedGesture}`;
-    } else {
-      navigate(`/search/camera?gesture_label=${detectedGesture}`);
-    }
-    
-    // 모달 닫기
-    setTimeout(() => setOpen(false), 300);
-  }, [location.pathname, navigate]);
-  
-  // 제스처 타이머 설정
-  const { startPreparationTimer, handleRetry } = useGestureTimer({
-    isOpen: open,
-    onTimerComplete: handleTimerComplete
-  });
+  // 강력한 줌 방지 적용 (기존 코드 대체)
+  useZoomPrevention();
   
   // 컴포넌트 마운트 시 한 번만 실행
   useEffect(() => {
@@ -79,6 +61,28 @@ function SearchCameraModal() {
       console.log('[🔄️ 모달 열림] 상태 초기화 완료');
     }
   }, [open, resetAllState]);
+  
+  // 타이머 완료 후 처리 함수
+  const handleTimerComplete = useCallback((detectedGesture: string) => {
+    // 여기서는 이미 유효한 제스처만 전달받게 됨
+    console.log(`[🔍 검색 시작] 제스처: ${detectedGesture}`);
+    
+    // 페이지 이동
+    if (location.pathname.includes('/search')) {
+      window.location.href = `/search/camera?gesture_label=${detectedGesture}`;
+    } else {
+      navigate(`/search/camera?gesture_label=${detectedGesture}`);
+    }
+    
+    // 모달 닫기
+    setTimeout(() => setOpen(false), 300);
+  }, [location.pathname, navigate]);
+  
+  // 제스처 타이머 설정
+  const { startPreparationTimer, handleRetry } = useGestureTimer({
+    isOpen: open,
+    onTimerComplete: handleTimerComplete
+  });
   
   // 카메라 버튼 클릭 핸들러
   const handleCameraClick = () => {
