@@ -4,7 +4,6 @@ import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import WebCamera from './WebCamera';
 
 interface GesturePracticeCameraProps {
-  // 가이드라인 svg 조절 props
   guidelineClassName?: string;
   guideText?: string;
   gestureLabel?: string;
@@ -15,16 +14,35 @@ const GesturePracticeCamera = ({
   guideText,
   gestureLabel,
 }: GesturePracticeCameraProps) => {
-  // 상태 관리
   const [isCorrect, setIsCorrect] = useState(false);
   const [showGuideline, setShowGuideline] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
   const [wsConnected, setWsConnected] = useState(false);
 
-  // 참조
+  // 컨테이너 크기 조절을 위한 상태
+  const [containerDimension, setContainerDimension] = useState('aspect-square');
+  const containerRef = useRef<HTMLDivElement>(null);
   const correctTimeRef = useRef<NodeJS.Timeout | null>(null);
 
-  // WebCamera에서 받은 제스처 처리
+  // 반응형 컨테이너 조정
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        // lg 브레이크포인트
+        setContainerDimension('h-[70vh] aspect-square');
+      } else {
+        setContainerDimension('h-[38vh] aspect-square');
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const handleGesture = useCallback(
     (gesture: string, confidence: number) => {
       if (cameraActive) {
@@ -32,41 +50,34 @@ const GesturePracticeCamera = ({
           `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
         );
 
-        // 신뢰도가 70% 이상이고 gestureLabel과 일치하면 카메라 종료
         if (confidence >= 70 && gesture === gestureLabel) {
-          // 정답 표시, 가이드라인 숨김 설정, 카메라 비활성화
           setIsCorrect(true);
           setShowGuideline(false);
           setCameraActive(false);
 
-          // 1.5초 후에 정답 표시 숨기고 다시하기 버튼 표시
           if (correctTimeRef.current) {
             clearTimeout(correctTimeRef.current);
           }
           correctTimeRef.current = setTimeout(() => {
             setIsCorrect(false);
-          }, 1500);
+          }, 1000);
         }
       }
     },
     [cameraActive, gestureLabel]
   );
 
-  // 다시하기 버튼 핸들러
   const handleRestart = useCallback(() => {
-    // 상태 초기화
     setIsCorrect(false);
     setShowGuideline(true);
     setCameraActive(true);
 
-    // 타이머 정리
     if (correctTimeRef.current) {
       clearTimeout(correctTimeRef.current);
       correctTimeRef.current = null;
     }
   }, []);
 
-  // 컴포넌트 언마운트 시 리소스 정리
   useEffect(() => {
     return () => {
       if (correctTimeRef.current) {
@@ -75,14 +86,17 @@ const GesturePracticeCamera = ({
     };
   }, []);
 
-  // 웹소켓 연결 상태 처리
   const handleConnectionStatus = useCallback((status: boolean) => {
     setWsConnected(status);
   }, []);
 
   return (
-    <div className="w-full bg-white relative overflow-hidden rounded-lg drop-shadow-basic">
-      <div className="relative w-full h-full aspect-square">
+    <div
+      ref={containerRef}
+      className={`w-full ${containerDimension} bg-white relative overflow-hidden rounded-lg drop-shadow-basic`}
+    >
+      {/* 고정 비율 유지를 위한 래퍼 */}
+      <div className="relative w-full h-full">
         {/* WebCamera 컴포넌트 사용 */}
         <WebCamera
           guidelineClassName={guidelineClassName}
@@ -90,24 +104,28 @@ const GesturePracticeCamera = ({
           onConnectionStatus={handleConnectionStatus}
           isPaused={!cameraActive}
           onGesture={handleGesture}
+          showGuideline={showGuideline}
         />
 
-        {/* 정확도 70% 이상이고 gestureLabel과 일치할 때만 정답 표시 */}
+        {/* 정확도 70% 이상일 때 정답 표시 */}
         {isCorrect && (
-          <div className="absolute flex justify-center items-center top-16 left-4 lg:top-25 lg:right-4 z-10">
-            <img src="/images/correct_mark.svg" alt="correct_mark" className="w-[40%] lg:w-[76%]" />
+          <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none">
+            <img
+              src="/images/correct_mark.svg"
+              alt="correct_mark"
+              className="w-50 lg:w-80 max-w-[70%]"
+            />
           </div>
         )}
 
         {/* 카메라 비활성화 시 오버레이 및 다시하기 버튼 */}
         {!cameraActive && !isCorrect && (
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center z-20">
-            <div className="text-white text-xl font-bold text-center mb-6"></div>
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-colors"
+              className="bg-kr-400 hover:bg-kr-500 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 md:py-3 md:px-8 rounded-full shadow-md transition-colors text-md lg:text-lg"
               onClick={handleRestart}
             >
-              <FontAwesomeIcon icon={faRotateRight} className="mr-0.5 sm:mr-1.5" />
+              <FontAwesomeIcon icon={faRotateRight} className="mr-1 sm:mr-2" />
               <span> 다시 연습하기</span>
             </button>
           </div>
