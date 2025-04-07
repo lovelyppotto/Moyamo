@@ -15,24 +15,37 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
   const [isPaused, setIsPaused] = useState(true); // 카메라 일시 정지 상태
   const [currentGesture, setCurrentGesture] = useState<string | null>(null);
   const [currentConfidence, setCurrentConfidence] = useState<number>(0);
+  const [isAnswered, setIsAnswered] = useState(false); // 정답 처리 여부 상태 추가
 
   // 제스처 감지 처리 함수
   const handleGesture = (gesture: string, confidence: number) => {
+    if (isAnswered) return; // 이미 정답 처리된 경우 무시
+
     setCurrentGesture(gesture);
     setCurrentConfidence(confidence);
     const CorrectAnswer = answer?.correctGestureName;
 
     // 타이머가 끝난 후에만 정답 처리
     if (!showTimer) {
-      console.log(`감지된 제스처: ${gesture}, 신뢰도: ${confidence}`);
-      // gesture랑 answer?.correctGestureName이 일치한다면 정답처리하기. (빠르게 가져오는데 일치는 빠르게 처리 가능?)
-      if (CorrectAnswer === currentGesture) {
+      console.log(`감지된 제스처: ${gesture}, 신뢰도: ${confidence}, 정답: ${CorrectAnswer}`);
+
+      if (CorrectAnswer === gesture) {
+        console.log('정답 처리');
+        setIsAnswered(true); // 정답 처리 상태 업데이트
         onSelect(true);
       }
     }
   };
 
-  //퀴즈를 풀 때
+  // 시간 초과 처리
+  const handleTimeout = () => {
+    if (!isAnswered) {
+      // 아직 정답 처리가 안 된 경우에만
+      console.log('시간 초과');
+      setIsAnswered(true);
+      onSelect(false);
+    }
+  };
 
   const handleTimerEnd = () => {
     setShowTimer(false);
@@ -40,8 +53,9 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
 
     // 타이머가 끝나고 1초 후에 프로그레스 바 시작
     setTimeout(() => {
-      handleTimerEnd();
       onProgressStart();
+      // 30초 후 시간 초과 처리
+      setTimeout(handleTimeout, 30000);
     }, 1000);
   };
 
@@ -55,9 +69,13 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
         )}
         <div className="absolute inset-0">
           <WebCamera
-            isPaused={isPaused}
+            isPaused={isPaused || isAnswered} // 정답 처리되면 카메라 일시 정지
             guideText={
-              currentGesture ? '동작을 인식하고 있습니다.' : '3초 이상 동작을 유지해주세요.'
+              isAnswered
+                ? '정답 처리되었습니다'
+                : currentGesture
+                  ? '동작을 인식하고 있습니다.'
+                  : '3초 이상 동작을 유지해주세요.'
             }
             guidelineClassName="w-4/5 opacity-50"
             onGesture={handleGesture}
