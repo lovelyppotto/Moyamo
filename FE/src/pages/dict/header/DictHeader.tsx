@@ -7,8 +7,8 @@ import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
-import { useQueryClient } from '@tanstack/react-query';
 import DarkModeLottie from '@/components/DarkModeLottie';
+import { useTheme } from '@/components/theme-provider';
 
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
@@ -33,10 +33,9 @@ function DictHeader({
   countryOptions = [],
 }: DictHeaderProps) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryClient = useQueryClient();
   const getCountryCode = useCountryCode();
   const countryCode = getCountryCode(gestureCompareInfo?.countryName);
+  const { theme } = useTheme();
 
   // 국가 선택 핸들러
   const handleCountrySelect = (country: Country) => {
