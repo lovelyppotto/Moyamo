@@ -14,7 +14,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     if (rendererRef.current) {
       rendererRef.current.dispose();
       containerRef.current.removeChild(rendererRef.current.domElement);
@@ -45,6 +45,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping; // 톤 매핑 추가
     renderer.toneMappingExposure = 1.5; // 노출 증가 (1.0에서 1.5로 변경)
+    renderer.setClearColor(0x000000, 0); // 배경색을 투명하게 설정 (두 번째 인자 0은 투명도를 의미)
     containerRef.current.appendChild(renderer.domElement);
 
     // Light 설정 - 더 밝고 따뜻한 조명으로 변경
@@ -78,12 +79,12 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     controls.maxPolarAngle = Math.PI / 2; // 90도
 
     // 크기 조절 관련 모든 기능 비활성화
-    controls.enableZoom = false;     // 마우스 휠 줌 비활성화
-    controls.enablePan = false;      // 패닝 비활성화
+    controls.enableZoom = false; // 마우스 휠 줌 비활성화
+    controls.enablePan = false; // 패닝 비활성화
     controls.mouseButtons = {
-      LEFT: THREE.MOUSE.ROTATE,      // 좌클릭은 회전만 가능
-      MIDDLE: null,                  // 휠클릭 비활성화
-      RIGHT: null                    // 우클릭 비활성화
+      LEFT: THREE.MOUSE.ROTATE, // 좌클릭은 회전만 가능
+      MIDDLE: null, // 휠클릭 비활성화
+      RIGHT: null, // 우클릭 비활성화
     };
 
     // Animation Mixer
@@ -281,5 +282,5 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     };
   }, [url, index]);
 
-  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={containerRef} style={{ width: '100%', height: '100%',  background: 'transparent' }} />;
 }

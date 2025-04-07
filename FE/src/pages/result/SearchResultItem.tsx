@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { GestureSearchResult } from '@/types/searchGestureType';
+import { GlbViewer } from '@/components/GlbViewer'; // GlbViewer 컴포넌트 가져오기
 
 interface SearchResultItemProps {
   result: GestureSearchResult;
@@ -9,7 +10,7 @@ interface SearchResultItemProps {
 
 function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
-  const DETAIL_AVAILABLE_COUNTRYS = [1, 2, 3, 4, 5]
+  const DETAIL_AVAILABLE_COUNTRYS = [1, 2, 3, 4, 5];
 
   // 제스처 상세 페이지로 이동
   const handleFlagClick = (countryId: number, countryName: string) => {
@@ -34,26 +35,38 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
       });
     }
   };
-  // console.log('렌더링된 결과:', result.gestureName, 'gestureId:', result.gestureId);
+
+  // GLB 모델인지 확인 (URL이 .glb로 끝나는지 확인)
+  const isGlbModel = result.gestureImage && result.gestureImage.toLowerCase().endsWith('.glb');
 
   return (
     <div className="my-2">
       <div className="flex items-center">
-        {/* 이미지 컨테이너 */}
-        <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0">
-          {result.gestureImage ? (
+        {/* 이미지 또는 3D 모델 컨테이너 */}
+        <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0 bg-gray-50 dark:bg-gray-700 rounded-md overflow-hidden">
+          {isGlbModel && result.gestureImage ? (
+            // gestureImage가 GLB 파일인 경우 GlbViewer 컴포넌트 표시
+            <div className="w-full h-full overflow-hidden">
+              <GlbViewer url={result.gestureImage} />
+            </div>
+          ) : result.gestureImage ? (
+            // 일반 이미지인 경우 이미지 태그로 표시
             <img
               src={result.gestureImage}
               alt={result.gestureName}
               className="h-full object-cover rounded-md"
             />
           ) : (
+            // 이미지가 없는 경우 기본 placeholder 표시
             <div className="h-full w-full bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
-              <span className="text-gray-500 dark:text-gray-300 text-xs md:text-sm text-center">이미지 준비 중</span>
+              <span className="text-gray-500 dark:text-gray-300 text-xs md:text-sm text-center">
+                이미지 준비 중
+              </span>
             </div>
           )}
         </div>
-        {/* 제스처 설명 */}
+
+        {/* 제스처 설명 (이전과 동일) */}
         <div className="flex-1 ml-4 relative">
           <div
             className="relative rounded-lg shadow-md p-6
@@ -87,7 +100,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
               <div className="flex items-center space-x-2">
                 {result.meanings.map((meaning) => {
                   const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
-                  
+
                   return (
                     <React.Fragment key={meaning.countryId}>
                       <div className="relative group">
@@ -95,15 +108,17 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
                           src={meaning.imageUrl}
                           alt={meaning.countryName}
                           className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
-                            ${isAvailable 
-                              ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer' 
-                              : 'opacity-50 grayscale cursor-not-allowed'
+                            ${
+                              isAvailable
+                                ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer'
+                                : 'opacity-50 grayscale cursor-not-allowed'
                             }
                             ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                           onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
-                          title={isAvailable
-                            ? `${meaning.countryName}의 의미: ${meaning.meaning}`
-                            : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
+                          title={
+                            isAvailable
+                              ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                              : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
                           }
                         />
                         {!isAvailable && (
