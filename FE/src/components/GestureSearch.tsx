@@ -197,7 +197,8 @@ function GestureSearchInput() {
               ))}
             </div>
           ) : (
-            <div className="py-4 text-center text-gray-500 dark:text-d-txt-50/70 font-[NanumSquareRound]">
+            <div className="py-4 text-center text-gray-500 dark:text-d-txt-50/70 
+            font-[NanumSquareRound] text-sm">
               검색 결과가 없습니다.
             </div>
           )}
