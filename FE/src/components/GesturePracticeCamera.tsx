@@ -60,7 +60,7 @@ const GesturePracticeCamera = ({
           }
           correctTimeRef.current = setTimeout(() => {
             setIsCorrect(false);
-          }, 1500);
+          }, 1000);
         }
       }
     },
