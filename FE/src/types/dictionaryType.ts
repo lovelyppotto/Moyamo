@@ -11,6 +11,7 @@ export type GestureListResponse = {
       image_url: string | null;
       gesture_title: string;
       gesture_label: string;
+      gesture_type: string;
       multiple_gestures: number;
     }[];
   };
@@ -23,6 +24,7 @@ export interface GestureItem {
   imageUrl: string | null;
   gestureTitle: string;
   gestureLabel: string;
+  gestureType: string;
   multipleGestures: number;
 }
 

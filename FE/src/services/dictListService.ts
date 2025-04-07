@@ -25,6 +25,7 @@ export const getGesturesByCountry = async (countryId: number): Promise<GesturesB
       imageUrl: gesture.image_url,
       gestureTitle: gesture.gesture_title,
       gestureLabel: gesture.gesture_label,
+      gestureType: gesture.gesture_type,
       multipleGestures: gesture.multiple_gestures,
     })),
   };
