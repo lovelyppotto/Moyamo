@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCountryStyles } from '@/hooks/useCountryStyles';
 import { useGestureDetail } from '@/hooks/apiHooks';
 import { useCountryCode } from '@/hooks/useCountryCode';
-import ErrorPage from '@/components/ErrorPage';
 import { GlbViewer } from '@/components/GlbViewer';
 
 function GestureDetail() {
@@ -32,7 +31,7 @@ function GestureDetail() {
 
   // 에러 상태 확인
   if (isError || !gestureData) {
-    return <ErrorPage />;
+    navigate('/error');
   }
 
   // '사용 상황' 데이터 파싱
@@ -140,9 +139,9 @@ function GestureDetail() {
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
       {/* 헤더 */}
       <DictHeader
-        title={gestureData.countryName}
+        title={gestureData?.countryName}
         gestureCompareInfo={gestureData}
-        showCompareGuide={gestureData.multipleGestures >= 1}
+        showCompareGuide={(gestureData?.multipleGestures ?? 0) >= 1} // undefined나 null일 경우 0을 사용
         className=""
       />
 
@@ -181,7 +180,7 @@ function GestureDetail() {
             <div className="pr-4 font-[NanumSquareRound]">
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">의미</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-                {gestureData.gestureMeaning}
+                {gestureData?.gestureMeaning}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>

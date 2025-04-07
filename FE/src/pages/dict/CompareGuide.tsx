@@ -2,7 +2,6 @@ import DictHeader from './header/DictHeader';
 import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
-import ErrorPage from '@/components/ErrorPage';
 import { GlbViewer } from '@/components/GlbViewer';
 import { useNavigate } from 'react-router-dom';
 
