@@ -6,6 +6,7 @@ import SearchCameraModal from '../cameraModal/SearchCameraModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getCountryId, getCountryName } from '@/utils/countryUtils';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 interface SearchBarProps {
   searchInputRef: React.RefObject<HTMLDivElement | null>;
@@ -28,6 +29,7 @@ function GestureSearchBar({
   const [countryId, setCountryId] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isCameraSearch, setIsCameraSearch] = useState(propIsCameraSearch);
+  const [hasShownToast, setHasShownToast] = useState(false); // 중복 알림 방지
 
   const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
 
@@ -78,8 +80,26 @@ function GestureSearchBar({
   // 입력 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+
+    if (newValue.length > 20) {
+      // 50자 제한 알림 표시
+      if (!hasShownToast) {
+        toast.error('검색어가 너무 깁니다.', {
+          description: '정확한 검색을 위해 20자 이하로 입력해주세요.',
+          duration: 3000,
+          position: 'top-right',
+          icon: '⚠️',
+        });
+        setHasShownToast(true);
+
+        // 일정 시간 후 알림 상태 초기화
+        setTimeout(() => setHasShownToast(false), 3000);
+      }
+      return;
+    }
+
     setSearchTerm(newValue);
-    onSearchTermChange(newValue); // 입력값 변경 시 콜백 호출
+    onSearchTermChange(newValue);
 
     // 카메라 검색에서 일반 검색으로 전환
     if (isCameraSearch) {
