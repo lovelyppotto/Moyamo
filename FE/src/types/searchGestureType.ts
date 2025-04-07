@@ -28,3 +28,13 @@ export interface SearchResponse {
     meanings: ApiMeaning[];
   }[];
 }
+
+export interface SearchResponseSingle {
+  status: number;
+  data: {
+    gesture_id: number;
+    gesture_name: string;
+    gesture_image: string | null;
+    meanings: ApiMeaning[];
+  };
+}
