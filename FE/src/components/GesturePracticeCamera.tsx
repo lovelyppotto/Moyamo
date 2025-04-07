@@ -10,12 +10,6 @@ interface GesturePracticeCameraProps {
   gestureLabel?: string;
 }
 
-interface GestureFrame {
-  gesture: string;
-  confidence: number;
-  timestamp: number;
-}
-
 const GesturePracticeCamera = ({
   guidelineClassName,
   guideText,
@@ -25,34 +19,37 @@ const GesturePracticeCamera = ({
   const [isCorrect, setIsCorrect] = useState(false);
   const [showGuideline, setShowGuideline] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
-  const [gestureFrames, setGestureFrames] = useState<GestureFrame[]>([]);
-  const [mostFrequentGesture, setMostFrequentGesture] = useState<string | null>(null);
   const [wsConnected, setWsConnected] = useState(false);
 
   // 참조
   const correctTimeRef = useRef<NodeJS.Timeout | null>(null);
-  const processingFramesRef = useRef<boolean>(false);
 
   // WebCamera에서 받은 제스처 처리
   const handleGesture = useCallback(
     (gesture: string, confidence: number) => {
       if (cameraActive) {
-        // 현재 제스처 프레임을 기록
-        setGestureFrames((prev) => [
-          ...prev,
-          {
-            gesture,
-            confidence,
-            timestamp: Date.now(),
-          },
-        ]);
-
         console.log(
-          `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "mostFrequent": ${mostFrequentGesture}, "expected": ${gestureLabel}`
+          `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
         );
+
+        // 신뢰도가 70% 이상이고 gestureLabel과 일치하면 카메라 종료
+        if (confidence >= 70 && gesture === gestureLabel) {
+          // 정답 표시, 가이드라인 숨김 설정, 카메라 비활성화
+          setIsCorrect(true);
+          setShowGuideline(false);
+          setCameraActive(false);
+
+          // 1초 후에 정답 표시 숨기고 다시하기 버튼 표시
+          if (correctTimeRef.current) {
+            clearTimeout(correctTimeRef.current);
+          }
+          correctTimeRef.current = setTimeout(() => {
+            setIsCorrect(false);
+          }, 1500);
+        }
       }
     },
-    [cameraActive, mostFrequentGesture, gestureLabel]
+    [cameraActive, gestureLabel]
   );
 
   // 다시하기 버튼 핸들러
@@ -60,8 +57,6 @@ const GesturePracticeCamera = ({
     // 상태 초기화
     setIsCorrect(false);
     setShowGuideline(true);
-    setGestureFrames([]);
-    setMostFrequentGesture(null);
     setCameraActive(true);
 
     // 타이머 정리
@@ -71,80 +66,14 @@ const GesturePracticeCamera = ({
     }
   }, []);
 
-  // 최빈값 계산 함수
-  const calculateMostFrequentGesture = useCallback((frames: GestureFrame[]) => {
-    if (frames.length === 0) return null;
-
-    // 70% 이상 프레임만 필터링
-    const confidentFrames = frames.filter((frame) => frame.confidence >= 70);
-
-    if (confidentFrames.length === 0) return null;
-
-    // 제스처별 빈도수 계산
-    const gestureCounts: Record<string, number> = {};
-
-    for (const frame of confidentFrames) {
-      if (frame.gesture) {
-        gestureCounts[frame.gesture] = (gestureCounts[frame.gesture] || 0) + 1;
-      }
-    }
-
-    // 최빈값 찾기
-    let mostFrequent: string | null = null;
-    let highestCount = 0;
-
-    for (const [gesture, count] of Object.entries(gestureCounts)) {
-      if (count > highestCount) {
-        mostFrequent = gesture;
-        highestCount = count;
-      }
-    }
-
-    return mostFrequent;
-  }, []);
-
-  // 정기적으로 최빈값 계산 및 확인
+  // 컴포넌트 언마운트 시 리소스 정리
   useEffect(() => {
-    if (processingFramesRef.current || !cameraActive) return;
-
-    const processFramesInterval = setInterval(() => {
-      if (gestureFrames.length === 0) return;
-
-      processingFramesRef.current = true;
-
-      try {
-        // 현재 시간 기준 3초 이내의 프레임만 유지
-        const now = Date.now();
-        const recentFrames = gestureFrames.filter((frame) => now - frame.timestamp <= 3000);
-
-        // 프레임 목록 업데이트
-        setGestureFrames(recentFrames);
-
-        // 최빈값 계산
-        const frequentGesture = calculateMostFrequentGesture(recentFrames);
-        setMostFrequentGesture(frequentGesture);
-
-        // 최빈값 제스처가 gestureLabel과 일치하는지 확인
-        if (frequentGesture && frequentGesture === gestureLabel) {
-          // 타이머 제거
-          if (correctTimeRef.current) {
-            clearTimeout(correctTimeRef.current);
-          }
-
-          // 정답 표시, 가이드라인 숨김 설정, 카메라 비활성화
-          setIsCorrect(true);
-          setShowGuideline(false);
-          setCameraActive(false);
-        }
-      } finally {
-        processingFramesRef.current = false;
-      }
-    }, 500); // 500ms마다 최빈값 계산 및 확인
-
     return () => {
-      clearInterval(processFramesInterval);
+      if (correctTimeRef.current) {
+        clearTimeout(correctTimeRef.current);
+      }
     };
-  }, [gestureFrames, gestureLabel, calculateMostFrequentGesture, cameraActive]);
+  }, []);
 
   // 웹소켓 연결 상태 처리
   const handleConnectionStatus = useCallback((status: boolean) => {
@@ -171,7 +100,7 @@ const GesturePracticeCamera = ({
         )}
 
         {/* 카메라 비활성화 시 오버레이 및 다시하기 버튼 */}
-        {!cameraActive && (
+        {!cameraActive && !isCorrect && (
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center z-20">
             <div className="text-white text-xl font-bold text-center mb-6"></div>
             <button
