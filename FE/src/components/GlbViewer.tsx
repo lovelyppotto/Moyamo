@@ -42,7 +42,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     const renderer = rendererRef.current;
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-    renderer.outputEncoding = THREE.sRGBEncoding; // sRGB 색상 공간 사용
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping; // 톤 매핑 추가
     renderer.toneMappingExposure = 1.5; // 노출 증가 (1.0에서 1.5로 변경)
     containerRef.current.appendChild(renderer.domElement);

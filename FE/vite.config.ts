@@ -16,7 +16,7 @@ export default defineConfig({
       manifest: {
         name: 'Moyamo',
         short_name: 'Moyamo',
-        description: '국가별 제스처 정보 제공 APP',
+        description: '국가별 제스처 정보 제공 서비스',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
