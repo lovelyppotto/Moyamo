@@ -12,6 +12,8 @@ interface WebCameraProps {
   onConnectionStatus?: (status: boolean) => void;
   isPaused?: boolean;
   onGesture?: (gesture: string, confidence: number) => void;
+  // 가이드라인 표시 여부 제어
+  showGuideline?: boolean;
 }
 
 const WebCamera = ({
@@ -20,6 +22,7 @@ const WebCamera = ({
   onConnectionStatus,
   isPaused = false,
   onGesture,
+  showGuideline = true,
 }: WebCameraProps) => {
   // 웹소켓 서비스 사용
   const {
@@ -258,26 +261,28 @@ const WebCamera = ({
       />
 
       {/* 가이드라인 컨테이너 */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
-          {/* SVG 가이드라인 */}
-          <img
-            src="/images/guide-line.svg"
-            alt="카메라 가이드라인"
-            className={`absolute ${guidelineClassName}`}
-          />
-          {/* 안내 텍스트 - 가시성 향상 */}
-          <div className="absolute top-5 left-0 right-0 flex justify-center items-center">
-            <p
-              className="bg-black/60 text-white px-4 py-2 rounded-lg
+      {showGuideline && (
+        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+          <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
+            {/* SVG 가이드라인 */}
+            <img
+              src="/images/guide-line.svg"
+              alt="카메라 가이드라인"
+              className={`absolute ${guidelineClassName}`}
+            />
+            {/* 안내 텍스트 - 가시성 향상 */}
+            <div className="absolute top-5 left-0 right-0 flex justify-center items-center">
+              <p
+                className="bg-black/60 text-white px-4 py-2 rounded-lg
               text-sm md:text-base font-[NanumSquareRoundEB] 
               drop-shadow-lg"
-            >
-              {guideText}
-            </p>
+              >
+                {guideText}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
