@@ -24,7 +24,7 @@ function CameraDialogFooter({
     if (isPreparingGesture) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1">{preparationCountdown}</span>초 후 인식
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{preparationCountdown}</span>초 후 인식
           시작
         </span>
       );
@@ -33,7 +33,7 @@ function CameraDialogFooter({
     if (isCountingDown) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1">{countdown}</span>초 동안 유지
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{countdown}</span>초 동안 유지
         </span>
       );
     }
@@ -41,7 +41,7 @@ function CameraDialogFooter({
     return (
       <span className="flex items-center">
         <Camera size={20} className="mr-2" />
-        {isErrorToastShown ? '다시 시도하기' : '촬영하기'}
+        {isErrorToastShown ? '다시 시도하기' : '검색하기'}
       </span>
     );
   };
@@ -54,8 +54,8 @@ function CameraDialogFooter({
           disabled={isPreparingGesture || isCountingDown || !isWebSocketConnected}
           className={`flex items-center justify-center w-full py-3 rounded-b-lg ${
             isWebSocketConnected && !isPreparingGesture && !isCountingDown
-              ? 'bg-white text-black'
-              : 'bg-black text-white'
+              ? 'bg-d-txt-50 text-black'
+              : 'bg-gray-300 text-black cursor-not-allowed'
           }`}
         >
           {getButtonContent()}

@@ -93,12 +93,10 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     setGuideText('제스처를 유지해주세요');
     
     timerRef.current = setInterval(() => {
-      decrementCountdown();
-      
-      // Zustand에서 현재 값을 가져올 수 없으므로 상태 확인용 함수 추가
       const countdown = useGestureStore.getState().countdown;
       
-      if (countdown <= 1) {
+      // 카운트다운이 0이 될 때만 타이머 종료 (이제 1까지 표시됨)
+      if (countdown <= 0) {
         if (timerRef.current) {
           clearInterval(timerRef.current);
           timerRef.current = null;
@@ -108,7 +106,12 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
         
         // 카운트다운 완료 후 제스처 결과 확인
         checkGestureResult();
+        return; // 카운트다운이 0 이하면 decrementCountdown 호출하지 않음
       }
+      
+      // 카운트다운 감소
+      decrementCountdown();
+      
     }, 1000);
   }, [
     setPreparationState, 
@@ -149,12 +152,10 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
     
     // 준비 타이머 시작
     prepTimerRef.current = setInterval(() => {
-      decrementPreparationCountdown();
-      
-      // Zustand에서 현재 값을 가져올 수 없으므로 상태 확인용 함수 추가
       const countdown = useGestureStore.getState().preparationCountdown;
       
-      if (countdown <= 1) {
+      // 카운트다운이 0이 될 때만 타이머 종료 (이제 1까지 표시됨)
+      if (countdown <= 0) {
         if (prepTimerRef.current) {
           clearInterval(prepTimerRef.current);
           prepTimerRef.current = null;
@@ -162,7 +163,12 @@ export const useGestureTimer = ({ isOpen, onTimerComplete }: UseGestureTimerProp
         
         // 준비 완료 후 실제 카운트다운 시작
         startActualCountdown();
+        return; // 카운트다운이 0 이하면 decrementPreparationCountdown 호출하지 않음
       }
+      
+      // 준비 카운트다운 감소
+      decrementPreparationCountdown();
+      
     }, 1000);
   }, [
     isPreparingGesture, 
