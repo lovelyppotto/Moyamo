@@ -9,11 +9,7 @@ import com.moyamo.be.search.repository.GestureSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,27 +30,29 @@ public class GestureSearchService {
     }
 
     private ApiResponse<List<GestureSearchResponseDto>> getListApiResponse(List<CountryGesture> countryGestures) {
-        Map<Integer, GestureSearchResponseDto> responseMap = new HashMap<>();
+
+        Map<String, GestureSearchResponseDto> responseMap = new LinkedHashMap<>();
 
         for (CountryGesture cg : countryGestures) {
             Gesture gesture = cg.getGesture();
             GestureInfo gestureInfo = cg.getGestureInfo();
+            String meaning = gestureInfo.getGestureMeaning();
             int gestureId = gesture.getGestureId();
 
-            // gesture_id가 없으면 새로 추가
-            responseMap.putIfAbsent(gestureId, new GestureSearchResponseDto(
-                    gesture.getGestureId(),
+            String key = gestureId + "::" + meaning;
+
+            responseMap.putIfAbsent(key, new GestureSearchResponseDto(
+                    gestureId,
                     gestureInfo.getGestureTitle(),
                     gesture.getImageUrl(),
                     new ArrayList<>()
             ));
 
-            // meanings 리스트에 의미 추가
-            responseMap.get(gestureId).getMeanings().add(new GestureSearchResponseDto.Meaning(
+            responseMap.get(key).getMeanings().add(new GestureSearchResponseDto.Meaning(
                     cg.getCountry().getCountryId(),
                     cg.getCountry().getImageUrl(),
                     cg.getCountry().getCountryName(),
-                    cg.getGestureInfo().getGestureMeaning()
+                    meaning
             ));
         }
 
