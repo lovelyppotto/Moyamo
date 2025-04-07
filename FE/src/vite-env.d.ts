@@ -3,6 +3,7 @@ interface ImportMetaEnv {
   readonly MODE: string;
   readonly VITE_USE_MOCK_DATA: string;
   readonly VITE_SERVER_STATIC_WS_URL: string;
+  readonly VITE_SERVER_DYNAMIC_WS_URL: string;
 }
 
 interface ImportMeta {

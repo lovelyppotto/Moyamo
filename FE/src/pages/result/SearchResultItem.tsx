@@ -77,7 +77,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
             {/* 제목 */}
             <div className="flex justify-between items-start mb-1 relative z-10">
               <h3
-                className="text-xl md:text-3xl font-bold font-[NanumSquareRoundEB] text-gray-900
+                className="text-xl md:text-xl lg:text-2xl font-bold font-[NanumSquareRoundEB] text-gray-900
                 dark:text-d-txt-50"
               >
                 {result.gestureName}
@@ -121,7 +121,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
             {/* 설명 텍스트 */}
             <p
               className="relative z-10 
-            text-base md:text-lg text-gray-700 font-[NanumSquareRound]
+            text-base md:text- text-gray-700 font-[NanumSquareRound]
             dark:text-d-txt-50"
             >
               {result.meanings[0]?.meaning}
