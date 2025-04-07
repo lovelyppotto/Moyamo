@@ -1,4 +1,9 @@
-import { SearchResponse, SearchResponseSingle, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
+import {
+  SearchResponse,
+  SearchResponseSingle,
+  GestureSearchResult,
+  ApiMeaning,
+} from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/data/resultMock';
 
@@ -12,7 +17,7 @@ const useMockData = () => {
   if (!isDevelopment) {
     return false;
   }
-  
+
   // 개발 환경에서만 localStorage 값 확인
   try {
     const storedValue = localStorage.getItem('useMockData');
@@ -73,7 +78,7 @@ export const searchGestures = async (
     console.log('검색어가 비어있어 결과를 반환하지 않습니다.');
     return [];
   }
-  
+
   // 목 데이터 사용 여부 확인
   if (useMockData()) {
     console.log(
@@ -92,7 +97,7 @@ export const searchGestures = async (
   try {
     let endpoint = '/api/search';
     let params: Record<string, string | number | undefined> = {};
-  
+
     if (isCameraSearch) {
       // 카메라 검색 API
       endpoint = '/api/search/camera';
@@ -110,7 +115,13 @@ export const searchGestures = async (
 
     if (isCameraSearch) {
       const { data } = await apiClient.get<SearchResponseSingle>(endpoint, { params });
-      
+
+      // 데이터가 없거나 문제가 있으면 빈 배열 반환
+      if (!data || !data.data || Object.keys(data.data).length === 0) {
+        console.log('카메라 검색 결과가 없습니다.');
+        return [];
+      }
+
       // 단일 객체를 변환
       const singleResult: GestureSearchResult = {
         gestureId: data.data.gesture_id,
@@ -123,12 +134,24 @@ export const searchGestures = async (
           meaning: m.meaning,
         })),
       };
-      
+
       return [singleResult]; // 배열로 변환하여 반환
     } else {
       // 일반 검색은 배열 타입으로 처리
       const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
-      
+
+      // 데이터가 없거나 배열이 아니면 빈 배열 반환
+      if (!data || !data.data) {
+        console.log('검색 결과가 없습니다.');
+        return [];
+      }
+
+      // data.data가 배열인지 확인
+      if (!Array.isArray(data.data)) {
+        console.log('응답 형식이 예상과 다릅니다. data.data가 배열이 아닙니다.');
+        return [];
+      }
+
       // 배열을 변환
       const result = data.data.map((item) => ({
         gestureId: item.gesture_id,
@@ -141,7 +164,7 @@ export const searchGestures = async (
           meaning: m.meaning,
         })),
       }));
-      
+
       return result;
     }
   } catch (error) {
@@ -151,7 +174,7 @@ export const searchGestures = async (
     if (!isDevelopment) {
       return [];
     }
-    
+
     // 개발 환경에서만 API 오류 시 목 데이터로 대체
     console.log('개발 환경에서 목 데이터로 대체합니다.');
     return getMockSearchResults(searchQuery, countryId);
@@ -165,7 +188,7 @@ export const toggleMockDataMode = (useMock: boolean) => {
     console.warn('배포 환경에서는 데이터 모드를 변경할 수 없습니다.');
     return false;
   }
-  
+
   try {
     localStorage.setItem('useMockData', useMock ? 'true' : 'false');
     console.log(`데이터 소스 변경: ${useMock ? '목 데이터' : '실제 API'} 사용 모드`);
