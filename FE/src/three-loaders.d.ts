@@ -1,7 +1,3 @@
-// three-loaders.d.ts 파일 생성하기
-// 프로젝트 루트 또는 src 폴더에 저장
-
-// Three.js 모듈 선언
 declare module 'three/examples/jsm/loaders/GLTFLoader' {
   import { Object3D, Scene, Loader } from 'three';
 
@@ -46,11 +42,50 @@ declare module 'three/examples/jsm/controls/OrbitControls' {
     update(): boolean;
     dispose(): void;
 
-    // 추가적인 메서드와 속성
+    // 추가적인 메서드와 속성들...
     minDistance: number;
     maxDistance: number;
     enableZoom: boolean;
     enableRotate: boolean;
     enablePan: boolean;
+
+    // 극좌표각 제어 속성 추가
+    minPolarAngle: number;
+    maxPolarAngle: number;
+
+    // 마우스 버튼 설정 추가
+    mouseButtons: {
+      LEFT?: any;
+      MIDDLE?: any;
+      RIGHT?: any;
+    };
+
+    // 카메라 제어 속성
+    autoRotate: boolean;
+    autoRotateSpeed: number;
+
+    // 회전 속성
+    rotateSpeed: number;
+
+    // 줌 속성
+    zoomSpeed: number;
+    minZoom: number;
+    maxZoom: number;
+
+    // 패닝 속성
+    panSpeed: number;
+
+    // 키보드 제어
+    enableKeys: boolean;
+    keys: {
+      LEFT: string;
+      UP: string;
+      RIGHT: string;
+      BOTTOM: string;
+    };
+
+    // 추가 메서드
+    saveState(): void;
+    reset(): void;
   }
 }
