@@ -30,8 +30,8 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       0.1,
       1000
     );
-    camera.position.y = 0; // 1.5에서 0으로 변경하여 정면에서 보도록 조정
-    camera.position.z = 2.5;
+    camera.position.y = 1; // 1.5에서 0으로 변경하여 정면에서 보도록 조정
+    camera.position.z = 3.0;
     scene.add(camera);
 
     // Renderer 설정
@@ -151,12 +151,14 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxSize = Math.max(size.x, size.y, size.z);
-        const scale = 2 / maxSize;
+        const scale = 2.8 / maxSize;
         model.scale.multiplyScalar(scale);
 
         // 모델 위치 중앙 정렬
         const center = box.getCenter(new THREE.Vector3());
         model.position.sub(center.multiplyScalar(scale));
+
+        model.position.y += 0.2; // y 위치를 위로 올리기 (예시로 1만큼 올림)
 
         // Armature 찾기
         let armature: THREE.Object3D | null = null;
@@ -282,5 +284,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     };
   }, [url, index]);
 
-  return <div ref={containerRef} style={{ width: '100%', height: '100%',  background: 'transparent' }} />;
+  return (
+    <div ref={containerRef} style={{ width: '100%', height: '100%', background: 'transparent' }} />
+  );
 }
