@@ -93,7 +93,7 @@ function CompareGuide() {
         </div>
 
         {/* 카드 컨테이너 */}
-        <div className="flex-1 px-4 pb-14 md:pb-24 overflow-y-auto">
+        <div className="flex-1 px-4 pb-14 md:pb-24 overflow-y-auto customScrollbar kr">
           {/* 국가 그룹 카드들 */}
           <div className={gridLayoutClass}>
             {/* 국가별 제스처 의미 카드들 */}
