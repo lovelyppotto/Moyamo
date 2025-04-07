@@ -121,7 +121,7 @@ function SearchResultItem({ result, onFlagClick }: SearchResultItemProps) {
             {/* 설명 텍스트 */}
             <p
               className="relative z-10 
-            text-base lg:text-lg text-gray-700 font-[NanumSquareRound]
+            text-base md:text- text-gray-700 font-[NanumSquareRound]
             dark:text-d-txt-50"
             >
               {result.meanings[0]?.meaning}

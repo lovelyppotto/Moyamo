@@ -1,9 +1,4 @@
-import {
-  SearchResponse,
-  SearchResponseSingle,
-  GestureSearchResult,
-  ApiMeaning,
-} from '@/types/searchGestureType';
+import { SearchResponse, GestureSearchResult, ApiMeaning } from '@/types/searchGestureType';
 import apiClient from '@/api/apiClient';
 import { searchResultMock } from '@/data/resultMock';
 
@@ -87,7 +82,9 @@ export const searchGestures = async (
     // API 응답 딜레이 시뮬레이션
     await new Promise((resolve) => setTimeout(resolve, 300));
     // 카메라 검색에 맞게 목 데이터 필터링
-    return getMockSearchResults(searchQuery, countryId);
+    const mockResults = getMockSearchResults(searchQuery, countryId);
+
+    return mockResults;
   }
 
   // 실제 API 호출
@@ -99,74 +96,62 @@ export const searchGestures = async (
     let params: Record<string, string | number | undefined> = {};
 
     if (isCameraSearch) {
-      // 카메라 검색 API
+      // 카메라 검색 API - countryId 전달하지 않음
       endpoint = '/api/search/camera';
       params = {
         gesture_label: searchQuery,
-        country_id: countryId,
       };
     } else {
-      // 일반 검색 API
+      // 일반 검색 API - countryId 전달
       params = {
         gesture_name: searchQuery,
         country_id: countryId,
       };
     }
 
-    if (isCameraSearch) {
-      const { data } = await apiClient.get<SearchResponseSingle>(endpoint, { params });
+    // API 호출
+    const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
 
-      // 데이터가 없거나 문제가 있으면 빈 배열 반환
-      if (!data || !data.data || Object.keys(data.data).length === 0) {
-        console.log('카메라 검색 결과가 없습니다.');
-        return [];
-      }
-
-      // 단일 객체를 변환
-      const singleResult: GestureSearchResult = {
-        gestureId: data.data.gesture_id,
-        gestureName: data.data.gesture_name,
-        gestureImage: data.data.gesture_image,
-        meanings: data.data.meanings.map((m: ApiMeaning) => ({
-          countryId: m.country_id,
-          imageUrl: m.image_url,
-          countryName: m.country_name,
-          meaning: m.meaning,
-        })),
-      };
-
-      return [singleResult]; // 배열로 변환하여 반환
-    } else {
-      // 일반 검색은 배열 타입으로 처리
-      const { data } = await apiClient.get<SearchResponse>(endpoint, { params });
-
-      // 데이터가 없거나 배열이 아니면 빈 배열 반환
-      if (!data || !data.data) {
-        console.log('검색 결과가 없습니다.');
-        return [];
-      }
-
-      // data.data가 배열인지 확인
-      if (!Array.isArray(data.data)) {
-        console.log('응답 형식이 예상과 다릅니다. data.data가 배열이 아닙니다.');
-        return [];
-      }
-
-      // 배열을 변환
-      const result = data.data.map((item) => ({
-        gestureId: item.gesture_id,
-        gestureName: item.gesture_name,
-        gestureImage: item.gesture_image,
-        meanings: item.meanings.map((m: ApiMeaning) => ({
-          countryId: m.country_id,
-          imageUrl: m.image_url,
-          countryName: m.country_name,
-          meaning: m.meaning,
-        })),
-      }));
-
-      return result;
+    // 데이터 유효성 검사
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      console.log('유효한 검색 결과가 없습니다.');
+      return [];
     }
+
+    // API 응답 데이터 변환
+    const results: GestureSearchResult[] = [];
+
+    for (const item of data.data) {
+      if (!item) continue;
+
+      try {
+        const meanings = Array.isArray(item.meanings)
+          ? item.meanings.map((m: ApiMeaning) => ({
+              countryId: m.country_id,
+              imageUrl: m.image_url,
+              countryName: m.country_name,
+              meaning: m.meaning,
+            }))
+          : [];
+
+        results.push({
+          gestureId: item.gesture_id,
+          gestureName: item.gesture_name,
+          gestureImage: item.gesture_image,
+          meanings: meanings,
+        });
+      } catch (err) {
+        console.error('API 응답 항목 변환 중 오류:', err);
+        // 오류 발생 시 해당 항목 건너뛰기
+      }
+    }
+
+    // // 카메라 검색이고 결과가 하나이며 여러 국가의 의미가 있는 경우에만 분리
+    // if (isCameraSearch && results.length === 1 && results[0]?.meanings.length > 1) {
+    //   return separateByCountry(results);
+    // }
+
+    return results;
   } catch (error) {
     console.error('API 호출 실패:', error);
 
@@ -180,6 +165,25 @@ export const searchGestures = async (
     return getMockSearchResults(searchQuery, countryId);
   }
 };
+
+// 국가별로 결과를 분리하는 함수
+// function separateByCountry(results: GestureSearchResult[]): GestureSearchResult[] {
+//   const separatedResults: GestureSearchResult[] = [];
+
+//   results.forEach((result) => {
+//     // 각 국가별로 별도의 결과 항목 생성
+//     result.meanings.forEach((meaning) => {
+//       separatedResults.push({
+//         gestureId: result.gestureId,
+//         gestureName: result.gestureName,
+//         gestureImage: result.gestureImage,
+//         meanings: [meaning], // 단일 국가 의미만 포함
+//       });
+//     });
+//   });
+
+//   return separatedResults;
+// }
 
 // 목 데이터와 API 사용 모드 전환 함수 (개발 편의용)
 export const toggleMockDataMode = (useMock: boolean) => {

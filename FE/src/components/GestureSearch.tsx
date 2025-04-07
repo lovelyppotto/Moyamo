@@ -26,6 +26,9 @@ function GestureSearchInput() {
   const [searchResultsWidth, setSearchResultsWidth] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
+  // 카메라 검색 여부를 확인하는 상태
+  const [isCameraSearch, setIsCameraSearch] = useState(false);
+
   const {
     data: searchResults,
     refetch,
@@ -44,6 +47,19 @@ function GestureSearchInput() {
 
   const { handleSearch, updateUrlOnInputChange, updateUrlOnCountrySelect } =
     useSearchNavigation(setSelectedCountryName);
+
+  // URL에서 gesture_label 파라미터 확인 및 검색어 설정
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const gestureLabel = url.searchParams.get('gesture_label');
+
+    if (gestureLabel) {
+      setSearchTerm(gestureLabel);
+      setIsCameraSearch(true);
+    } else {
+      setIsCameraSearch(false);
+    }
+  }, [location.search, setSearchTerm]);
 
   // 컴포넌트 마운트시 및 창 크기 변경시 검색 결과 너비 업데이트
   useEffect(() => {
@@ -94,8 +110,29 @@ function GestureSearchInput() {
     const newValue = e.target.value;
     setSearchTerm(newValue);
 
+    // 사용자가 입력을 시작하면 카메라 검색 모드 확인
+    const url = new URL(window.location.href);
+    const hasCameraParam = url.searchParams.has('gesture_label');
+
+    // 카메라 검색 모드에서 첫 입력 시에만 파라미터 제거
+    if (hasCameraParam && location.pathname === '/search') {
+      const params = new URLSearchParams(location.search);
+      params.delete('gesture_label');
+
+      // 이전 검색어 파라미터는 유지 (실시간 검색을 위해)
+      // 새로운 URL로 이동
+      window.history.replaceState({}, '', `/search?${params.toString()}`);
+
+      // 카메라 검색 모드 해제 (상태만 변경)
+      setIsCameraSearch(false);
+    }
+
+    // 기존 입력 처리 로직은 그대로 유지 (실시간 검색 위해)
     if (newValue === '') {
       setShowResults(false);
+      updateUrlOnInputChange(newValue);
+    } else {
+      // 새 입력값이 있으면 일반 검색으로 URL 업데이트
       updateUrlOnInputChange(newValue);
     }
   };
@@ -103,6 +140,14 @@ function GestureSearchInput() {
   // 키 입력 핸들러
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      // 카메라 검색 모드였다면 해제
+      if (isCameraSearch) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('gesture_label');
+        url.searchParams.set('gesture_name', searchTerm);
+        navigate(url.pathname + url.search, { replace: true });
+        setIsCameraSearch(false);
+      }
       handleSearch();
     }
   };
@@ -112,11 +157,38 @@ function GestureSearchInput() {
     const countryId = getCountryId(country);
     setSearchCountry(countryId);
     setSelectedCountryName(country);
+
+    // 카메라 검색 모드였다면 해제하고 일반 검색으로 전환
+    if (isCameraSearch) {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('gesture_label')) {
+        const currentTerm = searchTerm;
+        url.searchParams.delete('gesture_label');
+        if (currentTerm) {
+          url.searchParams.set('gesture_name', currentTerm);
+        }
+        // URL 업데이트 (브라우저 히스토리 변경)
+        navigate(url.pathname + url.search, { replace: true });
+        setIsCameraSearch(false);
+      }
+    }
+
     updateUrlOnCountrySelect(countryId);
   };
 
   // 검색 실행 핸들러
   const executeSearch = () => {
+    // 카메라 검색 모드였다면 해제
+    if (isCameraSearch) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('gesture_label');
+      if (searchTerm) {
+        url.searchParams.set('gesture_name', searchTerm);
+      }
+      navigate(url.pathname + url.search, { replace: true });
+      setIsCameraSearch(false);
+    }
+
     refetch();
     handleSearch();
   };
@@ -157,6 +229,11 @@ function GestureSearchInput() {
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
             />
+            {/* {isCameraSearch && (
+              <div className="absolute right-2 top-2 text-xs text-blue-500 dark:text-blue-300">
+                카메라 검색
+              </div>
+            )} */}
           </div>
           <div className="ml-1 flex items-center justify-center">
             <SearchCameraModal />
@@ -197,8 +274,10 @@ function GestureSearchInput() {
               ))}
             </div>
           ) : (
-            <div className="py-4 text-center text-gray-500 dark:text-d-txt-50/70 
-            font-[NanumSquareRound] text-sm">
+            <div
+              className="py-4 text-center text-gray-500 dark:text-d-txt-50/70 
+            font-[NanumSquareRound] text-sm"
+            >
               검색 결과가 없습니다.
             </div>
           )}
