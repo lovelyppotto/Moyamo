@@ -75,8 +75,8 @@ function GesturePractice() {
           ) : (
             <GesturePracticeCamera
               guidelineClassName="max-w-[500px] 
-              w-[40%] lg:w-[65%]
-              top-14 lg:top-22"
+              w-[40%] lg:w-[60%]
+              top-16 lg:top-22"
               guideText="정확도 70% 이상 시 ○표시가 나타납니다."
               gestureLabel={gesture.gestureLabel}
             />
