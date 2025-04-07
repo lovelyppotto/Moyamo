@@ -36,7 +36,7 @@ function SearchResultsList({
       {/* 카메라 검색 모드이고 GLB 모델이 있을 때만 상단에 GLB 표시 */}
       {finalSearchType === 'camera' && firstGlbModel && (
         <div className="flex justify-center py-6 mb-4">
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-600 flex items-center justify-center shadow-lg">
+          <div className="w-32 h-32 md:w-50 md:h-50 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-600 flex items-center justify-center shadow-lg">
             <GlbViewer url={firstGlbModel} />
           </div>
         </div>
