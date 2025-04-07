@@ -35,7 +35,33 @@ function SearchCameraModal() {
   } = useGestureStore();
 
   // 제스처 이벤트 리스너 설정
-  useGestureEvents({ isOpen: open });
+  useGestureEvents({ isOpen: open });     
+
+  // 줌 방지 핸들러
+  useEffect(() => {
+    const preventZoom = (e: KeyboardEvent) => {
+      console.log('key:', e.key)
+      if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+        e.preventDefault();
+      }
+    };
+
+    const preventWheelZoom = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
+    };
+
+    // 이벤트 리스너 추가
+    window.addEventListener('keydown', preventZoom);
+    window.addEventListener('wheel', preventWheelZoom, { passive: false });
+
+    return () => {
+      // 이벤트 리스너 제거
+      window.removeEventListener('keydown', preventZoom);
+      window.removeEventListener('wheel', preventWheelZoom);
+    };
+  }, []);
   
   // 타이머 완료 후 처리 함수
   const handleTimerComplete = useCallback((detectedGesture: string) => {
