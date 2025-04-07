@@ -71,15 +71,47 @@ export const useSearchNavigation = (setSelectedCountryName: (name: string) => vo
 
   // 입력 변경 시 URL 업데이트
   const updateUrlOnInputChange = (newValue: string) => {
+    // 현재 URL 파라미터 가져오기
+    const params = new URLSearchParams(location.search);
+    const hasGestureLabel = params.has('gesture_label');
+    const isInCameraSearch = location.pathname === '/search/camera';
+
+    // 카메라 검색 모드에서 사용자 입력 있을 때 자동 전환
+    if ((hasGestureLabel || isInCameraSearch) && newValue.trim() !== '') {
+      // 카메라 라벨 제거하고 일반 검색으로 전환
+      params.delete('gesture_label');
+      params.set('gesture_name', newValue);
+
+      // search로 리다이렉트
+      if (location.pathname.includes('/search')) {
+        navigate(`/search?${params.toString()}`, { replace: true });
+        // 쿼리 무효화하여 새로운 검색 결과 가져오기
+        queryClient.invalidateQueries({ queryKey: ['gestureName'] });
+        queryClient.refetchQueries({ queryKey: ['gestureName'] });
+        return;
+      }
+    }
+
+    // 일반 검색 모드에서 입력값이 비었을 때
     if (newValue === '') {
-      const params = new URLSearchParams(location.search);
       params.delete('gesture_name');
-      params.delete('gesture_label'); // 카메라 라벨도 함께 삭제
+      // 카메라 검색 모드가 아닐 때만 gesture_label도 함께 삭제
+      if (!hasGestureLabel) {
+        params.delete('gesture_label');
+      }
       const newSearch = params.toString();
 
       if (location.pathname === '/search') {
         navigate(newSearch ? `/search?${newSearch}` : '/search', { replace: true });
       }
+    }
+    // 일반 검색 모드이고 검색 페이지에 있을 때 실시간 URL 업데이트
+    else if (location.pathname === '/search' && !hasGestureLabel) {
+      params.set('gesture_name', newValue);
+      window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+      // 쿼리 무효화하여 새로운 검색 결과 가져오기
+      queryClient.invalidateQueries({ queryKey: ['gestureName'] });
+      queryClient.refetchQueries({ queryKey: ['gestureName'] });
     }
   };
 
@@ -87,23 +119,36 @@ export const useSearchNavigation = (setSelectedCountryName: (name: string) => vo
   const updateUrlOnCountrySelect = (countryId: number) => {
     if (location.pathname === '/search') {
       const params = new URLSearchParams(location.search);
+      const hasGestureLabel = params.has('gesture_label');
 
+      // 국가 ID 설정
       if (countryId === 0) {
         params.delete('country_id');
       } else {
         params.set('country_id', countryId.toString());
       }
 
-      // 검색어 유지 (기존 파라미터 형식 그대로 유지)
-      const hasGestureLabel = params.has('gesture_label');
-      const hasGestureName = params.has('gesture_name');
+      // 카메라 검색 모드에서 국가 변경 시 일반 검색으로 전환
+      if (hasGestureLabel) {
+        const gestureLabel = params.get('gesture_label') || '';
+        params.delete('gesture_label');
 
-      if (searchTerm.trim() && !hasGestureLabel && !hasGestureName) {
-        // 기존에 검색 파라미터가 없으면 일반 검색으로 추가
+        // 카메라 검색어가 있으면 일반 검색어로 설정
+        if (gestureLabel) {
+          params.set('gesture_name', gestureLabel);
+        } else if (searchTerm.trim()) {
+          // 카메라 검색어가 없지만 state에 검색어가 있으면 사용
+          params.set('gesture_name', searchTerm);
+        }
+      }
+      // 일반 검색 모드이고 검색어가 있지만 URL에 없을 때
+      else if (searchTerm.trim() && !params.has('gesture_name')) {
         params.set('gesture_name', searchTerm);
       }
 
       navigate(`/search?${params.toString()}`, { replace: true });
+      // 쿼리 무효화하여 새로운 검색 결과 가져오기
+      queryClient.invalidateQueries({ queryKey: ['gestureName'] });
     }
   };
 

@@ -145,12 +145,6 @@ export const searchGestures = async (
         // 오류 발생 시 해당 항목 건너뛰기
       }
     }
-
-    // // 카메라 검색이고 결과가 하나이며 여러 국가의 의미가 있는 경우에만 분리
-    // if (isCameraSearch && results.length === 1 && results[0]?.meanings.length > 1) {
-    //   return separateByCountry(results);
-    // }
-
     return results;
   } catch (error) {
     console.error('API 호출 실패:', error);
@@ -165,25 +159,6 @@ export const searchGestures = async (
     return getMockSearchResults(searchQuery, countryId);
   }
 };
-
-// 국가별로 결과를 분리하는 함수
-// function separateByCountry(results: GestureSearchResult[]): GestureSearchResult[] {
-//   const separatedResults: GestureSearchResult[] = [];
-
-//   results.forEach((result) => {
-//     // 각 국가별로 별도의 결과 항목 생성
-//     result.meanings.forEach((meaning) => {
-//       separatedResults.push({
-//         gestureId: result.gestureId,
-//         gestureName: result.gestureName,
-//         gestureImage: result.gestureImage,
-//         meanings: [meaning], // 단일 국가 의미만 포함
-//       });
-//     });
-//   });
-
-//   return separatedResults;
-// }
 
 // 목 데이터와 API 사용 모드 전환 함수 (개발 편의용)
 export const toggleMockDataMode = (useMock: boolean) => {

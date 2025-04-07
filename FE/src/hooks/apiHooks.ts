@@ -22,20 +22,50 @@ export function useGestureSearch(
   const isGestureLabel = params.has('gesture_label');
   const gestureLabel = params.get('gesture_label') || '';
 
-  // 최종 검색어 결정 (카메라 라벨 우선)
-  const finalSearchTerm = isGestureLabel ? gestureLabel : searchTerm.trim();
+  // 일반 검색어 확인
+  const gestureName = params.get('gesture_name') || '';
+  const isInCameraSearchPath = location.pathname === '/search/camera';
+
+  // 최종 검색어 결정 (카메라 라벨 우선, 그 다음 URL의 gesture_name, 마지막으로 state의 searchTerm)
+  let finalSearchTerm = '';
+
+  if (isGestureLabel && gestureLabel) {
+    // 카메라 검색이 우선
+    finalSearchTerm = gestureLabel;
+  } else if (isInCameraSearchPath && gestureName) {
+    // 카메라 검색 경로에서는 gesture_name 사용
+    finalSearchTerm = gestureName;
+  } else if (location.pathname === '/search' && gestureName) {
+    // 검색 페이지에서는 URL의 gesture_name 파라미터 사용
+    finalSearchTerm = gestureName;
+  } else {
+    // 그 외의 경우 state의 searchTerm 사용
+    finalSearchTerm = searchTerm.trim();
+  }
+
   const isValidQuery = !!finalSearchTerm;
 
   return useQuery({
     // 쿼리 키에 검색 유형 포함 (일반 검색 또는 카메라 검색)
-    queryKey: ['gestureName', finalSearchTerm, countryId, isGestureLabel ? 'camera' : 'text'],
-    queryFn: () => searchGestures(finalSearchTerm, countryId),
+    queryKey: [
+      'gestureName',
+      finalSearchTerm,
+      countryId,
+      isGestureLabel || isInCameraSearchPath ? 'camera' : 'text',
+    ],
+    queryFn: () =>
+      searchGestures(finalSearchTerm, countryId, isGestureLabel || isInCameraSearchPath),
     // 검색어가 있고 enabled 옵션이 true일 때만 API 호출
     enabled: isValidQuery && options.enabled,
     staleTime: 5 * 60 * 1000,
     initialData: isValidQuery ? undefined : [],
+    // 중요: 쿼리가 항상 최신 데이터를 반영하도록 설정
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 }
+
 // 문화적 팁 가져오기
 export function useTips() {
   return useQuery({

@@ -1,0 +1,231 @@
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import BaseDropdown from '@/pages/home/dropdowns/BaseDropdown';
+import SearchCameraModal from '../cameraModal/SearchCameraModal';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getCountryId, getCountryName } from '@/utils/countryUtils';
+import { useQueryClient } from '@tanstack/react-query';
+
+interface SearchBarProps {
+  searchInputRef: React.RefObject<HTMLDivElement | null>;
+  isCameraSearch: boolean;
+}
+
+function GestureSearchBar({
+  searchInputRef,
+  isCameraSearch: propIsCameraSearch,
+}: SearchBarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // 로컬 상태로 관리
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCountryName, setSelectedCountryName] = useState('전체');
+  const [countryId, setCountryId] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isCameraSearch, setIsCameraSearch] = useState(propIsCameraSearch);
+
+  const countries = ['전체', '한국', '미국', '일본', '중국', '이탈리아'];
+
+  // 화면 크기에 따라 모바일 여부 감지
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
+
+  // URL에서 검색어와 국가 정보 가져오기
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const gestureLabel = params.get('gesture_label');
+    const gestureName = params.get('gesture_name');
+    const countryParam = params.get('country_id');
+
+    // 국가 ID 설정
+    const newCountryId = countryParam ? parseInt(countryParam, 10) : 0;
+    setCountryId(newCountryId);
+    setSelectedCountryName(getCountryName(newCountryId));
+
+    // 카메라 검색 여부 확인
+    const isInCameraPath = location.pathname === '/search/camera';
+    const hasCameraLabel = params.has('gesture_label');
+    setIsCameraSearch(isInCameraPath || hasCameraLabel);
+
+    // 검색어 설정 - 가장 중요한 부분
+    if (gestureLabel) {
+      console.log('카메라 검색어 설정:', gestureLabel);
+      setSearchTerm(gestureLabel);
+    } else if (gestureName) {
+      console.log('일반 검색어 설정:', gestureName);
+      setSearchTerm(gestureName);
+    } else {
+      // URL에 검색어가 없으면 빈 문자열로 설정
+      setSearchTerm('');
+    }
+  }, [location.pathname, location.search]);
+
+  // 입력 변경 핸들러
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setSearchTerm(newValue);
+
+    // 카메라 검색에서 일반 검색으로 전환
+    if (isCameraSearch) {
+      setIsCameraSearch(false);
+    }
+
+    // 검색 페이지에서 URL 업데이트
+    if (location.pathname.includes('/search')) {
+      const params = new URLSearchParams(location.search);
+
+      // 카메라 검색 파라미터 제거
+      params.delete('gesture_label');
+
+      if (newValue.trim() !== '') {
+        // 새 검색어로 업데이트
+        params.set('gesture_name', newValue);
+      } else {
+        // 검색어가 비어있으면 파라미터 제거
+        params.delete('gesture_name');
+      }
+
+      // 국가 ID 유지
+      if (countryId > 0) {
+        params.set('country_id', countryId.toString());
+      }
+
+      // URL 업데이트 (히스토리 대체)
+      navigate(`/search?${params.toString()}`, { replace: true });
+
+      // 검색 결과 갱신
+      queryClient.invalidateQueries({ queryKey: ['gestureName'] });
+      queryClient.refetchQueries({ queryKey: ['gestureName'] });
+    }
+  };
+
+  // 키 입력 핸들러
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      // 엔터 키로 검색 실행
+      executeSearch();
+    }
+  };
+
+  // 국가 선택 핸들러
+  const handleCountrySelect = (country: string) => {
+    const newCountryId = getCountryId(country);
+    setCountryId(newCountryId);
+    setSelectedCountryName(country);
+
+    // 검색 페이지에서 URL 업데이트
+    if (location.pathname.includes('/search')) {
+      const params = new URLSearchParams(location.search);
+
+      // 카메라 검색에서 일반 검색으로 전환
+      if (isCameraSearch) {
+        const currentTerm = params.get('gesture_label') || searchTerm;
+        params.delete('gesture_label');
+
+        if (currentTerm.trim()) {
+          params.set('gesture_name', currentTerm);
+        }
+
+        setIsCameraSearch(false);
+      }
+
+      // 국가 ID 설정
+      if (newCountryId > 0) {
+        params.set('country_id', newCountryId.toString());
+      } else {
+        params.delete('country_id');
+      }
+
+      // URL 업데이트 (히스토리 대체)
+      navigate(`/search?${params.toString()}`, { replace: true });
+
+      // 검색 결과 갱신
+      queryClient.invalidateQueries({ queryKey: ['gestureName'] });
+      queryClient.refetchQueries({ queryKey: ['gestureName'] });
+    }
+  };
+
+  // 검색 실행 핸들러
+  const executeSearch = () => {
+    if (!searchTerm.trim()) return;
+
+    // 카메라 검색에서 일반 검색으로 전환
+    if (isCameraSearch) {
+      setIsCameraSearch(false);
+    }
+
+    // 검색 파라미터 구성
+    const params = new URLSearchParams();
+    params.set('gesture_name', searchTerm);
+
+    if (countryId > 0) {
+      params.set('country_id', countryId.toString());
+    }
+
+    // 검색 페이지로 이동
+    navigate(`/search?${params.toString()}`);
+  };
+
+  return (
+    <div className="flex items-center flex-1">
+      {/* 모바일이 아닐 때만 검색 아이콘 표시 */}
+      {!isMobile && (
+        <FontAwesomeIcon
+          icon={faMagnifyingGlass}
+          size="lg"
+          className="mr-3 cursor-pointer text-gray-600 dark:text-white"
+          onClick={executeSearch}
+        />
+      )}
+
+      <BaseDropdown
+        selected={selectedCountryName}
+        options={countries}
+        label="검색 국가"
+        onSelect={handleCountrySelect}
+      />
+
+      {/* 검색창 */}
+      <div className="flex items-center w-full ml-2">
+        <div className="relative flex-1 min-w-[70%]" ref={searchInputRef}>
+          <input
+            className="w-full h-10 px-2 
+            text-xs sm:text-sm mb:text-base lg:text-md
+            border-b border-gray-400 focus:outline-none
+            dark:border-d-txt-50/80
+            dark:text-d-txt-50/90
+            font-[NanumSquareRound]"
+            placeholder="검색어를 입력하세요"
+            value={searchTerm}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
+          />
+          {/* 카메라 검색일 때 표시 */}
+          {isCameraSearch && (
+            <div className="absolute right-2 top-2 text-xs text-blue-500 dark:text-blue-300">
+              카메라 검색
+            </div>
+          )}
+        </div>
+        <div className="ml-1 flex items-center justify-center">
+          <SearchCameraModal />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default GestureSearchBar;
