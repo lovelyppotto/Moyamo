@@ -12,21 +12,20 @@ function GestureSearchInput() {
   const [showResults, setShowResults] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isCameraSearch, setIsCameraSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); // searchTerm을 상태로 관리
 
   // URL에서 검색어와 카메라 검색 여부 확인
   const params = new URLSearchParams(location.search);
   const gestureName = params.get('gesture_name') || '';
   const gestureLabel = params.get('gesture_label') || '';
   const countryId = params.get('country_id') ? parseInt(params.get('country_id')!, 10) : 0;
-  const searchTerm = gestureLabel || gestureName;
 
   // 홈 페이지 여부 확인
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
   // 검색 쿼리 실행
-  const { data: searchResults, isLoading } = useGestureSearch(searchTerm, countryId, {
-    // 홈 페이지이고 검색어가 있을 때만 자동으로 요청
-    enabled: isHomePage && searchTerm !== '',
+  const { data: searchResults, isLoading } = useGestureSearch(searchTerm || gestureLabel || gestureName, countryId, {
+    enabled: isHomePage && (searchTerm || gestureLabel || gestureName) !== '',
   });
 
   // 화면 크기에 따라 작은 화면 여부 감지
@@ -52,19 +51,27 @@ function GestureSearchInput() {
 
   // 검색 결과 표시 여부 결정
   useEffect(() => {
-    // 홈 페이지에서만 검색 결과를 표시
+    console.log('useEffect triggered:', { isHomePage, searchTerm });
     setShowResults(isHomePage && searchTerm !== '');
   }, [searchTerm, isHomePage]);
 
   // 검색 결과 클릭 핸들러
   const handleResultClick = (result: any) => {
-    // 검색 결과 페이지로 이동
     window.location.href = `/search?gesture_name=${encodeURIComponent(result.gestureName)}`;
+  };
+
+  // 검색어 변경 핸들러
+  const handleSearchTermChange = (newTerm: string) => {
+    setSearchTerm(newTerm);
   };
 
   return (
     <div className="search-container relative">
-      <GestureSearchBar searchInputRef={searchInputRef} isCameraSearch={isCameraSearch} />
+      <GestureSearchBar
+        searchInputRef={searchInputRef}
+        isCameraSearch={isCameraSearch}
+        onSearchTermChange={handleSearchTermChange} // 콜백 전달
+      />
 
       {showResults && (
         <GestureSearchPreview
