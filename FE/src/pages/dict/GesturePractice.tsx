@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import GesturePracticeCamera from '../../components/GesturePracticeCamera';
 import { GlbViewer } from '@/components/GlbViewer';
 
@@ -20,9 +20,9 @@ function GesturePractice() {
   }, [gesture, navigate]);
 
   // 카메라 버튼 클릭 시 카메라로 전환
-  const toggleScreen = () => {
-    setShowCamera(!showCamera);
-  };
+  const toggleScreen = useCallback(() => {
+    setShowCamera(true);
+  }, []);
 
   return (
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
@@ -42,7 +42,6 @@ function GesturePractice() {
       </div>
 
       {/* 메인 컨텐츠 */}
-
       <div className="flex flex-col lg:flex-row w-full h-full max-w-full px-2 py-1 flex-1 justify-center items-center lg:gap-8 xl:gap-12">
         {/* 따라할 제스처 */}
         <div className="w-full max-w-[500px] lg:w-auto lg:flex-1 flex justify-center items-center mb-2 lg:mb-0">
@@ -50,12 +49,7 @@ function GesturePractice() {
             className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic 
           flex justify-center items-center p-3"
           >
-            {/* <img
-              src={gesture.imageUrl}
-              alt={`${gesture.gestureTitle} image`}
-              className="w-[90%] h-[90%] lg:w-[80%] lg:h-[80%] object-contain"
-            /> */}
-            <GlbViewer url={gesture.imageUrl} />
+            <GlbViewer url={gesture?.imageUrl} />
           </div>
         </div>
 
@@ -63,7 +57,7 @@ function GesturePractice() {
         <div
           className="w-full max-w-[500px] md:w-[500px] lg:w-[600px] h-[38vh] lg:h-[70vh] bg-gray-200 rounded-lg drop-shadow-basic 
           flex justify-center items-center cursor-pointer"
-          onClick={toggleScreen}
+          onClick={!showCamera ? toggleScreen : undefined} // 카메라가 보이지 않을 때만 클릭 이벤트 활성화
         >
           {!showCamera ? (
             <div
@@ -81,7 +75,7 @@ function GesturePractice() {
           ) : (
             <GesturePracticeCamera
               guidelineClassName="max-w-[500px] 
-              w-[45%] lg:w-[80%]
+              w-[45%] lg:w-[60%]
               top-12 lg:top-22"
               guideText="정확도 70% 이상 시 ○표시가 나타납니다."
               gestureLabel={gesture.gestureLabel}
