@@ -2,11 +2,9 @@ import DictHeader from './header/DictHeader';
 import DictStatusLabel from './DictStatusLabel';
 import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
-import { useCountryCode } from '@/hooks/useCountryCode';
+import ErrorPage from '@/components/ErrorPage';
 
 function CompareGuide() {
-  const getCountryCode = useCountryCode();
-
   // 이미지 제대로 들어오면 삭제!!!!
   const defaultImagePath = '/images/gestures/cross-finger.png';
 
@@ -30,11 +28,7 @@ function CompareGuide() {
 
   // 에러 상태 확인
   if (isError || !currentGestureData) {
-    return (
-      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
-        데이터를 불러올 수 없습니다.
-      </div>
-    );
+    return <ErrorPage />;
   }
 
   // 제스처 의미 데이터

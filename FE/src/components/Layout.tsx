@@ -20,8 +20,9 @@ function Layout() {
   const isAnyResultPage = isResultPage || isCameraResultPage; // 통합 검색 결과 페이지 여부
   const isQuizPage =
     location.pathname.startsWith('/quiz') || location.pathname.startsWith('/quizcontent');
-
   const isDictPage = location.pathname.includes('/dictionary');
+  const isErrorPage = location.pathname === '/error';
+
   const volumeHight = (
     <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  " />
   );
@@ -46,7 +47,7 @@ function Layout() {
   };
 
   // 패딩 적용하지 않는 페이지
-  const noPaddingPage = isHomePage || isAnyResultPage || isDictPage || isQuizPage;
+  const noPaddingPage = isHomePage || isAnyResultPage || isDictPage || isQuizPage || isErrorPage;
 
   // Result 페이지와 Quiz 페이지는 배경색 적용 안 함
   const bgStyle = isAnyResultPage || isQuizPage ? {} : { backgroundColor: '#f5f5f5' };

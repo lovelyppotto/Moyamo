@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
+import ErrorPage from '@/components/ErrorPage';
 
 function Dictionary() {
   const navigate = useNavigate();
@@ -16,6 +17,18 @@ function Dictionary() {
   // URL에서 country_id 파라미터 가져오기
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
+
+  useEffect(() => {
+    const countryIdParam = queryParams.get('country_id');
+
+    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
+    if (countryIdParam !== null) {
+      const parsedId = parseInt(countryIdParam);
+      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
+        navigate('/');
+      }
+    }
+  }, []);
 
   // 국가 목록
   const countryOptions: Country[] = [
@@ -35,7 +48,21 @@ function Dictionary() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
-  const { data: gestureData, isLoading, isError, error } = useGesturesByCountry(selectedCountry.id);
+  const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
+
+  // 로딩 상태 확인 - 로딩 페이지 구현 필요
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
+        로딩 중...
+      </div>
+    );
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return <ErrorPage />;
+  }
 
   // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
   const currentGestures = React.useMemo(() => {
@@ -73,8 +100,19 @@ function Dictionary() {
 
   // 국가 선택 핸들러
   const handleSelectCountry = (country: Country) => {
+    // ID 유효성 검사 (1~5 사이의 숫자인지 확인)
+    if (
+      !country ||
+      !country.id ||
+      isNaN(Number(country.id)) ||
+      Number(country.id) < 1 ||
+      Number(country.id) > 5
+    ) {
+      navigate('/');
+      return;
+    }
+
     setSelectedCountry(country);
-    // 다른 국가 선택 시 URL 파라미터 업데이트
     navigate(`/dictionary?country_id=${country.id}`);
   };
 
@@ -91,18 +129,42 @@ function Dictionary() {
 
   // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
-    if (!currentGesture) return; // 제스처가 없으면 이동 안함
+    if (!currentGesture || !currentGesture.gestureId) return; // 제스처가 없으면 이동 안함
 
-    navigate(
-      `/dictionary/detail?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`
-    );
+    // gesture_id 유효성 검사 (예: 숫자이고 특정 범위 내인지)
+    const gestureId = currentGesture.gestureId;
+    if (isNaN(Number(gestureId)) || Number(gestureId) < 1) {
+      navigate('/');
+      return;
+    }
+
+    // country_id 유효성 검사 (1~5 사이의 값인지)
+    if (
+      !selectedCountry ||
+      !selectedCountry.id ||
+      isNaN(Number(selectedCountry.id)) ||
+      Number(selectedCountry.id) < 1 ||
+      Number(selectedCountry.id) > 5
+    ) {
+      navigate('/');
+      return;
+    }
+
+    navigate(`/dictionary/detail?gesture_id=${gestureId}&country_id=${selectedCountry.id}`);
   };
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    if (!currentGesture) return;
+    if (!currentGesture || !currentGesture.gestureId) return;
 
-    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`);
+    // gesture_id 유효성 검사
+    const gestureId = currentGesture.gestureId;
+    if (isNaN(Number(gestureId)) || Number(gestureId) < 1) {
+      navigate('/');
+      return;
+    }
+
+    navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 
   return (
