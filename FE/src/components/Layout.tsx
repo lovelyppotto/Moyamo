@@ -15,8 +15,8 @@ function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
-  const isResultPage = location.pathname === '/search';
-  const isCameraResultPage = location.pathname === '/search/camera';
+  const isResultPage = location.pathname === '/search' || location.pathname === '/search/';
+  const isCameraResultPage = location.pathname === '/search/camera' || location.pathname === '/search/camera/';
   const isAnyResultPage = isResultPage || isCameraResultPage; // 통합 검색 결과 페이지 여부
   const isQuizPage =
     location.pathname.startsWith('/quiz') || location.pathname.startsWith('/quizcontent');
