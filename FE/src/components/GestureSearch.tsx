@@ -61,24 +61,6 @@ function GestureSearchInput() {
     }
   }, [location.search, setSearchTerm]);
 
-  // 컴포넌트 마운트시 및 창 크기 변경시 검색 결과 너비 업데이트
-  useEffect(() => {
-    const updateSearchResultsWidth = () => {
-      if (searchInputRef.current) {
-        setSearchResultsWidth(searchInputRef.current.offsetWidth);
-      }
-    };
-
-    // 초기 너비 설정
-    updateSearchResultsWidth();
-
-    // 창 크기 변경 시 너비 업데이트
-    window.addEventListener('resize', updateSearchResultsWidth);
-    return () => {
-      window.removeEventListener('resize', updateSearchResultsWidth);
-    };
-  }, []);
-
   // 화면 크기에 따라 모바일 여부 및 작은 화면 여부 감지
   useEffect(() => {
     const checkScreenSize = () => {
