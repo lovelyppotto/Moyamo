@@ -32,12 +32,12 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
   useEffect(() => {
     // CAMERA 타입이 아닌 경우 바로 프로그레스 시작
-    if (questionData.type !== 'CAMERA') {
+    if (questionData && questionData.type !== 'CAMERA') {
       setStartProgress(true);
     } else {
       setStartProgress(false);
     }
-  }, [questionData.type]);
+  }, [questionData?.type]);
 
   function handleSelectAnswer(isCorrect: boolean | null) {
     setAnswer({
@@ -104,7 +104,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
           <div className="flex justify-between items-center mt-[3vh]">
             <h1 className="sm:text-sm md:text-2xl lg:text-3xl 2xl:text-4xl font-[NanumSquareRoundB] mx-[2%] dark:text-white">
-              {`Q${Index + 1}. ${questionData.text}`}
+              {`Q${Index + 1}. ${questionData?.text}`}
             </h1>
             <button
               className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer dark:text-white"
@@ -116,7 +116,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
           </div>
           <div className="h-2/3 w-full overflow-x-visible  mt-[3vh]">
             {/* form 태그 제거하고 직접 컴포넌트들 렌더링 */}
-            {questionData.type === 'MEANING' && (
+            {questionData?.type === 'MEANING' && (
               <Answers
                 options={questionData.options}
                 answer={questionData.answer}
@@ -125,7 +125,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 isTimeOut={isTimeOut}
               />
             )}
-            {questionData.type === 'GESTURE' && (
+            {questionData?.type === 'GESTURE' && (
               <Answers2
                 options={questionData.options}
                 answer={questionData.answer}
@@ -133,11 +133,11 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 isTimeOut={isTimeOut}
               />
             )}
-            {questionData.type === 'CAMERA' && (
+            {questionData?.type === 'CAMERA' && (
               <Answers3
                 options={questionData.options}
                 answer={questionData.answer}
-                onSelect={handleSelectAnswer}
+                onSelect={handleSelectAnswer}                                             
                 onProgressStart={() => setStartProgress(true)}
               />
             )}

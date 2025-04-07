@@ -20,15 +20,19 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
   const handleGesture = (gesture: string, confidence: number) => {
     setCurrentGesture(gesture);
     setCurrentConfidence(confidence);
+    const CorrectAnswer = answer?.correctGestureName;
 
     // 타이머가 끝난 후에만 정답 처리
     if (!showTimer) {
       console.log(`감지된 제스처: ${gesture}, 신뢰도: ${confidence}`);
-
-      const isCorrect = answer?.correctGestureName === gesture;
-      onSelect(isCorrect);
+      // gesture랑 answer?.correctGestureName이 일치한다면 정답처리하기. (빠르게 가져오는데 일치는 빠르게 처리 가능?)
+      if (CorrectAnswer === currentGesture) {
+        onSelect(true);
+      }
     }
   };
+
+  //퀴즈를 풀 때
 
   const handleTimerEnd = () => {
     setShowTimer(false);
@@ -53,9 +57,7 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, onProgressStart }
           <WebCamera
             isPaused={isPaused}
             guideText={
-              currentGesture
-                ? `감지된 제스처: ${currentGesture} (${Math.round(currentConfidence * 100)}%)`
-                : '손을 화면 중앙에 위치시켜 주세요'
+              currentGesture ? '동작을 인식하고 있습니다.' : '3초 이상 동작을 유지해주세요.'
             }
             guidelineClassName="w-4/5 opacity-50"
             onGesture={handleGesture}
@@ -70,3 +72,5 @@ export default Answers3;
 
 //고칠 부분: 감지된 제스처: 없음, 신뢰도: 52.3 -> 얼마 안 지나서 바로 멈춤. PROGRESS 시작된건가? 2개만 받고 끝남?2번째 문제여도 끝남'''
 //RESULT에 VERY GOOD, 버튼 돌아가기 아이콘콘
+//다음 퀴즈를 건너뜀...?
+//index를 넘어서 다음 퀴즈 페이지가 보임...!
