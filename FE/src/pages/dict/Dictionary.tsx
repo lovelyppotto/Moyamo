@@ -18,18 +18,6 @@ function Dictionary() {
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
 
-  useEffect(() => {
-    const countryIdParam = queryParams.get('country_id');
-
-    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
-    if (countryIdParam !== null) {
-      const parsedId = parseInt(countryIdParam);
-      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
-        navigate('/');
-      }
-    }
-  }, []);
-
   // 국가 목록
   const countryOptions: Country[] = [
     { code: 'kr', name: '한국', id: 1 },
@@ -46,47 +34,46 @@ function Dictionary() {
 
   const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
+  const [shuffledGestures, setShuffledGestures] = useState<any[]>([]); // 셔플된 제스처 목록 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
 
-  // 로딩 상태 확인 - 로딩 페이지 구현 필요
-  if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
-        로딩 중...
-      </div>
-    );
-  }
-
-  // 에러 상태 확인
-  if (isError || !gestureData) {
-    return <ErrorPage />;
-  }
-
-  // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
-  const currentGestures = React.useMemo(() => {
-    if (!gestureData?.gestures) return [];
-
-    // 원본 배열을 복사해서 작업 (원본 데이터 유지)
-    const shuffledGestures = [...gestureData.gestures];
-
-    for (let i = shuffledGestures.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
+  // 유효성 검사
+  useEffect(() => {
+    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
+    if (countryIdParam !== null) {
+      const parsedId = parseInt(countryIdParam);
+      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
+        navigate('/');
+      }
     }
+  }, [countryIdParam, navigate]); // 의존성 배열에 navigate 추가
 
-    return shuffledGestures;
+  // 제스처 데이터 섞기 및 초기 선택 제스처 설정
+  useEffect(() => {
+    if (gestureData?.gestures && gestureData.gestures.length > 0) {
+      // 원본 배열을 복사해서 작업 (원본 데이터 유지)
+      const newShuffledGestures = [...gestureData.gestures];
+
+      // Fisher-Yates 셔플 알고리즘
+      for (let i = newShuffledGestures.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newShuffledGestures[i], newShuffledGestures[j]] = [
+          newShuffledGestures[j],
+          newShuffledGestures[i],
+        ];
+      }
+
+      setShuffledGestures(newShuffledGestures);
+
+      // 국가 변경되면 첫번째 제스처를 선택
+      setSelectedGesture(newShuffledGestures[0].gestureId);
+    }
   }, [gestureData]);
 
-  // API에서 제스처 데이터 가져오기
-  useEffect(() => {
-    // gestureData가 존재하고 gestures 배열이 있을 때만 처리
-    if (gestureData?.gestures && gestureData.gestures.length > 0) {
-      // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(currentGestures[0].gestureId);
-    }
-  }, [gestureData, currentGestures]);
+  // 현재 제스처 목록
+  const currentGestures = shuffledGestures;
 
   // 현재 선택된 제스처
   const currentGesture =
@@ -166,6 +153,20 @@ function Dictionary() {
 
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
+
+  // 모든 훅 선언 후 조건부 렌더링
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
+        로딩 중...
+      </div>
+    );
+  }
+
+  // 에러 상태 확인
+  if (isError || !gestureData) {
+    return <ErrorPage />;
+  }
 
   return (
     <div className="flex flex-col h-screen w-full dark:bg-gray-900 dark:text-d-txt-50">
