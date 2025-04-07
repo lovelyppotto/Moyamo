@@ -10,11 +10,13 @@ import { useQueryClient } from '@tanstack/react-query';
 interface SearchBarProps {
   searchInputRef: React.RefObject<HTMLDivElement | null>;
   isCameraSearch: boolean;
+  onSearchTermChange: (newTerm: string) => void;
 }
 
 function GestureSearchBar({
   searchInputRef,
   isCameraSearch: propIsCameraSearch,
+  onSearchTermChange,
 }: SearchBarProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,6 +79,7 @@ function GestureSearchBar({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
+    onSearchTermChange(newValue); // 입력값 변경 시 콜백 호출
 
     // 카메라 검색에서 일반 검색으로 전환
     if (isCameraSearch) {
