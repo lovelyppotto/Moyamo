@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useGestureStore } from '@/stores/useGesturStore';
 import { useGestureEvents } from '@/hooks/useGestureEvents';
 import { useGestureTimer } from '@/hooks/useGestureTimer';
+import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 
 // 컴포넌트
 import CameraDialogHeader from './CameraDialogHeader';
@@ -35,33 +36,31 @@ function SearchCameraModal() {
   } = useGestureStore();
 
   // 제스처 이벤트 리스너 설정
-  useGestureEvents({ isOpen: open });     
-
-  // 줌 방지 핸들러
+  useGestureEvents({ isOpen: open });
+  
+  // 강력한 줌 방지 적용 (기존 코드 대체)
+  useZoomPrevention();
+  
+  // 컴포넌트 마운트 시 한 번만 실행
   useEffect(() => {
-    const preventZoom = (e: KeyboardEvent) => {
-      console.log('key:', e.key)
-      if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-        e.preventDefault();
-      }
-    };
-
-    const preventWheelZoom = (e: WheelEvent) => {
-      if (e.ctrlKey) {
-        e.preventDefault();
-      }
-    };
-
-    // 이벤트 리스너 추가
-    window.addEventListener('keydown', preventZoom);
-    window.addEventListener('wheel', preventWheelZoom, { passive: false });
+    mountCountRef.current += 1;
+    console.log(`[🔍 SearchCameraModal] 마운트 (${mountCountRef.current}번째)`);
 
     return () => {
-      // 이벤트 리스너 제거
-      window.removeEventListener('keydown', preventZoom);
-      window.removeEventListener('wheel', preventWheelZoom);
+      console.log('[🔍 SearchCameraModal] 언마운트');
+      // 모든 토스트 제거
+      toast.dismiss();
     };
   }, []);
+  
+  // 모달이 열리면 모든 상태 초기화
+  useEffect(() => {
+    if (open) {
+      resetAllState();
+      toast.dismiss();
+      console.log('[🔄️ 모달 열림] 상태 초기화 완료');
+    }
+  }, [open, resetAllState]);
   
   // 타이머 완료 후 처리 함수
   const handleTimerComplete = useCallback((detectedGesture: string) => {
@@ -84,27 +83,6 @@ function SearchCameraModal() {
     isOpen: open,
     onTimerComplete: handleTimerComplete
   });
-  
-  // 컴포넌트 마운트 시 한 번만 실행
-  useEffect(() => {
-    mountCountRef.current += 1;
-    console.log(`[🔍 SearchCameraModal] 마운트 (${mountCountRef.current}번째)`);
-
-    return () => {
-      console.log('[🔍 SearchCameraModal] 언마운트');
-      // 모든 토스트 제거
-      toast.dismiss();
-    };
-  }, []);
-  
-  // 모달이 열리면 모든 상태 초기화
-  useEffect(() => {
-    if (open) {
-      resetAllState();
-      toast.dismiss();
-      console.log('[🔄️ 모달 열림] 상태 초기화 완료');
-    }
-  }, [open, resetAllState]);
   
   // 카메라 버튼 클릭 핸들러
   const handleCameraClick = () => {
