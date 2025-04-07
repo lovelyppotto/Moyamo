@@ -46,6 +46,7 @@ function Dictionary() {
 
   const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
+  const [shuffledGestures, setShuffledGestures] = useState<any[]>([]); // 셔플된 제스처 목록 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
@@ -64,29 +65,30 @@ function Dictionary() {
     return <ErrorPage />;
   }
 
-  // 현재 선택한 국가에 해당하는 제스처 목록(랜덤)
-  const currentGestures = React.useMemo(() => {
-    if (!gestureData?.gestures) return [];
+  // 제스처 데이터 섞기 및 초기 선택 제스처 설정
+  useEffect(() => {
+    if (gestureData?.gestures && gestureData.gestures.length > 0) {
+      // 원본 배열을 복사해서 작업 (원본 데이터 유지)
+      const newShuffledGestures = [...gestureData.gestures];
 
-    // 원본 배열을 복사해서 작업 (원본 데이터 유지)
-    const shuffledGestures = [...gestureData.gestures];
+      // Fisher-Yates 셔플 알고리즘
+      for (let i = newShuffledGestures.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newShuffledGestures[i], newShuffledGestures[j]] = [
+          newShuffledGestures[j],
+          newShuffledGestures[i],
+        ];
+      }
 
-    for (let i = shuffledGestures.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledGestures[i], shuffledGestures[j]] = [shuffledGestures[j], shuffledGestures[i]];
+      setShuffledGestures(newShuffledGestures);
+
+      // 국가 변경되면 첫번째 제스처를 선택
+      setSelectedGesture(newShuffledGestures[0].gestureId);
     }
-
-    return shuffledGestures;
   }, [gestureData]);
 
-  // API에서 제스처 데이터 가져오기
-  useEffect(() => {
-    // gestureData가 존재하고 gestures 배열이 있을 때만 처리
-    if (gestureData?.gestures && gestureData.gestures.length > 0) {
-      // 국가 변경되면 첫번째 제스처를 선택
-      setSelectedGesture(currentGestures[0].gestureId);
-    }
-  }, [gestureData, currentGestures]);
+  // 현재 제스처 목록
+  const currentGestures = shuffledGestures;
 
   // 현재 선택된 제스처
   const currentGesture =
