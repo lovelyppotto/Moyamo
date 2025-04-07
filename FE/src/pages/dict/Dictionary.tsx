@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
+import LoadingPage from '@/components/LoadingPage';
 
 function Dictionary() {
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ function Dictionary() {
     { code: 'it', name: '이탈리아', id: 5 },
   ];
 
+  // 로딩페이지 관련
+  const [showContent, setShowContent] = useState(false);
+
   // URL 파라미터에서 국가 ID 가져오기
   const initialCountry = countryIdParam
     ? countryOptions.find((country) => country.id === parseInt(countryIdParam)) || countryOptions[0]
@@ -37,6 +41,13 @@ function Dictionary() {
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
+
+  // 로딩페이지
+  useEffect(() => {
+    if (!isLoading && gestureData && !showContent) {
+      // 데이터가 로드되었지만 로딩 화면을 계속 표시
+    }
+  }, [isLoading, gestureData, showContent]);
 
   // 유효성 검사
   useEffect(() => {
@@ -154,12 +165,8 @@ function Dictionary() {
   };
 
   // 로딩 상태 확인
-  if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
-        로딩 중...
-      </div>
-    );
+  if (isLoading || !showContent) {
+    return <LoadingPage minDuration={3000} onComplete={() => setShowContent(true)} />;
   }
 
   // 에러 상태 확인
