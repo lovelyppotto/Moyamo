@@ -4,6 +4,7 @@ import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
 import ErrorPage from '@/components/ErrorPage';
 import { GlbViewer } from '@/components/GlbViewer';
+import { useNavigate } from 'react-router-dom';
 
 function CompareGuide() {
   // URL 쿼리 파라미터에서 gesture_id 추출
@@ -12,8 +13,8 @@ function CompareGuide() {
   const gestureId = gestureIdParam ? parseInt(gestureIdParam, 10) : undefined;
   // useCompareGuide 훅을 사용하여 제스처 비교 가이드 가져오기
   const { data: gestureGuideData, isLoading, isError } = useCompareGuide(gestureId);
-
   const currentGestureData = gestureGuideData;
+  const navigate = useNavigate();
 
   // 로딩 상태 확인 - 로딩 페이지 구현 필요
   if (isLoading) {
@@ -26,11 +27,11 @@ function CompareGuide() {
 
   // 에러 상태 확인
   if (isError || !currentGestureData) {
-    return <ErrorPage />;
+    navigate('/error');
   }
 
   // 제스처 의미 데이터
-  const gestureMeanings = currentGestureData.meanings || [];
+  const gestureMeanings = currentGestureData?.meanings || [];
 
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
