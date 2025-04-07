@@ -11,13 +11,13 @@ function ErrorPage() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center font-[NanumSquareRoundEB] bg-white px-4">
-      <p className="text-center text-[48px] sm:text-[64px] md:text-[80px] lg:text-[90px] leading-tight text-[#5E7CFF] font-bold mb-10">
+    <div className="w-screen h-screen flex flex-col items-center justify-center font-[NanumSquareRoundEB] bg-white px-4 dark:bg-gray-900 ">
+      <p className="text-center text-[48px] sm:text-[64px] md:text-[80px] lg:text-[90px] leading-tight text-kr-500 dark:text-d-kr-500 font-bold mb-10">
         404
         <br />
         ERROR
       </p>
-      <div className="text-center text-black text-[18px] sm-text-[24px] md:text-[28px] mb-12">
+      <div className="text-center text-black dark:text-d-txt-50 text-[18px] sm-text-[24px] md:text-[28px] mb-12">
         <p>
           찾을 수 없는 페이지입니다.
           <br />
@@ -26,16 +26,16 @@ function ErrorPage() {
       </div>
       <div className="flex flex-row gap-8 sm:gap-10 lg:gap-14">
         <button
-          className="bg-[#5E7CFF] text-white px-8 py-3 rounded-xl text-base sm:text-xl lg:text-2xl"
-          onClick={handleBackClick}
-        >
-          BACK
-        </button>
-        <button
-          className="bg-[#5E7CFF] text-white px-8 py-3 rounded-xl text-base sm:text-xl lg:text-2xl"
+          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
           onClick={handleHomeClick}
         >
           Home
+        </button>
+        <button
+          className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 text-white dark:text-d-txt-50 px-12 py-4 rounded-full text-base sm:text-xl lg:text-2xl cursor-pointer"
+          onClick={handleBackClick}
+        >
+          BACK
         </button>
       </div>
     </div>
