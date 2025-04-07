@@ -17,6 +17,18 @@ function Dictionary() {
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
 
+  useEffect(() => {
+    const countryIdParam = queryParams.get('country_id');
+
+    // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
+    if (countryIdParam !== null) {
+      const parsedId = parseInt(countryIdParam);
+      if (isNaN(parsedId) || parsedId < 1 || parsedId > 5) {
+        navigate('/');
+      }
+    }
+  }, []);
+
   // 국가 목록
   const countryOptions: Country[] = [
     { code: 'kr', name: '한국', id: 1 },
@@ -73,8 +85,19 @@ function Dictionary() {
 
   // 국가 선택 핸들러
   const handleSelectCountry = (country: Country) => {
+    // ID 유효성 검사 (1~5 사이의 숫자인지 확인)
+    if (
+      !country ||
+      !country.id ||
+      isNaN(Number(country.id)) ||
+      Number(country.id) < 1 ||
+      Number(country.id) > 5
+    ) {
+      navigate('/');
+      return;
+    }
+
     setSelectedCountry(country);
-    // 다른 국가 선택 시 URL 파라미터 업데이트
     navigate(`/dictionary?country_id=${country.id}`);
   };
 
@@ -91,18 +114,42 @@ function Dictionary() {
 
   // 제스처 디테일로 이동
   const handleDetailButtonClick = () => {
-    if (!currentGesture) return; // 제스처가 없으면 이동 안함
+    if (!currentGesture || !currentGesture.gestureId) return; // 제스처가 없으면 이동 안함
 
-    navigate(
-      `/dictionary/detail?gesture_id=${currentGesture.gestureId}&country_id=${selectedCountry.id}`
-    );
+    // gesture_id 유효성 검사 (예: 숫자이고 특정 범위 내인지)
+    const gestureId = currentGesture.gestureId;
+    if (isNaN(Number(gestureId)) || Number(gestureId) < 1) {
+      navigate('/');
+      return;
+    }
+
+    // country_id 유효성 검사 (1~5 사이의 값인지)
+    if (
+      !selectedCountry ||
+      !selectedCountry.id ||
+      isNaN(Number(selectedCountry.id)) ||
+      Number(selectedCountry.id) < 1 ||
+      Number(selectedCountry.id) > 5
+    ) {
+      navigate('/');
+      return;
+    }
+
+    navigate(`/dictionary/detail?gesture_id=${gestureId}&country_id=${selectedCountry.id}`);
   };
 
   // 비교 가이드로 이동
   const handleGuideButtonClick = () => {
-    if (!currentGesture) return;
+    if (!currentGesture || !currentGesture.gestureId) return;
 
-    navigate(`/dictionary/compare?gesture_id=${currentGesture.gestureId}`);
+    // gesture_id 유효성 검사
+    const gestureId = currentGesture.gestureId;
+    if (isNaN(Number(gestureId)) || Number(gestureId) < 1) {
+      console.error('유효하지 않은 제스처 ID');
+      return;
+    }
+
+    navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 
   return (
