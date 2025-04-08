@@ -83,12 +83,13 @@ function CompareGuide() {
         {/* 메인 이미지 */}
         <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[4%] lg:mb-[3%]">
           <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
-            {/* <img
-              src={currentGestureData.imageUrl || defaultImagePath}
-              alt="compare guide image"
-              className="w-[90%] h-[90%] object-contain"
-            /> */}
-            <GlbViewer url={`${currentGestureData?.imageUrl}`} />
+            {currentGestureData?.imageUrl ? (
+              <GlbViewer url={`${currentGestureData.imageUrl}`} />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
+                이미지 준비 중
+              </div>
+            )}
           </div>
         </div>
 

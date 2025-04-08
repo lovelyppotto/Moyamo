@@ -157,13 +157,13 @@ function GestureDetail() {
               className="w-full max-w-[600px] md:max-w-[500px] sm:max-w-[500px] lg:h-[90%] sm:h-[300px] min-h-[150px] 
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
-              {/* 이미지 크기 조정: md일 때 너비를 75%로 증가, 높이도 조정 */}
-              {/* <img
-                src={gestureData.gestureImage || defaultImagePath}
-                alt={`${gestureData.gestureTitle} image`}
-                className="p-2 w-[25%] md:w-[80%] h-auto max-h-[90%] object-contain"
-              /> */}
-              <GlbViewer url={`${gestureData?.gestureImage}`} />
+              {gestureData?.gestureImage ? (
+                <GlbViewer url={`${gestureData.gestureImage}`} />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
+                  이미지 준비 중
+                </div>
+              )}
             </div>
           </div>
 
