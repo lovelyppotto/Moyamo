@@ -79,7 +79,7 @@ def predict_static(input_vector: np.ndarray):
 async def dynamic_api(req: DynamicRequest):
     if len(req.frames) <= 50 or len(req.frames[0]) != 64:
         raise HTTPException(status_code=400, detail="Expected shape: (90, 64)")
-    input_seq = np.array(req.frames).reshape(1, 50, 64)
+    input_seq = np.array(req.frames).reshape(1, len(req.frames), 64)
     label, confidence = predict_dynamic(input_seq)
     return {"gesture": label, "confidence": round(confidence, 2)}
 
