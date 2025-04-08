@@ -45,7 +45,7 @@ pipeline {
             }
             steps {
                 script {
-                    def services = ['static-gesture', 'dynamic-gesture', 'complex-gesture']
+                    def services = ['static-gesture', 'dynamic-gesture']
 
                     for (service in services) {
                         dir("AI/${service}") { 

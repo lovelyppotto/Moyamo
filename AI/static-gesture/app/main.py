@@ -6,7 +6,7 @@ import json
 
 app = FastAPI()
 
-# ✅ CORS 설정 (프론트에서 접근 허용)
+#CORS 설정 (프론트에서 접근 허용)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,10 +15,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ 클래스 라벨 로딩
+#클래스 라벨 로딩
 label_classes = np.load("models/label_classes_mk2.npy")
 
-# ✅ TFLite 모델 로딩
+#TFLite 모델 로딩
 interpreter = Interpreter(model_path="models/static_gesture_mk2_model.tflite")
 interpreter.allocate_tensors()
 
@@ -26,7 +26,7 @@ interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-# ✅ 정규화 함수
+#정규화 함수
 def normalize_landmarks(joint):
     joint = np.array(joint).reshape(21, 3)
     origin = joint[0]
@@ -36,7 +36,7 @@ def normalize_landmarks(joint):
         joint /= norm
     return joint.flatten()
 
-# ✅ 추론 함수 (TFLite)
+#추론 함수 (TFLite)
 def predict(input_vector: np.ndarray) -> tuple[str, float]:
     interpreter.set_tensor(input_details[0]['index'], input_vector.astype(np.float32))
     interpreter.invoke()
@@ -51,7 +51,7 @@ def predict(input_vector: np.ndarray) -> tuple[str, float]:
         return label_classes[pred_idx], max_conf * 100
 
 
-# ✅ WebSocket 실시간 추론 엔드포인트
+#WebSocket 실시간 추론 엔드포인트
 @app.websocket("/ws/predict")
 async def predict_ws(websocket: WebSocket):
     await websocket.accept()
