@@ -269,17 +269,27 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     // 클린업
     return () => {
       window.removeEventListener('resize', handleResize);
+
       if (mixer) {
         mixer.stopAllAction();
       }
+
       if (mixer2) {
         mixer2.stopAllAction();
       }
+
       if (rendererRef.current) {
         rendererRef.current.dispose();
-        if (containerRef.current) {
+
+        // 핵심 수정 부분: 부모-자식 관계 확인 후 제거 (DOM 요소를 제거하기 전에 해당 요소가 실제로 containerRef의 자식인지 확인)
+        if (
+          containerRef.current &&
+          rendererRef.current.domElement.parentNode === containerRef.current
+        ) {
           containerRef.current.removeChild(rendererRef.current.domElement);
         }
+
+        rendererRef.current = null;
       }
     };
   }, [url, index]);
