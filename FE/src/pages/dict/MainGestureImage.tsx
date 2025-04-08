@@ -23,7 +23,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
             <GlbViewer url={gesture.imageUrl} />
           ) : (
             <div className="text-gray-400 flex items-center justify-center h-full w-full text-center px-4">
-              <p className="text-lg sm:text-xl">이미지가 없습니다</p>
+              <p className="text-lg sm:text-xl font-[NanumSquareRoundB]">이미지 준비 중</p>
             </div>
           )}
         </div>
