@@ -60,7 +60,7 @@ export function DictGestureCard({
     >
       <div className="h-full flex flex-col">
         {/* 이미지 영역 */}
-        <div className="flex-grow flex items-center justify-center p-2 sm:p-3">
+        <div className="flex items-center justify-center sm:p-3 h-[75%]">
           {gesture.imageUrl ? (
             shouldLoad ? (
               <GlbViewer url={gesture.imageUrl} />
@@ -77,10 +77,10 @@ export function DictGestureCard({
         </div>
 
         {/* 타이틀 영역 */}
-        <div className="w-full bg-gray-200 p-2 sm:p-[14px]">
-          <span className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
+        <div className="w-full bg-gray-200 h-[25%] sm:p-[14px] flex justify-center items-center">
+          <p className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
             {gesture.gestureTitle}
-          </span>
+          </p>
         </div>
       </div>
     </div>
