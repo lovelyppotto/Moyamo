@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
-import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
+import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
 
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
@@ -24,15 +24,15 @@ const WebCamera = ({
   onGesture,
   showGuideline = true,
 }: WebCameraProps) => {
-  // 웹소켓 서비스 사용
+  // HTTP API 서비스 사용
   const {
-    status: wsStatus,
+    status: apiStatus,
     gesture,
     confidence,
     sendLandmarks,
-    connect: connectWs,
-    disconnect: disconnectWs,
-  } = useGestureWebSocket();
+    connect: connectApi,
+    disconnect: disconnectApi,
+  } = useGestureHttpApi();
 
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -96,34 +96,34 @@ const WebCamera = ({
     [HAND_CONNECTIONS, drawConnectors, drawLandmarks]
   );
 
-  // 부모 컴포넌트에 웹소켓 연결 상태 알림
+  // 부모 컴포넌트에 API 연결 상태 알림
   useEffect(() => {
     if (onConnectionStatus) {
-      onConnectionStatus(wsStatus === 'open');
+      onConnectionStatus(apiStatus === 'open');
     }
-  }, [wsStatus, onConnectionStatus]);
+  }, [apiStatus, onConnectionStatus]);
 
-  // 컴포넌트 마운트 시 웹소켓 연결
+  // 컴포넌트 마운트 시 API 연결
   useEffect(() => {
     if (!isPaused) {
       console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
 
-      // 웹소켓 URL 확인
-      console.log('[🔍 웹소켓 URL]', import.meta.env.VITE_SERVER_STATIC_WS_URL);
+      // API URL 확인
+      console.log('[🔍 API URL]', import.meta.env.VITE_API_BASE_URL);
 
-      // 웹소켓 연결 시작 전에 약간의 지연
+      // API 연결 시작 전에 약간의 지연
       const timer = setTimeout(() => {
-        console.log('[🔍 웹소켓 연결 시작]');
-        connectWs();
-      }, 1000); // 1초로 지연 시간 증가
+        console.log('[🔍 API 연결 시작]');
+        connectApi();
+      }, 1000); // 1초로 지연 시간 설정
 
       return () => {
         console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
         clearTimeout(timer);
-        disconnectWs();
+        disconnectApi();
       };
     }
-  }, [connectWs, disconnectWs, isPaused]);
+  }, [connectApi, disconnectApi, isPaused]);
 
   // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
   useEffect(() => {
