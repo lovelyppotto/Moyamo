@@ -14,6 +14,7 @@ interface WebCameraProps {
   onGesture?: (gesture: string, confidence: number) => void;
   // 가이드라인 표시 여부 제어
   showGuideline?: boolean;
+  onHandDetected?: (detected: boolean) => void;
 }
 
 const WebCamera = ({
@@ -23,6 +24,7 @@ const WebCamera = ({
   isPaused = true,
   onGesture,
   showGuideline = true,
+  onHandDetected,
 }: WebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -167,43 +169,49 @@ useEffect(() => {
 }, []);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
-const predictWebcam = useCallback(async () => {
-  // 조기 종료 조건
-  if (!webcamRef.current?.video?.readyState || !canvasRef.current) {
-    // 다음 프레임에서 다시 시도
-    animationRef.current = requestAnimationFrame(predictWebcam);
-    return;
-  }
-
-  try {
-    const video = webcamRef.current.video;
-    
-    // 손 랜드마크 감지 시도
-    const results = await detectFrame(video);
-    
-    // 감지된 랜드마크 그리기 (공통 함수 활용)
-    drawCanvas(results || { landmarks: [], worldLandmarks: [], handednesses: [], handedness: [] });
-    
-    // API 통신 (isPaused가 false일 때만)
-    if (results?.landmarks && results.landmarks.length > 0 && !isPaused) {
-      // 주기적으로만 로그 출력 (10프레임마다)
-      if (Math.random() < 0.1) {
-        console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
-      }
-      sendLandmarks(results.landmarks);
-    } else if (isPaused && results?.landmarks && results.landmarks.length > 0) {
-      // 주기적으로만 로그 출력 (10프레임마다)
-      if (Math.random() < 0.1) {
-        console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
-      }
+  const predictWebcam = useCallback(async () => {
+    // 조기 종료 조건
+    if (!webcamRef.current?.video?.readyState || !canvasRef.current) {
+      // 다음 프레임에서 다시 시도
+      animationRef.current = requestAnimationFrame(predictWebcam);
+      return;
     }
-  } catch (e) {
-    console.error('[🖐️ 손 감지 오류]', e);
-  }
-
-  // 항상 다음 프레임 요청
-  animationRef.current = requestAnimationFrame(predictWebcam);
-}, [detectFrame, sendLandmarks, isPaused, drawCanvas]);
+  
+    try {
+      const video = webcamRef.current.video;
+      
+      // 손 랜드마크 감지 시도
+      const results = await detectFrame(video);
+      
+      // 손 감지 여부를 부모 컴포넌트로 전달
+      const handDetected = !!(results?.landmarks && results.landmarks.length > 0);
+      if (onHandDetected) {
+        onHandDetected(handDetected);
+      }
+      
+      // 감지된 랜드마크 그리기 (공통 함수 활용)
+      drawCanvas(results || { landmarks: [], worldLandmarks: [], handednesses: [], handedness: [] });
+      
+      // API 통신 (isPaused가 false일 때만)
+      if (handDetected && !isPaused) {
+        // 주기적으로만 로그 출력 (10프레임마다)
+        if (Math.random() < 0.1) {
+          console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
+        }
+        sendLandmarks(results.landmarks);
+      } else if (isPaused && handDetected) {
+        // 주기적으로만 로그 출력 (10프레임마다)
+        if (Math.random() < 0.1) {
+          console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
+        }
+      }
+    } catch (e) {
+      console.error('[🖐️ 손 감지 오류]', e);
+    }
+  
+    // 항상 다음 프레임 요청
+    animationRef.current = requestAnimationFrame(predictWebcam);
+  }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected]);
 
 // 애니메이션 프레임 관리 - 분리된 useEffect로 처리
 useEffect(() => {

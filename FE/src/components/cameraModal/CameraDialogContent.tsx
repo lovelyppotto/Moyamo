@@ -5,6 +5,7 @@ interface CameraDialogContentProps {
   guideText: string;
   isPaused?: boolean;
   onConnectionStatus: (status: boolean) => void;
+  onHandDetected?: (detected: boolean) => void; // 추가
 }
 
 function CameraDialogContent({
@@ -12,6 +13,7 @@ function CameraDialogContent({
   guideText,
   isPaused = false,
   onConnectionStatus,
+  onHandDetected, // 추가
 }: CameraDialogContentProps) {
   return (
     <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
@@ -26,6 +28,7 @@ function CameraDialogContent({
               guideText={guideText}
               onConnectionStatus={onConnectionStatus}
               isPaused={isPaused}
+              onHandDetected={onHandDetected} // 추가
             />
           )}
         </div>

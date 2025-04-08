@@ -31,7 +31,14 @@ function SearchCameraModal() {
   // 제스처 관련 상태
   const [detectedGesture, setDetectedGesture] = useState<string | null>(null);
   const [lastConfidence, setLastConfidence] = useState<number>(0);
+  const [handDetected, setHandDetected] = useState(false);
   
+  // 손 감지 콜백 
+  const handleHandDetected = useCallback((detected: boolean) => {
+    console.log(`[🖐️ 손 감지 상태 업데이트] detected: ${detected}`);
+    setHandDetected(detected);
+  }, []);
+
   // 타이머 관리 훅 사용
   const { startTimer, clearTimer, cleanupTimers } = useGestureTimer();
   
@@ -166,66 +173,66 @@ function SearchCameraModal() {
     onGestureDetected: handleGestureDetected
   });
   
-  // 검색 실행 함수
-  const executeSearch = useCallback(() => {
-    console.log('[🔍 검색 실행] 시작', { detectedGesture, lastConfidence });
+  // // 검색 실행 함수
+  // const executeSearch = useCallback(() => {
+  //   console.log('[🔍 검색 실행] 시작', { detectedGesture, lastConfidence });
     
-    // 제스처가 감지되었고, 'none'이 아니면 바로 검색 실행
-    if (detectedGesture && detectedGesture !== 'none') {
-      // 부적절한 제스처 필터링
-      if (inappropriateGestures.includes(detectedGesture)) {
-        toast.dismiss();
-        toast.error('부적절한 제스처가 감지되었습니다', {
-          description: '상대방을 존중하는 제스처를 사용해 주세요.',
-          duration: 3000,
-        });
+  //   // 제스처가 감지되었고, 'none'이 아니면 바로 검색 실행
+  //   if (detectedGesture && detectedGesture !== 'none') {
+  //     // 부적절한 제스처 필터링
+  //     if (inappropriateGestures.includes(detectedGesture)) {
+  //       toast.dismiss();
+  //       toast.error('부적절한 제스처가 감지되었습니다', {
+  //         description: '상대방을 존중하는 제스처를 사용해 주세요.',
+  //         duration: 3000,
+  //       });
         
-        setGuideText('다른 제스처로 다시 시도해 주세요');
-        setIsErrorToastShown(true);
-        setApiActive(false);
-        return;
-      }
+  //       setGuideText('다른 제스처로 다시 시도해 주세요');
+  //       setIsErrorToastShown(true);
+  //       setApiActive(false);
+  //       return;
+  //     }
       
-      // 검색 성공 - 페이지 이동
-      console.log(`[🔍 검색 성공] 제스처: ${detectedGesture} - 페이지 이동 준비`);
-      setGuideText('인식 완료!');
+  //     // 검색 성공 - 페이지 이동
+  //     console.log(`[🔍 검색 성공] 제스처: ${detectedGesture} - 페이지 이동 준비`);
+  //     setGuideText('인식 완료!');
       
-      // API 비활성화
-      setApiActive(false);
+  //     // API 비활성화
+  //     setApiActive(false);
       
-      // 검색 페이지로 이동
-      const targetUrl = `/search/camera?gesture_label=${detectedGesture}`;
-      console.log('[🔍 검색 이동] 대상 URL:', targetUrl);
+  //     // 검색 페이지로 이동
+  //     const targetUrl = `/search/camera?gesture_label=${detectedGesture}`;
+  //     console.log('[🔍 검색 이동] 대상 URL:', targetUrl);
       
-      try {
-        // 검색 페이지로 이동
-        if (location.pathname.includes('/search')) {
-          window.location.href = targetUrl;
-        } else {
-          navigate(targetUrl);
-        }
+  //     try {
+  //       // 검색 페이지로 이동
+  //       if (location.pathname.includes('/search')) {
+  //         window.location.href = targetUrl;
+  //       } else {
+  //         navigate(targetUrl);
+  //       }
         
-        // 모달 닫기
-        setTimeout(() => setOpen(false), 300);
-      } catch (error) {
-        console.error('[🔍 검색 이동 실패]', error);
-        toast.error('검색 페이지로 이동하는 중 오류가 발생했습니다');
-      }
-    } else {
-      // 제스처가 없거나 'none'인 경우
-      console.log('[🔍 검색 실패] 유효한 제스처 없음:', detectedGesture);
+  //       // 모달 닫기
+  //       setTimeout(() => setOpen(false), 300);
+  //     } catch (error) {
+  //       console.error('[🔍 검색 이동 실패]', error);
+  //       toast.error('검색 페이지로 이동하는 중 오류가 발생했습니다');
+  //     }
+  //   } else {
+  //     // 제스처가 없거나 'none'인 경우
+  //     console.log('[🔍 검색 실패] 유효한 제스처 없음:', detectedGesture);
       
-      toast.dismiss();
-      toast.warning('제스처 인식 오류', {
-        description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
-        duration: 3000,
-      });
+  //     toast.dismiss();
+  //     toast.warning('제스처 인식 오류', {
+  //       description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
+  //       duration: 3000,
+  //     });
       
-      setGuideText('버튼을 눌러 다시 시도해 주세요');
-      setIsErrorToastShown(true);
-      setApiActive(false);
-    }
-  }, [detectedGesture, lastConfidence, inappropriateGestures, location.pathname, navigate]);
+  //     setGuideText('버튼을 눌러 다시 시도해 주세요');
+  //     setIsErrorToastShown(true);
+  //     setApiActive(false);
+  //   }
+  // }, [detectedGesture, lastConfidence, inappropriateGestures, location.pathname, navigate]);
   
   // 준비 타이머
   const startPreparationTimer = useCallback(() => {
@@ -265,55 +272,87 @@ function SearchCameraModal() {
   }, [isPreparingGesture, isCountingDown]);
   
   // 실제 카운트다운 타이머
-  // 실제 카운트다운 타이머 수정 (TypeScript 오류 수정)
-const startCountdownTimer = useCallback(() => {
-  console.log('[⏱️ 카운트다운 타이머] 시작');
-  
-  // 준비 단계 종료, 카운트다운 시작
-  setIsPreparingGesture(false);
-  setIsCountingDown(true);
-  setCountdown(3);
-  setGuideText('제스처를 유지해주세요');
-  
-  // 최종 제스처를 저장할 변수
-  let finalGesture: string | null = null;
-  
-  // 카운트다운 중 제스처 감지를 위한 이벤트 리스너
-  const captureGesture = (event: Event) => {
-    const gestureEvent = event as CustomEvent<{gesture: string; confidence: number}>;
-    if (gestureEvent.detail && gestureEvent.detail.gesture) {
-      finalGesture = gestureEvent.detail.gesture;
-      console.log(`[🖐️ 카운트다운 중 제스처 캡처] ${finalGesture}`);
-    }
-  };
-  
-  // 이벤트 리스너 등록
-  window.addEventListener('gesture-detected', captureGesture);
-  
-  // 카운트다운
-  let count = 3;
-  const countInterval = setInterval(() => {
-    count--;
-    setCountdown(count);
-    console.log(`[⏱️ 카운트다운] ${count}초 남음, 현재 캡처된 제스처:`, finalGesture);
+  const startCountdownTimer = useCallback(() => {
+    console.log('[⏱️ 카운트다운 타이머] 시작');
     
-    if (count <= 0) {
-      clearInterval(countInterval);
+    // 준비 단계 종료, 카운트다운 시작
+    setIsPreparingGesture(false);
+    setIsCountingDown(true);
+    setCountdown(3);
+    setGuideText('제스처를 유지해주세요');
+    
+    // 최종 제스처를 저장할 변수
+    let finalGesture: string | null = null;
+    let wasHandDetected = false; // 카운트다운 중 손이 감지되었는지 여부
+    
+    // 카운트다운 중 제스처 감지를 위한 이벤트 리스너
+    const captureGesture = (event: Event) => {
+      const gestureEvent = event as CustomEvent<{gesture: string; confidence: number}>;
+      if (gestureEvent.detail && gestureEvent.detail.gesture) {
+        finalGesture = gestureEvent.detail.gesture;
+        console.log(`[🖐️ 카운트다운 중 제스처 캡처] ${finalGesture}`);
+        
+        // 손이 감지되었음을 표시
+        wasHandDetected = true;
+      }
+    };
+    
+    // 이벤트 리스너 등록
+    window.addEventListener('gesture-detected', captureGesture);
+    
+    // 카운트다운
+    let count = 3;
+    const countInterval = setInterval(() => {
+      count--;
+      setCountdown(count);
+      console.log(`[⏱️ 카운트다운] ${count}초 남음, 현재 캡처된 제스처:`, finalGesture);
       
-      // 리스너 제거
-      window.removeEventListener('gesture-detected', captureGesture);
+      // 손 감지 상태 업데이트
+      wasHandDetected = wasHandDetected || handDetected;
       
-      // 카운트다운 완료 상태 설정
-      setIsCountingDown(false);
-      
-      console.log('[⏱️ 카운트다운 완료] 최종 제스처:', finalGesture || detectedGesture);
-      
-      // 최종 제스처 선택 (캡처된 것 우선, 없으면 상태의 것 사용)
-      const gestureToUse = finalGesture || detectedGesture;
-      
-      // 검색 실행
-      if (gestureToUse && gestureToUse !== 'none') {
-        // 부적절한 제스처 확인
+      if (count <= 0) {
+        clearInterval(countInterval);
+        
+        // 리스너 제거
+        window.removeEventListener('gesture-detected', captureGesture);
+        
+        // 카운트다운 완료 상태 설정
+        setIsCountingDown(false);
+        
+        console.log('[⏱️ 카운트다운 완료] 최종 제스처:', finalGesture || detectedGesture);
+        
+        // 최종 제스처 선택 (캡처된 것 우선, 없으면 상태의 것 사용)
+        const gestureToUse = finalGesture || detectedGesture;
+        
+        // 1. 손 감지가 일어나지 않았을 때
+        if (!wasHandDetected) {
+          toast.dismiss();
+          toast.warning('손 감지 경고', {
+            description: '손이 카메라에 인식되지 않았습니다. 손을 화면 내에 전부 들어가게 해주세요.',
+            duration: 3000,
+          });
+          
+          setGuideText('버튼을 눌러 다시 시도해 주세요');
+          setIsErrorToastShown(true);
+          setApiActive(false);
+          return;
+        }
+        
+        // 2. API 결과가 none인 경우 또는 제스처가 감지되지 않은 경우
+        if (!gestureToUse || gestureToUse === 'none') {
+          toast.dismiss();
+          toast.warning('제스처 인식 오류', {
+            description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
+            duration: 3000,
+          });
+          
+          setGuideText('버튼을 눌러 다시 시도해 주세요');
+          setIsErrorToastShown(true);
+          setApiActive(false);
+          return;
+        }
+        
+        // 3 & 4. 부적절한 제스처 처리
         if (inappropriateGestures.includes(gestureToUse)) {
           toast.dismiss();
           toast.error('부적절한 제스처가 감지되었습니다', {
@@ -324,45 +363,50 @@ const startCountdownTimer = useCallback(() => {
           setGuideText('다른 제스처로 다시 시도해 주세요');
           setIsErrorToastShown(true);
           setApiActive(false);
-        } else {
-          // 검색 페이지로 이동
-          console.log(`[🔍 검색 실행] 제스처: ${gestureToUse}`);
-          setGuideText('인식 완료!');
-          setApiActive(false);
           
-          const targetUrl = `/search/camera?gesture_label=${gestureToUse}`;
-          try {
-            if (location.pathname.includes('/search')) {
-              window.location.href = targetUrl;
-            } else {
-              navigate(targetUrl);
+          // devil 제스처인 경우에만 검색으로 넘어감
+          if (gestureToUse === 'devil') {
+            const targetUrl = `/search/camera?gesture_label=${gestureToUse}`;
+            try {
+              if (location.pathname.includes('/search')) {
+                window.location.href = targetUrl;
+              } else {
+                navigate(targetUrl);
+              }
+              setOpen(false);
+            } catch (error) {
+              console.error('[🔍 검색 이동 실패]', error);
             }
-            setOpen(false);
-          } catch (error) {
-            console.error('[🔍 검색 이동 실패]', error);
-            toast.error('검색 페이지로 이동하는 중 오류가 발생했습니다');
           }
+          
+          return;
         }
-      } else {
-        // 제스처가 감지되지 않음
-        toast.dismiss();
-        toast.warning('제스처 인식 오류', {
-          description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
-          duration: 3000,
-        });
         
-        setGuideText('버튼을 눌러 다시 시도해 주세요');
-        setIsErrorToastShown(true);
+        // 일반 제스처 처리 (검색으로 이동)
+        console.log(`[🔍 검색 실행] 제스처: ${gestureToUse}`);
+        setGuideText('인식 완료!');
         setApiActive(false);
+        
+        const targetUrl = `/search/camera?gesture_label=${gestureToUse}`;
+        try {
+          if (location.pathname.includes('/search')) {
+            window.location.href = targetUrl;
+          } else {
+            navigate(targetUrl);
+          }
+          setOpen(false);
+        } catch (error) {
+          console.error('[🔍 검색 이동 실패]', error);
+          toast.error('검색 페이지로 이동하는 중 오류가 발생했습니다');
+        }
       }
-    }
-  }, 1000);
-  
-  return () => {
-    clearInterval(countInterval);
-    window.removeEventListener('gesture-detected', captureGesture);
-  };
-}, [detectedGesture, inappropriateGestures, location.pathname, navigate]);
+    }, 1000);
+    
+    return () => {
+      clearInterval(countInterval);
+      window.removeEventListener('gesture-detected', captureGesture);
+    };
+  }, [detectedGesture, inappropriateGestures, location.pathname, navigate, handDetected]);
   
   // 캡처 버튼 클릭 핸들러
   const handleCaptureClick = useCallback(() => {
@@ -456,6 +500,7 @@ const startCountdownTimer = useCallback(() => {
               guideText={guideText}
               onConnectionStatus={handleConnectionStatus}
               isPaused={!apiActive}
+              onHandDetected={handleHandDetected}
             />
           )}
 
