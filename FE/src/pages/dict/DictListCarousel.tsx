@@ -22,11 +22,6 @@ export function DictListCarousel({
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { getHoverBorderClass } = useCountryStyles();
 
-  // 마우스 드래그를 위한 상태 추가
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [startScrollLeft, setStartScrollLeft] = useState(0);
-
   // 현재 보이는 카드 인덱스 범위
   const [visibleIndexes, setVisibleIndexes] = useState<number[]>([]);
 
@@ -168,47 +163,10 @@ export function DictListCarousel({
     return hoverClass.replace('hover:', '');
   };
 
-  // 마우스 드래그 이벤트 핸들러
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (scrollRef.current) {
-      setIsDragging(true);
-      setStartX(e.pageX - scrollRef.current.offsetLeft);
-      setStartScrollLeft(scrollRef.current.scrollLeft);
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    if (scrollRef.current) {
-      const x = e.pageX - scrollRef.current.offsetLeft;
-      const walk = (x - startX) * 2; // 스크롤 속도 조절
-      scrollRef.current.scrollLeft = startScrollLeft - walk;
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    updateVisibleCards(); // 드래그 종료 후 보이는 카드 업데이트
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-    updateVisibleCards(); // 드래그 종료 후 보이는 카드 업데이트
-  };
-
-  // 클릭 이벤트가 드래그 중에 발생하지 않도록 처리
-  const handleClick = (e: React.MouseEvent) => {
-    if (isDragging) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className="w-full h-full flex justify-center font-[NanumSquareRound]">
       <div ref={containerRef} className="w-full h-full flex items-center relative px-6">
-        {/* 이전 버튼 - 모바일에서는 숨김 */}
+        {/* 이전 버튼 */}
         <button
           onClick={scrollToPrev}
           className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
@@ -220,29 +178,22 @@ export function DictListCarousel({
         {/* 카드 컨테이너 */}
         <div
           ref={scrollRef}
-          className={`flex overflow-x-auto snap-x scrollbar-hide w-full h-full ${
-            isDragging ? 'cursor-grabbing' : 'cursor-grab'
-          }`}
+          className="flex overflow-x-auto snap-x scrollbar-hide w-full h-full"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch',
           }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
         >
           {/* 카드 관련 */}
           {gestures.map((gesture, index) => (
             <div
               key={`gesture-${gesture.gestureId || index}`}
               className="flex-shrink-0 w-[100%] sm:w-[50%] lg:w-[33.333%] snap-start px-2 h-full"
-              onClick={handleClick}
             >
               <DictGestureCard
                 gesture={gesture}
-                onClick={() => !isDragging && handleGestureClick(gesture.gestureId)}
+                onClick={() => handleGestureClick(gesture.gestureId)}
                 hoverBorderClass={`hover:${getBorderClass(selectedCountry)}`}
                 isVisible={visibleIndexes.includes(index)} // 현재 보이는지 여부 전달
               />
@@ -250,7 +201,7 @@ export function DictListCarousel({
           ))}
         </div>
 
-        {/* 다음 버튼 - 모바일에서는 숨김 */}
+        {/* 다음 버튼 */}
         <button
           onClick={scrollToNext}
           className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
