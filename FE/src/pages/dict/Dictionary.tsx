@@ -28,7 +28,7 @@ function Dictionary() {
   ];
 
   // 로딩페이지 관련
-  const [showContent, setShowContent] = useState(false);
+  // const [showContent, setShowContent] = useState(false);
 
   // URL 파라미터에서 국가 ID 가져오기
   const initialCountry = countryIdParam
@@ -43,11 +43,11 @@ function Dictionary() {
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
 
   // 로딩페이지
-  useEffect(() => {
-    if (!isLoading && gestureData && !showContent) {
-      // 데이터가 로드되었지만 로딩 화면을 계속 표시
-    }
-  }, [isLoading, gestureData, showContent]);
+  // useEffect(() => {
+  //   if (!isLoading && gestureData && !showContent) {
+  //     // 데이터가 로드되었지만 로딩 화면을 계속 표시
+  //   }
+  // }, [isLoading, gestureData, showContent]);
 
   // 유효성 검사
   useEffect(() => {
@@ -211,9 +211,9 @@ function Dictionary() {
   };
 
   // 로딩 상태 확인
-  if (isLoading || !showContent) {
-    return <LoadingPage onComplete={() => setShowContent(true)} />;
-  }
+  // if (isLoading || !showContent) {
+  //   return <LoadingPage onComplete={() => setShowContent(true)} />;
+  // }
 
   // 에러 상태 확인
   if (isError || !gestureData) {
