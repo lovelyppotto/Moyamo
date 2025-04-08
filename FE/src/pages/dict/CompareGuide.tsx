@@ -35,8 +35,8 @@ function CompareGuide() {
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
     gestureMeanings.length === 1
-      ? 'w-full md:max-w-[800px] md:px-8 lg:max-w-[600px] lg:px-0 mx-auto grid grid-cols-1 gap-8 place-items-center'
-      : 'w-full md:max-w-[800px] md:px-8 lg:max-w-[1000px] lg:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8';
+      ? 'w-full md:max-w-[800px] md:px-8 lg:max-w-[600px] lg:px-0 mx-auto grid grid-cols-1 gap-6 place-items-center'
+      : 'w-full md:max-w-[800px] md:px-8 lg:max-w-[1000px] lg:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6';
 
   // 사용 상황 텍스트를 / 구분자로 파싱하여 표시하는 함수
   const parseSituation = (situation: string) => {
@@ -70,109 +70,107 @@ function CompareGuide() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50">
-      {/* 헤더 */}
-      <DictHeader
-        title="나라별 제스처 비교 가이드"
-        showCompareGuide={false}
-        className="mb-[4%] lg:mb-[3%]"
-      />
+    <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50 overflow-hidden">
+      {/* 헤더 - 10% */}
+      <div className="h-[10vh] mb-8">
+        <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="h-full" />
+      </div>
 
-      {/* 컨텐츠 */}
-      <div className="h-[calc(100vh-80px)] flex flex-col">
-        {/* 메인 이미지 */}
-        <div className="h-[30vh] md:h-[25vh] flex justify-center items-center mb-[4%] lg:mb-[3%]">
-          <div className="w-[35vmin] h-[35vmin] md:w-[30vmin] md:h-[30vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
-            {currentGestureData?.imageUrl ? (
-              <GlbViewer url={`${currentGestureData.imageUrl}`} />
-            ) : (
-              <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
-                이미지 준비 중
-              </div>
-            )}
-          </div>
+      {/* 메인 이미지 - 30% */}
+      <div className="h-[30vh] flex justify-center items-center">
+        <div className="w-[25vmin] h-[25vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
+          {currentGestureData?.imageUrl ? (
+            <GlbViewer url={`${currentGestureData.imageUrl}`} />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
+              이미지 준비 중
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* 카드 컨테이너 */}
-        <div className="flex-1 px-4 pb-14 md:pb-24 overflow-y-auto customScrollbar kr">
-          {/* 국가 그룹 카드들 */}
-          <div className={gridLayoutClass}>
-            {/* 국가별 제스처 의미 카드들 */}
-            {gestureMeanings.map((meaning: MeaningItem, index: number) => {
-              // 국가 이름, 이미지 URL 파싱
+      {/* 카드 컨테이너 - 60% */}
+      <div className="h-[50vh] px-4 overflow-hidden customScrollbar kr">
+        {/* 국가 그룹 카드들 */}
+        <div className={`${gridLayoutClass} h-full`}>
+          {/* 국가별 제스처 의미 카드들 */}
+          {gestureMeanings.map((meaning: MeaningItem, index: number) => {
+            // 국가 이름, 이미지 URL 파싱
+            const countryNames = meaning.countryName.split(',').map((name) => name.trim());
+            const countryImageUrls = meaning.countryImageUrl.split(',').map((url) => url.trim());
 
-              // 국기 이미지 렌더링 - 모두 한 줄로 표시하고 크기 축소
-              const countryNames = meaning.countryName.split(',').map((name) => name.trim());
-              const countryImageUrls = meaning.countryImageUrl.split(',').map((url) => url.trim());
-
-              const renderFlags = () => {
-                return (
-                  <div className="flex justify-center flex-wrap gap-2 md:gap-3 mb-[4%]">
-                    {countryNames.map((name, flagIndex) => {
-                      const imageUrl = countryImageUrls[flagIndex] || countryImageUrls[0];
-                      return (
-                        <img
-                          key={flagIndex}
-                          src={imageUrl}
-                          alt={`${name} flag`}
-                          className="h-6 md:h-8 w-auto drop-shadow-nation"
-                        />
-                      );
-                    })}
-                  </div>
-                );
-              };
-
+            const renderFlags = () => {
               return (
-                <div
-                  key={`meaning-${index}`}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 flex flex-col w-full"
-                >
-                  <DictStatusLabel isPositive={meaning.isPositive} className="mb-6" />
+                <div className="flex justify-center flex-wrap gap-2 md:gap-3 mb-3">
+                  {countryNames.map((name, flagIndex) => {
+                    const imageUrl = countryImageUrls[flagIndex] || countryImageUrls[0];
+                    return (
+                      <img
+                        key={flagIndex}
+                        src={imageUrl}
+                        alt={`${name} flag`}
+                        className="h-6 md:h-8 w-auto drop-shadow-nation"
+                      />
+                    );
+                  })}
+                </div>
+              );
+            };
+
+            return (
+              <div
+                key={`meaning-${index}`}
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-full"
+              >
+                {/* 고정된 헤더 부분 */}
+                <div className="flex-none">
+                  <DictStatusLabel
+                    isPositive={meaning.isPositive}
+                    className="mb-4 flex justify-center"
+                  />
                   {/* 국기 이미지 */}
                   {renderFlags()}
 
                   {/* 국가 이름 */}
-                  <h2 className="text-center text-[20px] lg:text-[22px] font-[NanumSquareRoundB] mb-6">
+                  <h2 className="text-center text-lg lg:text-xl font-[NanumSquareRoundB] mb-3">
                     {countryNames.join(', ')}
                   </h2>
 
-                  <hr className="text-gray-300 mb-4" />
+                  <hr className="text-gray-300 mb-3" />
+                </div>
 
+                {/* 콘텐츠 부분 */}
+                <div className="flex-1 overflow-y-auto pr-2">
                   <div className="flex flex-col gap-4">
                     {/* 의미 */}
                     <div className="flex flex-col items-center">
-                      <p className="font-[NanumSquareRoundB] text-[18px] lg:text-[20px] mb-2">
-                        의미
-                      </p>
-                      <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px]  text-center">
+                      <p className="font-[NanumSquareRoundB] text-xl mb-2">의미</p>
+                      <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
                         {meaning.gestureMeaning}
                       </p>
                     </div>
 
                     {/* 사용 상황 */}
-                    <div className="flex flex-col items-center">
-                      <p className="font-[NanumSquareRoundB] text-[18px] lg:text-[20px] mb-2">
-                        사용 상황
-                      </p>
+                    <div className="flex flex-col items-center mt-3">
+                      <p className="font-[NanumSquareRoundB] text-lg mb-2">사용 상황</p>
                       <div className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
                         {parseSituation(meaning.gestureSituation)}
                       </div>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-
-            {/* 데이터 없는 경우 메시지 표시 */}
-            {gestureMeanings.length === 0 && (
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 col-span-1 lg:col-span-2 flex justify-center items-center">
-                <p className="text-center text-[100px]">
-                  이 제스처에 대한 국가별 의미 정보가 없습니다.
-                </p>
               </div>
-            )}
-          </div>
+            );
+          })}
+
+          {/* 데이터 없는 경우 메시지 표시 */}
+          {gestureMeanings.length === 0 && (
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 col-span-1 lg:col-span-2 flex justify-center items-center h-full">
+              <p className="text-center text-xl font-[NanumSquareRoundB]">
+                이 제스처에 대한 국가별 의미 정보가 없습니다.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
