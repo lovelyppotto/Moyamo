@@ -17,7 +17,8 @@ const GesturePracticeCamera = ({
   const [isCorrect, setIsCorrect] = useState(false);
   const [showGuideline, setShowGuideline] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
-  const [wsConnected, setWsConnected] = useState(false);
+  // 웹소켓 -> API 방식으로 변경: wsConnected -> apiConnected
+  const [apiConnected, setApiConnected] = useState(false); // 수정: 연결 상태 변수명 변경
 
   // 컨테이너 크기 조절을 위한 상태
   const [containerDimension, setContainerDimension] = useState('aspect-square');
@@ -86,8 +87,10 @@ const GesturePracticeCamera = ({
     };
   }, []);
 
+  // 수정: API 연결 상태를 받는 콜백 함수명 유지 (내부 동작만 변경)
   const handleConnectionStatus = useCallback((status: boolean) => {
-    setWsConnected(status);
+    setApiConnected(status); // 수정: wsConnected -> apiConnected
+    console.log(`[🌐 API 연결 상태] ${status ? '연결됨' : '연결 끊김'}`); // 로그 추가
   }, []);
 
   return (
@@ -97,15 +100,20 @@ const GesturePracticeCamera = ({
     >
       {/* 고정 비율 유지를 위한 래퍼 */}
       <div className="relative w-full h-full">
-        {/* WebCamera 컴포넌트 사용 */}
-        <WebCamera
-          guidelineClassName={guidelineClassName}
-          guideText={guideText}
-          onConnectionStatus={handleConnectionStatus}
-          isPaused={!cameraActive}
-          onGesture={handleGesture}
-          showGuideline={showGuideline}
-        />
+        {/* WebCamera 컴포넌트 사용 - cameraActive가 false일 때 숨김 처리 */}
+        {cameraActive ? (
+          <WebCamera
+            guidelineClassName={guidelineClassName}
+            guideText={guideText}
+            onConnectionStatus={handleConnectionStatus}
+            isPaused={!cameraActive}
+            onGesture={handleGesture}
+            showGuideline={showGuideline}
+          />
+        ) : (
+          // 카메라가 비활성화된 경우 검은 배경 표시
+          <div className="w-full h-full bg-black flex justify-center items-center"></div>
+        )}
 
         {/* 정확도 70% 이상일 때 정답 표시 */}
         {isCorrect && (
