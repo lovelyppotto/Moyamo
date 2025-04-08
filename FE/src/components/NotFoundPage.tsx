@@ -88,7 +88,7 @@ function NotFoundPage() {
           }
           
           .sliding-text-very-slow {
-            animation: slide 70s linear infinite; /* 새로운 매우 느린 속도 */
+            animation: slide 90s linear infinite; /* 새로운 매우 느린 속도 */
           }
           
           .sliding-text-reverse {
