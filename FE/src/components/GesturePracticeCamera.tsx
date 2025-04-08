@@ -54,13 +54,15 @@ const GesturePracticeCamera = ({
         if (confidence >= 70 && gesture === gestureLabel) {
           setIsCorrect(true);
           setShowGuideline(false);
-          setCameraActive(false);
 
+          // 정답 표시 후 일정 시간 후에 다시하기 버튼 표시
           if (correctTimeRef.current) {
             clearTimeout(correctTimeRef.current);
           }
           correctTimeRef.current = setTimeout(() => {
             setIsCorrect(false);
+            // 카메라 비활성화는 정답 표시가 사라진 후(다시하기 버튼이 나타날 때)
+            setCameraActive(false);
           }, 1000);
         }
       }
