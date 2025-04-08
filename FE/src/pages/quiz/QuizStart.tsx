@@ -50,7 +50,7 @@ function Quiz() {
         {/* DialogTrigger를 Dialog 내부로 이동 */}
         <DialogTrigger asChild>
           <button
-            className="absolute bottom-40 left-1/2 transform -translate-x-1/2 text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-900 drop-shadow-quiz-box dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center align-center bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce cursor-pointer"
+            className="select-none absolute bottom-40 left-1/2 transform -translate-x-1/2 text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-900 drop-shadow-quiz-box dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center align-center bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce cursor-pointer"
             onClick={handleButtonClick}
           >
             <p className="drop-shadow-basic">start</p>
@@ -92,10 +92,10 @@ function Quiz() {
           {/* 중간 텍스트 부분 */}
           <div className="flex flex-col items-center align-center font-['DNFBitBitv2'] mt-30 animate-pulse">
             {/* <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/2 h-auto" /> */}
-            <div className="mb-8 text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
+            <div className="select-none mb-8 text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
               GESTURE
             </div>
-            <div className="text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
+            <div className="select-none text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
               QUIZ
             </div>
           </div>

@@ -366,6 +366,7 @@ function CountryBubble() {
                             src={getAttractionImage(country.image)}
                             alt={country.name}
                             className="w-full h-full object-cover"
+                            draggable="false"
                           />
                         </div>
                         <div
