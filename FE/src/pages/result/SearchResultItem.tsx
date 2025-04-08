@@ -156,7 +156,8 @@ function SearchResultItem({
                       <img
                         src={meaning.imageUrl}
                         alt={meaning.countryName}
-                        className={`w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
+                        draggable="false"
+                        className={`select-none w-6 h-4 md:w-10 md:h-6 lg:w-14 lg:h-9 object-cover 
                           ${
                             isAvailable
                               ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer'
