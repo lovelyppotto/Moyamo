@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
@@ -24,6 +24,9 @@ const WebCamera = ({
   onGesture,
   showGuideline = true,
 }: WebCameraProps) => {
+  // 카메라 리소스 관리 상태
+  const [isCameraInitialized, setIsCameraInitialized] = useState(false);
+
   // HTTP API 서비스 사용
   const {
     status: apiStatus,
@@ -42,7 +45,6 @@ const WebCamera = ({
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-  const resultsRef = useRef<HandLandmarkerResult | null>(null);
 
   // 마지막으로 이벤트를 발행한 시간 추적
   const lastEventTimeRef = useRef<number>(0);
@@ -52,9 +54,14 @@ const WebCamera = ({
   // 캔버스에 랜드마크 그리기 함수
   const drawCanvas = useCallback(
     (results: HandLandmarkerResult) => {
-      const canvasCtx = canvasRef.current!.getContext('2d')!;
-      const width = canvasRef.current!.width;
-      const height = canvasRef.current!.height;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const canvasCtx = canvas.getContext('2d');
+      if (!canvasCtx) return;
+      
+      const width = canvas.width;
+      const height = canvas.height;
 
       // 캔버스 초기화
       canvasCtx.save();
@@ -103,25 +110,33 @@ const WebCamera = ({
     }
   }, [apiStatus, onConnectionStatus]);
 
-  // 컴포넌트 마운트 시 API 연결
+  // 컴포넌트 마운트/언마운트 시 카메라 초기화/정리
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && !isCameraInitialized) {
       console.log('[🔍 WebCamera 컴포넌트 활성화됨]');
-
+      
       // API URL 확인
       console.log('[🔍 API URL]', import.meta.env.VITE_API_BASE_URL);
-
-      // API 연결 시작 전에 약간의 지연
+      
+      // API 연결 지연 시작
       const timer = setTimeout(() => {
         console.log('[🔍 API 연결 시작]');
         connectApi();
-      }, 1000); // 1초로 지연 시간 설정
-
+        setIsCameraInitialized(true);
+      }, 1000);
+      
       return () => {
         clearTimeout(timer);
+      };
+    }
+    
+    // 컴포넌트가 일시 중지되거나 언마운트될 때
+    if ((isPaused && isCameraInitialized) || !isCameraInitialized) {
+      return () => {
         disconnectApi();
-
-        // 웹캠 리소스 명시적으로 해제
+        setIsCameraInitialized(false);
+        
+        // 웹캠 리소스 해제
         if (webcamRef.current && webcamRef.current.video) {
           const video = webcamRef.current.video;
           if (video.srcObject) {
@@ -130,11 +145,17 @@ const WebCamera = ({
             video.srcObject = null;
           }
         }
+        
+        // 애니메이션 취소
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
       };
     }
-  }, [connectApi, disconnectApi, isPaused]);
+  }, [isPaused, isCameraInitialized, connectApi, disconnectApi]);
 
-  // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
+  // 제스처 정보가 변경될 때마다 이벤트 발행
   useEffect(() => {
     // isPaused가 true이거나 gesture가 없으면 이벤트를 발행하지 않음
     if (gesture && !isPaused) {
@@ -142,6 +163,8 @@ const WebCamera = ({
 
       // 마지막 이벤트 발행 시간으로부터 EVENT_THROTTLE 시간이 지났는지 확인
       if (now - lastEventTimeRef.current > EVENT_THROTTLE) {
+        console.log(`[🖐️ 제스처 감지] ${gesture} (신뢰도: ${confidence || 0})`);
+        
         // 커스텀 이벤트 생성하여 제스처 데이터 전달
         const gestureEvent = new CustomEvent('gesture-detected', {
           detail: { gesture, confidence },
@@ -149,6 +172,8 @@ const WebCamera = ({
 
         // 이벤트 발행
         window.dispatchEvent(gestureEvent);
+        
+        // onGesture 콜백이 있으면 호출
         if (onGesture) {
           onGesture(gesture, confidence || 0);
         }
@@ -160,7 +185,7 @@ const WebCamera = ({
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
-    // isPaused가 true이면 프로세싱을 중단
+    // isPaused가 true이면 프로세싱 중단
     if (isPaused) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -182,16 +207,13 @@ const WebCamera = ({
       const results = await detectFrame(video);
 
       if (results) {
-        resultsRef.current = results;
-
-        // 손 랜드마크가 감지되면 즉시 서버로 전송
+        // 손 랜드마크가 감지되면 서버로 전송
         if (results.landmarks && results.landmarks.length > 0 && !isPaused) {
           sendLandmarks(results.landmarks);
         }
 
         // 캔버스에 랜드마크 그리기
         if (canvasRef.current) {
-          // 추가 안전 검사
           drawCanvas(results);
         }
       }
@@ -207,10 +229,10 @@ const WebCamera = ({
 
   // 모델 로딩이 완료되면 웹캠 예측 시작
   useEffect(() => {
-    if (!isLoading && !error && !isPaused) {
+    if (!isLoading && !error && !isPaused && isCameraInitialized) {
       console.log('[🔍 WebCamera] 예측 시작');
       animationRef.current = requestAnimationFrame(predictWebcam);
-    } else if (isPaused && animationRef.current) {
+    } else if ((isPaused || !isCameraInitialized) && animationRef.current) {
       console.log('[🔍 WebCamera] 일시 중지됨');
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
@@ -223,7 +245,7 @@ const WebCamera = ({
         animationRef.current = null;
       }
     };
-  }, [isLoading, error, predictWebcam, isPaused]);
+  }, [isLoading, error, predictWebcam, isPaused, isCameraInitialized]);
 
   // 에러 발생 시 로깅
   useEffect(() => {
@@ -283,8 +305,8 @@ const WebCamera = ({
             <div className="absolute top-5 left-0 right-0 flex justify-center items-center">
               <p
                 className="bg-black/60 text-white px-4 py-2 rounded-lg
-              text-sm md:text-base font-[NanumSquareRoundEB] 
-              drop-shadow-lg"
+                text-sm md:text-base font-[NanumSquareRoundEB] 
+                drop-shadow-lg"
               >
                 {guideText}
               </p>
