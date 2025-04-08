@@ -81,31 +81,41 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
 
   // 데이터를 서버로 전송하는 함수
   const sendToServer = useCallback(
-    (sequenceData: number[][]) => {
-      const isDynamic = isDynamicGesture(sequenceData);
-      const endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
-      const url = SERVER_BASE_URL + endpoint;
-
-      const payload = { frames: sequenceData };
-      console.log(`[📤 전송됨] ${isDynamic ? '동적' : '정적'} 제스처`);
-
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setRecognitionResult({
-            gesture: res.gesture,
-            confidence: res.confidence,
-          });
-          console.log('[📥 응답]', res);
-        })
-        .catch((err) => {
-          console.error('[❌ 전송 실패]', err);
-          setStatus('error');
+    async (sequenceData: number[][]) => {
+      try {
+        const isDynamic = isDynamicGesture(sequenceData);
+        const endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
+        const url = SERVER_BASE_URL + endpoint;
+  
+        const payload = { frames: sequenceData };
+        console.log(`[📤 전송됨] ${isDynamic ? '동적' : '정적'} 제스처`);
+  
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         });
+        
+        const res = await response.json();
+        
+        // 응답 처리
+        const result = Array.isArray(res) ? res[0] : res;
+        
+        // gesture가 배열인 경우 첫 번째 요소를 제스처 이름으로 사용
+        const gestureName = Array.isArray(result.gesture) ? result.gesture[0] : result.gesture;
+        // gesture가 배열인 경우 두 번째 요소를 confidence로 사용
+        const confidenceValue = Array.isArray(result.gesture) ? result.gesture[1] : result.confidence;
+        
+        setRecognitionResult({
+          gesture: gestureName,
+          confidence: confidenceValue,
+        });
+        
+        console.log('[📥 응답]', res);
+        console.log('[🔍 인식된 제스처]', gestureName);
+      } catch (err) {
+        setStatus('error');
+      }
     },
     [SERVER_BASE_URL, isDynamicGesture]
   );
