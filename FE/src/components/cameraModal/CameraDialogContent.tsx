@@ -7,9 +7,10 @@ interface CameraDialogContentProps {
   onConnectionStatus: (status: boolean) => void;
 }
 
-function CameraDialogContent ({
+function CameraDialogContent({
   open,
   guideText,
+  isPaused = false,
   onConnectionStatus,
 }: CameraDialogContentProps) {
   return (
@@ -18,13 +19,15 @@ function CameraDialogContent ({
       <div className="bg-white">
         <div className="aspect-square w-full">
           {/* WebCamera 컴포넌트에 props 전달 */}
-          <WebCamera
-            key={open ? 'camera-open' : 'camera-closed'} // 키를 추가하여 컴포넌트 강제 재생성
-            guidelineClassName="w-[70%] mt-35"
-            guideText={guideText}
-            onConnectionStatus={onConnectionStatus}
-            isPaused={!open}
-          />
+          {open && (
+            <WebCamera
+              key={`camera-instance`} // 키 값을 고정하여 불필요한 재렌더링 방지
+              guidelineClassName="w-[70%] mt-35"
+              guideText={guideText}
+              onConnectionStatus={onConnectionStatus}
+              isPaused={isPaused}
+            />
+          )}
         </div>
       </div>
     </div>

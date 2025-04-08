@@ -20,7 +20,7 @@ interface UseGestureHttpApiReturn {
 }
 
 /**
- * 제스처 인식을 위한 HTTP API 통신을 관리하는 커스텀 훅
+ * 제스처 인식을 위한 HTTP API 통신을 관리하는 커스텀 훅 (단순화된 버전)
  */
 export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   const SERVER_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -28,9 +28,6 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   // API 상태 관리
   const [status, setStatus] = useState<ApiStatus>('closed');
   
-  // 처리 중 상태 - API 요청 중복 방지
-  const [isProcessing, setIsProcessing] = useState(false);
-
   // 제스처 인식 결과 관리
   const [recognitionResult, setRecognitionResult] = useState<GestureRecognitionResult>({
     gesture: null,
@@ -41,19 +38,25 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   const sequenceRef = useRef<number[][]>([]);
 
   // 시퀀스 길이 (frame 수)
-  const SEQUENCE_LENGTH = 90;
+  const SEQUENCE_LENGTH = 60;
 
   // 마지막으로 데이터를 전송한 시간
   const lastSentTimeRef = useRef<number>(0);
   
   // 마지막 API 요청 타임스탬프
   const lastApiRequestRef = useRef<number>(0);
+  
+  // API 요청 처리 중 여부
+  const isProcessingRef = useRef<boolean>(false);
+  
+  // 한 세션에서 결과를 보낸 적이 있는지 여부
+  const resultSentRef = useRef<boolean>(false);
 
   // 데이터 전송 간격 (ms)
   const SEND_THROTTLE = 50;
   
-  // API 요청 간격 (ms) - 재검색 시 동일한 요청이 너무 빠르게 발생하는 것 방지
-  const API_REQUEST_THROTTLE = 500; // 0.5초로 줄여서 테스트
+  // API 요청 간격 (ms)
+  const API_REQUEST_THROTTLE = 1000;
 
   // 시퀀스 클리어
   const clearSequence = useCallback(() => {
@@ -90,34 +93,44 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   }, []);
 
   // 데이터를 서버로 전송하는 함수
-  const sendToServer = useCallback(
-    async (sequenceData: number[][]) => {
+// 데이터를 서버로 전송하는 함수
+const sendToServer = useCallback(
+  async (sequenceData: number[][]) => {
+    try {
+      // 이미 결과를 보낸 적이 있으면 무시
+      if (resultSentRef.current) {
+        console.log('[🚫 이미 결과가 전송됨] 추가 API 요청 무시');
+        isProcessingRef.current = false;
+        return;
+      }
+      
+      const now = Date.now();
+      
+      // API 요청 간격 제한 (쓰로틀링)
+      if (now - lastApiRequestRef.current < API_REQUEST_THROTTLE) {
+        console.log('[🔄 API 요청 쓰로틀링] 최근 요청 이후 충분한 시간이 지나지 않음');
+        isProcessingRef.current = false;
+        return;
+      }
+      
+      lastApiRequestRef.current = now;
+      
+      // 수집된 시퀀스 데이터 확인
+      if (sequenceData.length < 10) {
+        console.log('[⚠️ 불충분한 데이터] 시퀀스 데이터가 너무 적습니다.');
+        isProcessingRef.current = false;
+        return;
+      }
+      
+      const isDynamic = isDynamicGesture(sequenceData);
+      const endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
+      const url = SERVER_BASE_URL + endpoint;
+  
+      const payload = { frames: sequenceData };
+      console.log(`[📤 전송됨] ${isDynamic ? '동적' : '정적'} 제스처 (${sequenceData.length} 프레임) to ${url}`);
+  
       try {
-        const now = Date.now();
-        
-        // API 요청 간격 제한 (쓰로틀링)
-        if (now - lastApiRequestRef.current < API_REQUEST_THROTTLE) {
-          console.log('[🔄 API 요청 쓰로틀링] 최근 요청 이후 충분한 시간이 지나지 않음');
-          setIsProcessing(false);
-          return;
-        }
-        
-        lastApiRequestRef.current = now;
-        
-        // 수집된 시퀀스 데이터 확인
-        if (sequenceData.length < 10) {
-          console.log('[⚠️ 불충분한 데이터] 시퀀스 데이터가 너무 적습니다.');
-          setIsProcessing(false);
-          return;
-        }
-        
-        const isDynamic = isDynamicGesture(sequenceData);
-        const endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
-        const url = SERVER_BASE_URL + endpoint;
-  
-        const payload = { frames: sequenceData };
-        console.log(`[📤 전송됨] ${isDynamic ? '동적' : '정적'} 제스처 (${sequenceData.length} 프레임)`);
-  
+        // HTTP API 요청
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -140,133 +153,146 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
         
         console.log('[📥 응답]', JSON.stringify(res));
         console.log('[🔍 인식된 제스처]', gestureName, '(신뢰도:', confidenceValue, ')');
-
-        // 결과 설정 전에 재확인 (유효한 응답인지)
+  
+        // 결과 저장
         if (gestureName) {
           setRecognitionResult({
             gesture: gestureName,
             confidence: confidenceValue,
           });
           
-          // 제스처 이벤트 발행 - 즉시 다른 컴포넌트에 알림
+          // 이미 결과 전송 플래그 설정
+          resultSentRef.current = true;
+          
+          // 이벤트 발행
           const gestureEvent = new CustomEvent('gesture-detected', {
-            detail: { 
-              gesture: gestureName, 
-              confidence: confidenceValue 
-            }
+            detail: { gesture: gestureName, confidence: confidenceValue },
           });
           window.dispatchEvent(gestureEvent);
         } else {
           console.warn('[⚠️ 인식 실패] 서버 응답에 유효한 제스처가 없습니다.');
-          setRecognitionResult({
-            gesture: null,
-            confidence: null,
-          });
-        }
-        
-        // 처리 완료
-        setIsProcessing(false);
-      } catch (err) {
-        console.error('[🌐 API 오류]', err);
-        setStatus('error');
-        setIsProcessing(false);
-        
-        // 오류 시 상태 리셋
-        setRecognitionResult({
-          gesture: null,
-          confidence: null,
-        });
-      }
-    },
-    [SERVER_BASE_URL, isDynamicGesture, API_REQUEST_THROTTLE]
-  );
-
-  // 랜드마크 데이터 전송 함수
-  const sendLandmarks = useCallback(
-    (landmarks: any[]) => {
-      try {
-        // 상태가 'closed'이면 처리하지 않음
-        if (status === 'closed') return;
-        
-        const now = Date.now();
-
-        // 전송 간격 제한 (쓰로틀링)
-        if (now - lastSentTimeRef.current < SEND_THROTTLE) {
-          return;
-        }
-
-        lastSentTimeRef.current = now;
-
-        if (status !== 'open') {
-          setStatus('open');
-        }
-
-        // 각 손에 대해 랜드마크 처리 (내부 함수로 분리)
-        processLandmarksToSequence(landmarks);
-
-        // 충분한 프레임이 모였고, 처리 중이 아니면 서버로 전송
-        if (sequenceRef.current.length >= SEQUENCE_LENGTH && !isProcessing) {
-          console.log(`[🔄 시퀀스 완성] ${sequenceRef.current.length} 프레임`);
-          setIsProcessing(true); // 처리 중 상태로 설정
-          
-          // 현재 시퀀스 복사 후 초기화
-          const currentSequence = [...sequenceRef.current];
-          clearSequence();
-          
-          // 서버로 전송
-          sendToServer(currentSequence);
         }
       } catch (error) {
-        console.error('[🌐 API] 데이터 처리 오류:', error);
-        setIsProcessing(false);
+        console.error('[🌐 API 요청 오류]', error);
+        // 에러가 발생해도 none 제스처로 이벤트 발행
+        const gestureEvent = new CustomEvent('gesture-detected', {
+          detail: { gesture: 'none', confidence: 0 },
+        });
+        window.dispatchEvent(gestureEvent);
       }
-    },
-    [SEND_THROTTLE, SEQUENCE_LENGTH, status, clearSequence, sendToServer, isProcessing]
-  );
-  
-  // 랜드마크를 처리하여 시퀀스에 추가하는 내부 함수
-  const processLandmarksToSequence = (landmarks: any[]) => {
-    // 각 손에 대해 랜드마크 처리
-    for (const hand of landmarks) {
-      // 원점 (첫 번째 랜드마크)
-      const origin = [hand[0].x, hand[0].y, hand[0].z];
-
-      // 정규화된 랜드마크 계산 (원점 기준으로 상대적 위치)
-      const normalized = hand.map((lm: any) => [
-        lm.x - origin[0],
-        lm.y - origin[1],
-        lm.z - origin[2],
-      ]);
-
-      // 정규화된 랜드마크를 1차원 배열로 평탄화
-      const flat = normalized.flat();
-
-      // 벡터 정규화 (단위 벡터로 변환)
-      const norm = Math.hypot(...flat);
-      const normed = norm > 0 ? flat.map((v: number) => v / norm) : flat;
-
-      // 양손 여부 추가 (현재 단일 손만 처리 중)
-      const isTwoHands = landmarks.length === 2 ? 1 : 0;
-
-      // 최종 벡터 생성 (63개 좌표 + 양손 여부 = 64차원)
-      const vector64 = [...normed, isTwoHands];
-
-      // 시퀀스에 추가 (최대 길이 유지)
-      sequenceRef.current.push(vector64);
       
-      // 시퀀스가 너무 길어지면 앞부분 제거
-      if (sequenceRef.current.length > SEQUENCE_LENGTH * 1.5) {
-        sequenceRef.current = sequenceRef.current.slice(-SEQUENCE_LENGTH);
-      }
+      // 처리 완료
+      isProcessingRef.current = false;
+    } catch (err) {
+      console.error('[🌐 API 오류]', err);
+      setStatus('error');
+      isProcessingRef.current = false;
     }
-  };
+  },
+  [SERVER_BASE_URL, isDynamicGesture, API_REQUEST_THROTTLE]
+);
+
+// 랜드마크 데이터 전송 함수
+const sendLandmarks = useCallback(
+  (landmarks: any[]) => {
+    try {
+      // 상태가 'closed'이면 처리하지 않음
+      if (status === 'closed') {
+        console.log('[🌐 API] status=closed, 처리하지 않음');
+        return;
+      }
+      
+      // 이미 결과가 전송되었으면 처리하지 않음
+      if (resultSentRef.current) {
+        // console.log('[🌐 API] 이미 결과 전송됨');
+        return;
+      }
+      
+      // 이미 처리 중이면 무시
+      if (isProcessingRef.current) {
+        // console.log('[🌐 API] 이미 처리 중');
+        return;
+      }
+      
+      const now = Date.now();
+
+      // 전송 간격 제한 (쓰로틀링)
+      if (now - lastSentTimeRef.current < SEND_THROTTLE) {
+        return;
+      }
+
+      lastSentTimeRef.current = now;
+
+      if (status !== 'open') {
+        console.log('[🌐 API] 상태를 open으로 변경');
+        setStatus('open');
+      }
+
+      // 각 손에 대해 랜드마크 처리 (단순화된 로직)
+      for (const hand of landmarks) {
+        // 원점 (첫 번째 랜드마크)
+        const origin = [hand[0].x, hand[0].y, hand[0].z];
+
+        // 정규화된 랜드마크 계산
+        const normalized = hand.map((lm: any) => [
+          lm.x - origin[0],
+          lm.y - origin[1],
+          lm.z - origin[2],
+        ]);
+
+        // 정규화된 랜드마크를 1차원 배열로 평탄화
+        const flat = normalized.flat();
+
+        // 벡터 정규화
+        const norm = Math.hypot(...flat);
+        const normed = norm > 0 ? flat.map((v: number) => v / norm) : flat;
+
+        // 양손 여부 추가
+        const isTwoHands = landmarks.length === 2 ? 1 : 0;
+
+        // 최종 벡터 생성
+        const vector64 = [...normed, isTwoHands];
+
+        // 시퀀스에 추가
+        sequenceRef.current.push(vector64);
+        
+        // 시퀀스가 너무 길어지면 앞부분 제거
+        if (sequenceRef.current.length > SEQUENCE_LENGTH * 1.5) {
+          sequenceRef.current = sequenceRef.current.slice(-SEQUENCE_LENGTH);
+        }
+      }
+
+      // 충분한 프레임이 모였고, 처리 중이 아니면 서버로 전송 (5프레임마다 로그)
+      if (sequenceRef.current.length % 5 === 0) {
+        console.log(`[🔄 시퀀스 수집 중] ${sequenceRef.current.length}/${SEQUENCE_LENGTH} 프레임`);
+      }
+      
+      if (sequenceRef.current.length >= SEQUENCE_LENGTH && !isProcessingRef.current && !resultSentRef.current) {
+        console.log(`[🔄 시퀀스 완성] ${sequenceRef.current.length} 프레임`);
+        isProcessingRef.current = true; // 처리 중 상태로 설정
+        
+        // 현재 시퀀스 복사 후 초기화
+        const currentSequence = [...sequenceRef.current];
+        clearSequence();
+        
+        // 서버로 전송
+        sendToServer(currentSequence);
+      }
+    } catch (error) {
+      console.error('[🌐 API] 데이터 처리 오류:', error);
+      isProcessingRef.current = false;
+    }
+  },
+  [SEND_THROTTLE, SEQUENCE_LENGTH, status, clearSequence, sendToServer]
+);
 
   // API 연결 함수
   const connect = useCallback(() => {
     console.log('[🌐 API] 연결 준비 완료');
     setStatus('open');
     clearSequence();
-    setIsProcessing(false); // 처리 상태 초기화
+    isProcessingRef.current = false;
+    resultSentRef.current = false;
     
     // 결과 초기화
     setRecognitionResult({
@@ -280,11 +306,14 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
     console.log('[🌐 API] 연결 종료');
     setStatus('closed');
     clearSequence();
+    isProcessingRef.current = false;
+    resultSentRef.current = false; // 이 부분 추가
+    
+    // 결과 초기화
     setRecognitionResult({
       gesture: null,
       confidence: null,
     });
-    setIsProcessing(false);
   }, [clearSequence]);
 
   return {
