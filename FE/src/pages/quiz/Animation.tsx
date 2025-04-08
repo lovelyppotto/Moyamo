@@ -11,14 +11,14 @@ function Animation({ showWrongImage, showCorrectImage }: AnimationProps): JSX.El
         <img
           src="/images/correct.png"
           alt="correct_img"
-          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 w-[80vh] h-[80vh]"
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-100 w-[80vh] h-[80vh]"
         />
       )}
       {showWrongImage && (
         <img
           src="/images/wrong.png"
           alt="wrong_img"
-          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 w-[80vh] h-[80vh]"
+          className="z-100 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80vh] h-[80vh]"
         />
       )}
     </>

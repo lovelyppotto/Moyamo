@@ -25,62 +25,55 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   });
   const [showCorrectImage, setShowCorrectImage] = useState<boolean>(false);
   const [showWrongImage, setShowWrongImage] = useState<boolean>(false);
-  const [timer, setTimer] = useState(10000);
+  const [timer, setTimer] = useState(questionData.type === 'CAMERA' ? 30000 : 10000);
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
-  const [startProgress, setStartProgress] = useState(false);
+  const [startProgress, setStartProgress] = useState(true); // 모든 타입에서 바로 시작하도록 변경
   const [isTimeOut, setIsTimedOut] = useState(false);
 
-  useEffect(() => {
-    // CAMERA 타입이 아닌 경우 바로 프로그레스 시작
-    if (questionData && questionData.type !== 'CAMERA') {
-      setStartProgress(true);
-    } else {
-      setStartProgress(false);
-    }
-  }, [questionData?.type]);
+  // useEffect를 제거하고 항상 프로그레스 바가 시작되도록 함
 
   function handleSelectAnswer(isCorrect: boolean | null) {
+    // 모든 케이스(정답, 오답, 스킵)에 대해 처리
     setAnswer({
       isCorrect: isCorrect,
     });
-    let newTimer = questionData.type === 'CAMERA' ? 30000 : 10000; //시간의 기본 최대값
-    let newProgressClass = '';
+    
+    let newTimer = questionData.type === 'CAMERA' ? 20000 : 10000;
+    let newProgressClass = 'bg-[var(--color-kr-600)]';
 
-    if (isCorrect == null) {
+    // 스킵(null) 처리
+    if (isCorrect === null) {
       newTimer = 2000;
       newProgressClass = 'bg-gray-200';
-    }
-    setTimer(newTimer);
-    setProgressClass(newProgressClass);
-
-    // 1초 후 정답 여부 확인
-    setTimeout(() => {
-      setAnswer({
-        isCorrect: isCorrect,
-      });
-      // 정답 여부에 따라 이미지 표시
+      setShowWrongImage(true); // 스킵도 오답으로 처리
+    } else {
+      // 정답/오답 처리
       if (isCorrect) {
         setShowCorrectImage(true);
       } else {
         setShowWrongImage(true);
       }
+    }
 
-      //이미지 표시를 위한 타이머 (1초 후 이미지 숨김)
-      setTimeout(() => {
-        setShowCorrectImage(false);
-        setShowWrongImage(false);
-      }, 1000);
-      // 다음 문제로 넘어가기 위한 타이머
-      setTimeout(() => {
-        onSelectAnswer(isCorrect);
-      }, 400);
-    }, 200);
+    setTimer(newTimer);
+    setProgressClass(newProgressClass);
+
+    // 이미지 표시를 위한 타이머 (1초 후 이미지 숨김)
+    setTimeout(() => {
+      setShowCorrectImage(false);
+      setShowWrongImage(false);
+      
+      // 다음 문제로 넘어가기
+      onSelectAnswer(isCorrect);
+    }, 1000);
   }
 
   const handleSkipAnswer = useCallback((): void => {
+    console.log('Skip button clicked or timer expired');
     setIsTimedOut(true);
+    // handleSelectAnswer를 통해 스킵 처리
     handleSelectAnswer(null);
-  }, [handleSelectAnswer]);
+  }, []);
 
   return (
     <div className="h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
@@ -138,7 +131,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}                                             
-                onProgressStart={() => setStartProgress(true)}
+                isTimeOut={isTimeOut}
               />
             )}
           </div>

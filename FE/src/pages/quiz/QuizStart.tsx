@@ -40,10 +40,6 @@ function Quiz() {
     }
   };
 
-  const handleBack = (): void => {
-    navigate('/');
-  };
-
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>

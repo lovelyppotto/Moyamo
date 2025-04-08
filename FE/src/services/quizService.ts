@@ -58,12 +58,12 @@ export const getQuizQuestions = async (useCamera: boolean): Promise<FrontendQues
   console.log('[프로덕션 환경] 실제 API 호출 중...');
   try {
     const params = new URLSearchParams();
-    params.append('type', 'GESTURE');
-    params.append('type', 'MEANING');
     if (useCamera) {
       params.append('type', 'CAMERA');
+    } else {
+      params.append('type', 'GESTURE');
+      params.append('type', 'MEANING');
     }
-
     const { data } = await apiClient.get<QuizResponse>(`/api/quiz?${params.toString()}`);
     return transformQuizData(data.data);
   } catch (error) {
