@@ -6,10 +6,10 @@ interface CountrySelectorProps {
   onCountrySelect: (country: string) => void;
 }
 
-const SearchCountrySelector: React.FC<CountrySelectorProps> = ({
+function SearchCountrySelector ({
   selectedCountry,
   onCountrySelect,
-}) => {
+}: CountrySelectorProps){
   return (
     <BaseDropdown
       selected={selectedCountry}
