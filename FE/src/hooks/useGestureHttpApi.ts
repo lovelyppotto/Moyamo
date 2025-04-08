@@ -286,13 +286,14 @@ const sendLandmarks = useCallback(
   [SEND_THROTTLE, SEQUENCE_LENGTH, status, clearSequence, sendToServer]
 );
 
-  // API 연결 함수
+  // API 연결 준비 완료 콜백
   const connect = useCallback(() => {
     console.log('[🌐 API] 연결 준비 완료');
     setStatus('open');
     clearSequence();
     isProcessingRef.current = false;
     resultSentRef.current = false;
+    lastApiRequestRef.current = 0;
     
     // 결과 초기화
     setRecognitionResult({

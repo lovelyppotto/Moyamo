@@ -78,18 +78,28 @@ const WebCamera = ({
     if (gesture && !isPaused) {
       console.log(`[🖐️ 제스처 감지] ${gesture} (신뢰도: ${confidence || 0})`);
       
-      // 커스텀 이벤트 생성하여 제스처 데이터 전달
-      const gestureEvent = new CustomEvent('gesture-detected', {
-        detail: { gesture, confidence },
-      });
-
-      // 이벤트 발행
-      window.dispatchEvent(gestureEvent);
-      
-      // onGesture 콜백이 있으면 호출
-      if (onGesture) {
-        onGesture(gesture, confidence || 0);
-      }
+      // 새 이벤트를 발행하기 전에 이벤트 발행 지연 (중복 방지)
+      setTimeout(() => {
+        // 이미 모달이 닫혔거나 isPaused 상태가 변경되었으면 이벤트 발행 취소
+        if (isPaused) {
+          console.log('[🖐️ 제스처 이벤트 취소] 일시 정지 상태');
+          return;
+        }
+        
+        // 커스텀 이벤트 생성하여 제스처 데이터 전달
+        const gestureEvent = new CustomEvent('gesture-detected', {
+          detail: { gesture, confidence },
+        });
+  
+        // 이벤트 발행
+        window.dispatchEvent(gestureEvent);
+        console.log(`[🖐️ 제스처 이벤트 발행] ${gesture}`);
+        
+        // onGesture 콜백이 있으면 호출
+        if (onGesture) {
+          onGesture(gesture, confidence || 0);
+        }
+      }, 100);
     }
   }, [gesture, confidence, isPaused, onGesture]);
 
