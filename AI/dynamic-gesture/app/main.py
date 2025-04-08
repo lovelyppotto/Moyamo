@@ -56,7 +56,7 @@ def get_majority_vote(predictions: List[str]):
     return most_common_label, round(confidence, 2)
 
 def predict_dynamic(input_vector: np.ndarray):
-    # 🔥 90프레임 들어오면 앞에서 자르기
+    #90프레임 들어오면 앞에서 자르기
     if input_vector.shape[1] > 50:
         input_vector = input_vector[:, -50:, :]
     
@@ -75,7 +75,7 @@ def predict_static(input_vector: np.ndarray):
     label_idx = int(np.argmax(output_data))
     return (static_label_classes[label_idx], confidence * 100) if confidence >= 0.5 else ("없음", confidence * 100)
 
-@app.post("api/predict/dynamic")
+@app.post("/dynamic")
 async def dynamic_api(req: DynamicRequest):
     if len(req.frames) != 90 or len(req.frames[0]) != 64:
         raise HTTPException(status_code=400, detail="Expected shape: (90, 64)")
@@ -83,7 +83,7 @@ async def dynamic_api(req: DynamicRequest):
     label, confidence = predict_dynamic(input_seq)
     return {"gesture": label, "confidence": round(confidence, 2)}
 
-@app.post("api/predict/static")
+@app.post("/static")
 async def static_api(req: StaticRequest):
     vectors = req.frames  # (N, 64)
 
