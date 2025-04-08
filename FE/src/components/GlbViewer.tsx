@@ -13,7 +13,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !url) return;
 
     if (rendererRef.current) {
       rendererRef.current.dispose();
