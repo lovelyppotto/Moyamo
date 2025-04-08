@@ -47,7 +47,7 @@ function CountrySelector({
             key={country.id}
             className="flex justify-center items-center py-4 px-6
               rounded-xl transition-colors font-[NanumSquareRoundB]
-              hover:bg-kr-200 dark:hover:bg-d-kr-200/40"
+              hover:bg-kr-200 dark:hover:bg-d-kr-200/40 cursor-pointer"
             onClick={() => onSelectCountry(country.id)}
           >
             <div className="w-12 h-8 flex items-center justify-center mr-4 overflow-hidden drop-shadow-nation">

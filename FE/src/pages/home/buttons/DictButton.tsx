@@ -37,17 +37,21 @@ function DictionaryButton() {
             bg-inch-worm-500 dark:bg-inch-worm-450
             rounded-full drop-shadow-basic"
           >
-            <div className="relative mr-4
-            w-38 mb-10
+            <div className="relative mr-4 
+            w-38 mb-10 select-none
             sm:w-41 sm:mb-14
             md:w-50 md:mb-16 
             lg:w-60 lg:mb-18">
               {/* 책 이미지 */}
-              <img src={getIconImage('dict')} alt="DictionaryIcon" className="drop-shadow-basic" draggable="false" />
+              <img 
+                src={getIconImage('dict')}
+                alt="DictionaryIcon"
+                className="drop-shadow-basic"
+                draggable="false" />
             </div>
           </div>
           <p
-            className="font-[NanumSquareRoundEB]
+            className="select-none font-[NanumSquareRoundEB]
             mt-2 md:mt-2 lg:mt-2
             text-lg md:text-xl lg:text-2xl"
           >

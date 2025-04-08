@@ -271,11 +271,12 @@ function CountryBubble() {
                       <img
                         src={getAttractionImage(country.image)}
                         alt={country.name}
-                        className="w-full h-full object-cover"
+                        className="select-none w-full h-full object-cover"
+                        draggable="false"
                       />
                     </div>
                     <div
-                      className={`mt-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold 
+                      className={`select-none mt-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold 
                       ${country.labelBackground} 
                       ${country.name === 'Communication' ? 'text-black border border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
                     >
@@ -365,11 +366,12 @@ function CountryBubble() {
                           <img
                             src={getAttractionImage(country.image)}
                             alt={country.name}
-                            className="w-full h-full object-cover"
+                            className="select-none w-full h-full object-cover"
+                            draggable="false"
                           />
                         </div>
                         <div
-                          className={`${country.labelPosition} px-4 rounded-full border-2 dark:border-slate-100 font-bold ${
+                          className={`${country.labelPosition} select-none px-4 rounded-full border-2 dark:border-slate-100 font-bold ${
                             country.labelBackground
                           } ${country.name === 'Communication' ? 'text-black border-black dark:bg-gray-900 dark:text-d-txt-50' : 'text-white'}`}
                         >

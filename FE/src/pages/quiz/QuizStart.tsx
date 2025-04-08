@@ -47,34 +47,16 @@ function Quiz() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
+        {/* DialogTrigger를 Dialog 내부로 이동 */}
         <DialogTrigger asChild>
-          {/* w-full h-full을 쓰면 스크롤이 생김!! 전체적으로 설정한 마진값 때문인 것 같음 */}
-          <div className="flex flex-col h-screen overflow-hidden w-full bg-[var(--color-kr-100)] dark:bg-gray-900">
-            <div className=" flex flex-col justify-center items-center h-3/4 ">
-              {/* 중간 텍스트 부분 / 일단 마진값 */}
-              <div className="flex flex-col items-center align-center font-['DNFBitBitv2'] mb-30 animate-pulse">
-                <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/2 h-auto " />
-                <div className=" text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz ">
-                  GESTURE QUIZ
-                </div>
-                {/* <img src="/images/quiz_img2.png" alt="quiz-img" className="w-1/5 h-1/5" /> */}
-              </div>
-
-              {/* 마지막 버튼 부분 */}
-              <div className="flex justify-center ">
-                {/* tailwind.config.js에 커스텀 그림자 정의해야 함 */}
-                {/* 함수: 버튼을 누르면 랜덤으로 게임 페이지로 들어가도록 하기 */}
-                <button
-                  className="text-4xl xl:text-6xl font-['DNFBitBitv2']  text-gray-900  drop-shadow-quiz-box  dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center algin-center  bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce mt-[5vh] cursor-pointer"
-                  onClick={handleButtonClick}
-                >
-                  <p className="drop-shadow-basic ">start</p>
-                </button>
-              </div>
-            </div>
-          </div>
+          <button
+            className="select-none absolute bottom-40 left-1/2 transform -translate-x-1/2 text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-900 drop-shadow-quiz-box dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center align-center bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce cursor-pointer"
+            onClick={handleButtonClick}
+          >
+            <p className="drop-shadow-basic">start</p>
+          </button>
         </DialogTrigger>
-        {showCameraOption}
+
         <DialogContent
           className="py-10 px-10 drop-shadow-basic
             bg-white border-none font-[NanumSquareRound]
@@ -82,13 +64,6 @@ function Quiz() {
           style={{ maxWidth: '530px', width: '90vw' }}
         >
           <DialogHeader>
-            <button
-              className="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
-              onClick={handleBack}
-            >
-              <span className="sr-only">뒤로</span>← 뒤로
-            </button>
-
             <DialogTitle className="my-4 text-3xl font-[NanumSquareRoundEB]">
               <FontAwesomeIcon icon={faSquareCheck} className="mr-2" />
               제스처 퀴즈 모드 선택
@@ -99,11 +74,11 @@ function Quiz() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-4 mt-2">
-            <Button className="bg-slate-200 dark:bg-slate-600" onClick={() => handleStart(false)}>
+            <Button className="bg-slate-200 dark:bg-slate-600 cursor-pointer" onClick={() => handleStart(false)}>
               제외하기
             </Button>
             <Button
-              className="bg-kr-500 dark:bg-kr-450 text-white"
+              className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer"
               onClick={() => handleStart(true)}
             >
               포함하기
@@ -111,6 +86,21 @@ function Quiz() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <div className="flex flex-col h-screen overflow-hidden w-full bg-[var(--color-kr-100)] dark:bg-gray-900">
+        <div className="flex flex-col justify-center items-center h-3/4">
+          {/* 중간 텍스트 부분 */}
+          <div className="flex flex-col items-center align-center font-['DNFBitBitv2'] mt-30 animate-pulse">
+            {/* <img src="/images/quiz_img1.png" alt="quiz-img" className="w-1/2 h-auto" /> */}
+            <div className="select-none mb-8 text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
+              GESTURE
+            </div>
+            <div className="select-none text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
+              QUIZ
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

@@ -26,7 +26,7 @@ function Home() {
       px-10 dark:text-d-txt-50"
       >
         <div
-          className="flex flex-col item-center font-[DNFBitBitv2]
+          className="select-none flex flex-col item-center font-[DNFBitBitv2]
           text-3xl text-center "
         >
           {/* 첫 번째 줄 */}
@@ -40,6 +40,7 @@ function Home() {
               alt="pixel-puzzle"
               className="w-9 h-9 sm:w-14 sm:h-14 
               lg:w-16 lg:h-16 xl:w-17 xl:h-17 mx-1 sm:mx-2"
+              draggable="false"
             />
             <h1 className="dark:text-d-txt-50 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">meaningful</h1>
           </div>
@@ -68,7 +69,7 @@ function Home() {
           </div>
         </div>
         <p
-          className="text-sm sm:text-lg md:text-xl
+          className="select-none text-sm sm:text-lg md:text-xl
           text-center font-[NanumSquareRoundB]
           mt-3 md:mt-1"
         >

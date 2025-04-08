@@ -23,7 +23,7 @@ function QuizButton() {
       >
         <div
           className="relative 
-              ml-5 
+              ml-5 select-none
               w-38 mb-14
               sm:w-38 sm:mb-18
               md:w-43 md:mb-20
@@ -38,7 +38,7 @@ function QuizButton() {
         </div>
       </div>
       <p
-        className="font-[NanumSquareRoundEB]
+        className="select-none font-[NanumSquareRoundEB]
             mt-2 md:mt-2 lg:mt-2
             text-lg md:text-xl lg:text-2xl"
       >
