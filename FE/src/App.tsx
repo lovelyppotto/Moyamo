@@ -14,7 +14,7 @@ import GesturePractice from './pages/dict/GesturePractice';
 import ModeToggle from './components/ModeToggle';
 import OfflineIndicator from './components/OfflineIndicator';
 import './pwa';
-import ErrorPage from './components/ErrorPage';
+import NotFoundPage from './components/NotFoundPage';
 
 const router = createBrowserRouter([
   {
@@ -80,7 +80,12 @@ const router = createBrowserRouter([
       // 에러페이지
       {
         path: 'error',
-        element: <ErrorPage />,
+        element: <NotFoundPage />,
+      },
+      // 404 페이지 - 모든 매칭되지 않는 경로에 대해
+      {
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },

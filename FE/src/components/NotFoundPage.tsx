@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-function ErrorPage() {
+function NotFoundPage() {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -42,4 +42,4 @@ function ErrorPage() {
   );
 }
 
-export default ErrorPage;
+export default NotFoundPage;
