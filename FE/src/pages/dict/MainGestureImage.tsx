@@ -17,7 +17,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
       <div className="w-full h-full flex flex-col">
         {/* 이미지 영역 - 비율 유지 */}
         <div
-          className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getBorderColorClass(countryCode)} w-full aspect-[16/9]`}
+          className={`bg-white rounded-t-2xl flex items-center justify-center border-4 ${getBorderColorClass(countryCode)} w-full h-[80%] aspect-[16/9]`}
         >
           {gesture.imageUrl ? (
             <GlbViewer url={gesture.imageUrl} />
@@ -30,7 +30,7 @@ function MainGestureImage({ gesture, countryCode }: MainGestureImageProps) {
 
         {/* 타이틀 영역 */}
         <div
-          className={`${getColorClass(countryCode)} py-2 px-4 text-white text-center rounded-b-2xl flex items-center justify-center min-h-[50px]`}
+          className={`${getColorClass(countryCode)} py-2 px-4 text-white text-center rounded-b-2xl flex items-center justify-center h-[20%]`}
         >
           <h2 className="text-base sm:text-lg md:text-xl">{gesture.gestureTitle}</h2>
         </div>

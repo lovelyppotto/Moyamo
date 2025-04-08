@@ -52,12 +52,12 @@ export function DictListCarousel({
     const containerWidth = scrollRef.current.clientWidth;
 
     // 카드 너비 계산
-    let cardWidth = containerWidth;
+    let cardWidth = containerWidth / 2; // 기본값: 화면의 절반
     const viewportWidth = window.innerWidth;
 
     if (viewportWidth >= 1024) {
       cardWidth = containerWidth / 3;
-    } else if (viewportWidth >= 640) {
+    } else {
       cardWidth = containerWidth / 2;
     }
 
@@ -189,7 +189,7 @@ export function DictListCarousel({
           {gestures.map((gesture, index) => (
             <div
               key={`gesture-${gesture.gestureId || index}`}
-              className="flex-shrink-0 w-[100%] sm:w-[50%] lg:w-[33.333%] snap-start px-2 h-full"
+              className="flex-shrink-0 w-[50%] lg:w-[33.333%] snap-start px-2 h-full"
             >
               <DictGestureCard
                 gesture={gesture}
