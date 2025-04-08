@@ -74,6 +74,7 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
               {shuffledAnswers.current[0].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[0].gestureImage} />
+                  <div className="absolute inset-0 bg-transparent z-10"></div>
                 </div>
               )}
             </div>
@@ -91,6 +92,7 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
               {shuffledAnswers.current[1].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[1].gestureImage} />
+                  <div className="absolute inset-0 bg-transparent z-10"></div>
                 </div>
               )}
             </div>
@@ -108,6 +110,7 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
               {shuffledAnswers.current[2].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[2].gestureImage} />
+                  <div className="absolute inset-0 bg-transparent z-10"></div>
                 </div>
               )}
             </div>
@@ -125,6 +128,7 @@ const Answers2: React.FC<Answers2Props> = ({ options, answer, onSelect, isTimeOu
               {shuffledAnswers.current[3].gestureImage && (
                 <div className="w-full h-[80%] flex items-center justify-center">
                   <GlbViewer url={shuffledAnswers.current[3].gestureImage} />
+                  <div className="absolute inset-0 bg-transparent z-10"></div>
                 </div>
               )}
             </div>
