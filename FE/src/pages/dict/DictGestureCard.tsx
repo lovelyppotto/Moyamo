@@ -70,8 +70,8 @@ export function DictGestureCard({
               </div>
             )
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-gray-400">
-              이미지 없음
+            <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
+              이미지 준비 중
             </div>
           )}
         </div>
