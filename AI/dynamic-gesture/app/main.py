@@ -1,69 +1,108 @@
-# app/inference_server.py
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import tensorflow as tf
-import json
+from tensorflow.lite.python.interpreter import Interpreter
+from pydantic import BaseModel
+from typing import List
+from collections import Counter
 
 app = FastAPI()
 
-# ✅ CORS 설정 (필요시 허용 범위 좁히기)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ✅ 클래스 라벨 로딩
-label_classes = np.load("models/label_classes_dynamic.npy")
+dynamic_label_classes = np.load("models/label_classes_dynamic.npy")
+static_label_classes = np.load("models/label_classes_mk2.npy")
 
-# ✅ TFLite 모델 로딩
-interpreter = tf.lite.Interpreter(model_path="models/dynamic_gesture_lstm.tflite")
-interpreter.allocate_tensors()
+dynamic_interpreter = tf.lite.Interpreter(model_path="models/dynamic_gesture_lstm.tflite")
+static_interpreter = Interpreter(model_path="models/static_gesture_mk2_model.tflite")
 
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+dynamic_interpreter.allocate_tensors()
+static_interpreter.allocate_tensors()
 
+dynamic_input = dynamic_interpreter.get_input_details()
+dynamic_output = dynamic_interpreter.get_output_details()
 
-def predict(input_vector: np.ndarray) -> tuple[str, float]:
-    interpreter.set_tensor(input_details[0]["index"], input_vector.astype(np.float32))
-    interpreter.invoke()
-    output_data = interpreter.get_tensor(output_details[0]["index"])
+static_input = static_interpreter.get_input_details()
+static_output = static_interpreter.get_output_details()
 
+class DynamicRequest(BaseModel):
+    frames: List[List[float]]
+
+class StaticRequest(BaseModel):
+    frames: List[List[float]]  # (1, 64)
+
+def normalize_landmarks(joint):
+    joint = np.array(joint).reshape(21, 3)
+    origin = joint[0]
+    joint -= origin
+    norm = np.linalg.norm(joint)
+    if norm > 0:
+        joint /= norm
+    return joint.flatten()
+
+def get_majority_vote(predictions: List[str]):
+    if not predictions:
+        return "없음", 0.0
+    counter = Counter(predictions)
+    most_common_label, count = counter.most_common(1)[0]
+    confidence = count / len(predictions) * 100
+    return most_common_label, round(confidence, 2)
+
+def predict_dynamic(input_vector: np.ndarray):
+    # 🔥 90프레임 들어오면 앞에서 자르기
+    if input_vector.shape[1] > 50:
+        input_vector = input_vector[:, -50:, :]
+    
+    dynamic_interpreter.set_tensor(dynamic_input[0]["index"], input_vector.astype(np.float32))
+    dynamic_interpreter.invoke()
+    output_data = dynamic_interpreter.get_tensor(dynamic_output[0]["index"])
     confidence = float(np.max(output_data))
     label_idx = int(np.argmax(output_data))
+    return (dynamic_label_classes[label_idx], confidence * 100) if confidence >= 0.7 else ("none", confidence * 100)
 
-    if confidence < 0.7:
-        return "none", confidence * 100
-    return label_classes[label_idx], confidence * 100
+def predict_static(input_vector: np.ndarray):
+    static_interpreter.set_tensor(static_input[0]["index"], input_vector.astype(np.float32))
+    static_interpreter.invoke()
+    output_data = static_interpreter.get_tensor(static_output[0]["index"])
+    confidence = float(np.max(output_data))
+    label_idx = int(np.argmax(output_data))
+    return (static_label_classes[label_idx], confidence * 100) if confidence >= 0.5 else ("없음", confidence * 100)
 
-@app.websocket("/ws/predict")
-async def ws_predict(websocket: WebSocket):
-    await websocket.accept()
-    print("[✅ 연결됨] 클라이언트 WebSocket 접속")
+@app.post("api/predict/dynamic")
+async def dynamic_api(req: DynamicRequest):
+    if len(req.frames) != 90 or len(req.frames[0]) != 64:
+        raise HTTPException(status_code=400, detail="Expected shape: (90, 64)")
+    input_seq = np.array(req.frames).reshape(1, 90, 64)
+    label, confidence = predict_dynamic(input_seq)
+    return {"gesture": label, "confidence": round(confidence, 2)}
+
+@app.post("api/predict/static")
+async def static_api(req: StaticRequest):
+    vectors = req.frames  # (N, 64)
+
+    if not vectors or len(vectors[0]) != 64:
+        raise HTTPException(status_code=400, detail="Expected shape: (N, 64)")
 
     try:
-        while True:
-            data = await websocket.receive_text()
-            payload = json.loads(data)
+        predictions = []
+        for vec in vectors:
+            input_vector = np.array(vec).reshape(1, 64, 1)
+            label, conf = predict_static(input_vector)
+            predictions.append(label)
 
-            frames = payload.get("frames", [])  # (50, 64)
+        if not predictions:
+            return {"gesture": "없음", "confidence": 0.0}
 
-            if not isinstance(frames, list) or len(frames) != 50:
-                await websocket.send_text(json.dumps({"error": "Invalid sequence (50 frames expected)"}))
-                continue
-
-            input_seq = np.array(frames).reshape(1, 50, 64)
-            label, confidence = predict(input_seq)
-
-            await websocket.send_text(json.dumps({
-                "gesture": label,
-                "confidence": round(confidence, 2)
-            }))
+        final_label = get_majority_vote(predictions)
+        final_conf = 100.0 * predictions.count(final_label) / len(predictions)
+        return {"gesture": final_label, "confidence": round(final_conf, 2)}
 
     except Exception as e:
-        print("[❌ 오류]", e)
-    finally:
-        await websocket.close()
-        print("[🛑 연결 종료됨]")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
