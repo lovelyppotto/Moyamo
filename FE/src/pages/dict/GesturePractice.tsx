@@ -49,7 +49,7 @@ function GesturePractice() {
             className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic 
           flex justify-center items-center p-3"
           >
-            <GlbViewer url={gesture?.imageUrl} />
+            <GlbViewer url={gesture?.gestureImage} />
           </div>
         </div>
 
