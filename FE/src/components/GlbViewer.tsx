@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 interface GlbViewerProps {
@@ -92,8 +93,15 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     // 두 번째 믹서 추가
     let mixer2: THREE.AnimationMixer | null = null;
 
+    // DRACO 로더 설정
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/');
+    dracoLoader.setDecoderConfig({ type: 'js' });
+
     // GLB/GLTF 로더
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader); // DRACO 로더 설정
+
     loader.load(
       url,
       (gltf) => {
@@ -295,3 +303,4 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     <div ref={containerRef} style={{ width: '100%', height: '100%', background: 'transparent' }} />
   );
 }
+
