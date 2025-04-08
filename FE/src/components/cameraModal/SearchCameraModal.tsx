@@ -193,7 +193,7 @@ function SearchCameraModal() {
             />
 
             {/* 연결 상태 표시 */}
-            <ConnectionStatus isWebSocketConnected={isWebSocketConnected} isOpen={open} />
+            <ConnectionStatus isServerConnected={isWebSocketConnected} isOpen={open} />
           </div>
         </DialogContent>
       </Dialog>
