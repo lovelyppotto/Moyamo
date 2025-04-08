@@ -23,17 +23,17 @@ function Layout() {
   const isDictPage = location.pathname.includes('/dictionary');
   const isErrorPage = useMatch('*'); // 와일드카드 경로 확인
 
-  const volumeHight = (
-    <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  " />
-  );
-  const volumeOff = (
-    <FontAwesomeIcon icon={faVolumeOff} className="text-xl md:text-2xl lg:text-3xl  " />
-  );
-  const volumeLow = (
-    <FontAwesomeIcon icon={faVolumeLow} className="text-xl md:text-2xl lg:text-3xl  " />
-  );
-  const volumeList = [volumeHight, volumeLow, volumeOff];
-  const [index, setIndex] = useState(0); //// 볼륨 상태 index
+  // const volumeHight = (
+  //   <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  " />
+  // );
+  // const volumeOff = (
+  //   <FontAwesomeIcon icon={faVolumeOff} className="text-xl md:text-2xl lg:text-3xl  " />
+  // );
+  // const volumeLow = (
+  //   <FontAwesomeIcon icon={faVolumeLow} className="text-xl md:text-2xl lg:text-3xl  " />
+  // );
+  // const volumeList = [volumeHight, volumeLow, volumeOff];
+  // const [index, setIndex] = useState(0); //// 볼륨 상태 index
 
   const handleBack = () => {
     navigate(-1);
@@ -42,9 +42,9 @@ function Layout() {
     navigate('/');
   };
   // 볼륨 상태가 바뀌는 함수: 1)아이콘 바뀌기 2)실제 소리 받아오기 3) 상태저장
-  const handleVolume = () => {
-    setIndex((index + 1) % 3); //0,1,2
-  };
+  // const handleVolume = () => {
+  //   setIndex((index + 1) % 3); //0,1,2
+  // };
 
   // 패딩 적용하지 않는 페이지
   const noPaddingPage = isHomePage || isAnyResultPage || isDictPage || isQuizPage || isErrorPage;
@@ -76,12 +76,12 @@ function Layout() {
               className="text-xl md:text-2xl lg:text-3xl dark:text-white text-gray-800"
             />
           </button>
-          <button
+          {/* <button
             className="absolute top-4 right-4 z-10 cursor-pointer dark:text-white text-gray-800"
             onClick={handleVolume}
           >
             {volumeList[index]}
-          </button>
+          </button> */}
         </>
       )}
 
