@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Camera } from 'lucide-react';
@@ -32,6 +32,12 @@ function SearchCameraModal() {
   const [detectedGesture, setDetectedGesture] = useState<string | null>(null);
   const [lastConfidence, setLastConfidence] = useState<number>(0);
   const [handDetected, setHandDetected] = useState(false);
+  
+  const handDetectedRef = useRef(handDetected);
+
+  useEffect(() => {
+    handDetectedRef.current = handDetected;
+  }, [handDetected]);
   
   // 손 감지 콜백 
   const handleHandDetected = useCallback((detected: boolean) => {
@@ -283,7 +289,7 @@ function SearchCameraModal() {
     
     // 최종 제스처를 저장할 변수
     let finalGesture: string | null = null;
-    let wasHandDetected = false; // 카운트다운 중 손이 감지되었는지 여부
+    let wasHandDetected = false; // 초기값
     
     // 카운트다운 중 제스처 감지를 위한 이벤트 리스너
     const captureGesture = (event: Event) => {
@@ -305,7 +311,7 @@ function SearchCameraModal() {
     const countInterval = setInterval(() => {
       count--;
       setCountdown(count);
-      console.log(`[⏱️ 카운트다운] ${count}초 남음, 현재 캡처된 제스처:`, finalGesture);
+      console.log(`[⏱️ 카운트다운] ${count}초 남음, 현재 손 감지 상태: ${handDetected}`);
       
       // 손 감지 상태 업데이트
       wasHandDetected = wasHandDetected || handDetected;
@@ -319,7 +325,7 @@ function SearchCameraModal() {
         // 카운트다운 완료 상태 설정
         setIsCountingDown(false);
         
-        console.log('[⏱️ 카운트다운 완료] 최종 제스처:', finalGesture || detectedGesture);
+        console.log(`[⏱️ 카운트다운 완료] 손 감지 여부: ${wasHandDetected}`);
         
         // 최종 제스처 선택 (캡처된 것 우선, 없으면 상태의 것 사용)
         const gestureToUse = finalGesture || detectedGesture;
