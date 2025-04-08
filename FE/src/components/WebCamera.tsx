@@ -121,6 +121,16 @@ const WebCamera = ({
         console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
         clearTimeout(timer);
         disconnectApi();
+
+        // 웹캠 리소스 명시적으로 해제
+        if (webcamRef.current && webcamRef.current.video) {
+          const video = webcamRef.current.video;
+          if (video.srcObject) {
+            const tracks = (video.srcObject as MediaStream).getTracks();
+            tracks.forEach((track) => track.stop());
+            video.srcObject = null;
+          }
+        }
       };
     }
   }, [connectApi, disconnectApi, isPaused]);
