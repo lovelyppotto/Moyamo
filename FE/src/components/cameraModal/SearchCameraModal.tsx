@@ -14,7 +14,6 @@ import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 import CameraDialogHeader from './CameraDialogHeader';
 import CameraDialogContent from './CameraDialogContent';
 import CameraDialogFooter from './CameraDialogFooter';
-import ConnectionStatus from './ConnectionStatus';
 
 function SearchCameraModal() {
   const navigate = useNavigate();
@@ -30,9 +29,9 @@ function SearchCameraModal() {
     isCountingDown,
     countdown,
     isErrorToastShown,
-    isWebSocketConnected,
+    isWebSocketConnected, // 이름은 유지하지만 실제로는 API 연결 상태를 나타냄
     setGuideText,
-    setWebSocketConnected,
+    setWebSocketConnected, // HTTP API 연결 상태를 설정하는 함수
     resetAllState,
   } = useGestureStore();
 
@@ -126,11 +125,11 @@ function SearchCameraModal() {
     }
   };
 
-  // 웹소켓 연결 상태 콜백 핸들러
+  // API 연결 상태 콜백 핸들러 (이름은 유지하지만 이제는 HTTP API 연결 상태를 나타냄)
   const handleConnectionStatus = useCallback(
     (status: boolean) => {
-      console.log(`[🌐 WebSocket 연결 상태] ${status ? '연결됨' : '연결 안됨'}`);
-      setWebSocketConnected(status);
+      console.log(`[🌐 API 연결 상태] ${status ? '연결됨' : '연결 안됨'}`);
+      setWebSocketConnected(status); // 실제로는 HTTP API 연결 상태를 설정
     },
     [setWebSocketConnected]
   );
@@ -188,12 +187,9 @@ function SearchCameraModal() {
               preparationCountdown={preparationCountdown}
               countdown={countdown}
               isErrorToastShown={isErrorToastShown}
-              isWebSocketConnected={isWebSocketConnected}
+              isWebSocketConnected={isWebSocketConnected} // 실제로는 HTTP API 연결 상태
               onCaptureClick={handleCaptureClick}
             />
-
-            {/* 연결 상태 표시 */}
-            <ConnectionStatus isServerConnected={isWebSocketConnected} isOpen={open} />
           </div>
         </DialogContent>
       </Dialog>

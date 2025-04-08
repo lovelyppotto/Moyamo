@@ -1,12 +1,12 @@
 // ConnectionStatus.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ConnectionStatusProps {
   isServerConnected: boolean;
   isOpen: boolean;
 }
 
-const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ isServerConnected, isOpen }) => {
+function ConnectionStatus({ isServerConnected, isOpen }: ConnectionStatusProps) {
   const [showStatus, setShowStatus] = useState(false);
 
   // isOpen 값이 변경되면(모달이 열리거나 닫히면) 상태를 업데이트

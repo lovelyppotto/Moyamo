@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 // API 연결 상태를 나타내는 타입
 export type ApiStatus = 'closed' | 'connecting' | 'open' | 'error';
@@ -83,7 +83,7 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   // 데이터를 서버로 전송하는 함수
   const sendToServer = useCallback((sequenceData: number[][]) => {
     const isDynamic = isDynamicGesture(sequenceData);
-    const endpoint = isDynamic ? "/predict/dynamic" : "/predict/static";
+    const endpoint = isDynamic ? "/api/predict/dynamic" : "/api/predict/static";
     const url = SERVER_BASE_URL + endpoint;
 
     const payload = { frames: sequenceData };
