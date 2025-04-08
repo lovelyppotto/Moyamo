@@ -6,7 +6,7 @@ import {
   faVolumeLow,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useMatch } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import FontPreloader from '@/hooks/FontPreloader';
@@ -21,7 +21,7 @@ function Layout() {
   const isQuizPage =
     location.pathname.startsWith('/quiz') || location.pathname.startsWith('/quizcontent');
   const isDictPage = location.pathname.includes('/dictionary');
-  const isErrorPage = location.pathname === '/error';
+  const isErrorPage = useMatch('*'); // 와일드카드 경로 확인
 
   const volumeHight = (
     <FontAwesomeIcon icon={faVolumeHigh} className="text-xl md:text-2xl lg:text-3xl  " />
