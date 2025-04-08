@@ -18,10 +18,10 @@ app.add_middleware(
 )
 
 dynamic_label_classes = np.load("models/label_classes_dynamic.npy")
-static_label_classes = np.load("models/label_classes_mk2.npy")
+static_label_classes = np.load("models/label_classes_mk3.npy")
 
 dynamic_interpreter = tf.lite.Interpreter(model_path="models/dynamic_gesture_lstm.tflite")
-static_interpreter = Interpreter(model_path="models/static_gesture_mk2_model.tflite")
+static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
 
 dynamic_interpreter.allocate_tensors()
 static_interpreter.allocate_tensors()
@@ -77,7 +77,7 @@ def predict_static(input_vector: np.ndarray):
 
 @app.post("/dynamic")
 async def dynamic_api(req: DynamicRequest):
-    if len(req.frames) != 90 or len(req.frames[0]) != 64:
+    if len(req.frames) <= 50 or len(req.frames[0]) != 64:
         raise HTTPException(status_code=400, detail="Expected shape: (90, 64)")
     input_seq = np.array(req.frames).reshape(1, 90, 64)
     label, confidence = predict_dynamic(input_seq)
