@@ -20,6 +20,7 @@ function SearchCameraModal() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const mountCountRef = useRef<number>(0);
+  const [cameraActive, setCameraActive] = useState(false);
 
   // Zustand 스토어에서 상태 가져오기
   const {
@@ -118,6 +119,7 @@ function SearchCameraModal() {
 
   // 촬영 버튼 클릭 핸들러
   const handleCaptureClick = () => {
+    setCameraActive(true); // 버튼 클릭 시 활성화
     if (isErrorToastShown) {
       handleRetry();
     } else {
@@ -175,6 +177,7 @@ function SearchCameraModal() {
                 open={open}
                 guideText={guideText}
                 onConnectionStatus={handleConnectionStatus}
+                isPaused={!cameraActive}
               />
             )}
 

@@ -3,6 +3,7 @@ import WebCamera from '../WebCamera';
 interface CameraDialogContentProps {
   open: boolean;
   guideText: string;
+  isPaused?: boolean;
   onConnectionStatus: (status: boolean) => void;
 }
 

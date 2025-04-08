@@ -20,7 +20,7 @@ const WebCamera = ({
   guidelineClassName,
   guideText,
   onConnectionStatus,
-  isPaused = false,
+  isPaused = true,
   onGesture,
   showGuideline = true,
 }: WebCameraProps) => {
@@ -106,7 +106,7 @@ const WebCamera = ({
   // 컴포넌트 마운트 시 API 연결
   useEffect(() => {
     if (!isPaused) {
-      console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
+      console.log('[🔍 WebCamera 컴포넌트 활성화됨]');
 
       // API URL 확인
       console.log('[🔍 API URL]', import.meta.env.VITE_API_BASE_URL);
@@ -118,7 +118,6 @@ const WebCamera = ({
       }, 1000); // 1초로 지연 시간 설정
 
       return () => {
-        console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
         clearTimeout(timer);
         disconnectApi();
 
