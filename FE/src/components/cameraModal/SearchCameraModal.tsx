@@ -31,6 +31,7 @@ function SearchCameraModal() {
     countdown,
     isErrorToastShown,
     isWebSocketConnected,
+    setGuideText,
     setWebSocketConnected,
     resetAllState,
   } = useGestureStore();
@@ -68,7 +69,31 @@ function SearchCameraModal() {
       // 여기서는 이미 유효한 제스처만 전달받게 됨
       console.log(`[🔍 검색 시작] 제스처: ${detectedGesture}`);
 
-      // 페이지 이동
+      // middle_finger 제스처 감지 시
+      if (detectedGesture === 'middle_finger') {
+        toast.error('부적절한 제스처가 감지되었습니다', {
+          description: '상대방을 존중하는 제스처를 사용해 주세요.',
+          duration: 5000,
+          position: 'top-right',
+          icon: '⚠️',
+        });
+
+        // 가이드 텍스트 변경
+        setGuideText('다른 제스처로 다시 시도해 주세요');
+        return;
+      }
+
+      // devil 제스처 감지 시
+      if (detectedGesture === 'devil') {
+        toast.error('부적절한 제스처가 감지되었습니다', {
+          description: '상대방을 존중하는 제스처를 사용해 주세요.',
+          duration: 5000,
+          position: 'top-right',
+          icon: '⚠️',
+        });
+      }
+
+      // 검색 진행 (middle_finger가 아닌 경우만 여기에 도달)
       if (location.pathname.includes('/search')) {
         window.location.href = `/search/camera?gesture_label=${detectedGesture}`;
       } else {
@@ -78,7 +103,7 @@ function SearchCameraModal() {
       // 모달 닫기
       setTimeout(() => setOpen(false), 300);
     },
-    [location.pathname, navigate]
+    [location.pathname, navigate, setOpen, setGuideText]
   );
 
   // 제스처 타이머 설정
