@@ -12,6 +12,20 @@ function GesturePractice() {
   const [showCamera, setShowCamera] = useState(false);
   const { gesture } = location.state || [];
 
+  const getImageUrl = () => {
+    // gestureImage가 있으면 우선 사용 (GLB 파일)
+    if (gesture?.gestureImage && gesture.gestureImage.endsWith('.glb')) {
+      return gesture.gestureImage;
+    }
+    // imageUrl이 GLB 파일인 경우 사용
+    if (gesture?.imageUrl && gesture.imageUrl.endsWith('.glb')) {
+      return gesture.imageUrl;
+    }
+    // 둘 다 없는 경우 기본 이미지 반환 또는 에러 처리
+    return gesture?.gestureImage || gesture?.imageUrl || '';
+  };
+
+  console.log(getImageUrl());
   // gesture 없으면 에러 페이지로 이동
   useEffect(() => {
     if (!gesture) {
@@ -49,7 +63,7 @@ function GesturePractice() {
             className="w-full max-w-[500px] md:max-w-[600px] lg:max-w-[100%] h-[38vh] lg:h-[70vh] bg-white rounded-lg drop-shadow-basic 
           flex justify-center items-center p-3"
           >
-            <GlbViewer url={gesture?.gestureImage} />
+            <GlbViewer url={getImageUrl()} />
           </div>
         </div>
 
@@ -77,7 +91,7 @@ function GesturePractice() {
               guidelineClassName="max-w-[500px] 
               w-[40%] lg:w-[60%]
               top-16 lg:top-22"
-              guideText="정확도 70% 이상 시 ○표시가 나타납니다."
+              guideText="제스처를 3초간 유지해주세요."
               gestureLabel={gesture.gestureLabel}
             />
           )}
