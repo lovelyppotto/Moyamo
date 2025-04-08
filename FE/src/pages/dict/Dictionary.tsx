@@ -166,7 +166,7 @@ function Dictionary() {
 
   // 로딩 상태 확인
   if (isLoading || !showContent) {
-    return <LoadingPage minDuration={3000} onComplete={() => setShowContent(true)} />;
+    return <LoadingPage onComplete={() => setShowContent(true)} />;
   }
 
   // 에러 상태 확인
