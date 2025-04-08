@@ -18,8 +18,8 @@ interface GestureState {
   // 오류 상태
   isErrorToastShown: boolean;
 
-  // 웹소켓 연결 상태
-  isWebSocketConnected: boolean;
+  // 서버 연결 상태 (웹소켓에서 HTTP로 변경됨)
+  isWebSocketConnected: boolean; // 호환성을 위해 이름 유지, 실제로는 HTTP 연결 상태
 
   // 제스처 빈도 기록
   gestureFrequency: GestureFrequency;
@@ -38,7 +38,11 @@ interface GestureState {
   setPreparationState: (isPreparingGesture: boolean, countdown?: number) => void;
   setCountdownState: (isCountingDown: boolean, countdown?: number) => void;
   setErrorState: (isErrorShown: boolean) => void;
-  setWebSocketConnected: (isConnected: boolean) => void;
+
+  // 서버 연결 관련 액션 (웹소켓에서 HTTP로 변경됨)
+  setWebSocketConnected: (isConnected: boolean) => void; // 호환성 유지
+  setServerConnected: (isConnected: boolean) => void; // 신규 메소드 추가 (선택 사항)
+
   decrementPreparationCountdown: () => void;
   decrementCountdown: () => void;
   updateGestureFrequency: (gesture: string) => void;
@@ -60,7 +64,8 @@ export const useGestureStore = create<GestureState>((set, get) => ({
   isCountingDown: false,
   countdown: 3,
   isErrorToastShown: false,
-  isWebSocketConnected: false,
+  isWebSocketConnected: false, // 이제 HTTP 연결 상태를 나타냄
+  connectionType: 'http', // 초기 연결 타입 설정 (선택 사항)
   gestureFrequency: {},
   isProcessing: false,
   toastShownTimestamp: null,
@@ -89,9 +94,16 @@ export const useGestureStore = create<GestureState>((set, get) => ({
       isErrorToastShown: isErrorShown,
     }),
 
+  // 웹소켓 연결 상태 설정 (이제는 HTTP 연결 상태를 나타냄)
   setWebSocketConnected: (isConnected) =>
     set({
       isWebSocketConnected: isConnected,
+    }),
+
+  // 신규 메소드: 서버 연결 상태 설정 (선택 사항)
+  setServerConnected: (isConnected) =>
+    set({
+      isWebSocketConnected: isConnected, // 호환성을 위해 기존 변수 업데이트
     }),
 
   decrementPreparationCountdown: () =>
@@ -130,6 +142,7 @@ export const useGestureStore = create<GestureState>((set, get) => ({
       isCountingDown: false,
       countdown: 3,
       isErrorToastShown: false,
+      isWebSocketConnected: false, // HTTP 연결 상태 초기화
       gestureFrequency: {},
       isProcessing: false,
       toastShownTimestamp: null,
@@ -147,33 +160,33 @@ export const useGestureStore = create<GestureState>((set, get) => ({
   // 제스처 분석
   getMostFrequentGesture: () => {
     const { gestureFrequency } = get();
-  
+
     // 감지된 제스처가 없는 경우
     if (Object.keys(gestureFrequency).length === 0) {
       return null; // null 반환 (currentGesture 대신)
     }
-  
+
     // 가장 빈번한 제스처 찾기
     let mostFrequentGesture = '';
     let maxCount = 0;
-  
+
     Object.entries(gestureFrequency).forEach(([gesture, count]) => {
       if (count > maxCount) {
         maxCount = count;
         mostFrequentGesture = gesture;
       }
     });
-  
+
     // 최소 인식 횟수 검증 (예: 2회 이상 인식된 경우만 유효하게 처리)
     if (maxCount < 2) {
       return null; // 인식 횟수가 적으면 null 반환
     }
-  
+
     // '없음'인 경우에도 null 반환
     if (mostFrequentGesture === '없음') {
       return null;
     }
-  
+
     return mostFrequentGesture || null; // currentGesture 대신 null 반환
   },
 }));

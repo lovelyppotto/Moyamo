@@ -206,7 +206,7 @@ function GestureSearchBar({
             border-b border-gray-400 focus:outline-none
             dark:border-d-txt-50/80
             dark:text-d-txt-50/90
-            font-[NanumSquareRound]"
+            font-[NotoSansKR]"
             placeholder="검색어를 입력하세요"
             value={searchTerm}
             onChange={handleInputChange}

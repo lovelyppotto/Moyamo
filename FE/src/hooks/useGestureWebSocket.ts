@@ -1,156 +1,158 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+// 이전에 사용하던 웹소켓 훅 주석 처리
 
-// 웹소켓 연결 상태를 나타내는 타입
-export type WebSocketStatus = 'closed' | 'connecting' | 'open' | 'error';
+// import { useState, useEffect, useRef, useCallback } from 'react';
 
-// 제스처 인식 결과 타입
-interface GestureRecognitionResult {
-  gesture: string | null;
-  confidence: number | null;
-}
+// // 웹소켓 연결 상태를 나타내는 타입
+// export type WebSocketStatus = 'closed' | 'connecting' | 'open' | 'error';
 
-// 훅의 반환 타입
-interface UseGestureWebSocketReturn {
-  status: WebSocketStatus;
-  gesture: string | null;
-  confidence: number | null;
-  sendLandmarks: (landmarks: any[]) => void;
-  connect: () => void;
-  disconnect: () => void;
-}
+// // 제스처 인식 결과 타입
+// interface GestureRecognitionResult {
+//   gesture: string | null;
+//   confidence: number | null;
+// }
 
-/**
- * 제스처 인식을 위한 웹소켓 통신을 관리하는 커스텀 훅
- */
-export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
-  const SERVER_URL = import.meta.env.VITE_SERVER_STATIC_WS_URL;
-  // 웹소켓 상태 관리
-  const [status, setStatus] = useState<WebSocketStatus>('closed');
-  // 제스처 인식 결과 관리
-  const [recognitionResult, setRecognitionResult] = useState<GestureRecognitionResult>({
-    gesture: null,
-    confidence: null,
-  });
-  // 웹소켓 인스턴스 참조
-  const socket = useRef<WebSocket | null>(null);
-  // 마지막으로 데이터를 전송한 시간
-  const lastSentTimeRef = useRef<number>(0);
-  // 데이터 전송 간격 (ms)
-  const SEND_THROTTLE = 50;
+// // 훅의 반환 타입
+// interface UseGestureWebSocketReturn {
+//   status: WebSocketStatus;
+//   gesture: string | null;
+//   confidence: number | null;
+//   sendLandmarks: (landmarks: any[]) => void;
+//   connect: () => void;
+//   disconnect: () => void;
+// }
 
-  // 웹소켓 연결 함수
-  const connect = useCallback(() => {
-    if (
-      socket.current &&
-      (socket.current.readyState === WebSocket.OPEN ||
-        socket.current.readyState === WebSocket.CONNECTING)
-    ) {
-      console.log('[🌐 웹소켓] 이미 연결 중입니다.');
-      return;
-    }
+// /**
+//  * 제스처 인식을 위한 웹소켓 통신을 관리하는 커스텀 훅
+//  */
+// export const useGestureWebSocket = (): UseGestureWebSocketReturn => {
+//   const SERVER_URL = import.meta.env.VITE_SERVER_STATIC_WS_URL;
+//   // 웹소켓 상태 관리
+//   const [status, setStatus] = useState<WebSocketStatus>('closed');
+//   // 제스처 인식 결과 관리
+//   const [recognitionResult, setRecognitionResult] = useState<GestureRecognitionResult>({
+//     gesture: null,
+//     confidence: null,
+//   });
+//   // 웹소켓 인스턴스 참조
+//   const socket = useRef<WebSocket | null>(null);
+//   // 마지막으로 데이터를 전송한 시간
+//   const lastSentTimeRef = useRef<number>(0);
+//   // 데이터 전송 간격 (ms)
+//   const SEND_THROTTLE = 50;
 
-    try {
-      console.log('[🌐 웹소켓] 연결 시도 중...', SERVER_URL);
-      setStatus('connecting');
+//   // 웹소켓 연결 함수
+//   const connect = useCallback(() => {
+//     if (
+//       socket.current &&
+//       (socket.current.readyState === WebSocket.OPEN ||
+//         socket.current.readyState === WebSocket.CONNECTING)
+//     ) {
+//       console.log('[🌐 웹소켓] 이미 연결 중입니다.');
+//       return;
+//     }
 
-      socket.current = new WebSocket(SERVER_URL);
+//     try {
+//       console.log('[🌐 웹소켓] 연결 시도 중...', SERVER_URL);
+//       setStatus('connecting');
 
-      socket.current.onopen = () => {
-        console.log('[🌐 웹소켓] 연결 성공');
-        setStatus('open');
-      };
+//       socket.current = new WebSocket(SERVER_URL);
 
-      socket.current.onmessage = (event) => {
-        try {
-          const response = JSON.parse(event.data);
+//       socket.current.onopen = () => {
+//         console.log('[🌐 웹소켓] 연결 성공');
+//         setStatus('open');
+//       };
 
-          if (response.gesture) {
-            setRecognitionResult({
-              gesture: response.gesture,
-              confidence: response.confidence !== undefined ? response.confidence : null,
-            });
-          } else if (response.error) {
-            console.error('[🌐 웹소켓] 서버 오류:', response.error);
-          }
-        } catch (err) {
-          console.error('[🌐 웹소켓] 데이터 파싱 오류:', err);
-        }
-      };
+//       socket.current.onmessage = (event) => {
+//         try {
+//           const response = JSON.parse(event.data);
 
-      socket.current.onclose = () => {
-        console.log('[🌐 웹소켓] 연결 종료');
-        setStatus('closed');
-      };
+//           if (response.gesture) {
+//             setRecognitionResult({
+//               gesture: response.gesture,
+//               confidence: response.confidence !== undefined ? response.confidence : null,
+//             });
+//           } else if (response.error) {
+//             console.error('[🌐 웹소켓] 서버 오류:', response.error);
+//           }
+//         } catch (err) {
+//           console.error('[🌐 웹소켓] 데이터 파싱 오류:', err);
+//         }
+//       };
 
-      socket.current.onerror = (error) => {
-        console.error('[🌐 웹소켓] 오류 발생:', error);
-        setStatus('error');
-      };
-    } catch (error) {
-      console.error('[🌐 웹소켓] 연결 생성 오류:', error);
-      setStatus('error');
-    }
-  }, []);
+//       socket.current.onclose = () => {
+//         console.log('[🌐 웹소켓] 연결 종료');
+//         setStatus('closed');
+//       };
 
-  // 웹소켓 연결 해제 함수
-  const disconnect = useCallback(() => {
-    // 연결 결과 초기화
-    setRecognitionResult({
-      gesture: null,
-      confidence: null,
-    });
+//       socket.current.onerror = (error) => {
+//         console.error('[🌐 웹소켓] 오류 발생:', error);
+//         setStatus('error');
+//       };
+//     } catch (error) {
+//       console.error('[🌐 웹소켓] 연결 생성 오류:', error);
+//       setStatus('error');
+//     }
+//   }, []);
 
-    if (socket.current) {
-      console.log('[🌐 웹소켓] 연결 해제 중...');
-      socket.current.close();
-      socket.current = null;
-      setStatus('closed');
-    }
-  }, []);
+//   // 웹소켓 연결 해제 함수
+//   const disconnect = useCallback(() => {
+//     // 연결 결과 초기화
+//     setRecognitionResult({
+//       gesture: null,
+//       confidence: null,
+//     });
 
-  // 랜드마크 데이터 전송 함수
-  const sendLandmarks = useCallback((landmarks: any[]) => {
-    if (socket.current && socket.current.readyState === WebSocket.OPEN) {
-      try {
-        const now = Date.now();
+//     if (socket.current) {
+//       console.log('[🌐 웹소켓] 연결 해제 중...');
+//       socket.current.close();
+//       socket.current = null;
+//       setStatus('closed');
+//     }
+//   }, []);
 
-        // 전송 간격 제한 (쓰로틀링)
-        if (now - lastSentTimeRef.current < SEND_THROTTLE) {
-          return;
-        }
+//   // 랜드마크 데이터 전송 함수
+//   const sendLandmarks = useCallback((landmarks: any[]) => {
+//     if (socket.current && socket.current.readyState === WebSocket.OPEN) {
+//       try {
+//         const now = Date.now();
 
-        lastSentTimeRef.current = now;
+//         // 전송 간격 제한 (쓰로틀링)
+//         if (now - lastSentTimeRef.current < SEND_THROTTLE) {
+//           return;
+//         }
 
-        // 랜드마크 데이터 직렬화 (x, y, z 좌표만 포함)
-        const serializedLandmarks = landmarks.map((hand) =>
-          hand.map((lm: any) => ({
-            x: lm.x,
-            y: lm.y,
-            z: lm.z,
-          }))
-        );
+//         lastSentTimeRef.current = now;
 
-        const data = JSON.stringify({ frames: serializedLandmarks });
-        socket.current.send(data);
-      } catch (error) {
-        console.error('[🌐 웹소켓] 데이터 전송 오류:', error);
-      }
-    }
-  }, []);
+//         // 랜드마크 데이터 직렬화 (x, y, z 좌표만 포함)
+//         const serializedLandmarks = landmarks.map((hand) =>
+//           hand.map((lm: any) => ({
+//             x: lm.x,
+//             y: lm.y,
+//             z: lm.z,
+//           }))
+//         );
 
-  // 컴포넌트 언마운트 시 정리
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
+//         const data = JSON.stringify({ frames: serializedLandmarks });
+//         socket.current.send(data);
+//       } catch (error) {
+//         console.error('[🌐 웹소켓] 데이터 전송 오류:', error);
+//       }
+//     }
+//   }, []);
 
-  return {
-    status,
-    gesture: recognitionResult.gesture,
-    confidence: recognitionResult.confidence,
-    sendLandmarks,
-    connect,
-    disconnect,
-  };
-};
+//   // 컴포넌트 언마운트 시 정리
+//   useEffect(() => {
+//     return () => {
+//       disconnect();
+//     };
+//   }, [disconnect]);
+
+//   return {
+//     status,
+//     gesture: recognitionResult.gesture,
+//     confidence: recognitionResult.confidence,
+//     sendLandmarks,
+//     connect,
+//     disconnect,
+//   };
+// };

@@ -51,10 +51,10 @@ function CameraDialogFooter({
       <div className="">
         <button
           onClick={onCaptureClick}
-          disabled={isPreparingGesture || isCountingDown || !isWebSocketConnected}
+          disabled={isPreparingGesture || isCountingDown}
           className={`flex items-center justify-center w-full py-3 rounded-b-lg ${
-            isWebSocketConnected && !isPreparingGesture && !isCountingDown
-              ? 'bg-d-txt-50 text-black'
+            !isPreparingGesture && !isCountingDown
+              ? 'bg-d-txt-50 text-black hover:bg-gray-300 cursor-pointer'
               : 'bg-gray-300 text-black cursor-not-allowed'
           }`}
         >

@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
-import { useGestureWebSocket } from '@/hooks/useGestureWebSocket';
+import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
 
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
@@ -14,54 +14,115 @@ interface WebCameraProps {
   onGesture?: (gesture: string, confidence: number) => void;
   // 가이드라인 표시 여부 제어
   showGuideline?: boolean;
+  onHandDetected?: (detected: boolean) => void;
 }
 
 const WebCamera = ({
   guidelineClassName,
   guideText,
   onConnectionStatus,
-  isPaused = false,
+  isPaused = true,
   onGesture,
   showGuideline = true,
+  onHandDetected,
 }: WebCameraProps) => {
-  // 웹소켓 서비스 사용
-  const {
-    status: wsStatus,
-    gesture,
-    confidence,
-    sendLandmarks,
-    connect: connectWs,
-    disconnect: disconnectWs,
-  } = useGestureWebSocket();
-
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
     useHandLandmarker();
+
+  // HTTP API 서비스 사용
+  const {
+    status: apiStatus,
+    gesture,
+    confidence,
+    sendLandmarks,
+    connect: connectApi,
+    disconnect: disconnectApi,
+  } = useGestureHttpApi();
 
   // 컴포넌트 상태 및 참조
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-  const resultsRef = useRef<HandLandmarkerResult | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
 
-  // 마지막으로 이벤트를 발행한 시간 추적
-  const lastEventTimeRef = useRef<number>(0);
-  // 이벤트 쓰로틀링 간격 (ms)
-  const EVENT_THROTTLE = 150;
+  // API 연결 상태 콜백
+  useEffect(() => {
+    if (onConnectionStatus) {
+      onConnectionStatus(true); // 항상 연결됨으로 보고
+    }
+  }, [onConnectionStatus]);
+
+  // API 상태 관리 - 별도 useEffect로 분리
+  useEffect(() => {
+    // isPaused가 false일 때만 API 연결
+    if (!isPaused && apiStatus === 'closed') {
+      console.log('[🌐 API 연결 시작]');
+      connectApi();
+    } 
+    // isPaused가 true일 때 API 연결 해제
+    else if (isPaused && apiStatus === 'open') {
+      console.log('[🌐 API 연결 해제]');
+      disconnectApi();
+    }
+    
+    // 컴포넌트 언마운트 시 API 연결 해제
+    return () => {
+      if (apiStatus === 'open') {
+        disconnectApi();
+      }
+    };
+  }, [isPaused, apiStatus, connectApi, disconnectApi]);
+
+  // 제스처 정보가 변경될 때만 이벤트 발행
+  useEffect(() => {
+    // 제스처 감지 시 이벤트 발행
+    if (gesture && !isPaused) {
+      console.log(`[🖐️ 제스처 감지] ${gesture} (신뢰도: ${confidence || 0})`);
+      
+      // 새 이벤트를 발행하기 전에 이벤트 발행 지연 (중복 방지)
+      setTimeout(() => {
+        // 이미 모달이 닫혔거나 isPaused 상태가 변경되었으면 이벤트 발행 취소
+        if (isPaused) {
+          console.log('[🖐️ 제스처 이벤트 취소] 일시 정지 상태');
+          return;
+        }
+        
+        // 커스텀 이벤트 생성하여 제스처 데이터 전달
+        const gestureEvent = new CustomEvent('gesture-detected', {
+          detail: { gesture, confidence },
+        });
+  
+        // 이벤트 발행
+        window.dispatchEvent(gestureEvent);
+        console.log(`[🖐️ 제스처 이벤트 발행] ${gesture}`);
+        
+        // onGesture 콜백이 있으면 호출
+        if (onGesture) {
+          onGesture(gesture, confidence || 0);
+        }
+      }, 100);
+    }
+  }, [gesture, confidence, isPaused, onGesture]);
 
   // 캔버스에 랜드마크 그리기 함수
   const drawCanvas = useCallback(
     (results: HandLandmarkerResult) => {
-      const canvasCtx = canvasRef.current!.getContext('2d')!;
-      const width = canvasRef.current!.width;
-      const height = canvasRef.current!.height;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const canvasCtx = canvas.getContext('2d');
+      if (!canvasCtx) return;
+      
+      const width = canvas.width;
+      const height = canvas.height;
 
       // 캔버스 초기화
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, width, height);
 
-      // 정사각형 영역에 비디오 그리기
-      if (webcamRef.current && webcamRef.current.video) {
+      // 정사각형 영역에 비디오 그리기 
+      if (webcamRef.current?.video) {
         const video = webcamRef.current.video;
 
         // 정사각형 크기 계산
@@ -96,132 +157,80 @@ const WebCamera = ({
     [HAND_CONNECTIONS, drawConnectors, drawLandmarks]
   );
 
-  // 부모 컴포넌트에 웹소켓 연결 상태 알림
-  useEffect(() => {
-    if (onConnectionStatus) {
-      onConnectionStatus(wsStatus === 'open');
-    }
-  }, [wsStatus, onConnectionStatus]);
-
-  // 컴포넌트 마운트 시 웹소켓 연결
-  useEffect(() => {
-    if (!isPaused) {
-      console.log('[🔍 WebCamera 컴포넌트 마운트 & 활성화됨]');
-
-      // 웹소켓 URL 확인
-      console.log('[🔍 웹소켓 URL]', import.meta.env.VITE_SERVER_STATIC_WS_URL);
-
-      // 웹소켓 연결 시작 전에 약간의 지연
-      const timer = setTimeout(() => {
-        console.log('[🔍 웹소켓 연결 시작]');
-        connectWs();
-      }, 1000); // 1초로 지연 시간 증가
-
-      return () => {
-        console.log('[🔍 WebCamera 컴포넌트 언마운트 또는 비활성화]');
-        clearTimeout(timer);
-        disconnectWs();
-      };
-    }
-  }, [connectWs, disconnectWs, isPaused]);
-
-  // 제스처 정보가 변경될 때마다 이벤트 발행 (부모 컴포넌트로 데이터 전달)
-  useEffect(() => {
-    // isPaused가 true이거나 gesture가 없으면 이벤트를 발행하지 않음
-    if (gesture && !isPaused) {
-      const now = Date.now();
-
-      // 마지막 이벤트 발행 시간으로부터 EVENT_THROTTLE 시간이 지났는지 확인
-      if (now - lastEventTimeRef.current > EVENT_THROTTLE) {
-        // 커스텀 이벤트 생성하여 제스처 데이터 전달
-        const gestureEvent = new CustomEvent('gesture-detected', {
-          detail: { gesture, confidence },
-        });
-
-        // 이벤트 발행
-        window.dispatchEvent(gestureEvent);
-        if (onGesture) {
-          onGesture(gesture, confidence || 0);
-        }
-
-        lastEventTimeRef.current = now;
-      }
-    }
-  }, [gesture, confidence, isPaused, onGesture]);
+  // 웹캠 스트림 설정
+useEffect(() => {
+  if (webcamRef.current && webcamRef.current.video) {
+    console.log('Setting up video loadedmetadata event');
+    webcamRef.current.video.onloadedmetadata = () => {
+      console.log('Video metadata loaded');
+      setIsStreaming(true);
+    };
+  }
+}, []);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
-    // isPaused가 true이면 프로세싱을 중단
-    if (isPaused) {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-      return;
-    }
-
-    if (!webcamRef.current || !webcamRef.current.video || !canvasRef.current) {
-      // 아직 준비가 안 되었으면 다음 프레임에서 다시 시도
+    // 조기 종료 조건
+    if (!webcamRef.current?.video?.readyState || !canvasRef.current) {
+      // 다음 프레임에서 다시 시도
       animationRef.current = requestAnimationFrame(predictWebcam);
       return;
     }
-
-    const video = webcamRef.current.video;
-
+  
     try {
-      // 비디오 프레임에서 손 랜드마크 감지
+      const video = webcamRef.current.video;
+      
+      // 손 랜드마크 감지 시도
       const results = await detectFrame(video);
-
-      if (results) {
-        resultsRef.current = results;
-
-        // 손 랜드마크가 감지되면 즉시 서버로 전송
-        if (results.landmarks && results.landmarks.length > 0 && !isPaused) {
-          sendLandmarks(results.landmarks);
+      
+      // 손 감지 여부를 부모 컴포넌트로 전달
+      const handDetected = !!(results?.landmarks && results.landmarks.length > 0);
+      if (onHandDetected) {
+        onHandDetected(handDetected);
+      }
+      
+      // 감지된 랜드마크 그리기 (공통 함수 활용)
+      drawCanvas(results || { landmarks: [], worldLandmarks: [], handednesses: [], handedness: [] });
+      
+      // API 통신 (isPaused가 false일 때만)
+      if (handDetected && !isPaused) {
+        // 주기적으로만 로그 출력 (10프레임마다)
+        if (Math.random() < 0.1) {
+          console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
         }
-
-        // 캔버스에 랜드마크 그리기
-        if (canvasRef.current) {
-          // 추가 안전 검사
-          drawCanvas(results);
+        sendLandmarks(results.landmarks);
+      } else if (isPaused && handDetected) {
+        // 주기적으로만 로그 출력 (10프레임마다)
+        if (Math.random() < 0.1) {
+          console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
         }
       }
     } catch (e) {
       console.error('[🖐️ 손 감지 오류]', e);
     }
+  
+    // 항상 다음 프레임 요청
+    animationRef.current = requestAnimationFrame(predictWebcam);
+  }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected]);
 
-    // 다음 프레임 처리
-    if (!isPaused) {
-      animationRef.current = requestAnimationFrame(predictWebcam);
-    }
-  }, [detectFrame, sendLandmarks, drawCanvas, isPaused]);
-
-  // 모델 로딩이 완료되면 웹캠 예측 시작
-  useEffect(() => {
-    if (!isLoading && !error && !isPaused) {
-      console.log('[🔍 WebCamera] 예측 시작');
-      animationRef.current = requestAnimationFrame(predictWebcam);
-    } else if (isPaused && animationRef.current) {
-      console.log('[🔍 WebCamera] 일시 중지됨');
+// 애니메이션 프레임 관리 - 분리된 useEffect로 처리
+useEffect(() => {
+  console.log('Animation frame effect triggered', { isLoading, error });
+  // 초기 애니메이션 프레임 요청
+  if (!isLoading && !error) {
+    console.log('Starting animation frame');
+    animationRef.current = requestAnimationFrame(predictWebcam);
+  }
+  
+  // 정리 함수
+  return () => {
+    if (animationRef.current) {
+      console.log('Canceling animation frame');
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     }
-
-    // 컴포넌트 언마운트나 isPaused 변경 시 애니메이션 정리
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-    };
-  }, [isLoading, error, predictWebcam, isPaused]);
-
-  // 에러 발생 시 로깅
-  useEffect(() => {
-    if (error) {
-      console.error('[🖐️ HandLandmarker 오류]', error);
-    }
-  }, [error]);
+  };
+}, [isLoading, error, predictWebcam]);
 
   return (
     <div className="w-full h-full bg-white relative overflow-hidden">
@@ -274,8 +283,8 @@ const WebCamera = ({
             <div className="absolute top-5 left-0 right-0 flex justify-center items-center">
               <p
                 className="bg-black/60 text-white px-4 py-2 rounded-lg
-              text-sm md:text-base font-[NanumSquareRoundEB] 
-              drop-shadow-lg"
+                text-sm md:text-base font-[NanumSquareRoundEB] 
+                drop-shadow-lg"
               >
                 {guideText}
               </p>

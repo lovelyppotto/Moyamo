@@ -3,13 +3,17 @@ import WebCamera from '../WebCamera';
 interface CameraDialogContentProps {
   open: boolean;
   guideText: string;
+  isPaused?: boolean;
   onConnectionStatus: (status: boolean) => void;
+  onHandDetected?: (detected: boolean) => void; // 추가
 }
 
-function CameraDialogContent ({
+function CameraDialogContent({
   open,
   guideText,
+  isPaused = false,
   onConnectionStatus,
+  onHandDetected, // 추가
 }: CameraDialogContentProps) {
   return (
     <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
@@ -17,13 +21,16 @@ function CameraDialogContent ({
       <div className="bg-white">
         <div className="aspect-square w-full">
           {/* WebCamera 컴포넌트에 props 전달 */}
-          <WebCamera
-            key={open ? 'camera-open' : 'camera-closed'} // 키를 추가하여 컴포넌트 강제 재생성
-            guidelineClassName="w-[70%] mt-35"
-            guideText={guideText}
-            onConnectionStatus={onConnectionStatus}
-            isPaused={!open}
-          />
+          {open && (
+            <WebCamera
+              key={`camera-instance`} // 키 값을 고정하여 불필요한 재렌더링 방지
+              guidelineClassName="w-[70%] mt-35"
+              guideText={guideText}
+              onConnectionStatus={onConnectionStatus}
+              isPaused={isPaused}
+              onHandDetected={onHandDetected} // 추가
+            />
+          )}
         </div>
       </div>
     </div>
