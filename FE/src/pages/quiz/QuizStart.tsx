@@ -82,13 +82,6 @@ function Quiz() {
           style={{ maxWidth: '530px', width: '90vw' }}
         >
           <DialogHeader>
-            <button
-              className="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
-              onClick={handleBack}
-            >
-              <span className="sr-only">뒤로</span>← 뒤로
-            </button>
-
             <DialogTitle className="my-4 text-3xl font-[NanumSquareRoundEB]">
               <FontAwesomeIcon icon={faSquareCheck} className="mr-2" />
               제스처 퀴즈 모드 선택
@@ -99,11 +92,11 @@ function Quiz() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-4 mt-2">
-            <Button className="bg-slate-200 dark:bg-slate-600" onClick={() => handleStart(false)}>
+            <Button className="bg-slate-200 dark:bg-slate-600 cursor-pointer" onClick={() => handleStart(false)}>
               제외하기
             </Button>
             <Button
-              className="bg-kr-500 dark:bg-kr-450 text-white"
+              className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer"
               onClick={() => handleStart(true)}
             >
               포함하기
