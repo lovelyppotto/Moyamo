@@ -21,6 +21,7 @@ public interface GestureSearchRepository extends JpaRepository<CountryGesture, I
             OR g.gestureLabel LIKE %:gestureName%
         )
         AND (:countryId = 0 OR c.countryId = :countryId)
+        AND gi.gestureTitle IS NOT NULL
     """)
     List<CountryGesture> findGesturesByTitleAndCountry(@Param("gestureName") String gestureName,
                                                        @Param("countryId") int countryId);
