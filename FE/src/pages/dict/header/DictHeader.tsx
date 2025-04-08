@@ -104,7 +104,7 @@ function DictHeader({
       {showCompareGuide && (
         <button
           className="absolute flex items-center right-4 px-3 py-2 text-[13px] sm:text-[15px] bg-gray-200 text-gray-600
-           hover:bg-gray-300 transition-colors rounded-xl cursor-pointer mr-18 lg:mr-20"
+           hover:bg-gray-300 transition-colors rounded-xl cursor-pointer mr-3 lg:mr-5"
           onClick={handleGuideClick}
         >
           <FontAwesomeIcon icon={faRectangleList} className="mr-0.5 sm:mr-1.5" />
