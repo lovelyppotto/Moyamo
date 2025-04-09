@@ -77,23 +77,16 @@ function Dictionary() {
   }, [gestureData, selectedCountry.id]);
 
   useEffect(() => {
-    // 현재 페이지 경로 감지
-    const handleRouteChange = () => {
-      const currentPath = window.location.pathname;
-      // 딕셔너리 관련 경로가 아닌 경우에만 초기화
-      if (!currentPath.includes('/dictionary')) {
+    const currentPath = location.pathname;
+
+    return () => {
+      // 현재 /dictionary 경로인지 확인하고, 컴포넌트 언마운트 시 다른 경로로 이동하는지 확인
+      if (currentPath.includes('/dictionary')) {
         const key = `selectedGesture_${selectedCountry.id}`;
         sessionStorage.removeItem(key);
       }
     };
-
-    // 페이지를 떠날 때 이벤트 발생
-    window.addEventListener('beforeunload', handleRouteChange);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleRouteChange);
-    };
-  }, [selectedCountry.id]);
+  }, [location.pathname, selectedCountry.id]);
 
   // 현재 제스처 목록
   const currentGestures = gestureData?.gestures || [];
