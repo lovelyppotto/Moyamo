@@ -7,6 +7,7 @@ import { useGestureSearch } from '@/hooks/apiHooks';
 function GestureSearchInput() {
   const location = useLocation();
   const searchInputRef = useRef<HTMLDivElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // 로컬 상태 관리
   const [showResults, setShowResults] = useState(false);
@@ -24,9 +25,13 @@ function GestureSearchInput() {
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
   // 검색 쿼리 실행
-  const { data: searchResults, isLoading } = useGestureSearch(searchTerm || gestureLabel || gestureName, countryId, {
-    enabled: isHomePage && (searchTerm || gestureLabel || gestureName) !== '',
-  });
+  const { data: searchResults, isLoading } = useGestureSearch(
+    searchTerm || gestureLabel || gestureName,
+    countryId,
+    {
+      enabled: isHomePage && (searchTerm || gestureLabel || gestureName) !== '',
+    }
+  );
 
   // 화면 크기에 따라 작은 화면 여부 감지
   useEffect(() => {
@@ -55,6 +60,27 @@ function GestureSearchInput() {
     setShowResults(isHomePage && searchTerm !== '');
   }, [searchTerm, isHomePage]);
 
+  // 검색 결과 바깥 영역 클릭 이벤트 핸들링
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      }
+    };
+
+    // 검색 결과가 표시되고 있을 때만 이벤트 리스너 추가
+    if (showResults) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showResults]);
+
   // 검색 결과 클릭 핸들러
   const handleResultClick = (result: any) => {
     window.location.href = `/search?gesture_name=${encodeURIComponent(result.gestureName)}`;
@@ -66,11 +92,11 @@ function GestureSearchInput() {
   };
 
   return (
-    <div className="search-container relative">
+    <div className="search-container relative" ref={searchContainerRef}>
       <GestureSearchBar
         searchInputRef={searchInputRef}
         isCameraSearch={isCameraSearch}
-        onSearchTermChange={handleSearchTermChange} // 콜백 전달
+        onSearchTermChange={handleSearchTermChange}
       />
 
       {showResults && (

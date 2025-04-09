@@ -1,18 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
-import WebCamera from './WebCamera';
+import TypedWebCamera from './TypedWebCamera';
 
 interface GesturePracticeCameraProps {
   guidelineClassName?: string;
   guideText?: string;
   gestureLabel?: string;
+  // 제스처 타입 prop - string 타입 유지
+  gestureType?: string;
 }
 
 const GesturePracticeCamera = ({
   guidelineClassName,
   guideText,
   gestureLabel,
+  // 기본값은 'STATIC'으로 설정
+  gestureType = 'STATIC',
 }: GesturePracticeCameraProps) => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showGuideline, setShowGuideline] = useState(true);
@@ -27,29 +31,12 @@ const GesturePracticeCamera = ({
   // 추가: 제스처 처리 중 상태
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 컨테이너 크기 조절을 위한 상태
-  const [containerDimension, setContainerDimension] = useState('aspect-square');
+  // 컨테이너 참조
   const containerRef = useRef<HTMLDivElement>(null);
   const correctTimeRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 반응형 컨테이너 조정
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        // lg 브레이크포인트
-        setContainerDimension('h-[70vh] aspect-square');
-      } else {
-        setContainerDimension('h-[38vh] aspect-square');
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  // 정규화된 제스처 타입을 계산 (TypedWebCamera로 전달될 타입)
+  const normalizedGestureType = gestureType === 'DYNAMIC' ? 'DYNAMIC' : 'STATIC';
 
   // 추가: 타이머 정리 함수
   const clearAllTimers = useCallback(() => {
@@ -80,7 +67,7 @@ const GesturePracticeCamera = ({
       }
 
       console.log(
-        `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
+        `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}, "type": ${gestureType}`
       );
 
       // 인식 정확도가 너무 낮은 경우 무시
@@ -117,7 +104,7 @@ const GesturePracticeCamera = ({
         }, 2000);
       }
     },
-    [cameraActive, gestureLabel, isProcessing, clearAllTimers, startGestureRecognition]
+    [cameraActive, gestureLabel, gestureType, isProcessing, clearAllTimers, startGestureRecognition]
   );
 
   const handleRestart = useCallback(() => {
@@ -141,20 +128,21 @@ const GesturePracticeCamera = ({
   return (
     <div
       ref={containerRef}
-      className={`w-full ${containerDimension} bg-white relative overflow-hidden rounded-lg drop-shadow-basic`}
+      className="w-full h-full aspect-square bg-white relative overflow-hidden rounded-lg drop-shadow-basic"
     >
       {/* 고정 비율 유지를 위한 래퍼 */}
       <div className="relative w-full h-full">
-        {/* WebCamera 컴포넌트 사용 - cameraActive가 false일 때 숨김 처리 */}
+        {/* TypedWebCamera 컴포넌트 사용 - cameraActive가 false일 때 숨김 처리 */}
         {cameraActive ? (
           <>
-            <WebCamera
+            <TypedWebCamera
               guidelineClassName={guidelineClassName}
               guideText={guideText} // 피드백 메시지는 별도로 표시
               onConnectionStatus={handleConnectionStatus}
               isPaused={!cameraActive || isProcessing} // 처리 중일 때도 일시 정지
               onGesture={handleGesture}
               showGuideline={showGuideline}
+              gestureType={normalizedGestureType as 'STATIC' | 'DYNAMIC'} // 타입 변환
             />
 
             {/* 피드백 메시지가 있고 처리 중일 때 살짝 어두운 오버레이 추가 */}
