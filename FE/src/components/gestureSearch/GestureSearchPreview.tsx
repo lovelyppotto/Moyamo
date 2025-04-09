@@ -21,7 +21,7 @@ function GestureSearchPreview(props: SearchResultsProps) {
       {isLoading ? (
         <div className="py-4 text-center text-gray-500 dark:text-d-txt-50/70">검색 중...</div>
       ) : searchResults && searchResults.length > 0 ? (
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-80 overflow-y-auto customScrollbar kr">
           {searchResults.map((result, index) => (
             <div
               key={result.gestureId || index}
