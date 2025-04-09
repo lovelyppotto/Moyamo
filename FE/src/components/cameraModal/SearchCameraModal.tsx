@@ -220,10 +220,12 @@ function SearchCameraModal() {
         // 1. 손 감지가 일어나지 않았을 때
         if (!wasHandDetected) {
           toast.dismiss();
-          toast.warning('손 감지 경고', {
+          toast.info('손 감지 경고', {
             description:
               '손이 카메라에 인식되지 않았습니다. 손을 화면 내에 전부 들어가게 해주세요.',
             duration: 3000,
+            position: 'top-right',
+            icon: '👋',
           });
 
           setGuideText('버튼을 눌러 다시 시도해 주세요');
@@ -237,6 +239,8 @@ function SearchCameraModal() {
           toast.warning('제스처 인식 오류', {
             description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
             duration: 3000,
+            position: 'top-right',
+            icon: '⚠️',
           });
 
           setGuideText('버튼을 눌러 다시 시도해 주세요');
@@ -250,6 +254,8 @@ function SearchCameraModal() {
           toast.error('부적절한 제스처가 감지되었습니다', {
             description: '상대방을 존중하는 제스처를 사용해 주세요.',
             duration: 3000,
+            position: 'top-right',
+            icon: '🚫',
           });
 
           setGuideText('다른 제스처로 다시 시도해 주세요');
