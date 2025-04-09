@@ -14,7 +14,7 @@ function CameraDialogHeader() {
           주어지는 2초의 준비 시간 동안 손 전체가 화면에 들어오게 해 주세요.
         </p>
         <p className="text-sm text-left font-[NanumSquareRound]">
-          이후 자동으로 3초 동안 제스처 인식이 진행됩니다.
+          이후 자동으로 4초 동안 제스처 인식이 진행됩니다.
         </p>
       </div>
     </div>

@@ -1,7 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-function NotFoundPage() {
+// 공통 에러 페이지 컴포넌트 (404, 414 등 다양한 에러 처리)
+function ErrorPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // URL에서 에러 코드와 메시지 가져오기
+  const searchParams = new URLSearchParams(location.search);
+  const errorCode = searchParams.get('code') || '404';
+  const errorMessage = searchParams.get('message') || '';
+  
+  // 경로에 따른 에러 유형 결정
+  const is414Error = location.pathname === '/url-error' || errorCode === '414';
+  
+  // 에러 유형에 따른 메시지 설정
+  const primaryMessage = is414Error 
+    ? '요청한 URL이 너무 깁니다'
+    : '찾을 수 없는 페이지입니다';
+    
+  const secondaryMessage = is414Error
+    ? '검색어나 필터가 너무 많아 URL 길이가 제한을 초과했습니다'
+    : '요청하신 페이지가 사라졌거나, 잘못된 경로를 이용하셨습니다';
   
   const handleBackClick = () => {
     window.history.back();
@@ -13,14 +32,18 @@ function NotFoundPage() {
   
   return (
     <div className="w-screen h-screen flex flex-col items-end justify-center font-[NanumSquareRoundB] bg-white dark:bg-gray-900 overflow-hidden">
-      {/* 애니메이션 404 텍스트 */}
+      {/* 애니메이션 텍스트 */}
       <div className="absolute font-[Paperlogy-8ExtraBold] top-0 left-0 w-full overflow-hidden pointer-events-none">
         <div className="sliding-text-container">
           <div className="sliding-text sliding-text-very-slow">
-            PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND 
+            {is414Error 
+              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG' 
+              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND'} 
           </div>
           <div className="sliding-text sliding-text-very-slow">
-            PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND 
+            {is414Error 
+              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG' 
+              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND'} 
           </div>
         </div>
       </div>
@@ -29,9 +52,9 @@ function NotFoundPage() {
       <div className="z-10 flex flex-col items-end justify-center mr-10 md:mr-30 mt-20">
         <div className="text-right text-black dark:text-d-txt-50 text-[15px] sm:text-[20px] md:text-[25px] mb-3 md:mb-7 p-4 rounded-lg">
           <p className='select-none'>
-            찾을 수 없는 페이지입니다
+            {primaryMessage}
             <br />
-            요청하신 페이지가 사라졌거나, 잘못된 경로를 이용하셨습니다
+            {secondaryMessage}
           </p>
         </div>
         
@@ -66,7 +89,7 @@ function NotFoundPage() {
             display: inline-block;
             font-size: 120px;
             font-weight: 800;
-            color: var(--color-kr-500, #AB50D9);
+            color: ${is414Error ? 'var(--color-orange-500, #FF9800)' : 'var(--color-kr-500, #AB50D9)'};
             opacity: 0.3;
             padding-left: 0;
             text-transform: uppercase;
@@ -116,12 +139,12 @@ function NotFoundPage() {
           /* 다크 모드 텍스트 색상 */
           @media (prefers-color-scheme: dark) {
             .sliding-text, .sliding-text-reverse {
-              color: var(--color-d-kr-500, #CEA0FA);
+              color: ${is414Error ? 'var(--color-orange-300, #FFB74D)' : 'var(--color-d-kr-500, #CEA0FA)'};
             }
           }
           
           .dark .sliding-text, .dark .sliding-text-reverse {
-            color: var(--color-d-kr-500, #CEA0FA);
+            color: ${is414Error ? 'var(--color-orange-300, #FFB74D)' : 'var(--color-d-kr-500, #CEA0FA)'};
           }
         `
       }} />
@@ -129,4 +152,4 @@ function NotFoundPage() {
   );
 }
 
-export default NotFoundPage;
+export default ErrorPage;

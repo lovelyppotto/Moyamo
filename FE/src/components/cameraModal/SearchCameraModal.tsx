@@ -12,7 +12,7 @@ import CameraDialogFooter from './CameraDialogFooter';
 // 커스텀 훅
 import { useGestureEvents } from '@/hooks/useGestureEvents';
 import { useGestureTimer } from '@/hooks/useGestureTimer';
-
+import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 declare global {
   interface Window {
     resetGestureSequence?: () => void;
@@ -45,6 +45,8 @@ function SearchCameraModal() {
   const [handDetected, setHandDetected] = useState(false);
 
   const handDetectedRef = useRef(handDetected);
+
+  useZoomPrevention();
 
   useEffect(() => {
     handDetectedRef.current = handDetected;
@@ -155,7 +157,7 @@ function SearchCameraModal() {
     // 준비 단계 종료, 카운트다운 시작
     setIsPreparingGesture(false);
     setIsCountingDown(true);
-    setCountdown(3);
+    setCountdown(4);
     setGuideText('제스처를 유지해주세요');
 
     // 최종 제스처를 저장할 변수
@@ -178,7 +180,7 @@ function SearchCameraModal() {
     window.addEventListener('gesture-detected', captureGesture);
 
     // 카운트다운
-    let count = 3;
+    let count = 4;
     const countInterval = setInterval(() => {
       count--;
       setCountdown(count);
@@ -230,7 +232,7 @@ function SearchCameraModal() {
         }
 
         // 2. API 결과가 none인 경우 또는 제스처가 감지되지 않은 경우
-        if (!gestureToUse || gestureToUse === 'none') {
+        if (!gestureToUse || gestureToUse === '없음' || gestureToUse === 'none') {
           toast.dismiss();
           toast.warning('제스처 인식 오류', {
             description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
