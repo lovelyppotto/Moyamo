@@ -1,22 +1,34 @@
 import { useState, useRef, useEffect } from 'react';
 import WebCamera from '@/components/WebCamera';
 import { FrontendQuestionData } from '@/types/quizTypes';
+import { GestureType } from '@/hooks/useGestureHttpApi';
 
 interface Answers3Props {
   options: FrontendQuestionData['options'];
   answer: FrontendQuestionData['answer'];
   onSelect: (answer: boolean) => void;
   isTimeOut: boolean;
+  question: FrontendQuestionData; // 질문 데이터 전체를 받도록 추가
 }
 
-const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
+const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut, question }) => {
   const [currentGesture, setCurrentGesture] = useState<string | null>(null);
   const [currentConfidence, setCurrentConfidence] = useState<number>(0);
   const [isAnswered, setIsAnswered] = useState(false);
-  
+
+  // 제스처 타입 변환 (FrontendQuestionData 타입에서 GestureType으로)
+  const getGestureType = (): GestureType => {
+    const type = question.gestureType;
+    if (type === 'STATIC' || type === 'DYNAMIC') {
+      console.log(type);
+      return type;
+    }
+    return 'AUTO'; // 기본값
+  };
+
   // 중요: 답변 제출 여부를 추적하는 ref
   const hasSubmittedRef = useRef(false);
-  
+
   // 타임아웃 감지 - 의존성 배열 제거하여 마운트 시에만 실행되게 함
   useEffect(() => {
     // 현재 isTimeOut, onSelect를 클로저로 캡처
@@ -24,11 +36,11 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
       // 이미 답변을 제출했거나 정답 처리된 경우 무시
       if (isTimeOut && !hasSubmittedRef.current && !isAnswered) {
         console.log('카메라 시간 초과 - 오답 처리');
-        
+
         // 답변 제출 상태 업데이트
         hasSubmittedRef.current = true;
         setIsAnswered(true);
-        
+
         // 오답 처리 (딱 한 번만 호출됨)
         onSelect(false);
       }
@@ -36,7 +48,7 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
 
     // isTimeOut이 변경될 때마다 체크
     const intervalId = setInterval(checkTimeout, 100);
-    
+
     // 컴포넌트 언마운트 시 정리
     return () => {
       clearInterval(intervalId);
@@ -58,11 +70,11 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
 
     if (correctAnswer === gesture) {
       console.log('정답 처리');
-      
+
       // 답변 제출 상태 업데이트
       hasSubmittedRef.current = true;
       setIsAnswered(true);
-      
+
       // 정답 처리 (딱 한 번만 호출됨)
       onSelect(true);
     }
@@ -70,11 +82,11 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
 
   // 디버깅용 - 현재 상태 로깅
   useEffect(() => {
-    console.log('현재 상태:', { 
-      isTimeOut, 
-      hasSubmitted: hasSubmittedRef.current, 
-      isAnswered, 
-      currentGesture 
+    console.log('현재 상태:', {
+      isTimeOut,
+      hasSubmitted: hasSubmittedRef.current,
+      isAnswered,
+      currentGesture,
     });
   }, [isTimeOut, isAnswered, currentGesture]);
 
@@ -85,12 +97,15 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, isTimeOut }) => {
           <WebCamera
             isPaused={isAnswered} // 정답 처리되면 카메라 일시 정지
             guideText={
-              isAnswered ? '응답이 처리되었습니다' : 
-              currentGesture ? `제스처가 감지되었습니다: ${currentGesture}` : 
-              '3초 이상 동작을 유지해주세요.'
+              isAnswered
+                ? '응답이 처리되었습니다'
+                : currentGesture
+                  ? `제스처가 감지되었습니다: ${currentGesture}`
+                  : '3초 이상 동작을 유지해주세요.'
             }
             guidelineClassName="w-4/5 opacity-50"
             onGesture={handleGesture}
+            gestureType={getGestureType()} // 제스처 타입 전달
           />
         </div>
       </div>

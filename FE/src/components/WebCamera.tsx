@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
-import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
+import { useGestureHttpApi, GestureType } from '@/hooks/useGestureHttpApi';
 
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
@@ -15,6 +15,7 @@ interface WebCameraProps {
   // 가이드라인 표시 여부 제어
   showGuideline?: boolean;
   onHandDetected?: (detected: boolean) => void;
+  gestureType?: GestureType; // 추가된 제스처 타입 속성
 }
 
 const WebCamera = ({
@@ -25,6 +26,7 @@ const WebCamera = ({
   onGesture,
   showGuideline = true,
   onHandDetected,
+  gestureType = 'AUTO', // 기본값은 AUTO로 설정
 }: WebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -59,13 +61,13 @@ const WebCamera = ({
     if (!isPaused && apiStatus === 'closed') {
       console.log('[🌐 API 연결 시작]');
       connectApi();
-    } 
+    }
     // isPaused가 true일 때 API 연결 해제
     else if (isPaused && apiStatus === 'open') {
       console.log('[🌐 API 연결 해제]');
       disconnectApi();
     }
-    
+
     // 컴포넌트 언마운트 시 API 연결 해제
     return () => {
       if (apiStatus === 'open') {
@@ -79,7 +81,7 @@ const WebCamera = ({
     // 제스처 감지 시 이벤트 발행
     if (gesture && !isPaused) {
       console.log(`[🖐️ 제스처 감지] ${gesture} (신뢰도: ${confidence || 0})`);
-      
+
       // 새 이벤트를 발행하기 전에 이벤트 발행 지연 (중복 방지)
       setTimeout(() => {
         // 이미 모달이 닫혔거나 isPaused 상태가 변경되었으면 이벤트 발행 취소
@@ -87,16 +89,16 @@ const WebCamera = ({
           console.log('[🖐️ 제스처 이벤트 취소] 일시 정지 상태');
           return;
         }
-        
+
         // 커스텀 이벤트 생성하여 제스처 데이터 전달
         const gestureEvent = new CustomEvent('gesture-detected', {
           detail: { gesture, confidence },
         });
-  
+
         // 이벤트 발행
         window.dispatchEvent(gestureEvent);
         console.log(`[🖐️ 제스처 이벤트 발행] ${gesture}`);
-        
+
         // onGesture 콜백이 있으면 호출
         if (onGesture) {
           onGesture(gesture, confidence || 0);
@@ -110,10 +112,10 @@ const WebCamera = ({
     (results: HandLandmarkerResult) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      
+
       const canvasCtx = canvas.getContext('2d');
       if (!canvasCtx) return;
-      
+
       const width = canvas.width;
       const height = canvas.height;
 
@@ -121,7 +123,7 @@ const WebCamera = ({
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, width, height);
 
-      // 정사각형 영역에 비디오 그리기 
+      // 정사각형 영역에 비디오 그리기
       if (webcamRef.current?.video) {
         const video = webcamRef.current.video;
 
@@ -158,15 +160,15 @@ const WebCamera = ({
   );
 
   // 웹캠 스트림 설정
-useEffect(() => {
-  if (webcamRef.current && webcamRef.current.video) {
-    console.log('Setting up video loadedmetadata event');
-    webcamRef.current.video.onloadedmetadata = () => {
-      console.log('Video metadata loaded');
-      setIsStreaming(true);
-    };
-  }
-}, []);
+  useEffect(() => {
+    if (webcamRef.current && webcamRef.current.video) {
+      console.log('Setting up video loadedmetadata event');
+      webcamRef.current.video.onloadedmetadata = () => {
+        console.log('Video metadata loaded');
+        setIsStreaming(true);
+      };
+    }
+  }, []);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
@@ -176,22 +178,24 @@ useEffect(() => {
       animationRef.current = requestAnimationFrame(predictWebcam);
       return;
     }
-  
+
     try {
       const video = webcamRef.current.video;
-      
+
       // 손 랜드마크 감지 시도
       const results = await detectFrame(video);
-      
+
       // 손 감지 여부를 부모 컴포넌트로 전달
       const handDetected = !!(results?.landmarks && results.landmarks.length > 0);
       if (onHandDetected) {
         onHandDetected(handDetected);
       }
-      
+
       // 감지된 랜드마크 그리기 (공통 함수 활용)
-      drawCanvas(results || { landmarks: [], worldLandmarks: [], handednesses: [], handedness: [] });
-      
+      drawCanvas(
+        results || { landmarks: [], worldLandmarks: [], handednesses: [], handedness: [] }
+      );
+
       // API 통신 (isPaused가 false일 때만)
       if (handDetected && !isPaused) {
         // 주기적으로만 로그 출력 (10프레임마다)
@@ -208,29 +212,29 @@ useEffect(() => {
     } catch (e) {
       console.error('[🖐️ 손 감지 오류]', e);
     }
-  
+
     // 항상 다음 프레임 요청
     animationRef.current = requestAnimationFrame(predictWebcam);
   }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected]);
 
-// 애니메이션 프레임 관리 - 분리된 useEffect로 처리
-useEffect(() => {
-  console.log('Animation frame effect triggered', { isLoading, error });
-  // 초기 애니메이션 프레임 요청
-  if (!isLoading && !error) {
-    console.log('Starting animation frame');
-    animationRef.current = requestAnimationFrame(predictWebcam);
-  }
-  
-  // 정리 함수
-  return () => {
-    if (animationRef.current) {
-      console.log('Canceling animation frame');
-      cancelAnimationFrame(animationRef.current);
-      animationRef.current = null;
+  // 애니메이션 프레임 관리 - 분리된 useEffect로 처리
+  useEffect(() => {
+    console.log('Animation frame effect triggered', { isLoading, error });
+    // 초기 애니메이션 프레임 요청
+    if (!isLoading && !error) {
+      console.log('Starting animation frame');
+      animationRef.current = requestAnimationFrame(predictWebcam);
     }
-  };
-}, [isLoading, error, predictWebcam]);
+
+    // 정리 함수
+    return () => {
+      if (animationRef.current) {
+        console.log('Canceling animation frame');
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [isLoading, error, predictWebcam]);
 
   return (
     <div className="w-full h-full bg-white relative overflow-hidden">

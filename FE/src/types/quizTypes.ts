@@ -9,6 +9,7 @@ export interface QuestionData {
   question_id: number;
   question_text: string;
   question_type: 'MEANING' | 'GESTURE' | 'CAMERA';
+  gesture_type: 'STATIC' | 'DYNAMIC';
   gesture_url: string | null;
   options: Array<{
     option_id: number;
@@ -28,6 +29,7 @@ export interface FrontendQuestionData {
   id: number;
   text: string;
   type: 'MEANING' | 'GESTURE' | 'CAMERA';
+  gestureType: 'STATIC' | 'DYNAMIC';
   gestureUrl: string | null;
   options: Array<{
     id: number;

@@ -72,24 +72,24 @@ export const getQuizQuestions = async (useCamera: boolean): Promise<FrontendQues
   }
 };
 
-// 카메라로 촬영한 제스처 인식
-export const detectGesture = async (imageData: string): Promise<{ gesture: string }> => {
-  // 목 데이터 사용 여부 확인
-  if (useMockData()) {
-    console.log('[개발 환경] 목 데이터로 제스처 인식 시뮬레이션...');
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
-    return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
-  }
+// // 카메라로 촬영한 제스처 인식
+// export const detectGesture = async (imageData: string): Promise<{ gesture: string }> => {
+//   // 목 데이터 사용 여부 확인
+//   if (useMockData()) {
+//     console.log('[개발 환경] 목 데이터로 제스처 인식 시뮬레이션...');
+//     await new Promise((resolve) => setTimeout(resolve, 300));
+//     const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
+//     return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
+//   }
 
-  // 실제 API 호출
-  console.log('[프로덕션 환경] 실제 제스처 인식 API 호출 중...');
-  try {
-    const { data } = await apiClient.post('/api/gestures/detect', { image: imageData });
-    return data;
-  } catch (error) {
-    console.error('제스처 인식 API 호출 실패, 목 데이터로 대체:', error);
-    const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
-    return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
-  }
-};
+//   // 실제 API 호출
+//   console.log('[프로덕션 환경] 실제 제스처 인식 API 호출 중...');
+//   try {
+//     const { data } = await apiClient.post('/api/gestures/detect', { image: imageData });
+//     return data;
+//   } catch (error) {
+//     console.error('제스처 인식 API 호출 실패, 목 데이터로 대체:', error);
+//     const gestures = ['thumbs_up', 'victory', 'ok', 'heart'];
+//     return { gesture: gestures[Math.floor(Math.random() * gestures.length)] };
+//   }
+// };
