@@ -155,7 +155,7 @@ function SearchCameraModal() {
     // 준비 단계 종료, 카운트다운 시작
     setIsPreparingGesture(false);
     setIsCountingDown(true);
-    setCountdown(8);
+    setCountdown(3);
     setGuideText('제스처를 유지해주세요');
 
     // 최종 제스처를 저장할 변수
@@ -178,7 +178,7 @@ function SearchCameraModal() {
     window.addEventListener('gesture-detected', captureGesture);
 
     // 카운트다운
-    let count = 8;
+    let count = 3;
     const countInterval = setInterval(() => {
       count--;
       setCountdown(count);
