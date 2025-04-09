@@ -40,6 +40,7 @@ const WebCamera = ({
     sendLandmarks,
     connect: connectApi,
     disconnect: disconnectApi,
+    resetSequence, // 새로 추가된 메서드 사용
   } = useGestureHttpApi();
 
   // 컴포넌트 상태 및 참조
@@ -60,21 +61,24 @@ const WebCamera = ({
     // isPaused가 false일 때만 API 연결
     if (!isPaused && apiStatus === 'closed') {
       console.log('[🌐 API 연결 시작]');
+      resetSequence(); // 시퀀스 초기화 후 연결 시작
       connectApi();
     }
     // isPaused가 true일 때 API 연결 해제
     else if (isPaused && apiStatus === 'open') {
       console.log('[🌐 API 연결 해제]');
       disconnectApi();
+      resetSequence(); // 연결 해제 시 시퀀스 초기화
     }
 
     // 컴포넌트 언마운트 시 API 연결 해제
     return () => {
       if (apiStatus === 'open') {
         disconnectApi();
+        resetSequence(); // 연결 해제 시 시퀀스 초기화
       }
     };
-  }, [isPaused, apiStatus, connectApi, disconnectApi]);
+  }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence]);
 
   // 제스처 정보가 변경될 때만 이벤트 발행
   useEffect(() => {
@@ -198,16 +202,8 @@ const WebCamera = ({
 
       // API 통신 (isPaused가 false일 때만)
       if (handDetected && !isPaused) {
-        // 주기적으로만 로그 출력 (10프레임마다)
-        if (Math.random() < 0.1) {
-          console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
-        }
+        // API로 랜드마크 전송 (수집 여부는 useGestureHttpApi 내부에서 처리)
         sendLandmarks(results.landmarks);
-      } else if (isPaused && handDetected) {
-        // 주기적으로만 로그 출력 (10프레임마다)
-        if (Math.random() < 0.1) {
-          console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
-        }
       }
     } catch (e) {
       console.error('[🖐️ 손 감지 오류]', e);

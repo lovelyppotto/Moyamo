@@ -3,8 +3,20 @@ import { useState, useRef, useCallback } from 'react';
 // API 연결 상태를 나타내는 타입
 export type ApiStatus = 'closed' | 'connecting' | 'open' | 'error';
 
+
 // 제스처 타입 정의
 export type GestureType = 'STATIC' | 'DYNAMIC' | 'AUTO';
+
+// 전역 변수로 마지막 감지된 제스처 저장
+declare global {
+  interface Window {
+    lastDetectedGesture?: {
+      gesture: string;
+      confidence: number;
+    };
+  }
+}
+
 
 // 제스처 인식 결과 타입
 interface GestureRecognitionResult {
@@ -20,6 +32,7 @@ interface UseGestureHttpApiReturn {
   sendLandmarks: (landmarks: any[], gestureType?: GestureType) => void;
   connect: () => void;
   disconnect: () => void;
+  resetSequence: () => void; // 새로 추가된 메서드
 }
 
 /**
@@ -60,6 +73,9 @@ export const useGestureHttpApi = (
   // 한 세션에서 결과를 보낸 적이 있는지 여부
   const resultSentRef = useRef<boolean>(false);
 
+  // 프레임 수집이 활성화된 상태인지 여부 (새로 추가)
+  const isCollectingRef = useRef<boolean>(false);
+
   // 데이터 전송 간격 (ms)
   const SEND_THROTTLE = 50;
 
@@ -68,8 +84,18 @@ export const useGestureHttpApi = (
 
   // 시퀀스 클리어
   const clearSequence = useCallback(() => {
+    console.log('[🔄 시퀀스 초기화]');
     sequenceRef.current = [];
   }, []);
+
+  // 시퀀스 초기화 및 수집 비활성화 (외부에서 호출 가능)
+  const resetSequence = useCallback(() => {
+    console.log('[🔄 시퀀스 리셋 및 수집 중지]');
+    clearSequence();
+    isCollectingRef.current = false;
+    resultSentRef.current = false;
+    isProcessingRef.current = false;
+  }, [clearSequence]);
 
   // 정적/동적 제스처 판별 함수
   const isDynamicGesture = useCallback((sequence: number[][], threshold = 0.005): boolean => {
@@ -101,9 +127,11 @@ export const useGestureHttpApi = (
   }, []);
 
   // 데이터를 서버로 전송하는 함수
+
   // 데이터를 서버로 전송하는 함수
   const sendToServer = useCallback(
     async (sequenceData: number[][], gestureType: GestureType = 'AUTO') => {
+
       try {
         // 이미 결과를 보낸 적이 있으면 무시
         if (resultSentRef.current) {
@@ -130,6 +158,7 @@ export const useGestureHttpApi = (
           return;
         }
 
+
         // 제스처 타입에 따라 엔드포인트 결정
         let endpoint = '';
         let gestureTypeLabel = '';
@@ -148,11 +177,14 @@ export const useGestureHttpApi = (
           gestureTypeLabel = isDynamic ? '동적' : '정적';
           console.log(`[🎯 제스처 타입] 자동 감지: ${isDynamic ? 'DYNAMIC' : 'STATIC'}`);
         }
+
         const url = SERVER_BASE_URL + endpoint;
 
         const payload = { frames: sequenceData };
         console.log(
+
           `[📤 전송됨] ${gestureTypeLabel} 제스처 (${sequenceData.length} 프레임) to ${url}`
+
         );
 
         try {
@@ -184,6 +216,15 @@ export const useGestureHttpApi = (
 
           // 결과 저장
           if (gestureName) {
+
+            // 중요: 전역 변수에도 결과 저장
+            window.lastDetectedGesture = {
+              gesture: gestureName,
+              confidence: confidenceValue,
+            };
+            console.log('[💾 전역 변수에 제스처 저장]', gestureName);
+
+
             setRecognitionResult({
               gesture: gestureName,
               confidence: confidenceValue,
@@ -199,9 +240,21 @@ export const useGestureHttpApi = (
             window.dispatchEvent(gestureEvent);
           } else {
             console.warn('[⚠️ 인식 실패] 서버 응답에 유효한 제스처가 없습니다.');
+
+            // 실패해도 none 제스처를 전역 변수에 저장
+            window.lastDetectedGesture = {
+              gesture: 'none',
+              confidence: 0,
+            };
           }
         } catch (error) {
           console.error('[🌐 API 요청 오류]', error);
+          // 에러가 발생해도 none 제스처로 전역 변수에 저장
+          window.lastDetectedGesture = {
+            gesture: 'none',
+            confidence: 0,
+          };
+
           // 에러가 발생해도 none 제스처로 이벤트 발행
           const gestureEvent = new CustomEvent('gesture-detected', {
             detail: { gesture: 'none', confidence: 0 },
@@ -215,6 +268,12 @@ export const useGestureHttpApi = (
         console.error('[🌐 API 오류]', err);
         setStatus('error');
         isProcessingRef.current = false;
+
+        // 전역 변수에도 오류 상태 저장
+        window.lastDetectedGesture = {
+          gesture: 'none',
+          confidence: 0,
+        };
       }
     },
     [SERVER_BASE_URL, isDynamicGesture, API_REQUEST_THROTTLE]
@@ -232,6 +291,10 @@ export const useGestureHttpApi = (
         // 상태가 'closed'이면 처리하지 않음
         if (status === 'closed') {
           console.log('[🌐 API] status=closed, 처리하지 않음');
+          return;
+        }
+                // API가 일시 중지되었거나 수집이 활성화되지 않았으면 무시
+        if (!isCollectingRef.current) {
           return;
         }
 
@@ -334,6 +397,9 @@ export const useGestureHttpApi = (
     resultSentRef.current = false;
     lastApiRequestRef.current = 0;
 
+    // 프레임 수집 활성화 (중요!)
+    isCollectingRef.current = true;
+
     // 결과 초기화
     setRecognitionResult({
       gesture: null,
@@ -347,7 +413,10 @@ export const useGestureHttpApi = (
     setStatus('closed');
     clearSequence();
     isProcessingRef.current = false;
-    resultSentRef.current = false; // 이 부분 추가
+    resultSentRef.current = false;
+
+    // 프레임 수집 비활성화 (중요!)
+    isCollectingRef.current = false;
 
     // 결과 초기화
     setRecognitionResult({
@@ -363,5 +432,6 @@ export const useGestureHttpApi = (
     sendLandmarks,
     connect,
     disconnect,
+    resetSequence, // 새로 추가된 메서드 반환
   };
 };
