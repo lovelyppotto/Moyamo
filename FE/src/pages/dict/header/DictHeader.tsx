@@ -63,7 +63,7 @@ function DictHeader({
 
   return (
     <header
-      className={`w-[95%] h-[65px] mx-auto mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic dark:bg-gray-500 dark:text-d-txt-50 ${className || ''}`}
+      className={`w-[95%] h-[65px] mx-auto mt-[24px] px-[24px] py-1 flex justify-center items-center bg-white rounded-lg drop-shadow-basic dark:bg-gray-500 dark:text-d-txt-50 overflow-hidden ${className || ''}`}
     >
       <div>
         <button className="cursor-pointer" onClick={handleGoBack}>
@@ -75,18 +75,19 @@ function DictHeader({
       <div className="flex justify-center items-center flex-1">
         {/* 제목 표시할 때 */}
         {!showCountrySelector && (
-          <>
+          <div className="flex items-center w-full justify-center">
             {gestureCompareInfo && (
               <img
                 src={getFlagImage(countryCode)}
                 alt={`${gestureCompareInfo.countryName} flag`}
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
+                draggable="false"
               />
             )}
             <h1 className="text-[20px] md:text-[32px] font-[NanumSquareRoundEB] text-center">
               {title}
             </h1>
-          </>
+          </div>
         )}
 
         {/* 국가 선택 드롭다운 표시*/}
