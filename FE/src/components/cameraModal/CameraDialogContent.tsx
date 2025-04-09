@@ -60,7 +60,7 @@ const CameraDialogContent: React.FC<CameraDialogContentProps> = ({
     <div className="w-full aspect-square bg-gray-100 relative">
       {open && (
         <WebCamera
-          guidelineClassName="w-[65%] h-auto opacity-50"
+          guidelineClassName="w-[70%] h-auto top-20 opacity-70"
           guideText={guideText}
           onConnectionStatus={onConnectionStatus}
           isPaused={isPaused}
