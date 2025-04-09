@@ -3,6 +3,7 @@ import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
 import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
+import { toast } from 'sonner'; // Sonner의 toast 함수 가져오기
 
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
@@ -15,6 +16,10 @@ interface WebCameraProps {
   // 가이드라인 표시 여부 제어
   showGuideline?: boolean;
   onHandDetected?: (detected: boolean) => void;
+  // 웹캠 접근 차단 시 콜백 추가
+  onCameraBlocked?: () => void;
+  onResetSequence?: (resetFn: () => void) => void;
+  onStartCollectingFrames?: (startFn: () => void) => void;
 }
 
 const WebCamera = ({
@@ -25,6 +30,9 @@ const WebCamera = ({
   onGesture,
   showGuideline = true,
   onHandDetected,
+  onCameraBlocked,
+  onResetSequence,
+  onStartCollectingFrames,
 }: WebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -38,7 +46,8 @@ const WebCamera = ({
     sendLandmarks,
     connect: connectApi,
     disconnect: disconnectApi,
-    resetSequence, // 새로 추가된 메서드 사용
+    resetSequence,
+    startCollectingFrames,
   } = useGestureHttpApi();
 
   // 컴포넌트 상태 및 참조
@@ -46,16 +55,63 @@ const WebCamera = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isCameraBlocked, setIsCameraBlocked] = useState(false);
 
   // API 연결 상태 콜백
   useEffect(() => {
     if (onConnectionStatus) {
-      onConnectionStatus(true); // 항상 연결됨으로 보고
+      onConnectionStatus(!isCameraBlocked); // 카메라 차단 상태를 반영
     }
-  }, [onConnectionStatus]);
+  }, [onConnectionStatus, isCameraBlocked]);
+
+  // 토스트 메시지 중복 방지를 위한 참조
+  const blockToastShown = useRef(false);
+
+  // 웹캠 초기화 및 접근 오류 처리
+  useEffect(() => {
+    const initializeWebcam = async () => {
+      try {
+        // 사용자 미디어 권한 요청
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        setIsCameraBlocked(false);
+        blockToastShown.current = false; // 카메라 사용 가능해지면 토스트 상태 초기화
+      } catch (error) {
+        console.error('[🎥 웹캠 접근 오류]', error);
+        setIsCameraBlocked(true);
+        
+        // 웹캠 접근 거부 시 토스트 메시지 표시 (중복 방지)
+        if (!blockToastShown.current) {
+          toast.error('웹캠 접근이 차단되었습니다', {
+            description: '브라우저의 카메라 권한 허용 후 다시 시도해 주세요.',
+            position: 'top-right',
+            icon: '⚠️',
+            duration: 3000,
+          });
+          blockToastShown.current = true;
+        }
+        
+        // 콜백 함수가 제공된 경우 호출
+        if (onCameraBlocked) {
+          onCameraBlocked();
+        }
+      }
+    };
+
+    initializeWebcam();
+  }, [onCameraBlocked]);
 
   // API 상태 관리 - 별도 useEffect로 분리
   useEffect(() => {
+    // 카메라가 차단되었거나 isPaused가 true이면 API 연결 중단
+    if (isCameraBlocked) {
+      if (apiStatus === 'open') {
+        console.log('[🌐 API 연결 해제] 카메라 차단 상태');
+        disconnectApi();
+        resetSequence();
+      }
+      return;
+    }
+  
     // isPaused가 false일 때만 API 연결
     if (!isPaused && apiStatus === 'closed') {
       console.log('[🌐 API 연결 시작]');
@@ -68,7 +124,7 @@ const WebCamera = ({
       disconnectApi();
       resetSequence(); // 연결 해제 시 시퀀스 초기화
     }
-
+  
     // 컴포넌트 언마운트 시 API 연결 해제
     return () => {
       if (apiStatus === 'open') {
@@ -76,19 +132,36 @@ const WebCamera = ({
         resetSequence(); // 연결 해제 시 시퀀스 초기화
       }
     };
-  }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence]);
+  }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence, isCameraBlocked]);
+  
+
+  useEffect(() => {
+    if (onResetSequence) {
+      onResetSequence(resetSequence);
+    }
+  }, [resetSequence, onResetSequence]);
+
+  // 부모 컴포넌트에 startCollectingFrames 함수 전달
+  useEffect(() => {
+    if (onStartCollectingFrames) {
+      onStartCollectingFrames(startCollectingFrames);
+    }
+  }, [startCollectingFrames, onStartCollectingFrames]);
 
   // 제스처 정보가 변경될 때만 이벤트 발행
   useEffect(() => {
+    // 카메라가 차단되었거나 isPaused가 true이면 처리하지 않음
+    if (isCameraBlocked || isPaused) return;
+
     // 제스처 감지 시 이벤트 발행
-    if (gesture && !isPaused) {
+    if (gesture) {
       console.log(`[🖐️ 제스처 감지] ${gesture} (신뢰도: ${confidence || 0})`);
 
       // 새 이벤트를 발행하기 전에 이벤트 발행 지연 (중복 방지)
       setTimeout(() => {
         // 이미 모달이 닫혔거나 isPaused 상태가 변경되었으면 이벤트 발행 취소
-        if (isPaused) {
-          console.log('[🖐️ 제스처 이벤트 취소] 일시 정지 상태');
+        if (isPaused || isCameraBlocked) {
+          console.log('[🖐️ 제스처 이벤트 취소] 일시 정지 상태 또는 카메라 차단 상태');
           return;
         }
 
@@ -107,7 +180,7 @@ const WebCamera = ({
         }
       }, 100);
     }
-  }, [gesture, confidence, isPaused, onGesture]);
+  }, [gesture, confidence, isPaused, onGesture, isCameraBlocked]);
 
   // 캔버스에 랜드마크 그리기 함수
   const drawCanvas = useCallback(
@@ -163,6 +236,8 @@ const WebCamera = ({
 
   // 웹캠 스트림 설정
   useEffect(() => {
+    if (isCameraBlocked) return;
+
     if (webcamRef.current && webcamRef.current.video) {
       console.log('Setting up video loadedmetadata event');
       webcamRef.current.video.onloadedmetadata = () => {
@@ -170,10 +245,13 @@ const WebCamera = ({
         setIsStreaming(true);
       };
     }
-  }, []);
+  }, [isCameraBlocked]);
 
   // 웹캠에서 프레임을 가져와 처리하는 함수
   const predictWebcam = useCallback(async () => {
+    // 카메라가 차단된 경우 처리하지 않음
+    if (isCameraBlocked) return;
+
     // 조기 종료 조건
     if (!webcamRef.current?.video?.readyState || !canvasRef.current) {
       // 다음 프레임에서 다시 시도
@@ -209,11 +287,15 @@ const WebCamera = ({
 
     // 항상 다음 프레임 요청
     animationRef.current = requestAnimationFrame(predictWebcam);
-  }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected]);
+  }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected, isCameraBlocked]);
 
   // 애니메이션 프레임 관리 - 분리된 useEffect로 처리
   useEffect(() => {
-    console.log('Animation frame effect triggered', { isLoading, error });
+    console.log('Animation frame effect triggered', { isLoading, error, isCameraBlocked });
+    
+    // 카메라가 차단된 경우 애니메이션 프레임을 시작하지 않음
+    if (isCameraBlocked) return;
+    
     // 초기 애니메이션 프레임 요청
     if (!isLoading && !error) {
       console.log('Starting animation frame');
@@ -228,7 +310,67 @@ const WebCamera = ({
         animationRef.current = null;
       }
     };
-  }, [isLoading, error, predictWebcam]);
+  }, [isLoading, error, predictWebcam, isCameraBlocked]);
+
+  // 디바이스 변경 감지 처리
+  useEffect(() => {
+    const handleDeviceChange = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoInputDevices = devices.filter(device => device.kind === 'videoinput');
+
+        if (videoInputDevices.length === 0) {
+          setIsCameraBlocked(true);
+          // 중복 토스트 방지
+          if (!blockToastShown.current) {
+            toast.error('웹캠이 비활성화되었습니다. 다시 활성화해주세요.');
+            blockToastShown.current = true;
+          }
+          if (onCameraBlocked) {
+            onCameraBlocked();
+          }
+        } else {
+          // 카메라 장치가 있지만, 사용 권한이 있는지 확인
+          try {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+            // 이전에 차단되었다가 다시 활성화된 경우에만 상태 업데이트
+            if (isCameraBlocked) {
+              setIsCameraBlocked(false);
+              blockToastShown.current = false;
+            }
+          } catch (error) {
+            setIsCameraBlocked(true);
+            // 중복 토스트 방지
+            if (!blockToastShown.current) {
+              toast.error('웹캠 접근이 차단되었습니다. 카메라 권한을 허용해주세요.');
+              blockToastShown.current = true;
+            }
+            if (onCameraBlocked) {
+              onCameraBlocked();
+            }
+          }
+        }
+      } catch (error) {
+        console.error('[🎥 디바이스 변경 감지 오류]', error);
+        setIsCameraBlocked(true);
+        // 중복 토스트 방지
+        if (!blockToastShown.current) {
+          toast.error('웹캠 접근 상태를 확인할 수 없습니다.');
+          blockToastShown.current = true;
+        }
+        if (onCameraBlocked) {
+          onCameraBlocked();
+        }
+      }
+    };
+
+    // 브라우저에서 디바이스 변경 이벤트 감지
+    navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+
+    return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+    };
+  }, [onCameraBlocked, isCameraBlocked]);
 
   return (
     <div className="w-full h-full bg-white relative overflow-hidden">
@@ -244,6 +386,15 @@ const WebCamera = ({
         </div>
       )}
 
+      {isCameraBlocked && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center 
+          bg-black/90 z-50
+          font-[NanumSquareRoundB]">
+          <div className="text-orange-400 text-xl font-bold mb-2">카메라 접근이 차단됨</div>
+          <div className="text-white text-base">브라우저 설정에서 카메라 권한을 허용 후 다시 시도해주세요</div>
+        </div>
+      )}
+
       {/* 웹캠 (숨겨진 상태) */}
       <Webcam
         audio={false}
@@ -256,6 +407,14 @@ const WebCamera = ({
           height: 720,
         }}
         className="invisible absolute"
+        onUserMediaError={(error) => {
+          console.error('[🎥 웹캠 사용자 미디어 오류]', error);
+          setIsCameraBlocked(true);
+          // 토스트는 initializeWebcam에서만 표시하도록 제거
+          if (onCameraBlocked) {
+            onCameraBlocked();
+          }
+        }}
       />
 
       {/* 캔버스 (웹캠 화면과 손 랜드마크를 표시) */}
@@ -268,7 +427,7 @@ const WebCamera = ({
       />
 
       {/* 가이드라인 컨테이너 */}
-      {showGuideline && (
+      {showGuideline && !isCameraBlocked && (
         <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
           <div className="relative w-full h-[90%] flex justify-center items-center overflow-hidden">
             {/* SVG 가이드라인 */}
