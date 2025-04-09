@@ -38,6 +38,13 @@ function Dictionary() {
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
 
+  // 에러 상태를 useEffect에서 처리
+  useEffect(() => {
+    if (isError || (gestureData === undefined && !isLoading)) {
+      navigate('/error');
+    }
+  }, [isError, gestureData, isLoading, navigate]);
+
   // 유효성 검사
   useEffect(() => {
     // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
@@ -175,9 +182,9 @@ function Dictionary() {
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 
-  // 에러 상태 확인
-  if (isError || !gestureData) {
-    navigate('/error');
+  // 로딩 상태 체크
+  if (isLoading) {
+    return <LoadingPage minDuration={2000} />;
   }
 
   return (
