@@ -10,6 +10,7 @@ function GesturePractice() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showCamera, setShowCamera] = useState(false);
+  const [cameraPermission, setCameraPermission] = useState('prompt'); // 'prompt', 'granted', 'denied' 추가
   const { gesture } = location.state || [];
 
   const getImageUrl = () => {
@@ -33,10 +34,29 @@ function GesturePractice() {
     }
   }, [gesture, navigate]);
 
-  // 카메라 버튼 클릭 시 카메라로 전환
-  const toggleScreen = useCallback(() => {
-    setShowCamera(true);
+  // 카메라 권한 확인 함수 추가
+  const checkCameraPermission = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setCameraPermission('granted');
+      // 권한 확인 후 스트림 해제
+      stream.getTracks().forEach((track) => track.stop());
+      return true;
+    } catch (error) {
+      console.error('카메라 접근 권한 오류:', error);
+      setCameraPermission('denied');
+      return false;
+    }
   }, []);
+
+  // 카메라 버튼 클릭 시 카메라로 전환 (권한 확인 로직 추가)
+  const toggleScreen = useCallback(async () => {
+    const hasPermission = await checkCameraPermission();
+    if (hasPermission) {
+      setShowCamera(true);
+    }
+    // 권한이 없으면 setShowCamera(true)를 호출하지 않음 (알림만 표시)
+  }, [checkCameraPermission]);
 
   return (
     <div className="flex flex-col h-screen dark:bg-gray-900 dark:text-d-txt-50">
@@ -54,6 +74,16 @@ function GesturePractice() {
         </span>
         <span>가 표시됩니다.</span>
       </div>
+
+      {/* 카메라 권한 거부 알림 */}
+      {cameraPermission === 'denied' && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mx-4 mb-3">
+          <p className="font-[NanumSquareRoundB] text-center">
+            <strong>알림:</strong> 카메라 사용 권한이 차단되었습니다. 브라우저 설정에서 카메라
+            접근을 허용해주세요.
+          </p>
+        </div>
+      )}
 
       {/* 메인 컨텐츠 */}
       <div className="flex flex-col lg:flex-row w-full h-full max-w-full px-2 py-1 flex-1 justify-center items-center lg:gap-8 xl:gap-12">
