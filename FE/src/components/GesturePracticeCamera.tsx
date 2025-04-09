@@ -18,7 +18,14 @@ const GesturePracticeCamera = ({
   const [showGuideline, setShowGuideline] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
   // 웹소켓 -> API 방식으로 변경: wsConnected -> apiConnected
-  const [apiConnected, setApiConnected] = useState(false); // 수정: 연결 상태 변수명 변경
+  const [apiConnected, setApiConnected] = useState(false);
+
+  // 추가: 안내 메시지 상태
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  // 추가: 다시 시도 타이머 참조
+  const retryTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 추가: 제스처 처리 중 상태
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // 컨테이너 크기 조절을 위한 상태
   const [containerDimension, setContainerDimension] = useState('aspect-square');
@@ -44,55 +51,91 @@ const GesturePracticeCamera = ({
     };
   }, []);
 
-  const handleGesture = useCallback(
-    (gesture: string, confidence: number) => {
-      if (cameraActive) {
-        console.log(
-          `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
-        );
-
-        if (gesture === gestureLabel) {
-          setIsCorrect(true);
-          setShowGuideline(false);
-
-          // 정답 표시 후 일정 시간 후에 다시하기 버튼 표시
-          if (correctTimeRef.current) {
-            clearTimeout(correctTimeRef.current);
-          }
-          correctTimeRef.current = setTimeout(() => {
-            setIsCorrect(false);
-            // 카메라 비활성화는 정답 표시가 사라진 후(다시하기 버튼이 나타날 때)
-            setCameraActive(false);
-          }, 1000);
-        }
-      }
-    },
-    [cameraActive, gestureLabel]
-  );
-
-  const handleRestart = useCallback(() => {
-    setIsCorrect(false);
-    setShowGuideline(true);
-    setCameraActive(true);
-
+  // 추가: 타이머 정리 함수
+  const clearAllTimers = useCallback(() => {
     if (correctTimeRef.current) {
       clearTimeout(correctTimeRef.current);
       correctTimeRef.current = null;
     }
+
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
   }, []);
+
+  // 추가: 인식 시작 함수
+  const startGestureRecognition = useCallback(() => {
+    setCameraActive(true);
+    setShowGuideline(true);
+    setIsProcessing(false);
+    setFeedbackMessage('');
+  }, []);
+
+  const handleGesture = useCallback(
+    (gesture: string, confidence: number) => {
+      // 처리 중이거나 카메라가 비활성화된 경우 무시
+      if (!cameraActive || isProcessing) {
+        return;
+      }
+
+      console.log(
+        `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
+      );
+
+      // 인식 정확도가 너무 낮은 경우 무시
+      if (confidence < 30) {
+        return;
+      }
+
+      // 처리 중 상태로 설정하여 중복 이벤트 방지
+      setIsProcessing(true);
+
+      if (gesture === gestureLabel) {
+        // 정답인 경우
+        setIsCorrect(true);
+        setShowGuideline(false);
+
+        // 정답 표시 후 일정 시간 후에 다시하기 버튼 표시
+        clearAllTimers();
+        correctTimeRef.current = setTimeout(() => {
+          setIsCorrect(false);
+          // 카메라 비활성화는 정답 표시가 사라진 후(다시하기 버튼이 나타날 때)
+          setCameraActive(false);
+        }, 1000);
+      } else {
+        // 오답인 경우
+        setShowGuideline(false);
+        // 화면에 배경 어둡게 하기 위해 isProcessing 설정
+        setIsProcessing(true);
+        setFeedbackMessage('다시 시도해주세요.');
+
+        // 2초 후 다시 인식 시작
+        clearAllTimers();
+        retryTimerRef.current = setTimeout(() => {
+          startGestureRecognition();
+        }, 2000);
+      }
+    },
+    [cameraActive, gestureLabel, isProcessing, clearAllTimers, startGestureRecognition]
+  );
+
+  const handleRestart = useCallback(() => {
+    clearAllTimers();
+    setIsCorrect(false);
+    startGestureRecognition();
+  }, [clearAllTimers, startGestureRecognition]);
 
   useEffect(() => {
     return () => {
-      if (correctTimeRef.current) {
-        clearTimeout(correctTimeRef.current);
-      }
+      clearAllTimers();
     };
-  }, []);
+  }, [clearAllTimers]);
 
-  // 수정: API 연결 상태를 받는 콜백 함수명 유지 (내부 동작만 변경)
+  // API 연결 상태를 받는 콜백 함수
   const handleConnectionStatus = useCallback((status: boolean) => {
-    setApiConnected(status); // 수정: wsConnected -> apiConnected
-    console.log(`[🌐 API 연결 상태] ${status ? '연결됨' : '연결 끊김'}`); // 로그 추가
+    setApiConnected(status);
+    console.log(`[🌐 API 연결 상태] ${status ? '연결됨' : '연결 끊김'}`);
   }, []);
 
   return (
@@ -104,20 +147,26 @@ const GesturePracticeCamera = ({
       <div className="relative w-full h-full">
         {/* WebCamera 컴포넌트 사용 - cameraActive가 false일 때 숨김 처리 */}
         {cameraActive ? (
-          <WebCamera
-            guidelineClassName={guidelineClassName}
-            guideText={guideText}
-            onConnectionStatus={handleConnectionStatus}
-            isPaused={!cameraActive}
-            onGesture={handleGesture}
-            showGuideline={showGuideline}
-          />
+          <>
+            <WebCamera
+              guidelineClassName={guidelineClassName}
+              guideText={guideText} // 피드백 메시지는 별도로 표시
+              onConnectionStatus={handleConnectionStatus}
+              isPaused={!cameraActive || isProcessing} // 처리 중일 때도 일시 정지
+              onGesture={handleGesture}
+              showGuideline={showGuideline}
+            />
+
+            {/* 피드백 메시지가 있고 처리 중일 때 살짝 어두운 오버레이 추가 */}
+            {feedbackMessage && isProcessing && !isCorrect && (
+              <div className="absolute inset-0 bg-black/30 z-5"></div>
+            )}
+          </>
         ) : (
           // 카메라가 비활성화된 경우 검은 배경 표시
           <div className="w-full h-full bg-black flex justify-center items-center"></div>
         )}
 
-        {/* 정확도 70% 이상일 때 정답 표시 */}
         {isCorrect && (
           <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none">
             <img
@@ -125,6 +174,15 @@ const GesturePracticeCamera = ({
               alt="correct_mark"
               className="w-50 lg:w-80 max-w-[70%]"
             />
+          </div>
+        )}
+
+        {/* 피드백 메시지 표시 (오답 및 안내) - 화면 중앙에 표시 */}
+        {feedbackMessage && !isCorrect && cameraActive && (
+          <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none">
+            <div className="bg-kr-400/70 text-white px-4 py-3 rounded-xl text-base sm:text-lg max-w-[80%] text-center shadow-lg font-[NanumSquareRoundB]">
+              {feedbackMessage}
+            </div>
           </div>
         )}
 
