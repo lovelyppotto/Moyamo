@@ -50,18 +50,14 @@ function CompareGuide() {
 
     // 상황이 하나만 있는 경우 그대로 표시
     if (situations.length <= 1) {
-      return (
-        <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
-          {situation}
-        </p>
-      );
+      return <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">{situation}</p>;
     }
 
     // 여러개 있는 경우
     return (
-      <ul className="list-disc w-[70%] mx-auto pl-8 font-[NanumSquareRound] text-[16px] lg:text-[18px]">
+      <ul className="list-disc font-[NanumSquareRound] text-[17px] ml-4 pl-4">
         {situations.map((item, index) => (
-          <li key={index} className="mb-2 pl-1">
+          <li key={index} className="mb-2">
             {item}
           </li>
         ))}
@@ -71,13 +67,13 @@ function CompareGuide() {
 
   return (
     <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50 overflow-hidden">
-      {/* 헤더 - 10% */}
-      <div className="h-[10vh] mb-8">
+      {/* 헤더 */}
+      <div className="h-[10%] mb-9">
         <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="h-full" />
       </div>
 
-      {/* 메인 이미지 - 30% */}
-      <div className="h-[30vh] flex justify-center items-center">
+      {/* 메인 이미지 */}
+      <div className="h-[30%] flex justify-center items-center py">
         <div className="w-[25vmin] h-[25vmin] rounded-full bg-white dark:bg-gray-500 flex justify-center items-center drop-shadow-basic">
           {currentGestureData?.imageUrl ? (
             <GlbViewer url={`${currentGestureData.imageUrl}`} />
@@ -89,10 +85,10 @@ function CompareGuide() {
         </div>
       </div>
 
-      {/* 카드 컨테이너 - 60% */}
-      <div className="h-[50vh] px-4 overflow-hidden customScrollbar kr">
+      {/* 카드 컨테이너 */}
+      <div className="h-[60%] px-4">
         {/* 국가 그룹 카드들 */}
-        <div className={`${gridLayoutClass} h-full`}>
+        <div className={`${gridLayoutClass} py-4`}>
           {/* 국가별 제스처 의미 카드들 */}
           {gestureMeanings.map((meaning: MeaningItem, index: number) => {
             // 국가 이름, 이미지 URL 파싱
@@ -120,40 +116,44 @@ function CompareGuide() {
             return (
               <div
                 key={`meaning-${index}`}
-                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-full"
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-[390px] mb-6"
               >
-                {/* 고정된 헤더 부분 */}
-                <div className="flex-none">
+                {/* 국기 영역 */}
+                <div className="h-[35%] flex-none mb-8">
                   <DictStatusLabel
                     isPositive={meaning.isPositive}
-                    className="mb-4 flex justify-center"
+                    className="mb-2 flex justify-center"
                   />
                   {/* 국기 이미지 */}
                   {renderFlags()}
 
                   {/* 국가 이름 */}
-                  <h2 className="text-center text-lg lg:text-xl font-[NanumSquareRoundB] mb-3">
+                  <h2 className="text-center text-[20px] lg:text-[22px] font-[NanumSquareRoundB] mb-2">
                     {countryNames.join(', ')}
                   </h2>
 
-                  <hr className="text-gray-300 mb-3" />
+                  <hr className="text-gray-300 mb-2" />
                 </div>
 
                 {/* 콘텐츠 부분 */}
-                <div className="flex-1 overflow-y-auto pr-2">
-                  <div className="flex flex-col gap-4">
+                <div className="h-[65%] overflow-y-auto customScrollbar kr">
+                  <div className="flex flex-col gap-4 px-4 pt-2">
                     {/* 의미 */}
-                    <div className="flex flex-col items-center">
-                      <p className="font-[NanumSquareRoundB] text-xl mb-2">의미</p>
-                      <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+                    <div className="flex flex-col">
+                      <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4 ">
+                        의미
+                      </p>
+                      <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">
                         {meaning.gestureMeaning}
                       </p>
                     </div>
 
                     {/* 사용 상황 */}
-                    <div className="flex flex-col items-center mt-3">
-                      <p className="font-[NanumSquareRoundB] text-lg mb-2">사용 상황</p>
-                      <div className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+                    <div className="flex flex-col mt-3">
+                      <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4">
+                        사용 상황
+                      </p>
+                      <div className="font-[NanumSquareRound]">
                         {parseSituation(meaning.gestureSituation)}
                       </div>
                     </div>
@@ -165,7 +165,7 @@ function CompareGuide() {
 
           {/* 데이터 없는 경우 메시지 표시 */}
           {gestureMeanings.length === 0 && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 col-span-1 lg:col-span-2 flex justify-center items-center h-full">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-400 col-span-1 lg:col-span-2 flex justify-center items-center h-[320px]">
               <p className="text-center text-xl font-[NanumSquareRoundB]">
                 이 제스처에 대한 국가별 의미 정보가 없습니다.
               </p>
