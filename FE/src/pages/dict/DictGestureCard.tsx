@@ -8,7 +8,9 @@ interface DictGestureCardProps {
   gesture: GestureItem;
   onClick: () => void;
   hoverBorderClass: string;
-  isVisible?: boolean; // 가시성 여부를 위한 새 prop
+  isVisible?: boolean;
+  isSelected?: boolean; // 선택된 카드인지 여부
+  selectedBorderClass?: string; // 선택된 카드 테두리 클래스
 }
 
 export function DictGestureCard({
@@ -16,6 +18,8 @@ export function DictGestureCard({
   onClick,
   hoverBorderClass,
   isVisible = false, // 기본값은 false로 설정
+  isSelected = false,
+  selectedBorderClass = 'border-gray-500',
 }: DictGestureCardProps) {
   const [shouldLoad, setShouldLoad] = useState(isVisible);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -48,13 +52,20 @@ export function DictGestureCard({
     };
   }, [shouldLoad]);
 
+  // 선택 상태에 따른 테두리 클래스 결정
+  const borderClass = isSelected ? selectedBorderClass : 'border-gray-300';
+
   return (
     <div
       ref={cardRef}
       className={cn(
-        'h-full w-full rounded-lg border border-gray-300 overflow-hidden bg-white shadow-sm mx-auto',
+        'h-full w-full rounded-lg overflow-hidden bg-white shadow-sm mx-auto',
         'cursor-pointer transition-all duration-200 group',
-        hoverBorderClass
+        hoverBorderClass,
+        // border 스타일을 분리하여 동적으로 적용
+        borderClass,
+        // 선택된 상태일 때 테두리 두께 증가
+        isSelected ? 'border-2' : 'border'
       )}
       onClick={onClick}
     >
@@ -77,7 +88,13 @@ export function DictGestureCard({
         </div>
 
         {/* 타이틀 영역 */}
-        <div className="w-full bg-gray-200 h-[25%] sm:p-[14px] flex justify-center items-center">
+        <div
+          className={cn(
+            'w-full h-[25%] sm:p-[14px] flex justify-center items-center',
+            // 선택된 상태일 때 배경색 변경 (선택 사항)
+            isSelected ? 'bg-gray-300' : 'bg-gray-200'
+          )}
+        >
           <p className="text-sm sm:text-md text-center text-gray-500 font-[NanumSquareRoundB] block truncate">
             {gesture.gestureTitle}
           </p>
