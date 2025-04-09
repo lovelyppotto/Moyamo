@@ -1,38 +1,72 @@
+import React, { useEffect, useRef } from 'react';
 import WebCamera from '../WebCamera';
+import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
 
 interface CameraDialogContentProps {
   open: boolean;
-  guideText: string;
-  isPaused?: boolean;
-  onConnectionStatus: (status: boolean) => void;
-  onHandDetected?: (detected: boolean) => void; // 추가
+  guideText?: string;
+  onConnectionStatus?: (status: boolean) => void;
+  isPaused: boolean;
+  onHandDetected?: (detected: boolean) => void;
 }
 
-function CameraDialogContent({
+/**
+ * 카메라 다이얼로그의 내용 컴포넌트
+ * - 웹캠 출력 및 상태 관리
+ */
+const CameraDialogContent: React.FC<CameraDialogContentProps> = ({
   open,
-  guideText,
-  isPaused = false,
+  guideText = '제스처를 준비해주세요',
   onConnectionStatus,
-  onHandDetected, // 추가
-}: CameraDialogContentProps) {
+  isPaused,
+  onHandDetected,
+}) => {
+  // useGestureHttpApi 훅의 resetSequence 메서드에 접근하기 위한 참조
+  const { resetSequence } = useGestureHttpApi();
+
+  // 컴포넌트 마운트 시 전역 시퀀스 리셋 함수 연결
+  useEffect(() => {
+    if (resetSequence) {
+      // 전역 함수에 실제 resetSequence 메서드 연결
+      window.resetGestureSequence = resetSequence;
+
+      console.log('[🔄 전역 시퀀스 리셋 함수 연결됨]');
+    }
+
+    return () => {
+      // 컴포넌트 언마운트 시 연결 해제
+      window.resetGestureSequence = undefined;
+      console.log('[🔄 전역 시퀀스 리셋 함수 연결 해제]');
+    };
+  }, [resetSequence]);
+
+  // 모달이 열릴 때마다 시퀀스 초기화
+  useEffect(() => {
+    if (open && resetSequence) {
+      resetSequence();
+      console.log('[🔄 모달 열림: 시퀀스 초기화]');
+    }
+  }, [open, resetSequence]);
+
+  // 일시 정지 상태 변경 시 시퀀스 초기화
+  useEffect(() => {
+    if (isPaused && resetSequence) {
+      resetSequence();
+      console.log('[🔄 일시 정지: 시퀀스 초기화]');
+    }
+  }, [isPaused, resetSequence]);
+
   return (
-    <div className="flex-grow bg-white rounded-b-lg flex items-center justify-center overflow-hidden">
-      {/* 카메라 컨테이너를 정사각형 비율로 설정 */}
-      <div className="bg-white">
-        <div className="aspect-square w-full">
-          {/* WebCamera 컴포넌트에 props 전달 */}
-          {open && (
-            <WebCamera
-              key={`camera-instance`} // 키 값을 고정하여 불필요한 재렌더링 방지
-              guidelineClassName="w-[70%] mt-35"
-              guideText={guideText}
-              onConnectionStatus={onConnectionStatus}
-              isPaused={isPaused}
-              onHandDetected={onHandDetected} // 추가
-            />
-          )}
-        </div>
-      </div>
+    <div className="w-full aspect-square bg-gray-100 relative">
+      {open && (
+        <WebCamera
+          guidelineClassName="w-[65%] h-auto opacity-50"
+          guideText={guideText}
+          onConnectionStatus={onConnectionStatus}
+          isPaused={isPaused}
+          onHandDetected={onHandDetected}
+        />
+      )}
     </div>
   );
 };
