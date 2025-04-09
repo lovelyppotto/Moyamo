@@ -42,7 +42,7 @@ function DictCountrySelector({
             className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
             draggable="false"
           />
-          <span className="text-[20px] md:text-[32px] font-[NanumSquareRoundEB] text-center">
+          <span className="text-[20px] md:text-[32px] min-w-[120px] font-[NanumSquareRoundEB] text-center">
             {selectedCountry.name}
           </span>
           <FontAwesomeIcon icon={faCaretDown} className="ml-2" />

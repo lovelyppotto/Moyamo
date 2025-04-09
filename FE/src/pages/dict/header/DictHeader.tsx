@@ -102,7 +102,7 @@ function DictHeader({
 
         {/* 국가 선택 드롭다운 표시*/}
         {showCountrySelector && selectedCountry && (
-          <div className="flex justify-center items-center cursor-pointer h-[40px] py-0">
+          <div className="flex justify-center items-center cursor-pointer py-0">
             <DictCountrySelector
               selectedCountry={selectedCountry}
               onSelectCountry={handleCountrySelect}
