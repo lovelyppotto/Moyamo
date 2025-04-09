@@ -10,10 +10,10 @@ interface SearchResultItemProps {
   searchType?: 'text' | 'camera'; // 검색 유형
 }
 
-function SearchResultItem({ 
-  result, 
-  onFlagClick, 
-  searchType = 'text' // 기본값은 일반 텍스트 검색
+function SearchResultItem({
+  result,
+  onFlagClick,
+  searchType = 'text', // 기본값은 일반 텍스트 검색
 }: SearchResultItemProps) {
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
   // 5개 국가만 상세 페이지 사용 가능
@@ -55,30 +55,32 @@ function SearchResultItem({
           <h3 className="text-lg md:text-xl font-bold font-[NanumSquareRoundEB] text-gray-900 dark:text-d-txt-50">
             {result.meanings[0]?.meaning || result.gestureName}
           </h3>
-          
+
           {/* 국가 플래그 */}
           <div className="flex items-center space-x-3">
             {result.meanings.map((meaning) => {
               const isAvailable = DETAIL_AVAILABLE_COUNTRYS.includes(meaning.countryId);
-              
+
               return (
                 <div key={meaning.countryId} className="relative group">
                   <img
                     src={meaning.imageUrl}
                     alt={meaning.countryName}
                     className={`w-6 h-4 md:w-14 md:h-9 object-cover
-                      ${isAvailable 
-                        ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer' 
-                        : 'opacity-50 grayscale cursor-not-allowed'
+                      ${
+                        isAvailable
+                          ? 'drop-shadow-nation hover:scale-110 transition-transform cursor-pointer'
+                          : 'cursor-not-allowed'
                       }
                       ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                     onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
-                    title={
-                      isAvailable
-                        ? `${meaning.countryName}의 의미: ${meaning.meaning}`
-                        : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
-                    }
                   />
+                  {/* Tailwind 툴팁 */}
+                  <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
+                    {isAvailable
+                      ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                      : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`}
+                  </div>
                 </div>
               );
             })}
@@ -165,12 +167,13 @@ function SearchResultItem({
                           }
                           ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                         onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
-                        title={
-                          isAvailable
-                            ? `${meaning.countryName}의 의미: ${meaning.meaning}`
-                            : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`
-                        }
                       />
+                      {/* Tailwind 툴팁 */}
+                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
+                        {isAvailable
+                          ? `${meaning.countryName}의 의미: ${meaning.meaning}`
+                          : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`}
+                      </div>
                     </div>
                   );
                 })}
