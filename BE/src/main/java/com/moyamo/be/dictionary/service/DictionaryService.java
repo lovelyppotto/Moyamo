@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +23,13 @@ public class DictionaryService {
     private final CountryGestureRepository countryGestureRepository;
 
     public ApiResponse<GestureListWithCountryDto> getGesturesByCountry(Integer countryId) {
-        List<CountryGesture> gestures = countryGestureRepository.findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNullOrderByGestureInfo_GestureTitleAsc(countryId);
+        List<CountryGesture> gestures = countryGestureRepository.findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNull(countryId);
+
+        gestures.sort(
+                Comparator
+                        .comparingInt((CountryGesture g) -> extractData(g.getGestureInfo().getGestureTitle()))
+                        .thenComparing(g -> g.getGestureInfo().getGestureTitle())
+        );
 
         Country country = gestures.get(0).getCountry();
         int excludeId = country.getCountryId();
@@ -31,7 +38,7 @@ public class DictionaryService {
                     int gestureId = cg.getGesture().getGestureId();
                     int multiple = countryGestureRepository.countOtherCountriesByGestureId(gestureId, excludeId);
                     return new GestureListResponseDto(
-                            cg.getMeaningId().intValue(),
+                            cg.getMeaningId(),
                             gestureId,
                             cg.getGesture().getImageUrl(),
                             cg.getGestureInfo().getGestureTitle(),
@@ -133,5 +140,13 @@ public class DictionaryService {
                 new CountryGestureResponseDto(gestureId, imageUrl, meanings);
 
         return new ApiResponse<>(200, responseDto);
+    }
+
+    private int extractData(String title) {
+        try {
+            return Integer.parseInt(title.split(",")[0].trim());
+        } catch (NumberFormatException e) {
+            return Integer.MAX_VALUE;
+        }
     }
 }
