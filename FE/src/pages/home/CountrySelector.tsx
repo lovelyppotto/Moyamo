@@ -26,7 +26,7 @@ function CountrySelector({
       dark:bg-gray-800 dark:text-d-txt-50"
     >
       <div className="p-2 rounded-t-2xl bg-gray-200 dark:bg-gray-700">
-        <DialogHeader className="relative m-0">
+        <DialogHeader className="relative my-1">
           <button 
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
             onClick={onClose}
@@ -34,9 +34,9 @@ function CountrySelector({
             <span className="sr-only">닫기</span>
           </button>
           
-          <DialogTitle className="text-center text-3xl font-[NanumSquareRoundEB] mt-2">
+          <DialogTitle className="select-none text-center text-2xl md:text-3xl font-[NanumSquareRoundEB] mt-2">
             {title}
-            <p className="text-base font-[NanumSquareRound] mt-2">{subtitle}</p>
+            <p className="text-sm md:text-base font-[NanumSquareRound] mt-2">{subtitle}</p>
           </DialogTitle>
         </DialogHeader>
       </div>
@@ -55,6 +55,7 @@ function CountrySelector({
                 src={getFlagImage(country.flagSrc)} 
                 alt={`${country.name} 국기`} 
                 className="max-w-full max-h-full object-contain"
+                draggable="false"
               />
             </div>
             <span className="text-xl font-medium">{country.name}</span>
