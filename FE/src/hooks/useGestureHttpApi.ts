@@ -10,6 +10,8 @@ declare global {
       gesture: string;
       confidence: number;
     };
+    resetGestureSequence?: () => void;
+    startCollectingFrames?: () => void; // 프레임 수집 시작 함수 추가
   }
 }
 
@@ -27,7 +29,8 @@ interface UseGestureHttpApiReturn {
   sendLandmarks: (landmarks: any[]) => void;
   connect: () => void;
   disconnect: () => void;
-  resetSequence: () => void; // 새로 추가된 메서드
+  resetSequence: () => void;
+  startCollectingFrames: () => void; // 프레임 수집 시작 함수 추가
 }
 
 /**
@@ -85,6 +88,14 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
     isCollectingRef.current = false;
     resultSentRef.current = false;
     isProcessingRef.current = false;
+  }, [clearSequence]);
+
+  // 프레임 수집 시작 (새로 추가) - clearSequence 뒤에 정의
+  const startCollectingFrames = useCallback(() => {
+    console.log('[🎬 프레임 수집 시작]');
+    clearSequence(); // 기존 시퀀스 초기화
+    isCollectingRef.current = true;
+    resultSentRef.current = false;
   }, [clearSequence]);
 
   // 정적/동적 제스처 판별 함수
@@ -355,8 +366,9 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
     resultSentRef.current = false;
     lastApiRequestRef.current = 0;
 
-    // 프레임 수집 활성화 (중요!)
-    isCollectingRef.current = true;
+    // 중요: 기본적으로 프레임 수집은 비활성화 상태로 시작
+    // startCollectingFrames 함수를 명시적으로 호출해야 활성화됨
+    isCollectingRef.current = false;
 
     // 결과 초기화
     setRecognitionResult({
@@ -390,6 +402,7 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
     sendLandmarks,
     connect,
     disconnect,
-    resetSequence, // 새로 추가된 메서드 반환
+    resetSequence,
+    startCollectingFrames, // 새로 추가된 메서드 반환
   };
 };

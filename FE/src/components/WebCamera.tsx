@@ -18,6 +18,8 @@ interface WebCameraProps {
   onHandDetected?: (detected: boolean) => void;
   // 웹캠 접근 차단 시 콜백 추가
   onCameraBlocked?: () => void;
+  onResetSequence?: (resetFn: () => void) => void;
+  onStartCollectingFrames?: (startFn: () => void) => void;
 }
 
 const WebCamera = ({
@@ -29,6 +31,8 @@ const WebCamera = ({
   showGuideline = true,
   onHandDetected,
   onCameraBlocked,
+  onResetSequence,
+  onStartCollectingFrames,
 }: WebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -43,6 +47,7 @@ const WebCamera = ({
     connect: connectApi,
     disconnect: disconnectApi,
     resetSequence,
+    startCollectingFrames,
   } = useGestureHttpApi();
 
   // 컴포넌트 상태 및 참조
@@ -106,7 +111,7 @@ const WebCamera = ({
       }
       return;
     }
-
+  
     // isPaused가 false일 때만 API 연결
     if (!isPaused && apiStatus === 'closed') {
       console.log('[🌐 API 연결 시작]');
@@ -119,7 +124,7 @@ const WebCamera = ({
       disconnectApi();
       resetSequence(); // 연결 해제 시 시퀀스 초기화
     }
-
+  
     // 컴포넌트 언마운트 시 API 연결 해제
     return () => {
       if (apiStatus === 'open') {
@@ -128,6 +133,20 @@ const WebCamera = ({
       }
     };
   }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence, isCameraBlocked]);
+  
+
+  useEffect(() => {
+    if (onResetSequence) {
+      onResetSequence(resetSequence);
+    }
+  }, [resetSequence, onResetSequence]);
+
+  // 부모 컴포넌트에 startCollectingFrames 함수 전달
+  useEffect(() => {
+    if (onStartCollectingFrames) {
+      onStartCollectingFrames(startCollectingFrames);
+    }
+  }, [startCollectingFrames, onStartCollectingFrames]);
 
   // 제스처 정보가 변경될 때만 이벤트 발행
   useEffect(() => {

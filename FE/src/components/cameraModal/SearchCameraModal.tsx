@@ -24,10 +24,16 @@ declare global {
   }
 }
 
+interface CameraContentRef {
+  resetSequence: () => void;
+  startCollectingFrames: () => void; // 추가
+}
+
 function SearchCameraModal() {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const isCollectingFramesRef = useRef(false);
 
   // 상태 관리
   const [apiActive, setApiActive] = useState(false);
@@ -160,6 +166,12 @@ function SearchCameraModal() {
     setCountdown(4);
     setGuideText('제스처를 유지해주세요');
 
+    if (window.startCollectingFrames && !isCollectingFramesRef.current) {
+      console.log('[🎬 프레임 수집 시작 요청]');
+      window.startCollectingFrames();
+      isCollectingFramesRef.current = true;
+    }
+
     // 최종 제스처를 저장할 변수
     let finalGesture: string | null = null;
     let wasHandDetected = false; // 초기값
@@ -198,11 +210,11 @@ function SearchCameraModal() {
         // 카운트다운 완료 상태 설정
         setIsCountingDown(false);
 
-        // 디버깅 로그 추가
-        console.log(`[⏱️ 카운트다운 완료] 손 감지 여부: ${wasHandDetected}`);
-        console.log('[🔍 디버깅] finalGesture:', finalGesture);
-        console.log('[🔍 디버깅] detectedGesture:', detectedGesture);
-        console.log('[🔍 디버깅] 전역 제스처:', window.lastDetectedGesture);
+        // // 디버깅 로그 추가
+        // console.log(`[⏱️ 카운트다운 완료] 손 감지 여부: ${wasHandDetected}`);
+        // console.log('[🔍 디버깅] finalGesture:', finalGesture);
+        // console.log('[🔍 디버깅] detectedGesture:', detectedGesture);
+        // console.log('[🔍 디버깅] 전역 제스처:', window.lastDetectedGesture);
 
         // 전역 변수에서 제스처 가져오기
         if (!finalGesture && window.lastDetectedGesture) {
@@ -216,6 +228,7 @@ function SearchCameraModal() {
 
         // API 비활성화
         setApiActive(false);
+        isCollectingFramesRef.current = false;
 
         // 1. 손 감지가 일어나지 않았을 때
         if (!wasHandDetected) {
@@ -381,19 +394,18 @@ function SearchCameraModal() {
   // 전역 시퀀스 리셋 함수 등록
   useEffect(() => {
     // WebCamera 컴포넌트에서 사용할 전역 시퀀스 리셋 함수 등록
-    if (window.resetGestureSequence) {
-      console.log('[🔄 기존 전역 시퀀스 리셋 함수 발견]');
-    } else {
-      console.log('[🔄 전역 시퀀스 리셋 함수 등록]');
-      window.resetGestureSequence = () => {
-        console.log('[🔄 전역에서 시퀀스 리셋 요청됨]');
-        // 이 함수는 WebCamera에서 resetSequence 메서드를 호출하는 데 사용됨
+    if (!window.startCollectingFrames) {
+      console.log('[🎬 전역 프레임 수집 시작 함수 등록]');
+      window.startCollectingFrames = () => {
+        console.log('[🎬 전역에서 프레임 수집 시작 요청됨]');
+        // 이 함수는 WebCamera에서 startCollectingFrames 메서드를 호출하는 데 사용됨
       };
     }
 
     return () => {
       // 컴포넌트 언마운트 시 전역 함수 제거
       window.resetGestureSequence = undefined;
+      window.startCollectingFrames = undefined;
     };
   }, []);
 
