@@ -21,7 +21,6 @@ function DictCountrySelector({
   onSelectCountry,
   countryOptions,
 }: CountrySelectorProps) {
-
   // 국가 코드를 Country 객체로 변환
   const getCountryByCode = (code: string) => {
     return countryOptions.find((country) => country.code === code) || selectedCountry;
@@ -41,6 +40,7 @@ function DictCountrySelector({
             src={getFlagImage(selectedCountry.code)}
             alt={`${selectedCountry.code}`}
             className="w-25% max-w-[50px] h-auto aspect-[10/7] drop-shadow-nation"
+            draggable="false"
           />
           <span className="text-[calc(15px+0.5vw)] max-text-[20px] font-[NanumSquareRoundB]">
             {selectedCountry.name}
@@ -64,6 +64,7 @@ function DictCountrySelector({
                 src={getFlagImage(country.code)}
                 alt={`${country.name} 국기`}
                 className="w-15% min-w-[20px] max-w-[35px] h-auto aspect-[10/7] object-cover drop-shadow-nation"
+                draggable="false"
               />
               <span className="text-[calc(13px+0.3vw)] max-text-[16px] font-[NanumSquareRound] truncate">
                 {country.name}
