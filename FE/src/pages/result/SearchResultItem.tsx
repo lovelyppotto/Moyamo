@@ -169,7 +169,7 @@ function SearchResultItem({
                         onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
                       />
                       {/* Tailwind 툴팁 */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
+                      <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
                         {isAvailable
                           ? `${meaning.countryName}의 의미: ${meaning.meaning}`
                           : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`}
