@@ -20,13 +20,9 @@ app.add_middleware(
 dynamic_label_classes = np.load("models/label_classes_dynamic.npy")
 static_label_classes = np.load("models/label_classes_mk3.npy")
 
-# ✅ 변경: h5 모델 로드
+# ✅ 모델 경로 변경
 dynamic_model = load_model("models/dynamic_gesture_lstm_v1.h5")
-static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
-static_interpreter.allocate_tensors()
-
-static_input = static_interpreter.get_input_details()
-static_output = static_interpreter.get_output_details()
+static_model = load_model("models/static_gesture_mk3_v1_model.h5")
 
 class DynamicRequest(BaseModel):
     frames: List[List[float]]
@@ -51,7 +47,6 @@ def get_majority_vote(predictions: List[str]):
     confidence = count / len(predictions) * 100
     return most_common_label, round(confidence, 2)
 
-# ✅ 변경: h5 모델 기반 추론
 def predict_dynamic(input_vector: np.ndarray):
     if input_vector.shape[1] > 50:
         input_vector = input_vector[:, -50:, :]
@@ -61,10 +56,9 @@ def predict_dynamic(input_vector: np.ndarray):
     label_idx = int(np.argmax(output_data))
     return (dynamic_label_classes[label_idx], confidence * 100) if confidence >= 0.7 else ("none", confidence * 100)
 
+# ✅ 변경: static 모델도 h5 기반
 def predict_static(input_vector: np.ndarray):
-    static_interpreter.set_tensor(static_input[0]["index"], input_vector.astype(np.float32))
-    static_interpreter.invoke()
-    output_data = static_interpreter.get_tensor(static_output[0]["index"])
+    output_data = static_model.predict(input_vector, verbose=0)[0]
     confidence = float(np.max(output_data))
     label_idx = int(np.argmax(output_data))
     return (static_label_classes[label_idx], confidence * 100) if confidence >= 0.5 else ("없음", confidence * 100)
@@ -87,7 +81,7 @@ async def static_api(req: StaticRequest):
     try:
         predictions = []
         for vec in vectors:
-            input_vector = np.array(vec).reshape(1, 64, 1)
+            input_vector = np.array(vec).reshape(1, 64)
             label, conf = predict_static(input_vector)
             predictions.append(label)
 
