@@ -179,13 +179,13 @@ function GestureDetail() {
 
             <div className="pr-4 font-[NanumSquareRound]">
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[16px]">
                 {gestureData?.gestureMeaning}
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">사용 상황</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-                <ul className="text-lg space-y-3">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+                <ul className="text-lg space-y-3 text-[16px]">
                   {parsedSitudationData.map((item, index) => (
                     <li key={index}>• {item}</li>
                   ))}
@@ -193,8 +193,8 @@ function GestureDetail() {
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">다른 나라에서의 의미</h2>
-              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-                <ul className="text-lg space-y-3">
+              <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+                <ul className="text-lg space-y-3 text-[16px]">
                   {otherMeanings.map((item, index) => (
                     <li key={index}>
                       • {item.countries.replace(/,/g, ', ')} : {item.meaning}
@@ -207,8 +207,8 @@ function GestureDetail() {
               {tmi.length > 0 && (
                 <>
                   <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">TMI</h2>
-                  <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8 text-[18px]">
-                    <ul className="text-lg space-y-3">
+                  <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
+                    <ul className="text-lg space-y-3 text-[16px]">
                       {tmi.map((item, index) => (
                         <li key={index}>• {item}</li>
                       ))}
