@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import tensorflow as tf
-from tensorflow.lite.python.interpreter import Interpreter
+from tensorflow.keras.models import load_model
 from pydantic import BaseModel
 from typing import List
 from collections import Counter
@@ -20,14 +20,10 @@ app.add_middleware(
 dynamic_label_classes = np.load("models/label_classes_dynamic.npy")
 static_label_classes = np.load("models/label_classes_mk3.npy")
 
-dynamic_interpreter = tf.lite.Interpreter(model_path="models/dynamic_gesture_lstm.tflite")
+# ✅ 변경: h5 모델 로드
+dynamic_model = load_model("models/dynamic_gesture_lstm_v1.h5")
 static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
-
-dynamic_interpreter.allocate_tensors()
 static_interpreter.allocate_tensors()
-
-dynamic_input = dynamic_interpreter.get_input_details()
-dynamic_output = dynamic_interpreter.get_output_details()
 
 static_input = static_interpreter.get_input_details()
 static_output = static_interpreter.get_output_details()
@@ -55,14 +51,12 @@ def get_majority_vote(predictions: List[str]):
     confidence = count / len(predictions) * 100
     return most_common_label, round(confidence, 2)
 
+# ✅ 변경: h5 모델 기반 추론
 def predict_dynamic(input_vector: np.ndarray):
-    #90프레임 들어오면 앞에서 자르기
     if input_vector.shape[1] > 50:
         input_vector = input_vector[:, -50:, :]
-    
-    dynamic_interpreter.set_tensor(dynamic_input[0]["index"], input_vector.astype(np.float32))
-    dynamic_interpreter.invoke()
-    output_data = dynamic_interpreter.get_tensor(dynamic_output[0]["index"])
+
+    output_data = dynamic_model.predict(input_vector, verbose=0)[0]
     confidence = float(np.max(output_data))
     label_idx = int(np.argmax(output_data))
     return (dynamic_label_classes[label_idx], confidence * 100) if confidence >= 0.7 else ("none", confidence * 100)
