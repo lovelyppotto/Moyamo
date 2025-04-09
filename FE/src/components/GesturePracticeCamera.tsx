@@ -51,7 +51,7 @@ const GesturePracticeCamera = ({
           `[🔍 제스처 이벤트] "${gesture}", "confidence": ${confidence}, "expected": ${gestureLabel}`
         );
 
-        if (confidence >= 70 && gesture === gestureLabel) {
+        if (gesture === gestureLabel) {
           setIsCorrect(true);
           setShowGuideline(false);
 
