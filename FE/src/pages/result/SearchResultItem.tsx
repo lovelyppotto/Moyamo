@@ -95,7 +95,7 @@ function SearchResultItem({
     <div className="my-2">
       <div className="flex items-center">
         {/* 이미지 또는 3D 모델 컨테이너 */}
-        <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0 dark:bg-gray-500 rounded-full overflow-hidden">
+        <div className="flex w-16 h-16 md:w-28 md:h-28 justify-center items-center mr-2 flex-shrink-0 bg-white dark:bg-gray-500 rounded-full overflow-hidden">
           {isGlbModel && result.gestureImage ? (
             // gestureImage가 GLB 파일인 경우 GlbViewer 컴포넌트 표시
             <div className="w-full h-full overflow-hidden">
