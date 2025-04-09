@@ -38,7 +38,7 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   const sequenceRef = useRef<number[][]>([]);
 
   // 시퀀스 길이 (frame 수)
-  const SEQUENCE_LENGTH = 60;
+  const SEQUENCE_LENGTH = 80;
 
   // 마지막으로 데이터를 전송한 시간
   const lastSentTimeRef = useRef<number>(0);

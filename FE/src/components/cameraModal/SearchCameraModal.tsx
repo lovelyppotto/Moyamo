@@ -41,7 +41,7 @@ function SearchCameraModal() {
   
   // 손 감지 콜백 
   const handleHandDetected = useCallback((detected: boolean) => {
-    console.log(`[🖐️ 손 감지 상태 업데이트] detected: ${detected}`);
+    // console.log(`[🖐️ 손 감지 상태 업데이트] detected: ${detected}`);
     setHandDetected(detected);
   }, []);
 
@@ -136,7 +136,7 @@ function SearchCameraModal() {
     // 준비 단계 종료, 카운트다운 시작
     setIsPreparingGesture(false);
     setIsCountingDown(true);
-    setCountdown(3);
+    setCountdown(5);
     setGuideText('제스처를 유지해주세요');
     
     // 최종 제스처를 저장할 변수

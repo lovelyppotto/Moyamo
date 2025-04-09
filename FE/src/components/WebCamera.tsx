@@ -196,13 +196,13 @@ useEffect(() => {
       if (handDetected && !isPaused) {
         // 주기적으로만 로그 출력 (10프레임마다)
         if (Math.random() < 0.1) {
-          console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
+          // console.log(`[🖐️ 손 감지] ${results.landmarks.length}개 손 감지됨, isPaused=${isPaused}`);
         }
         sendLandmarks(results.landmarks);
       } else if (isPaused && handDetected) {
         // 주기적으로만 로그 출력 (10프레임마다)
         if (Math.random() < 0.1) {
-          console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
+          // console.log(`[🖐️ 손 감지됨] isPaused=${isPaused} 상태라 전송 안 함`);
         }
       }
     } catch (e) {

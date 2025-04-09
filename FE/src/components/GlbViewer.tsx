@@ -105,21 +105,21 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     loader.load(
       url,
       (gltf) => {
-        console.log('Model loaded successfully:', gltf);
+        // console.log('Model loaded successfully:', gltf);
         const model = gltf.scene;
 
         // 일반 설정 전에 애니메이션 복제 문제 디버깅
-        console.log('Animation cross-check:');
+        // console.log('Animation cross-check:');
         gltf.animations.forEach((anim, idx) => {
           if (idx < 3) {
             // 처음 3개만 간단히 확인
-            console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
-            console.log(`  UUID: ${anim.uuid}`);
-            console.log(`  Track count: ${anim.tracks.length}`);
+            // console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
+            // console.log(`  UUID: ${anim.uuid}`);
+            // console.log(`  Track count: ${anim.tracks.length}`);
             if (anim.tracks.length > 0) {
-              console.log(`  First track: ${anim.tracks[0].name}`);
-              console.log(`  First track values length: ${anim.tracks[0].values.length}`);
-              console.log(`  First track times length: ${anim.tracks[0].times.length}`);
+              // console.log(`  First track: ${anim.tracks[0].name}`);
+              // console.log(`  First track values length: ${anim.tracks[0].values.length}`);
+              // console.log(`  First track times length: ${anim.tracks[0].times.length}`);
             }
           }
         });
@@ -133,7 +133,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
               child.material.metalness = 0.1; // 금속성 감소
               child.material.envMapIntensity = 0.6; // 환경 맵 강도 감소
             } else {
-              console.log('One or both armatures missing - falling back to standard animation');
+              // console.log('One or both armatures missing - falling back to standard animation');
 
               // 일반적인 방식으로 애니메이션 적용
               if (armature) {
@@ -142,14 +142,14 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
                 const action = mixer.clipAction(animation);
                 action.timeScale = 0.5;
                 action.play();
-                console.log(`Animation "${animation.name}" applied to model for single armature`);
+                // console.log(`Animation "${animation.name}" applied to model for single armature`);
               }
             }
           }
 
           // 디버깅: 모든 객체와 본 계층 구조 출력
           if (child.name.includes('Armature') || child.type === 'Bone') {
-            console.log(`Found object: "${child.name}" (Type: ${child.type})`);
+            // console.log(`Found object: "${child.name}" (Type: ${child.type})`);
           }
         });
 
@@ -180,18 +180,18 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
           }
         });
 
-        console.log(
-          'Armatures found:',
-          armature ? 'Armature OK' : 'No Armature',
-          armature001 ? 'Armature001 OK' : 'No Armature001'
-        );
+        // console.log(
+        //   'Armatures found:',
+        //   armature ? 'Armature OK' : 'No Armature',
+        //   armature001 ? 'Armature001 OK' : 'No Armature001'
+        // );
 
         // 애니메이션 처리
         if (gltf.animations && gltf.animations.length > 0) {
-          console.log(
-            'All animations:',
-            gltf.animations.map((a) => a.name)
-          );
+          // console.log(
+          //   'All animations:',
+          //   gltf.animations.map((a) => a.name)
+          // );
 
           // 첫 번째 애니메이션 적용 (index = 0)
           if (gltf.animations[0]) {
@@ -199,7 +199,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             const action = mixer.clipAction(gltf.animations[0]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`First animation applied: ${gltf.animations[0].name}`);
+            // console.log(`First animation applied: ${gltf.animations[0].name}`);
           }
 
           // 두 번째 애니메이션이 있다면 적용 (index = 1)
@@ -208,7 +208,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             const action = mixer2.clipAction(gltf.animations[1]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`Second animation applied: ${gltf.animations[1].name}`);
+            // console.log(`Second animation applied: ${gltf.animations[1].name}`);
           }
 
           // 선택된 인덱스의 애니메이션이 아직 적용되지 않았다면 적용
@@ -217,16 +217,16 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             const action = mixer.clipAction(gltf.animations[index]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`Selected animation applied: ${gltf.animations[index].name}`);
+            // console.log(`Selected animation applied: ${gltf.animations[index].name}`);
           }
         }
       },
       (progress) => {
         const percentage = (progress.loaded / progress.total) * 100;
-        console.log('Loading progress:', percentage + '%');
+        // console.log('Loading progress:', percentage + '%');
       },
       (error) => {
-        console.error('\n GLB/GLTF 로딩 에러:', error);
+        // console.error('\n GLB/GLTF 로딩 에러:', error);
       }
     );
 
@@ -242,7 +242,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
         const frameCount = Math.floor(clock.getElapsedTime() * 60);
         if (frameCount < 10) {
-          console.log(`Animation frame ${frameCount}: Mixer 1 update with delta ${delta}`);
+          // console.log(`Animation frame ${frameCount}: Mixer 1 update with delta ${delta}`);
         }
       }
 
@@ -252,7 +252,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
         const frameCount = Math.floor(clock.getElapsedTime() * 60);
         if (frameCount < 10) {
-          console.log(`Animation frame ${frameCount}: Mixer 2 update with delta ${delta}`);
+          // console.log(`Animation frame ${frameCount}: Mixer 2 update with delta ${delta}`);
         }
       }
 
