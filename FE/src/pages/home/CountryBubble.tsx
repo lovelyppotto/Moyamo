@@ -312,7 +312,7 @@ function CountryBubble() {
       <TooltipProvider>
         <div>
           {/* 국가별 관광지 사진 영역 - 6각형 레이아웃 */}
-          <div className="absolute top-10 w-full h-full z-30 pointer-events-none">
+          <div className="absolute top-13 w-full h-full z-10 pointer-events-none">
             {countrySetup.map((country) => (
               <div key={country.id} className={country.position}>
                 <div className="relative">

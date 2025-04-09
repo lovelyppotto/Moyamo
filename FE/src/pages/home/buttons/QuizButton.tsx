@@ -9,12 +9,12 @@ function QuizButton() {
 
   return (
     <button
-      onClick={handleButtonClick}
-      className="flex flex-col items-center
-          bg-transparent border-none z-20
+          onClick={handleButtonClick}
+          className="flex flex-col items-center
+          bg-transparent border-none z-5 // z-index를 낮게 설정
           cursor-pointer transform transition-transform duration-300
           hover:scale-105"
-    >
+        >
       <div
         className="flex items-center justify-center relative
             w-35 h-18 sm:w-48 sm:h-22 md:w-55 md:h-23 lg:w-65 lg:h-26
