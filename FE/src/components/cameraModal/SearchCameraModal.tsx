@@ -31,7 +31,7 @@ function SearchCameraModal() {
 
   // 상태 관리
   const [apiActive, setApiActive] = useState(false);
-  const [guideText, setGuideText] = useState('버튼을 누르면 검색이 진행됩니다');
+  const [guideText, setGuideText] = useState('');
   const [isPreparingGesture, setIsPreparingGesture] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [preparationCountdown, setPreparationCountdown] = useState(2);
@@ -74,7 +74,7 @@ function SearchCameraModal() {
     setIsCountingDown(false);
     setPreparationCountdown(2);
     setCountdown(3);
-    setGuideText('버튼을 누르면 검색이 진행됩니다');
+    setGuideText('버튼을 누른 뒤 손 전체가 화면에 나오게 준비해 주세요');
     setIsErrorToastShown(false);
     setDetectedGesture(null);
     setLastConfidence(0);

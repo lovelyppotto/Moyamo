@@ -34,7 +34,7 @@ interface UseGestureHttpApiReturn {
  * 제스처 인식을 위한 HTTP API 통신을 관리하는 커스텀 훅 (단순화된 버전)
  */
 export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
-  const SERVER_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const SERVER_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // API 상태 관리
   const [status, setStatus] = useState<ApiStatus>('closed');

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import WebCamera from '../WebCamera';
 import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
 
