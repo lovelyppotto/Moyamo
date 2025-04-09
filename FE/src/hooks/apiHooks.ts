@@ -128,9 +128,9 @@ export function useQuizQuestions(useCamera: boolean) {
   });
 }
 
-//영상 퀴즈 ai 인식 결과 가져오기: 수정예정. (데이터 주고 받는 함수)
-export function useGestureDetection() {
-  return useMutation({
-    mutationFn: (imageData: string) => detectGesture(imageData),
-  });
-}
+// //영상 퀴즈 ai 인식 결과 가져오기: 수정예정. (데이터 주고 받는 함수)
+// export function useGestureDetection() {
+//   return useMutation({
+//     mutationFn: (imageData: string) => detectGesture(imageData),
+//   });
+// }

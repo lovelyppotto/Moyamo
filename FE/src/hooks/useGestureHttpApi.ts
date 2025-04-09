@@ -3,6 +3,10 @@ import { useState, useRef, useCallback } from 'react';
 // API 연결 상태를 나타내는 타입
 export type ApiStatus = 'closed' | 'connecting' | 'open' | 'error';
 
+
+// 제스처 타입 정의
+export type GestureType = 'STATIC' | 'DYNAMIC' | 'AUTO';
+
 // 전역 변수로 마지막 감지된 제스처 저장
 declare global {
   interface Window {
@@ -12,6 +16,7 @@ declare global {
     };
   }
 }
+
 
 // 제스처 인식 결과 타입
 interface GestureRecognitionResult {
@@ -24,7 +29,7 @@ interface UseGestureHttpApiReturn {
   status: ApiStatus;
   gesture: string | null;
   confidence: number | null;
-  sendLandmarks: (landmarks: any[]) => void;
+  sendLandmarks: (landmarks: any[], gestureType?: GestureType) => void;
   connect: () => void;
   disconnect: () => void;
   resetSequence: () => void; // 새로 추가된 메서드
@@ -33,7 +38,9 @@ interface UseGestureHttpApiReturn {
 /**
  * 제스처 인식을 위한 HTTP API 통신을 관리하는 커스텀 훅 (단순화된 버전)
  */
-export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
+export const useGestureHttpApi = (
+  defaultGestureType: GestureType = 'AUTO'
+): UseGestureHttpApiReturn => {
   const SERVER_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
   // API 상태 관리
@@ -47,6 +54,9 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
 
   // 시퀀스 참조 - 프레임 데이터를 저장
   const sequenceRef = useRef<number[][]>([]);
+
+  // 현재 처리 중인 제스처 타입
+  const currentGestureTypeRef = useRef<GestureType>(defaultGestureType);
 
   // 시퀀스 길이 (frame 수)
   const SEQUENCE_LENGTH = 60;
@@ -117,8 +127,11 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
   }, []);
 
   // 데이터를 서버로 전송하는 함수
+
+  // 데이터를 서버로 전송하는 함수
   const sendToServer = useCallback(
-    async (sequenceData: number[][]) => {
+    async (sequenceData: number[][], gestureType: GestureType = 'AUTO') => {
+
       try {
         // 이미 결과를 보낸 적이 있으면 무시
         if (resultSentRef.current) {
@@ -145,13 +158,33 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
           return;
         }
 
-        const isDynamic = isDynamicGesture(sequenceData);
-        const endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
+
+        // 제스처 타입에 따라 엔드포인트 결정
+        let endpoint = '';
+        let gestureTypeLabel = '';
+
+        if (gestureType === 'STATIC') {
+          endpoint = '/api/predict/static';
+          gestureTypeLabel = '정적';
+          console.log('[🎯 제스처 타입] 명시적 STATIC 타입 사용');
+        } else if (gestureType === 'DYNAMIC') {
+          endpoint = '/api/predict/dynamic';
+          gestureTypeLabel = '동적';
+          console.log('[🎯 제스처 타입] 명시적 DYNAMIC 타입 사용');
+        } else {
+          const isDynamic = isDynamicGesture(sequenceData);
+          endpoint = isDynamic ? '/api/predict/dynamic' : '/api/predict/static';
+          gestureTypeLabel = isDynamic ? '동적' : '정적';
+          console.log(`[🎯 제스처 타입] 자동 감지: ${isDynamic ? 'DYNAMIC' : 'STATIC'}`);
+        }
+
         const url = SERVER_BASE_URL + endpoint;
 
         const payload = { frames: sequenceData };
         console.log(
-          `[📤 전송됨] ${isDynamic ? '동적' : '정적'} 제스처 (${sequenceData.length} 프레임) to ${url}`
+
+          `[📤 전송됨] ${gestureTypeLabel} 제스처 (${sequenceData.length} 프레임) to ${url}`
+
         );
 
         try {
@@ -183,12 +216,14 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
 
           // 결과 저장
           if (gestureName) {
+
             // 중요: 전역 변수에도 결과 저장
             window.lastDetectedGesture = {
               gesture: gestureName,
               confidence: confidenceValue,
             };
             console.log('[💾 전역 변수에 제스처 저장]', gestureName);
+
 
             setRecognitionResult({
               gesture: gestureName,
@@ -246,25 +281,32 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
 
   // 랜드마크 데이터 전송 함수
   const sendLandmarks = useCallback(
-    (landmarks: any[]) => {
+    (landmarks: any[], gestureType?: GestureType) => {
       try {
+        // 제스처 타입이 지정되면 현재 타입 업데이트
+        if (gestureType) {
+          currentGestureTypeRef.current = gestureType;
+          console.log(`[🔄 제스처 타입 설정] ${gestureType}`);
+        }
         // 상태가 'closed'이면 처리하지 않음
         if (status === 'closed') {
+          console.log('[🌐 API] status=closed, 처리하지 않음');
           return;
         }
-
-        // API가 일시 중지되었거나 수집이 활성화되지 않았으면 무시
+                // API가 일시 중지되었거나 수집이 활성화되지 않았으면 무시
         if (!isCollectingRef.current) {
           return;
         }
 
         // 이미 결과가 전송되었으면 처리하지 않음
         if (resultSentRef.current) {
+          // console.log('[🌐 API] 이미 결과 전송됨');
           return;
         }
 
         // 이미 처리 중이면 무시
         if (isProcessingRef.current) {
+          // console.log('[🌐 API] 이미 처리 중');
           return;
         }
 
@@ -336,7 +378,7 @@ export const useGestureHttpApi = (): UseGestureHttpApiReturn => {
           clearSequence();
 
           // 서버로 전송
-          sendToServer(currentSequence);
+          sendToServer(currentSequence, currentGestureTypeRef.current);
         }
       } catch (error) {
         console.error('[🌐 API] 데이터 처리 오류:', error);

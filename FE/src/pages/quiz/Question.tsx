@@ -37,7 +37,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     setAnswer({
       isCorrect: isCorrect,
     });
-    
+
     let newTimer = questionData.type === 'CAMERA' ? 20000 : 10000;
     let newProgressClass = 'bg-[var(--color-kr-600)]';
 
@@ -62,7 +62,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     setTimeout(() => {
       setShowCorrectImage(false);
       setShowWrongImage(false);
-      
+
       // 다음 문제로 넘어가기
       onSelectAnswer(isCorrect);
     }, 1000);
@@ -130,8 +130,9 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
               <Answers3
                 options={questionData.options}
                 answer={questionData.answer}
-                onSelect={handleSelectAnswer}                                             
+                onSelect={handleSelectAnswer}
                 isTimeOut={isTimeOut}
+                question={questionData}
               />
             )}
           </div>

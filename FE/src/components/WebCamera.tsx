@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '@/hooks/useHandLandmarker';
-import { useGestureHttpApi } from '@/hooks/useGestureHttpApi';
+import { useGestureHttpApi, GestureType } from '@/hooks/useGestureHttpApi';
 
 interface WebCameraProps {
   // 가이드라인 svg 조절 props
@@ -15,6 +15,7 @@ interface WebCameraProps {
   // 가이드라인 표시 여부 제어
   showGuideline?: boolean;
   onHandDetected?: (detected: boolean) => void;
+  gestureType?: GestureType; // 추가된 제스처 타입 속성
 }
 
 const WebCamera = ({
@@ -25,6 +26,7 @@ const WebCamera = ({
   onGesture,
   showGuideline = true,
   onHandDetected,
+  gestureType = 'AUTO', // 기본값은 AUTO로 설정
 }: WebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
