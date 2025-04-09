@@ -93,6 +93,7 @@ function GesturePractice() {
               top-16 lg:top-22"
               guideText="제스처를 3초간 유지해주세요."
               gestureLabel={gesture.gestureLabel}
+              gestureType={gesture.gestureType}
             />
           )}
         </div>
