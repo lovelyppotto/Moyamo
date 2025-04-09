@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GestureSearchBar from './GestureSearchBar';
 import GestureSearchPreview from './GestureSearchPreview';
-import { useLocation } from 'react-router-dom';
 import { useGestureSearch } from '@/hooks/apiHooks';
+import { GestureSearchResult } from '@/types/searchGestureType';
 
 function GestureSearchInput() {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchInputRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -21,8 +23,27 @@ function GestureSearchInput() {
   const gestureLabel = params.get('gesture_label') || '';
   const countryId = params.get('country_id') ? parseInt(params.get('country_id')!, 10) : 0;
 
+  // 검색어 길이 확인 및 필요시 에러 페이지로 리다이렉트
+  useEffect(() => {
+    if ((gestureName && gestureName.length > 1000) || (gestureLabel && gestureLabel.length > 1000)) {
+      console.warn('URL 파라미터의 검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+    }
+  }, [gestureName, gestureLabel, navigate]);
+
   // 홈 페이지 여부 확인
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
+
+  // URL 파라미터 변경 시 검색어 상태 업데이트
+  useEffect(() => {
+    if (gestureLabel) {
+      setSearchTerm(gestureLabel);
+    } else if (gestureName) {
+      setSearchTerm(gestureName);
+    } else {
+      setSearchTerm('');
+    }
+  }, [gestureLabel, gestureName]);
 
   // 검색 쿼리 실행
   const { data: searchResults, isLoading } = useGestureSearch(
@@ -82,12 +103,25 @@ function GestureSearchInput() {
   }, [showResults]);
 
   // 검색 결과 클릭 핸들러
-  const handleResultClick = (result: any) => {
+  const handleResultClick = (result: GestureSearchResult) => {
+    if (result.gestureName.length > 1000) {
+      console.warn('검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+    
     window.location.href = `/search?gesture_name=${encodeURIComponent(result.gestureName)}`;
   };
 
   // 검색어 변경 핸들러
   const handleSearchTermChange = (newTerm: string) => {
+    // 검색어 길이 제한 검사
+    if (newTerm.length > 1000) {
+      console.warn('검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+    
     setSearchTerm(newTerm);
   };
 

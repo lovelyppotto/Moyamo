@@ -37,6 +37,13 @@ function GestureSearchBar({
     const gestureName = params.get('gesture_name');
     const countryParam = params.get('country_id');
 
+    // 검색어 길이 제한 검사
+    if ((gestureLabel && gestureLabel.length > 1000) || (gestureName && gestureName.length > 1000)) {
+      console.warn('URL 파라미터의 검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+
     // 국가 ID 설정
     const newCountryId = countryParam ? parseInt(countryParam, 10) : 0;
     setCountryId(newCountryId);
@@ -58,14 +65,15 @@ function GestureSearchBar({
       // URL에 검색어가 없으면 빈 문자열로 설정
       setSearchTerm('');
     }
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.search, navigate]);
 
   // 입력 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
 
+    // 기존 20자 제한 로직
     if (newValue.length > 20) {
-      // 50자 제한 알림 표시
+      // 20자 제한 알림 표시
       if (!hasShownToast) {
         toast.error('검색어가 너무 깁니다.', {
           description: '정확한 검색을 위해 20자 이하로 입력해주세요.',
@@ -78,6 +86,13 @@ function GestureSearchBar({
         // 일정 시간 후 알림 상태 초기화
         setTimeout(() => setHasShownToast(false), 3000);
       }
+      return;
+    }
+
+    // 414 에러 대응 검색어 길이 제한 검사 (1000자 제한)
+    if (newValue.length > 1000) {
+      console.warn('검색어가 너무 깁니다. 414 에러가 발생할 수 있습니다.');
+      navigate('/url-error', { replace: true });
       return;
     }
 
@@ -142,6 +157,13 @@ function GestureSearchBar({
         params.delete('gesture_label');
 
         if (currentTerm.trim()) {
+          // 검색어 길이 제한 검사
+          if (currentTerm.length > 1000) {
+            console.warn('검색어가 너무 깁니다.');
+            navigate('/url-error', { replace: true });
+            return;
+          }
+          
           params.set('gesture_name', currentTerm);
         }
 
@@ -167,6 +189,13 @@ function GestureSearchBar({
   // 검색 실행 핸들러
   const executeSearch = () => {
     if (!searchTerm.trim()) return;
+
+    // 검색어 길이 제한 검사
+    if (searchTerm.length > 1000) {
+      console.warn('검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
 
     // 카메라 검색에서 일반 검색으로 전환
     if (isCameraSearch) {
