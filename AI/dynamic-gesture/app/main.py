@@ -59,7 +59,7 @@ def predict_dynamic(input_vector: np.ndarray):
     output_data = dynamic_model.predict(input_vector, verbose=0)[0]
     confidence = float(np.max(output_data))
     label_idx = int(np.argmax(output_data))
-    return (dynamic_label_classes[label_idx], confidence * 100) if confidence >= 0.7 else ("none", confidence * 100)
+    return (dynamic_label_classes[label_idx], confidence * 100) if confidence >= 0.5 else ("none", confidence * 100)
 
 def predict_static(input_vector: np.ndarray):
     static_interpreter.set_tensor(static_input[0]["index"], input_vector.astype(np.float32))
