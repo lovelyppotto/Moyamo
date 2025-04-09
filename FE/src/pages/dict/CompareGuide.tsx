@@ -50,18 +50,14 @@ function CompareGuide() {
 
     // 상황이 하나만 있는 경우 그대로 표시
     if (situations.length <= 1) {
-      return (
-        <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
-          {situation}
-        </p>
-      );
+      return <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">{situation}</p>;
     }
 
     // 여러개 있는 경우
     return (
-      <ul className="list-disc w-[70%] mx-auto pl-8 font-[NanumSquareRound] text-[16px] lg:text-[18px]">
+      <ul className="list-disc font-[NanumSquareRound] text-[17px] ml-4 pl-4">
         {situations.map((item, index) => (
-          <li key={index} className="mb-2 pl-1">
+          <li key={index} className="mb-2">
             {item}
           </li>
         ))}
@@ -89,8 +85,8 @@ function CompareGuide() {
         </div>
       </div>
 
-      {/* 카드 컨테이너 - 60% */}
-      <div className="h-[50vh] px-4 overflow-hidden customScrollbar kr">
+      {/* 카드 컨테이너 */}
+      <div className="h-[50vh] px-4 customScrollbar kr">
         {/* 국가 그룹 카드들 */}
         <div className={`${gridLayoutClass} h-full`}>
           {/* 국가별 제스처 의미 카드들 */}
@@ -120,7 +116,7 @@ function CompareGuide() {
             return (
               <div
                 key={`meaning-${index}`}
-                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-full"
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full"
               >
                 {/* 고정된 헤더 부분 */}
                 <div className="flex-none">
@@ -132,7 +128,7 @@ function CompareGuide() {
                   {renderFlags()}
 
                   {/* 국가 이름 */}
-                  <h2 className="text-center text-lg lg:text-xl font-[NanumSquareRoundB] mb-3">
+                  <h2 className="text-center text-[20px] lg:text-[22px] font-[NanumSquareRoundB] mb-3">
                     {countryNames.join(', ')}
                   </h2>
 
@@ -140,20 +136,24 @@ function CompareGuide() {
                 </div>
 
                 {/* 콘텐츠 부분 */}
-                <div className="flex-1 overflow-y-auto pr-2">
-                  <div className="flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto">
+                  <div className="flex flex-col gap-4 px-4 pt-4">
                     {/* 의미 */}
-                    <div className="flex flex-col items-center">
-                      <p className="font-[NanumSquareRoundB] text-xl mb-2">의미</p>
-                      <p className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+                    <div className="flex flex-col">
+                      <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4 ">
+                        의미
+                      </p>
+                      <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">
                         {meaning.gestureMeaning}
                       </p>
                     </div>
 
                     {/* 사용 상황 */}
-                    <div className="flex flex-col items-center mt-3">
-                      <p className="font-[NanumSquareRoundB] text-lg mb-2">사용 상황</p>
-                      <div className="font-[NanumSquareRound] text-[16px] lg:text-[18px] text-center">
+                    <div className="flex flex-col mt-3">
+                      <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4">
+                        사용 상황
+                      </p>
+                      <div className="font-[NanumSquareRound]">
                         {parseSituation(meaning.gestureSituation)}
                       </div>
                     </div>
