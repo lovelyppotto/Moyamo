@@ -79,7 +79,7 @@ const router = createBrowserRouter([
       },
       // 에러페이지
       {
-        path: 'error',
+        path: 'url-error',
         element: <NotFoundPage />,
       },
       // 404 페이지 - 모든 매칭되지 않는 경로에 대해
