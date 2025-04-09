@@ -52,9 +52,9 @@ function Dictionary() {
   // 제스처 데이터 초기 선택 설정
   useEffect(() => {
     if (gestureData?.gestures && gestureData.gestures.length > 0) {
-      // 로컬 스토리지에서 이전에 선택된 제스처를 확인
+      // 세션 스토리지에서 이전에 선택된 제스처를 확인
       const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
-      const storedSelectedGesture = localStorage.getItem(selectedGestureKey);
+      const storedSelectedGesture = sessionStorage.getItem(selectedGestureKey);
 
       if (storedSelectedGesture) {
         const parsedGestureId = parseInt(storedSelectedGesture);
@@ -65,18 +65,18 @@ function Dictionary() {
 
         if (gestureExists) {
           setSelectedGesture(parsedGestureId);
-        } else if (gestureData.gestures.length > 0) {
+        } else {
           // 존재하지 않으면 첫 번째 제스처 선택
           setSelectedGesture(gestureData.gestures[0].gestureId);
         }
-      } else if (gestureData.gestures.length > 0) {
+      } else {
         // 저장된 선택 제스처가 없으면 첫 번째 제스처 선택
         setSelectedGesture(gestureData.gestures[0].gestureId);
       }
     }
   }, [gestureData, selectedCountry.id]);
 
-  // 현재 제스처 목록 
+  // 현재 제스처 목록
   const currentGestures = gestureData?.gestures || [];
 
   // 현재 선택된 제스처
@@ -87,9 +87,9 @@ function Dictionary() {
   // 제스처 선택 핸들러
   const handleSelectGesture = (gestureId: number) => {
     setSelectedGesture(gestureId);
-    // 선택한 제스처를 로컬 스토리지에 저장
+    // 선택한 제스처를 세션 스토리지에 저장
     const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
-    localStorage.setItem(selectedGestureKey, gestureId.toString());
+    sessionStorage.setItem(selectedGestureKey, gestureId.toString());
   };
 
   // 국가 선택 핸들러
