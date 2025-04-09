@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface CountryGestureRepository extends JpaRepository<CountryGesture, Integer> {
-    List<CountryGesture> findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNull(Integer countryId);
+    List<CountryGesture> findByCountry_CountryIdAndGestureInfo_GestureTitleIsNotNullOrderByGestureInfo_GestureTitleAsc(Integer countryId);
 
     Optional<CountryGesture> findByGesture_GestureIdAndCountry_CountryId(Integer gestureId, Integer countryId);
 
