@@ -21,7 +21,6 @@ function DictCountrySelector({
   onSelectCountry,
   countryOptions,
 }: CountrySelectorProps) {
-
   // 국가 코드를 Country 객체로 변환
   const getCountryByCode = (code: string) => {
     return countryOptions.find((country) => country.code === code) || selectedCountry;
@@ -35,14 +34,15 @@ function DictCountrySelector({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[220px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer  dark:bg-gray-500 dark:text-d-txt-50">
-        <div className="flex items-center gap-2 w-full">
+      <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[220px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer dark:bg-gray-500 dark:text-d-txt-50">
+        <div className="flex items-center w-full">
           <img
             src={getFlagImage(selectedCountry.code)}
             alt={`${selectedCountry.code}`}
-            className="w-25% max-w-[50px] h-auto aspect-[10/7] drop-shadow-nation"
+            className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
+            draggable="false"
           />
-          <span className="text-[calc(15px+0.5vw)] max-text-[20px] font-[NanumSquareRoundB]">
+          <span className="text-[20px] md:text-[32px] min-w-[120px] font-[NanumSquareRoundEB] text-center">
             {selectedCountry.name}
           </span>
           <FontAwesomeIcon icon={faCaretDown} className="ml-2" />
@@ -63,7 +63,8 @@ function DictCountrySelector({
               <img
                 src={getFlagImage(country.code)}
                 alt={`${country.name} 국기`}
-                className="w-15% min-w-[20px] max-w-[35px] h-auto aspect-[10/7] object-cover drop-shadow-nation"
+                className="w-15% min-w-[20px] max-w-[35px] h-auto aspect-[10/7] object-cover drop-shadow-nation select-none"
+                draggable="false"
               />
               <span className="text-[calc(13px+0.3vw)] max-text-[16px] font-[NanumSquareRound] truncate">
                 {country.name}
