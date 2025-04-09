@@ -30,6 +30,7 @@ const transformQuizData = (data: QuestionData[]): FrontendQuestionData[] => {
     text: question.question_text,
     type: question.question_type,
     gestureUrl: question.gesture_url,
+    gestureType: question.gesture_type,
     options: question.options.map((option) => ({
       id: option.option_id,
       meaning: option.option_meaning,

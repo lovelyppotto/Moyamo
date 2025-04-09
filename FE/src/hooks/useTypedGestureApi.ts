@@ -10,6 +10,7 @@ interface UseTypedGestureApiReturn {
   connect: () => void;
   disconnect: () => void;
   resetSequence: () => void;
+  
 }
 
 // 훅 파라미터 타입
@@ -132,9 +133,9 @@ export const useTypedGestureApi = ({
   const sendLandmarks = useCallback(
     (landmarks: any[]) => {
       // 디버깅 로그
-      // console.log(
-      //   `[👋 랜드마크 전송] ${landmarks.length}개 (타입: ${gestureType}, 최근 엔드포인트: ${apiEndpoint})`
-      // );
+      console.log(
+        `[👋 랜드마크 전송] ${landmarks.length}개 (타입: ${gestureType}, 최근 엔드포인트: ${apiEndpoint})`
+      );
 
       // 원본 훅의 sendLandmarks 함수 호출
       originalHook.sendLandmarks(landmarks);

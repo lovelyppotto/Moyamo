@@ -9,12 +9,14 @@ interface GesturePracticeCameraProps {
   gestureLabel?: string;
   // 제스처 타입 prop - string 타입 유지
   gestureType?: string;
+  onCorrect?: (isCorrect: boolean) => void;
 }
 
 const GesturePracticeCamera = ({
   guidelineClassName,
   guideText,
   gestureLabel,
+  onCorrect,
   // 기본값은 'STATIC'으로 설정
   gestureType = 'STATIC',
 }: GesturePracticeCameraProps) => {
@@ -82,6 +84,11 @@ const GesturePracticeCamera = ({
         // 정답인 경우
         setIsCorrect(true);
         setShowGuideline(false);
+
+        // 부모 컴포넌트에 정답 여부 알림 (콜백 함수가 있는 경우에만)
+        if (onCorrect) {
+          onCorrect(true);
+        }
 
         // 정답 표시 후 일정 시간 후에 다시하기 버튼 표시
         clearAllTimers();
