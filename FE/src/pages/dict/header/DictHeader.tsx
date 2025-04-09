@@ -94,7 +94,7 @@ function DictHeader({
                 draggable="false"
               />
             )}
-            <h1 className="text-[20px] md:text-[32px] font-[NanumSquareRoundEB] text-center">
+            <h1 className="text-[20px] md:text-[24px] xl:text-[32px] font-[NanumSquareRoundEB] text-center">
               {title}
             </h1>
           </div>
