@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -22,7 +23,8 @@ interface DictHeaderProps {
   countryOptions?: Country[];
 }
 
-function DictHeader({
+// 메모이제이션된 컴포넌트
+const DictHeader = React.memo(function DictHeader({
   title,
   gestureCompareInfo,
   showCompareGuide = false,
@@ -34,41 +36,49 @@ function DictHeader({
 }: DictHeaderProps) {
   const navigate = useNavigate();
   const getCountryCode = useCountryCode();
-  const countryCode = getCountryCode(gestureCompareInfo?.countryName);
+  const countryCode = useMemo(
+    () => getCountryCode(gestureCompareInfo?.countryName),
+    [getCountryCode, gestureCompareInfo?.countryName]
+  );
+
   const { theme } = useTheme();
-  const logoSrc = theme === 'dark' ? `${getLogoImage('logo-dark')}` : `${getLogoImage('logo')}`;
+  const logoSrc = useMemo(
+    () => (theme === 'dark' ? getLogoImage('logo-dark') : getLogoImage('logo')),
+    [theme]
+  );
 
-  // 국가 선택 핸들러
-  const handleCountrySelect = (country: Country) => {
-    if (onSelectCountry) {
-      onSelectCountry(country);
-    } else {
-      console.log('국가 선택 핸들러가 제공되지 않았습니다.');
-    }
-  };
+  // 국가 선택 핸들러 - useCallback으로 최적화
+  const handleCountrySelect = useCallback(
+    (country: Country) => {
+      if (onSelectCountry) {
+        onSelectCountry(country);
+      }
+    },
+    [onSelectCountry]
+  );
 
-  // 뒤로가기
-  const handleGoBack = () => {
-    // 현재 URL 확인
+  // 뒤로가기 - useCallback으로 최적화
+  const handleGoBack = useCallback(() => {
     const currentPath = window.location.pathname;
 
-    // Dictionary 메인 페이지(목록 페이지)인 경우 홈으로 이동
     if (currentPath === '/dictionary') {
       navigate('/');
     } else {
       window.history.back();
     }
-  };
+  }, [navigate]);
 
-  // 비교 가이드 페이지로 이동
-  const handleGuideClick = () => {
-    navigate(`/dictionary/compare?gesture_id=${gestureCompareInfo?.gestureId}`);
-  };
+  // 비교 가이드 페이지로 이동 - useCallback으로 최적화
+  const handleGuideClick = useCallback(() => {
+    if (gestureCompareInfo?.gestureId) {
+      navigate(`/dictionary/compare?gesture_id=${gestureCompareInfo.gestureId}`);
+    }
+  }, [navigate, gestureCompareInfo?.gestureId]);
 
-  // 로고 클릭 시 홈으로 이동
-  const handleLogoClick = () => {
+  // 로고 클릭 시 홈으로 이동 - useCallback으로 최적화
+  const handleLogoClick = useCallback(() => {
     navigate('/');
-  };
+  }, [navigate]);
 
   return (
     <header
@@ -92,6 +102,7 @@ function DictHeader({
                 alt={`${gestureCompareInfo.countryName} flag`}
                 className="w-[65px] h-[40px] mr-4 object-cover drop-shadow-nation"
                 draggable="false"
+                loading="eager"
               />
             )}
             <h1 className="text-[20px] md:text-[24px] xl:text-[32px] font-[NanumSquareRoundEB] text-center">
@@ -111,10 +122,9 @@ function DictHeader({
           </div>
         )}
       </div>
-      {/* 오른쪽 - 비교 가이드 버튼 있을 때 */}
 
-      {/* 홈버튼 */}
-      <div className="flex  col-span-1 justify-end items-center gap-1">
+      {/* 오른쪽 - 비교 가이드 버튼 있을 때 */}
+      <div className="flex col-span-1 justify-end items-center gap-1">
         {showCompareGuide && (
           <button
             className="flex items-center right-4 px-3 py-2 text-[13px] sm:text-[15px] bg-gray-200 text-gray-600
@@ -132,11 +142,15 @@ function DictHeader({
             className="w-full h-full object-contain select-none cursor-pointer"
             onClick={handleLogoClick}
             draggable="false" // 드래그 방지
+            loading="eager" // 로고는 빠르게 로드되어야 함
           />
         </div>
       </div>
     </header>
   );
-}
+});
+
+// 디스플레이 이름 설정
+DictHeader.displayName = 'DictHeader';
 
 export default DictHeader;
