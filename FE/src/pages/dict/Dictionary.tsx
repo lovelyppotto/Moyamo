@@ -8,14 +8,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
 import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
-import LoadingPage from '../../components/LoadingPage';
-import { useQueryClient } from '@tanstack/react-query';
-import { prefetchGLBModels } from '@/hooks/useGLBModel';
+import LoadingPage from '@/components/LoadingPage';
 
 function Dictionary() {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient(); // React Query 클라이언트
 
   // URL에서 country_id 파라미터 가져오기
   const queryParams = new URLSearchParams(location.search);
@@ -37,7 +34,6 @@ function Dictionary() {
 
   const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
-  const [loadingComplete, setLoadingComplete] = useState<boolean>(false); // 로딩 완료 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
@@ -49,18 +45,6 @@ function Dictionary() {
     }
   }, [isError, gestureData, isLoading, navigate]);
 
-  // 로딩 타이머 설정 - 최소 4초 로딩 화면 표시
-  useEffect(() => {
-    if (!isLoading) {
-      // 로딩 완료 시 타이머 설정
-      const timer = setTimeout(() => {
-        setLoadingComplete(true);
-      }, 4000); // 4초 동안 로딩 화면 표시
-
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
-
   // 유효성 검사
   useEffect(() => {
     // country_id가 있지만 유효하지 않은 경우 홈으로 리다이렉트
@@ -70,7 +54,7 @@ function Dictionary() {
         navigate('/');
       }
     }
-  }, [countryIdParam, navigate]);
+  }, [countryIdParam, navigate]); // 의존성 배열에 navigate 추가
 
   // 제스처 데이터 초기 선택 설정
   useEffect(() => {
@@ -99,32 +83,6 @@ function Dictionary() {
     }
   }, [gestureData, selectedCountry.id]);
 
-  // GLB 모델 미리 로드 - 데이터가 로드되면 실행
-  useEffect(() => {
-    if (gestureData?.gestures && gestureData.gestures.length > 0 && selectedCountry) {
-      // 현재 선택된 제스처 및 다음 4개 제스처의 URL 준비
-      const modelUrls: string[] = [];
-
-      // 현재 선택된 제스처의 인덱스 찾기
-      const currentIndex = gestureData.gestures.findIndex((g) => g.gestureId === selectedGesture);
-      if (currentIndex === -1) return;
-
-      // 현재 제스처와 다음 4개 제스처 URL 수집
-      for (let i = currentIndex; i < currentIndex + 5 && i < gestureData.gestures.length; i++) {
-        if (i >= 0) {
-          const gestureId = gestureData.gestures[i].gestureId;
-          modelUrls.push(`/models/${selectedCountry.code}/${gestureId}.glb`);
-        }
-      }
-
-      // 백그라운드에서 모델 미리 로드
-      if (modelUrls.length > 0) {
-        prefetchGLBModels(queryClient, modelUrls);
-      }
-    }
-  }, [selectedGesture, gestureData, selectedCountry, queryClient]);
-
-  // 세션 스토리지 정리
   useEffect(() => {
     const currentPath = location.pathname;
 
@@ -167,10 +125,9 @@ function Dictionary() {
       return;
     }
 
-    // 로딩 상태로 다시 변경 (국가 변경 시)
-    setLoadingComplete(false);
-
     setSelectedCountry(country);
+    // 국가 변경 시 선택된 제스처는 초기화하지 않음
+    // 로컬 스토리지에서 해당 국가의 선택된 제스처가 있으면 자동으로 로드됨
     navigate(`/dictionary?country_id=${country.id}`);
   };
 
@@ -226,13 +183,8 @@ function Dictionary() {
   };
 
   // 로딩 상태 체크
-  if (isLoading || !loadingComplete) {
-    return (
-      <LoadingPage
-        minDuration={4000} // 최소 4초 로딩 표시
-        onComplete={() => setLoadingComplete(true)}
-      />
-    );
+  if (isLoading) {
+    return <LoadingPage minDuration={2000} />;
   }
 
   return (

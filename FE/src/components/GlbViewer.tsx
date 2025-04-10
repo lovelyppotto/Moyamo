@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { useCachedGlb } from '@/hooks/useCachedGlb';
 
 interface GlbViewerProps {
   url: string;
@@ -13,13 +12,9 @@ interface GlbViewerProps {
 export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const [modelLoading, setModelLoading] = useState(true);
-
-  // LocalForage를 활용한 모델 캐싱
-  const { modelUrl, isLoading, error, progress } = useCachedGlb(url, true);
 
   useEffect(() => {
-    if (!containerRef.current || !modelUrl) return;
+    if (!containerRef.current || !url) return;
 
     if (rendererRef.current) {
       rendererRef.current.dispose();
@@ -107,12 +102,27 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader); // DRACO 로더 설정
 
-    setModelLoading(true); // 로딩 시작
-
     loader.load(
-      modelUrl, // 캐시된 모델 URL 사용
+      url,
       (gltf) => {
+        // console.log('Model loaded successfully:', gltf);
         const model = gltf.scene;
+
+        // 일반 설정 전에 애니메이션 복제 문제 디버깅
+        // console.log('Animation cross-check:');
+        gltf.animations.forEach((anim, idx) => {
+          if (idx < 3) {
+            // 처음 3개만 간단히 확인
+            // console.log(`Animation ${idx}: ${anim.name}, duration: ${anim.duration}`);
+            // console.log(`  UUID: ${anim.uuid}`);
+            // console.log(`  Track count: ${anim.tracks.length}`);
+            if (anim.tracks.length > 0) {
+              // console.log(`  First track: ${anim.tracks[0].name}`);
+              // console.log(`  First track values length: ${anim.tracks[0].values.length}`);
+              // console.log(`  First track times length: ${anim.tracks[0].times.length}`);
+            }
+          }
+        });
 
         // 모델 재질 설정 - 원래 재질이 더 잘 드러나도록 수정
         model.traverse((child) => {
@@ -122,7 +132,24 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
               child.material.roughness = 1.0; // 거칠기 증가 (덜 반짝이게)
               child.material.metalness = 0.1; // 금속성 감소
               child.material.envMapIntensity = 0.6; // 환경 맵 강도 감소
+            } else {
+              // console.log('One or both armatures missing - falling back to standard animation');
+
+              // 일반적인 방식으로 애니메이션 적용
+              if (armature) {
+                mixer = new THREE.AnimationMixer(model);
+                const animation = gltf.animations[0];
+                const action = mixer.clipAction(animation);
+                action.timeScale = 0.5;
+                action.play();
+                // console.log(`Animation "${animation.name}" applied to model for single armature`);
+              }
             }
+          }
+
+          // 디버깅: 모든 객체와 본 계층 구조 출력
+          if (child.name.includes('Armature') || child.type === 'Bone') {
+            // console.log(`Found object: "${child.name}" (Type: ${child.type})`);
           }
         });
 
@@ -153,14 +180,26 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
           }
         });
 
+        // console.log(
+        //   'Armatures found:',
+        //   armature ? 'Armature OK' : 'No Armature',
+        //   armature001 ? 'Armature001 OK' : 'No Armature001'
+        // );
+
         // 애니메이션 처리
         if (gltf.animations && gltf.animations.length > 0) {
+          // console.log(
+          //   'All animations:',
+          //   gltf.animations.map((a) => a.name)
+          // );
+
           // 첫 번째 애니메이션 적용 (index = 0)
           if (gltf.animations[0]) {
             mixer = new THREE.AnimationMixer(model);
             const action = mixer.clipAction(gltf.animations[0]);
             action.timeScale = 0.5;
             action.play();
+            // console.log(`First animation applied: ${gltf.animations[0].name}`);
           }
 
           // 두 번째 애니메이션이 있다면 적용 (index = 1)
@@ -169,6 +208,7 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             const action = mixer2.clipAction(gltf.animations[1]);
             action.timeScale = 0.5;
             action.play();
+            // console.log(`Second animation applied: ${gltf.animations[1].name}`);
           }
 
           // 선택된 인덱스의 애니메이션이 아직 적용되지 않았다면 적용
@@ -177,19 +217,16 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
             const action = mixer.clipAction(gltf.animations[index]);
             action.timeScale = 0.5;
             action.play();
+            // console.log(`Selected animation applied: ${gltf.animations[index].name}`);
           }
         }
-
-        setModelLoading(false); // 로딩 완료
       },
-      (xhr) => {
-        // 로딩 진행률
-        const loadProgress = Math.floor((xhr.loaded / xhr.total) * 100);
-        // 필요한 경우 진행률 처리
+      (progress) => {
+        const percentage = (progress.loaded / progress.total) * 100;
+        // console.log('Loading progress:', percentage + '%');
       },
-      (loadError) => {
-        console.error('GLB/GLTF 로딩 에러:', loadError);
-        setModelLoading(false); // 로딩 완료 (에러 상태)
+      (error) => {
+        // console.error('\n GLB/GLTF 로딩 에러:', error);
       }
     );
 
@@ -202,11 +239,21 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
       // 애니메이션 업데이트
       if (mixer) {
         mixer.update(delta);
+        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
+        const frameCount = Math.floor(clock.getElapsedTime() * 60);
+        if (frameCount < 10) {
+          // console.log(`Animation frame ${frameCount}: Mixer 1 update with delta ${delta}`);
+        }
       }
 
       // 두 번째 애니메이션 업데이트
       if (mixer2) {
         mixer2.update(delta);
+        // 디버깅 로그: 실제로 애니메이션이 업데이트되고 있는지 확인 (처음 몇 프레임만)
+        const frameCount = Math.floor(clock.getElapsedTime() * 60);
+        if (frameCount < 10) {
+          // console.log(`Animation frame ${frameCount}: Mixer 2 update with delta ${delta}`);
+        }
       }
 
       controls.update();
@@ -250,48 +297,9 @@ export function GlbViewer({ url, index = 0 }: GlbViewerProps) {
         rendererRef.current = null;
       }
     };
-  }, [modelUrl, index]);
-
-  // 로딩 표시기 렌더링
-  const renderLoadingIndicator = () => {
-    if (isLoading || modelLoading) {
-      return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-70 z-10">
-          {/* 로딩 스피너 */}
-          <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-
-          {/* 진행률 표시 (옵션) */}
-          {progress > 0 && progress < 100 && (
-            <div className="mt-2 w-24 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-500" style={{ width: `${progress}%` }}></div>
-            </div>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  // 에러 표시기 렌더링
-  const renderErrorIndicator = () => {
-    if (error) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-70 z-10">
-          <p className="text-red-500 p-4 rounded">모델을 불러올 수 없습니다: {error.message}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  }, [url, index]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', height: '100%', background: 'transparent' }}
-      className="relative"
-    >
-      {renderLoadingIndicator()}
-      {renderErrorIndicator()}
-    </div>
+    <div ref={containerRef} style={{ width: '100%', height: '100%', background: 'transparent' }} />
   );
 }
