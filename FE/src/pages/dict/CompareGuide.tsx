@@ -16,7 +16,7 @@ function CompareGuide() {
   const currentGestureData = gestureGuideData;
   const navigate = useNavigate();
 
-  // 로딩 상태 확인 - 로딩 페이지 구현 필요
+  // 로딩 상태 확인
   if (isLoading) {
     return <LoadingPage />;
   }
@@ -28,6 +28,13 @@ function CompareGuide() {
 
   // 제스처 의미 데이터
   const gestureMeanings = currentGestureData?.meanings || [];
+
+  // lg 이상에서는 1-2개일 때 고정 높이, 그 이상은 스크롤
+  // lg 미만에서는 항상 스크롤 가능하도록
+  const containerClass =
+    gestureMeanings.length <= 2
+      ? 'h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50 overflow-auto customScrollbar kr lg:overflow-hidden'
+      : 'min-h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50 overflow-auto customScrollbar kr';
 
   // lg인데 카드가 1개일 때 중앙 정렬
   const gridLayoutClass =
@@ -70,7 +77,7 @@ function CompareGuide() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col dark:bg-gray-900 dark:text-d-txt-50 overflow-hidden">
+    <div className={containerClass}>
       {/* 헤더 */}
       <div className="h-[10%] mb-9">
         <DictHeader title="나라별 제스처 비교 가이드" showCompareGuide={false} className="h-full" />
@@ -120,7 +127,7 @@ function CompareGuide() {
             return (
               <div
                 key={`meaning-${index}`}
-                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-[390px] mb-6"
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-400 flex flex-col w-full h-[384px]"
               >
                 {/* 국기 영역 */}
                 <div className="h-[35%] flex-none mb-8">
@@ -153,7 +160,7 @@ function CompareGuide() {
                     </div>
 
                     {/* 사용 상황 */}
-                    <div className="flex flex-col mt-1">
+                    <div className="flex flex-col mt-0.5">
                       <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4">
                         사용 상황
                       </p>
