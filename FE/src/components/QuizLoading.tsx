@@ -6,10 +6,9 @@ interface LoadingPageProps {
   minDuration?: number; // 최소 표시 시간
   size?: number; // 애니메이션 크기
   onComplete?: () => void; // 완료 콜백
-  index?: number; // 문제 인덱스
 }
 
-function LoadingPage({ minDuration = 1000, size = 200, onComplete, index = 0 }: LoadingPageProps) {
+function LoadingPage({ minDuration = 1000, size = 200, onComplete }: LoadingPageProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onComplete) onComplete();
@@ -32,7 +31,7 @@ function LoadingPage({ minDuration = 1000, size = 200, onComplete, index = 0 }: 
           style={{ width: size, height: size }}
         />
         <p className="mt-10 text-[40px] font-[DNFBitBitv2] text-black dark:text-d-txt-50">
-          {index}번째 문제 도전!
+          퀴즈로 이동 중...
         </p>
       </div>
     </div>
