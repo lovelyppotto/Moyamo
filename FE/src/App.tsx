@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -15,6 +16,7 @@ import ModeToggle from './components/ModeToggle';
 import OfflineIndicator from './components/OfflineIndicator';
 import './pwa';
 import ErrorPage from './components/ErrorPage';
+import { getHandLandmarker } from './utils/handLandmarkerSingleton';
 
 const router = createBrowserRouter([
   {
@@ -92,6 +94,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  useEffect(() => {
+    // 앱 로드 시 모델 미리 로딩
+    getHandLandmarker().then(() => {
+      console.log("HandLandmarker 미리 로딩 완료");
+    });
+  }, []);
+
   return (
     <div className="h-[100dvh] overflow-hidden relative">
       <Toaster />
