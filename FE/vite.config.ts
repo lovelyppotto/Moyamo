@@ -66,7 +66,8 @@ export default defineConfig({
       workbox: {
         // 모든 앱 자산 캐싱
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,json,woff,woff2}'],
-
+        clientsClaim: true, 
+        skipWaiting: true,
         // 오프라인 페이지 설정
         // navigateFallback: '/offline.html',
         
