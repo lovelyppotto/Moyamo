@@ -20,7 +20,6 @@ app.add_middleware(
 dynamic_label_classes = np.load("models/label_classes_dynamic_v2.npy")
 static_label_classes = np.load("models/label_classes_mk3.npy")
 
-# ✅ 변경: h5 모델 로드
 dynamic_model = load_model("models/dynamic_gesture_lstm_v3.h5")
 static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
 static_interpreter.allocate_tensors()
@@ -51,7 +50,6 @@ def get_majority_vote(predictions: List[str]):
     confidence = count / len(predictions) * 100
     return most_common_label, round(confidence, 2)
 
-# ✅ 변경: h5 모델 기반 추론
 def predict_dynamic(input_vector: np.ndarray):
     if input_vector.shape[1] > 50:
         input_vector = input_vector[:, -50:, :]
@@ -71,7 +69,7 @@ def predict_static(input_vector: np.ndarray):
 
 @app.post("/dynamic")
 async def dynamic_api(req: DynamicRequest):
-    if len(req.frames) <= 50 or len(req.frames[0]) != 64:
+    if len(req.frames) < 50 or len(req.frames[0]) != 64:
         raise HTTPException(status_code=400, detail="Expected shape: (90, 64)")
     input_seq = np.array(req.frames).reshape(1, len(req.frames), 64)
     label, confidence = predict_dynamic(input_seq)
