@@ -33,7 +33,7 @@ const DictCountrySelector = memo(
 
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[220px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer dark:bg-gray-500 dark:text-d-txt-50">
+        <DropdownMenuTrigger className="flex justify-center items-center gap-3 max-w-[250px] h-16 px-4 py-2 bg-white focus:outline-none cursor-pointer dark:bg-gray-500 dark:text-d-txt-50">
           <div className="flex items-center w-full justify-center">
             <img
               src={getFlagImage(selectedCountry.code)}
