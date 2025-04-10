@@ -20,6 +20,13 @@ export const useSearchNavigation = (setSelectedCountryName: (name: string) => vo
     const gestureLabel = params.get('gesture_label') || '';
     const countryParam = params.get('country_id');
 
+    // URL의 검색어가 너무 길면 에러 페이지로 리다이렉트
+    if ((gestureName.length > 1000) || (gestureLabel.length > 1000)) {
+      console.warn('URL 파라미터의 검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+
     // URL에 아무 검색어도 없는 경우 초기화
     if (!params.has('gesture_name') && !params.has('gesture_label')) {
       resetSearchTerm();
@@ -48,10 +55,18 @@ export const useSearchNavigation = (setSelectedCountryName: (name: string) => vo
     resetSearchTerm,
     queryClient,
     setSelectedCountryName,
+    navigate
   ]);
 
   // 검색 처리 (일반 검색 버튼 클릭 시)
   const handleSearch = () => {
+    // 검색어 길이 제한 검사
+    if (searchTerm.length > 1000) {
+      console.warn('검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+
     if (!searchTerm.trim()) {
       const params = new URLSearchParams();
       if (searchCountry !== 0) {
@@ -71,6 +86,13 @@ export const useSearchNavigation = (setSelectedCountryName: (name: string) => vo
 
   // 입력 변경 시 URL 업데이트
   const updateUrlOnInputChange = (newValue: string) => {
+    // 검색어 길이 제한 검사
+    if (newValue.length > 1000) {
+      console.warn('검색어가 너무 깁니다.');
+      navigate('/url-error', { replace: true });
+      return;
+    }
+
     // 현재 URL 파라미터 가져오기
     const params = new URLSearchParams(location.search);
     const hasGestureLabel = params.has('gesture_label');

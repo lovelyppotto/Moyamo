@@ -11,19 +11,24 @@ interface DictListCarouselProps {
   gestures?: GestureItem[];
   onSelectGesture?: (gestureId: number) => void;
   selectedCountry?: string;
+  selectedGestureId?: number; // 현재 선택된 제스처 ID 추가
 }
 
 export function DictListCarousel({
   gestures = [],
   onSelectGesture,
   selectedCountry,
+  selectedGestureId, // 선택된 제스처 ID 받기
 }: DictListCarouselProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  const { getHoverBorderClass } = useCountryStyles();
+  const { getHoverBorderClass, getBorderColorClass } = useCountryStyles();
 
   // 현재 보이는 카드 인덱스 범위
   const [visibleIndexes, setVisibleIndexes] = useState<number[]>([]);
+  // 스크롤 위치 상태 추가
+  const [isAtStart, setIsAtStart] = useState<boolean>(true);
+  const [isAtEnd, setIsAtEnd] = useState<boolean>(false);
 
   // 초기에 처음 보이는 카드들 로드 (기본으로 0, 1, 2 인덱스)
   useEffect(() => {
@@ -42,7 +47,61 @@ export function DictListCarousel({
       initialVisible.push(i);
     }
     setVisibleIndexes(initialVisible);
-  }, [gestures.length]);
+
+    // 선택된 제스처로 스크롤 (약간의 지연을 두어 컴포넌트가 렌더링된 후 실행)
+    if (selectedGestureId && scrollRef.current) {
+      setTimeout(() => {
+        scrollToSelectedGesture();
+      }, 100);
+    }
+
+    // 초기 스크롤 상태 설정
+    setIsAtStart(true);
+    setIsAtEnd(gestures.length <= visibleCount);
+  }, [gestures.length, selectedGestureId]);
+
+  // 선택된 제스처로 스크롤하는 함수
+  const scrollToSelectedGesture = () => {
+    if (!scrollRef.current || !selectedGestureId) return;
+
+    // 선택된 제스처의 인덱스 찾기
+    const selectedIndex = gestures.findIndex((g) => g.gestureId === selectedGestureId);
+    if (selectedIndex === -1) return;
+
+    // 카드 너비 계산
+    const containerWidth = scrollRef.current.clientWidth;
+    let cardWidth = containerWidth / 2; // 기본값: 화면의 절반
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 1024) {
+      cardWidth = containerWidth / 3;
+    } else {
+      cardWidth = containerWidth / 2;
+    }
+
+    // 선택된 제스처가 맨 앞에 오도록 스크롤 위치 계산
+    const scrollPosition = selectedIndex * cardWidth;
+    scrollRef.current.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+
+    // 스크롤 후 보이는 카드 업데이트
+    setTimeout(() => {
+      updateVisibleCards();
+      updateScrollPosition();
+    }, 500);
+  };
+
+  // 스크롤 위치 확인 함수 추가
+  const updateScrollPosition = () => {
+    if (!scrollRef.current) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+
+    // 시작 위치인지 확인 (좌측 끝)
+    setIsAtStart(scrollLeft <= 10);
+
+    // 끝 위치인지 확인 (우측 끝)
+    setIsAtEnd(Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 10);
+  };
 
   // 스크롤 위치에 따라 보이는 카드 업데이트
   const updateVisibleCards = () => {
@@ -87,6 +146,9 @@ export function DictListCarousel({
       const combined = [...new Set([...prev, ...newVisibleIndexes])];
       return combined;
     });
+
+    // 스크롤 위치 업데이트
+    updateScrollPosition();
   };
 
   // 왼쪽으로 스크롤
@@ -108,7 +170,10 @@ export function DictListCarousel({
       scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
 
       // 스크롤 완료 후 보이는 카드 업데이트
-      setTimeout(updateVisibleCards, 500);
+      setTimeout(() => {
+        updateVisibleCards();
+        updateScrollPosition();
+      }, 500);
     }
   };
 
@@ -131,7 +196,10 @@ export function DictListCarousel({
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 
       // 스크롤 완료 후 보이는 카드 업데이트
-      setTimeout(updateVisibleCards, 500);
+      setTimeout(() => {
+        updateVisibleCards();
+        updateScrollPosition();
+      }, 500);
     }
   };
 
@@ -139,9 +207,14 @@ export function DictListCarousel({
   useEffect(() => {
     const scrollElement = scrollRef.current;
     if (scrollElement) {
-      scrollElement.addEventListener('scroll', updateVisibleCards);
+      const handleScroll = () => {
+        updateVisibleCards();
+        updateScrollPosition();
+      };
+
+      scrollElement.addEventListener('scroll', handleScroll);
       // 초기 로드 시 보이는 카드 업데이트
-      updateVisibleCards();
+      handleScroll();
     }
 
     return () => {
@@ -158,22 +231,19 @@ export function DictListCarousel({
     }
   };
 
-  const getBorderClass = (countryCode?: string) => {
-    const hoverClass = getHoverBorderClass(countryCode);
-    return hoverClass.replace('hover:', '');
-  };
-
   return (
     <div className="w-full h-full flex justify-center font-[NanumSquareRound]">
       <div ref={containerRef} className="w-full h-full flex items-center relative px-6">
-        {/* 이전 버튼 */}
-        <button
-          onClick={scrollToPrev}
-          className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
-          aria-label="이전"
-        >
-          <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3 sm:w-4 sm:h-4" />
-        </button>
+        {/* 이전 버튼 - 시작 위치가 아닐 때만 표시 */}
+        {!isAtStart && (
+          <button
+            onClick={scrollToPrev}
+            className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
+            aria-label="이전"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3 sm:w-4 sm:h-4" />
+          </button>
+        )}
 
         {/* 카드 컨테이너 */}
         <div
@@ -194,21 +264,25 @@ export function DictListCarousel({
               <DictGestureCard
                 gesture={gesture}
                 onClick={() => handleGestureClick(gesture.gestureId)}
-                hoverBorderClass={`hover:${getBorderClass(selectedCountry)}`}
+                hoverBorderClass={getHoverBorderClass(selectedCountry)}
                 isVisible={visibleIndexes.includes(index)} // 현재 보이는지 여부 전달
+                isSelected={gesture.gestureId === selectedGestureId} // 선택된 제스처인지 전달
+                selectedBorderClass={getBorderColorClass(selectedCountry)} // 선택된 테두리 클래스 전달
               />
             </div>
           ))}
         </div>
 
-        {/* 다음 버튼 */}
-        <button
-          onClick={scrollToNext}
-          className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
-          aria-label="다음"
-        >
-          <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 sm:w-4 sm:h-4" />
-        </button>
+        {/* 다음 버튼 - 끝 위치가 아닐 때만 표시 */}
+        {!isAtEnd && (
+          <button
+            onClick={scrollToNext}
+            className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 bg-white rounded-full shadow-md text-gray-600 cursor-pointer"
+            aria-label="다음"
+          >
+            <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 sm:w-4 sm:h-4" />
+          </button>
+        )}
       </div>
     </div>
   );

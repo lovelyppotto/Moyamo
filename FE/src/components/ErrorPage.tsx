@@ -8,7 +8,6 @@ function ErrorPage() {
   // URL에서 에러 코드와 메시지 가져오기
   const searchParams = new URLSearchParams(location.search);
   const errorCode = searchParams.get('code') || '404';
-  const errorMessage = searchParams.get('message') || '';
   
   // 경로에 따른 에러 유형 결정
   const is414Error = location.pathname === '/url-error' || errorCode === '414';
@@ -37,13 +36,13 @@ function ErrorPage() {
         <div className="sliding-text-container">
           <div className="sliding-text sliding-text-very-slow">
             {is414Error 
-              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG' 
-              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND'} 
+              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ' 
+              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND '} 
           </div>
           <div className="sliding-text sliding-text-very-slow">
             {is414Error 
-              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG' 
-              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND'} 
+              ? 'ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ERROR 414 URL TOO LONG ' 
+              : 'PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND PAGE 404 NOT FOUND '} 
           </div>
         </div>
       </div>
@@ -60,18 +59,24 @@ function ErrorPage() {
         
         <div className="select-none flex flex-row gap-6 sm:gap-8 lg:gap-10">
           <button
-            className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700 text-white dark:text-d-txt-50 
-            px-5 py-2 md:px-12 md:py-4 rounded-full text-sm md:text-base lg:text-2xl cursor-pointer"
+            className={`${
+              is414Error
+                ? 'bg-us-500 hover:bg-us-600 dark:bg-us-400 dark:hover:bg-us-500'
+                : 'bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700'
+            } text-white dark:text-d-txt-50 px-5 py-2 md:px-12 md:py-4 rounded-full text-sm md:text-base lg:text-2xl cursor-pointer`}
             onClick={handleHomeClick}
           >
             Home
           </button>
           <button
-            className="bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700 text-white dark:text-d-txt-50 
-            px-5 py-2 md:px-12 md:py-4 rounded-full text-sm md:text-base lg:text-2xl cursor-pointer"
+            className={`${
+              is414Error
+                ? 'bg-us-500 hover:bg-us-600 dark:bg-us-400 dark:hover:bg-us-500'
+                : 'bg-kr-600 hover:bg-kr-700 dark:bg-d-kr-600 dark:hover:bg-d-kr-700'
+            } text-white dark:text-d-txt-50 px-5 py-2 md:px-12 md:py-4 rounded-full text-sm md:text-base lg:text-2xl cursor-pointer`}
             onClick={handleBackClick}
           >
-            BACK
+            Back
           </button>
         </div>
       </div>
@@ -89,7 +94,7 @@ function ErrorPage() {
             display: inline-block;
             font-size: 120px;
             font-weight: 800;
-            color: ${is414Error ? 'var(--color-orange-500, #FF9800)' : 'var(--color-kr-500, #AB50D9)'};
+            color: ${is414Error ? 'var(--color-us-500, #FF9800)' : 'var(--color-kr-500, #AB50D9)'};
             opacity: 0.3;
             padding-left: 0;
             text-transform: uppercase;

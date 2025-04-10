@@ -33,6 +33,9 @@ const GesturePracticeCamera = ({
   // 추가: 제스처 처리 중 상태
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // resetSequence 함수 참조 추가
+  const resetSequenceRef = useRef<(() => void) | null>(null);
+
   // 컨테이너 참조
   const containerRef = useRef<HTMLDivElement>(null);
   const correctTimeRef = useRef<NodeJS.Timeout | null>(null);
@@ -53,12 +56,20 @@ const GesturePracticeCamera = ({
     }
   }, []);
 
-  // 추가: 인식 시작 함수
+  // 추가: 인식 시작 함수 - resetSequence 호출 추가
   const startGestureRecognition = useCallback(() => {
     setCameraActive(true);
     setShowGuideline(true);
     setIsProcessing(false);
     setFeedbackMessage('');
+
+    // resetSequence 함수가 있으면 호출
+    if (resetSequenceRef.current) {
+      console.log('[🔄 제스처 인식 초기화] 시퀀스 리셋');
+      resetSequenceRef.current();
+    } else {
+      console.log('[⚠️ 경고] resetSequenceRef.current가 null입니다.');
+    }
   }, []);
 
   const handleGesture = useCallback(
@@ -103,6 +114,12 @@ const GesturePracticeCamera = ({
         // 화면에 배경 어둡게 하기 위해 isProcessing 설정
         setIsProcessing(true);
         setFeedbackMessage('다시 시도해주세요.');
+
+        // 시퀀스 리셋 추가
+        if (resetSequenceRef.current) {
+          console.log('[🔄 오답 후 시퀀스 리셋]');
+          resetSequenceRef.current();
+        }
 
         // 2초 후 다시 인식 시작
         clearAllTimers();
@@ -150,6 +167,7 @@ const GesturePracticeCamera = ({
               onGesture={handleGesture}
               showGuideline={showGuideline}
               gestureType={normalizedGestureType as 'STATIC' | 'DYNAMIC'} // 타입 변환
+              resetSequenceRef={resetSequenceRef} // 참조 전달
             />
 
             {/* 피드백 메시지가 있고 처리 중일 때 살짝 어두운 오버레이 추가 */}

@@ -17,6 +17,7 @@ interface TypedWebCameraProps {
   onHandDetected?: (detected: boolean) => void;
   // 제스처 타입 prop
   gestureType: 'STATIC' | 'DYNAMIC';
+  resetSequenceRef?: React.MutableRefObject<(() => void) | null>;
 }
 
 const TypedWebCamera = ({
@@ -28,6 +29,7 @@ const TypedWebCamera = ({
   showGuideline = true,
   onHandDetected,
   gestureType = 'STATIC',
+  resetSequenceRef,
 }: TypedWebCameraProps) => {
   // HandLandmarker 훅 사용
   const { isLoading, error, detectFrame, HAND_CONNECTIONS, drawLandmarks, drawConnectors } =
@@ -42,6 +44,7 @@ const TypedWebCamera = ({
     connect: connectApi,
     disconnect: disconnectApi,
     resetSequence,
+    startCollectingFrames, // 새로 추가된 메서드 사용
   } = useTypedGestureApi({ gestureType }); // 제스처 타입만 전달
 
   // 컴포넌트 상태 및 참조
@@ -49,6 +52,14 @@ const TypedWebCamera = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+
+  // resetSequence 함수를 외부에서 접근할 수 있도록 참조에 저장
+  useEffect(() => {
+    if (resetSequenceRef) {
+      resetSequenceRef.current = resetSequence;
+      console.log('[🔄 resetSequence 함수 참조 설정됨]');
+    }
+  }, [resetSequence, resetSequenceRef]);
 
   // API 연결 상태 콜백
   useEffect(() => {
@@ -59,11 +70,17 @@ const TypedWebCamera = ({
 
   // API 상태 관리 - 별도 useEffect로 분리
   useEffect(() => {
+    console.log(`[🌐 API 상태] isPaused: ${isPaused}, apiStatus: ${apiStatus}`);
     // isPaused가 false일 때만 API 연결
     if (!isPaused && apiStatus === 'closed') {
       console.log('[🌐 API 연결 시작]');
-      resetSequence(); // 시퀀스 초기화 후 연결 시작
-      connectApi();
+      resetSequence(); // 시퀀스 초기화
+      connectApi(); // 연결 시작 (내부적으로 startCollectingFrames 호출)
+    }
+    // isPaused가 false이고 이미 API가 연결되어 있으면 프레임 수집 시작
+    else if (!isPaused && apiStatus === 'open') {
+      console.log('[🎬 프레임 수집 시작]');
+      startCollectingFrames(); // 명시적으로 프레임 수집 시작
     }
     // isPaused가 true일 때 API 연결 해제
     else if (isPaused && apiStatus === 'open') {
@@ -79,7 +96,7 @@ const TypedWebCamera = ({
         resetSequence(); // 연결 해제 시 시퀀스 초기화
       }
     };
-  }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence]);
+  }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence, startCollectingFrames]);
 
   // 제스처 정보가 변경될 때만 이벤트 발행
   useEffect(() => {
@@ -202,7 +219,7 @@ const TypedWebCamera = ({
       );
 
       // API 통신 (isPaused가 false일 때만)
-      if (handDetected && !isPaused) {
+      if (handDetected && !isPaused && apiStatus === 'open') {
         // API로 랜드마크 전송 (수집 여부는 useGestureHttpApi 내부에서 처리)
         sendLandmarks(results.landmarks);
       }
@@ -212,7 +229,7 @@ const TypedWebCamera = ({
 
     // 항상 다음 프레임 요청
     animationRef.current = requestAnimationFrame(predictWebcam);
-  }, [detectFrame, sendLandmarks, isPaused, drawCanvas, onHandDetected]);
+  }, [detectFrame, sendLandmarks, isPaused, apiStatus, drawCanvas, onHandDetected]);
 
   // 애니메이션 프레임 관리 - 분리된 useEffect로 처리
   useEffect(() => {

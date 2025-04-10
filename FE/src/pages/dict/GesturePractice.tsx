@@ -10,6 +10,7 @@ function GesturePractice() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showCamera, setShowCamera] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const { gesture } = location.state || [];
 
   const getImageUrl = () => {
@@ -34,8 +35,20 @@ function GesturePractice() {
   }, [gesture, navigate]);
 
   // 카메라 버튼 클릭 시 카메라로 전환
-  const toggleScreen = useCallback(() => {
-    setShowCamera(true);
+  const toggleScreen = useCallback(async () => {
+    try {
+      // 카메라 권한 요청
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // 권한이 허용되면 카메라 표시
+      setShowCamera(true);
+      setPermissionDenied(false);
+      // 스트림 해제 (여기서는 불필요, GesturePracticeCamera에서 새 스트림을 생성할 것이기 때문)
+      stream.getTracks().forEach((track) => track.stop());
+    } catch (error) {
+      console.error('카메라 접근 권한 오류:', error);
+      // 권한이 거부되면 알림 표시
+      setPermissionDenied(true);
+    }
   }, []);
 
   return (
@@ -43,16 +56,29 @@ function GesturePractice() {
       {/* 헤더 */}
       <DictHeader title="연습하기" className="" />
 
-      {/* 간단한 설명 */}
+      {/* 간단한 설명 또는 카메라 권한 거부 알림 */}
       <div
         className="font-[NanumSquareRoundB] text-[16px] sm:text-[18px] lg:text-[24px] pt-2 pb-1 px-4
-        lg: mt-2 lg:pt-5 text-center flex justify-center items-center"
+        lg:mt-2 lg:pt-5 text-center flex flex-col justify-center items-center"
       >
-        <span>제스처를 정확히 따라하면 화면에&nbsp;</span>
-        <span className="text-fern-400 font-[NanumSquareRoundEB] sm:text-[22px] lg:text-[28px]">
-          O
-        </span>
-        <span>가 표시됩니다.</span>
+        {!permissionDenied ? (
+          // 기존 설명 메시지
+          <div className="flex justify-center items-center">
+            <span>제스처를 정확히 따라하면 화면에&nbsp;</span>
+            <span className="text-fern-400 font-[NanumSquareRoundEB] sm:text-[22px] lg:text-[28px]">
+              O
+            </span>
+            <span>가 표시됩니다.</span>
+          </div>
+        ) : (
+          // 권한 거부 알림
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg w-full">
+            <p className="font-[NanumSquareRoundB] text-center text-[14px] sm:text-[16px] lg:text-[18px]">
+              <strong>알림:</strong> 카메라 사용 권한이 차단되었습니다. 브라우저 설정에서 카메라
+              접근을 허용해주세요.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 메인 컨텐츠 */}

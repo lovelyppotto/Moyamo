@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useGestureHttpApi, ApiStatus } from '@/hooks/useGestureHttpApi';
 
-// 훅의 반환 타입 (원래 훅과 동일하게 유지)
+// 훅의 반환 타입 (startCollectingFrames 함수 추가)
 interface UseTypedGestureApiReturn {
   status: ApiStatus;
   gesture: string | null;
@@ -10,7 +10,7 @@ interface UseTypedGestureApiReturn {
   connect: () => void;
   disconnect: () => void;
   resetSequence: () => void;
-  
+  startCollectingFrames: () => void; // 이 함수를 반환값에 추가
 }
 
 // 훅 파라미터 타입
@@ -39,7 +39,7 @@ export const useTypedGestureApi = ({
 
   // 훅이 마운트될 때 한 번만 실행
   useEffect(() => {
-    // console.log(`[🔧 제스처 타입 초기화] 타입: ${gestureType}`);
+    console.log(`[🔧 제스처 타입 초기화] 타입: ${gestureType}`);
 
     // 원래 fetch 함수 백업
     const originalFetch = window.fetch;
@@ -61,18 +61,18 @@ export const useTypedGestureApi = ({
             static: prev.static + 1,
           }));
           console.log(`[🔍 원본 API 요청] static API 호출 감지 (타입: ${gestureType})`);
-          // console.log(
-          //   `[📊 API 요청 통계] static: ${apiRequestCount.static + 1}, dynamic: ${apiRequestCount.dynamic}`
-          // );
+          console.log(
+            `[📊 API 요청 통계] static: ${apiRequestCount.static + 1}, dynamic: ${apiRequestCount.dynamic}`
+          );
         } else if (url.includes('/api/predict/dynamic')) {
           setApiRequestCount((prev) => ({
             ...prev,
             dynamic: prev.dynamic + 1,
           }));
           console.log(`[🔍 원본 API 요청] dynamic API 호출 감지 (타입: ${gestureType})`);
-          // console.log(
-          //   `[📊 API 요청 통계] static: ${apiRequestCount.static}, dynamic: ${apiRequestCount.dynamic + 1}`
-          // );
+          console.log(
+            `[📊 API 요청 통계] static: ${apiRequestCount.static}, dynamic: ${apiRequestCount.dynamic + 1}`
+          );
         }
 
         // 제스처 타입에 맞게 API 엔드포인트 수정
@@ -81,20 +81,20 @@ export const useTypedGestureApi = ({
         // 타입이 STATIC인데 dynamic 엔드포인트를 호출하려는 경우
         if (gestureType === 'STATIC' && url.includes('/api/predict/dynamic')) {
           newUrl = url.replace('/api/predict/dynamic', '/api/predict/static');
-          console.log(`[🔄 API 경로 변경] dynamic -> static (${newUrl})`);
+          // console.log(`[🔄 API 경로 변경] dynamic -> static (${newUrl})`);
         }
         // 타입이 DYNAMIC인데 static 엔드포인트를 호출하려는 경우
         else if (gestureType === 'DYNAMIC' && url.includes('/api/predict/static')) {
           newUrl = url.replace('/api/predict/static', '/api/predict/dynamic');
-          console.log(`[🔄 API 경로 변경] static -> dynamic (${newUrl})`);
+          // console.log(`[🔄 API 경로 변경] static -> dynamic (${newUrl})`);
         }
 
         // URL이 변경되었는지 확인하고 로그 출력
-        if (url !== newUrl) {
-          console.log(`[🎯 최종 API 요청] ${newUrl} (원본: ${url})`);
-        } else {
-          console.log(`[🎯 최종 API 요청] ${url} (변경 없음)`);
-        }
+        // if (url !== newUrl) {
+        //   console.log(`[🎯 최종 API 요청] ${newUrl} (원본: ${url})`);
+        // } else {
+        //   console.log(`[🎯 최종 API 요청] ${url} (변경 없음)`);
+        // }
 
         // 변경된 URL로 요청
         return originalFetch(newUrl, init);
@@ -113,21 +113,31 @@ export const useTypedGestureApi = ({
 
   // 원본 훅의 resetSequence 함수를 확장
   const resetSequence = useCallback(() => {
-    console.log('[🔄 제스처 시퀀스] 초기화');
+    console.log(`[🔄 제스처 시퀀스] 초기화 (타입: ${gestureType})`);
     originalHook.resetSequence();
-  }, [originalHook]);
+  }, [originalHook, gestureType]);
 
-  // 원본 훅의 connect 함수를 확장하여 로깅 추가
+  // 원본 훅의 connect 함수를 확장하여 로깅 추가 및 자동으로 프레임 수집 시작
   const connect = useCallback(() => {
-    // console.log(`[🌐 제스처 API] 연결 시작 (타입: ${gestureType})`);
+    console.log(`[🌐 제스처 API] 연결 시작 (타입: ${gestureType})`);
     originalHook.connect();
+
+    // 연결 시 자동으로 프레임 수집 시작 - 이 부분이 중요합니다!
+    console.log('[🌐 제스처 API] 자동으로 프레임 수집 시작');
+    originalHook.startCollectingFrames();
   }, [originalHook, gestureType]);
 
   // 연결 해제 함수도 확장
   const disconnect = useCallback(() => {
-    // console.log('[🌐 제스처 API] 연결 종료');
+    console.log('[🌐 제스처 API] 연결 종료');
     originalHook.disconnect();
   }, [originalHook]);
+
+  // 프레임 수집 시작 함수 추가 - 이 부분이 중요합니다!
+  const startCollectingFrames = useCallback(() => {
+    console.log(`[🎬 제스처 프레임 수집] 시작 (타입: ${gestureType})`);
+    originalHook.startCollectingFrames();
+  }, [originalHook, gestureType]);
 
   // 랜드마크 전송 함수 래핑
   const sendLandmarks = useCallback(
@@ -150,5 +160,6 @@ export const useTypedGestureApi = ({
     connect,
     disconnect,
     resetSequence,
+    startCollectingFrames, // 이 함수를 반환값에 추가
   };
 };

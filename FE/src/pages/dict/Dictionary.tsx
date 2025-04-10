@@ -27,9 +27,6 @@ function Dictionary() {
     { code: 'it', name: '이탈리아', id: 5 },
   ];
 
-  // 로딩페이지 관련
-  // const [showContent, setShowContent] = useState(false);
-
   // URL 파라미터에서 국가 ID 가져오기
   const initialCountry = countryIdParam
     ? countryOptions.find((country) => country.id === parseInt(countryIdParam)) || countryOptions[0]
@@ -37,17 +34,16 @@ function Dictionary() {
 
   const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
-  const [shuffledGestures, setShuffledGestures] = useState<any[]>([]); // 셔플된 제스처 목록 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
 
-  // 로딩페이지
-  // useEffect(() => {
-  //   if (!isLoading && gestureData && !showContent) {
-  //     // 데이터가 로드되었지만 로딩 화면을 계속 표시
-  //   }
-  // }, [isLoading, gestureData, showContent]);
+  // 에러 상태를 useEffect에서 처리
+  useEffect(() => {
+    if (isError || (gestureData === undefined && !isLoading)) {
+      navigate('/error');
+    }
+  }, [isError, gestureData, isLoading, navigate]);
 
   // 유효성 검사
   useEffect(() => {
@@ -60,71 +56,47 @@ function Dictionary() {
     }
   }, [countryIdParam, navigate]); // 의존성 배열에 navigate 추가
 
-  // 제스처 데이터 섞기 및 초기 선택 제스처 설정
+  // 제스처 데이터 초기 선택 설정
   useEffect(() => {
     if (gestureData?.gestures && gestureData.gestures.length > 0) {
-      // 로컬 스토리지 키 생성
-      const storageKey = `shuffledGestures_${selectedCountry.id}`;
+      // 세션 스토리지에서 이전에 선택된 제스처를 확인
       const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
+      const storedSelectedGesture = sessionStorage.getItem(selectedGestureKey);
 
-      // 로컬 스토리지에서 해당 국가의 셔플된 제스처 배열과 이전에 선택된 제스처를 확인
-      const storedGestures = localStorage.getItem(storageKey);
-      const storedSelectedGesture = localStorage.getItem(selectedGestureKey);
+      if (storedSelectedGesture) {
+        const parsedGestureId = parseInt(storedSelectedGesture);
+        // 해당 제스처가 현재 배열에 존재하는지 확인
+        const gestureExists = gestureData.gestures.some(
+          (g) => g && typeof g === 'object' && 'gestureId' in g && g.gestureId === parsedGestureId
+        );
 
-      if (storedGestures) {
-        // 저장된 셔플 배열이 있으면 사용
-        const parsedGestures = JSON.parse(storedGestures);
-        setShuffledGestures(parsedGestures);
-
-        // 이전에 선택된 제스처 ID가 저장되어 있으면 사용
-        if (storedSelectedGesture) {
-          const parsedGestureId = parseInt(storedSelectedGesture);
-          // 해당 제스처가 현재 배열에 존재하는지 확인
-          const gestureExists =
-            Array.isArray(parsedGestures) &&
-            parsedGestures.some(
-              (g) =>
-                g && typeof g === 'object' && 'gestureId' in g && g.gestureId === parsedGestureId
-            );
-          if (gestureExists) {
-            setSelectedGesture(parsedGestureId);
-          } else if (parsedGestures.length > 0) {
-            // 존재하지 않으면 첫 번째 제스처 선택
-            setSelectedGesture(parsedGestures[0].gestureId);
-          }
-        } else if (parsedGestures.length > 0) {
-          // 저장된 선택 제스처가 없으면 첫 번째 제스처 선택
-          setSelectedGesture(parsedGestures[0].gestureId);
+        if (gestureExists) {
+          setSelectedGesture(parsedGestureId);
+        } else {
+          // 존재하지 않으면 첫 번째 제스처 선택
+          setSelectedGesture(gestureData.gestures[0].gestureId);
         }
       } else {
-        // 저장된 셔플 배열이 없으면 새로 생성
-        const newShuffledGestures = [...gestureData.gestures];
-
-        // Fisher-Yates 셔플 알고리즘
-        for (let i = newShuffledGestures.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [newShuffledGestures[i], newShuffledGestures[j]] = [
-            newShuffledGestures[j],
-            newShuffledGestures[i],
-          ];
-        }
-
-        // 셔플된 배열을 상태와 로컬 스토리지에 저장
-        setShuffledGestures(newShuffledGestures);
-        localStorage.setItem(storageKey, JSON.stringify(newShuffledGestures));
-
-        // 첫번째 제스처를 선택하고 저장
-        if (newShuffledGestures.length > 0) {
-          const initialGestureId = newShuffledGestures[0].gestureId;
-          setSelectedGesture(initialGestureId);
-          localStorage.setItem(selectedGestureKey, initialGestureId.toString());
-        }
+        // 저장된 선택 제스처가 없으면 첫 번째 제스처 선택
+        setSelectedGesture(gestureData.gestures[0].gestureId);
       }
     }
   }, [gestureData, selectedCountry.id]);
 
+  useEffect(() => {
+    const currentPath = location.pathname;
+
+    return () => {
+      // 현재 /dictionary 경로인지 확인하고, 컴포넌트 언마운트 시 다른 경로로 이동하는지 확인
+      if (currentPath.includes('/dictionary')) {
+        const key = `selectedGesture_${selectedCountry.id}`;
+        sessionStorage.removeItem(key);
+      }
+    };
+  }, [location.pathname, selectedCountry.id]);
+
   // 현재 제스처 목록
-  const currentGestures = shuffledGestures;
+  const currentGestures = gestureData?.gestures || [];
 
   // 현재 선택된 제스처
   const currentGesture =
@@ -134,9 +106,9 @@ function Dictionary() {
   // 제스처 선택 핸들러
   const handleSelectGesture = (gestureId: number) => {
     setSelectedGesture(gestureId);
-    // 선택한 제스처를 로컬 스토리지에 저장
+    // 선택한 제스처를 세션 스토리지에 저장
     const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
-    localStorage.setItem(selectedGestureKey, gestureId.toString());
+    sessionStorage.setItem(selectedGestureKey, gestureId.toString());
   };
 
   // 국가 선택 핸들러
@@ -210,14 +182,9 @@ function Dictionary() {
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 
-  // 로딩 상태 확인
-  // if (isLoading || !showContent) {
-  //   return <LoadingPage onComplete={() => setShowContent(true)} />;
-  // }
-
-  // 에러 상태 확인
-  if (isError || !gestureData) {
-    navigate('/error');
+  // 로딩 상태 체크
+  if (isLoading) {
+    return <LoadingPage minDuration={2000} />;
   }
 
   return (
@@ -274,6 +241,7 @@ function Dictionary() {
             gestures={currentGestures}
             onSelectGesture={handleSelectGesture}
             selectedCountry={selectedCountry.code}
+            selectedGestureId={selectedGesture}
           />
         </div>
       </div>

@@ -74,6 +74,13 @@ export const searchGestures = async (
     return [];
   }
 
+  // 검색어 길이 제한 검사 (1000자 초과 시 414 에러 페이지로 리다이렉트)
+  if (searchQuery.length > 1000) {
+    console.warn('검색어가 너무 깁니다. 검색을 수행하지 않습니다.');
+    window.location.href = '/url-error';
+    return [];
+  }
+
   // 목 데이터 사용 여부 확인
   if (useMockData()) {
     console.log(
