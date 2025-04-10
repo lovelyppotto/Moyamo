@@ -9,7 +9,6 @@ import { getCompareGuide } from '@/services/dictCompareService';
 
 import { getTips } from '@/services/tipService';
 
-// 제스처 검색
 export function useGestureSearch(
   searchTerm: string,
   countryId?: number,
@@ -25,6 +24,13 @@ export function useGestureSearch(
   // 일반 검색어 확인
   const gestureName = params.get('gesture_name') || '';
   const isInCameraSearchPath = location.pathname === '/search/camera';
+
+  // URL에서 국가 ID 확인
+  const urlCountryId = params.get('country_id');
+  // countryId 값이 있으면 우선 사용, 없으면 URL에서 가져오기
+  const finalCountryId = countryId !== undefined && countryId !== null 
+    ? countryId 
+    : (urlCountryId ? parseInt(urlCountryId, 10) : 0);
 
   // 최종 검색어 결정 (카메라 라벨 우선, 그 다음 URL의 gesture_name, 마지막으로 state의 searchTerm)
   let finalSearchTerm = '';
@@ -46,20 +52,21 @@ export function useGestureSearch(
   const isValidQuery = !!finalSearchTerm;
 
   return useQuery({
-    // 쿼리 키에 검색 유형 포함 (일반 검색 또는 카메라 검색)
+    // 쿼리 키에 검색 유형과 국가 ID 포함
     queryKey: [
       'gestureName',
       finalSearchTerm,
-      countryId,
+      finalCountryId, // 국가 ID를 쿼리 키에 포함하여 국가 필터 변경 시 자동으로 재요청
       isGestureLabel || isInCameraSearchPath ? 'camera' : 'text',
     ],
     queryFn: () =>
-      searchGestures(finalSearchTerm, countryId, isGestureLabel || isInCameraSearchPath),
+      searchGestures(finalSearchTerm, finalCountryId, isGestureLabel || isInCameraSearchPath),
     // 검색어가 있고 enabled 옵션이 true일 때만 API 호출
     enabled: isValidQuery && options.enabled,
     staleTime: 5 * 60 * 1000,
+    // 빈 검색어일 때 빈 배열 반환
     initialData: isValidQuery ? undefined : [],
-    // 중요: 쿼리가 항상 최신 데이터를 반영하도록 설정
+    // 쿼리가 항상 최신 데이터를 반영하도록 설정
     refetchOnMount: 'always',
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
