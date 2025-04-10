@@ -4,6 +4,7 @@ import { useCompareGuide } from '../../hooks/apiHooks';
 import { MeaningItem } from '../../types/dictCompareType';
 import { GlbViewer } from '@/components/GlbViewer';
 import { useNavigate } from 'react-router-dom';
+import LoadingPage from '@/components/LoadingPage';
 
 function CompareGuide() {
   // URL 쿼리 파라미터에서 gesture_id 추출
@@ -17,11 +18,7 @@ function CompareGuide() {
 
   // 로딩 상태 확인 - 로딩 페이지 구현 필요
   if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center font-[NanumSquareRoundEB] text-[40px]">
-        로딩 중...
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   // 에러 상태 확인
@@ -149,7 +146,7 @@ function CompareGuide() {
                     </div>
 
                     {/* 사용 상황 */}
-                    <div className="flex flex-col mt-3">
+                    <div className="flex flex-col mt-1">
                       <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4">
                         사용 상황
                       </p>
