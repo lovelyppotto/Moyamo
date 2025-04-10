@@ -30,9 +30,15 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const [startProgress, setStartProgress] = useState(true); // 모든 타입에서 바로 시작하도록 변경
   const [isTimeOut, setIsTimedOut] = useState(false);
 
-  // useEffect를 제거하고 항상 프로그레스 바가 시작되도록 함
-
   function handleSelectAnswer(isCorrect: boolean | null) {
+    // 이미 처리된 경우 중복 처리 방지
+    if (answer.isCorrect !== null) {
+      console.log('이미 답변이 처리되었습니다:', answer.isCorrect);
+      return;
+    }
+
+    console.log('답변 처리:', isCorrect);
+
     // 모든 케이스(정답, 오답, 스킵)에 대해 처리
     setAnswer({
       isCorrect: isCorrect,
@@ -71,8 +77,9 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const handleSkipAnswer = useCallback((): void => {
     console.log('Skip button clicked or timer expired');
     setIsTimedOut(true);
+    
     // handleSelectAnswer를 통해 스킵 처리
-    handleSelectAnswer(null);
+    handleSelectAnswer(true);
   }, []);
 
   return (
@@ -107,7 +114,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
               <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
             </button>
           </div>
-          <div className="h-2/3 w-full overflow-x-visible  mt-[3vh]">
+          <div className="h-2/3 w-full overflow-x-visible mt-[3vh]">
             {/* form 태그 제거하고 직접 컴포넌트들 렌더링 */}
             {questionData?.type === 'MEANING' && (
               <Answers
