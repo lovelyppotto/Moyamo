@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { FrontendQuestionData } from '@/types/quizTypes';
 import Animation from './Animation.tsx';
+import QuizLoadingPage from '@/components/QuizLoading';
 
 interface ResultProps {
   Index: number;
@@ -29,6 +30,8 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
   const [startProgress, setStartProgress] = useState(true);
   const [isTimeOut, setIsTimedOut] = useState(false);
+  // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // 컴포넌트 마운트 추적
   const isMountedRef = useRef(true);
@@ -42,6 +45,40 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const animationDelayTimerRef = useRef<NodeJS.Timeout | null>(null);
   // 다음 문제로 넘어가는 타이머
   const nextQuestionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 로딩 타이머 추가
+  const loadingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 로딩 완료 핸들러
+  const handleLoadingComplete = useCallback(() => {
+    if (isMountedRef.current) {
+      setIsLoading(false);
+      console.log('[Question] 로딩 완료');
+    }
+  }, []);
+
+  // 로딩 상태 처리 함수
+  const handleLoading = useCallback((duration: number = 1500) => {
+    setIsLoading(true);
+
+    // 이전 타이머가 있다면 제거
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+    }
+
+    // 지정된 시간 후 로딩 상태 해제
+    loadingTimerRef.current = setTimeout(() => {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+        console.log('[Question] 로딩 완료');
+      }
+    }, duration);
+  }, []);
+
+  // 로딩 상태 수동으로 설정하는 함수
+  const setLoadingState = useCallback((state: boolean) => {
+    setIsLoading(state);
+    console.log(`[Question] 로딩 상태 설정: ${state}`);
+  }, []);
 
   // 컴포넌트 마운트/언마운트 처리
   useEffect(() => {
@@ -51,6 +88,9 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     timeoutProcessedRef.current = false;
     nextQuestionCalledRef.current = false;
     setIsTimedOut(false);
+
+    // 초기 로딩 시작
+    setIsLoading(true);
 
     return () => {
       console.log(`[Question] 컴포넌트 언마운트됨, 문제 인덱스: ${Index}`);
@@ -65,6 +105,12 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
       if (nextQuestionTimerRef.current) {
         clearTimeout(nextQuestionTimerRef.current);
         nextQuestionTimerRef.current = null;
+      }
+
+      // 로딩 타이머 정리 추가
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = null;
       }
     };
   }, [Index, questionData.type]);
@@ -187,6 +233,15 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
   return (
     <div className="h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
+      {/* 로딩 모달 */}
+      {isLoading && (
+        <QuizLoadingPage
+          minDuration={2000}
+          index={Index + 1} // 인덱스는 0부터 시작하므로 1을 더해 1번부터 표시
+          onComplete={handleLoadingComplete}
+        />
+      )}
+
       <div className="h-1/3">
         <Animation showCorrectImage={showCorrectImage} showWrongImage={showWrongImage} />
         {/* 진행 바, 퀴즈박스 */}
