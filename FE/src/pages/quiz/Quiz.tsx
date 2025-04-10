@@ -1,11 +1,12 @@
-import QuizResult from './QuizResult';
 import { useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import Question from './Question.tsx';
+import QuizResult from './QuizResult';
 import { useQuizQuestions } from '@/hooks/apiHooks';
 
 function Quiz() {
   const [userAnswers, setUserAnswers] = useState<(boolean | null)[]>([]);
+  const [isFirstLoad, setIsFirstLoad] = useState(true); // 첫 로딩 상태 추가
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const useCamera = queryParams.get('useCamera') === 'true';
@@ -32,6 +33,10 @@ function Quiz() {
     [quizData?.length]
   );
 
+  const handleFirstLoadComplete = useCallback(() => {
+    setIsFirstLoad(false); // 첫 로딩 완료 시 상태 업데이트
+  }, []);
+
   // 디버깅을 위한 상태 출력
   console.log('퀴즈 상태:', {
     '전체 문제 수': quizData?.length,
@@ -57,10 +62,12 @@ function Quiz() {
 
   return (
     <Question
-      key={activeQuestionIndex}
+      key={activeQuestionIndex} // 여전히 고유 key 유지
       Index={activeQuestionIndex}
       onSelectAnswer={handleSelectAnswer}
       questionData={quizData[activeQuestionIndex]}
+      isFirstLoad={isFirstLoad} // 첫 로딩 상태 전달
+      onFirstLoadComplete={handleFirstLoadComplete} // 첫 로딩 완료 콜백 전달
     />
   );
 }
