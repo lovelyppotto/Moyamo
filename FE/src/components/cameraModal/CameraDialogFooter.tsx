@@ -24,8 +24,8 @@ function CameraDialogFooter({
     if (isPreparingGesture) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{preparationCountdown}</span>초 후 인식
-          시작
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{preparationCountdown}</span>
+          초 후 인식 시작
         </span>
       );
     }
@@ -33,7 +33,16 @@ function CameraDialogFooter({
     if (isCountingDown) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{countdown}</span>초 동안 유지
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{countdown}</span>초 동안
+          유지
+        </span>
+      );
+    }
+
+    if (!isWebSocketConnected) {
+      return (
+        <span className="flex items-center font-[NanumSquareRoundB]">
+          웹캠 연결이 필요합니다...
         </span>
       );
     }
@@ -46,23 +55,30 @@ function CameraDialogFooter({
     );
   };
 
+  // 버튼 비활성화 조건: 준비 중, 카운트다운 중, 또는 웹캠 연결 안 됨
+  const isButtonDisabled = isPreparingGesture || isCountingDown || !isWebSocketConnected;
+
+  // 버튼 스타일 결정
+  const getButtonStyle = () => {
+    if (isButtonDisabled) {
+      return 'bg-gray-300 text-black cursor-not-allowed';
+    }
+    return 'bg-d-txt-50 text-black hover:bg-gray-300 cursor-pointer';
+  };
+
   return (
     <div className="w-full bg-white dark:bg-gray-700">
       <div className="">
         <button
           onClick={onCaptureClick}
-          disabled={isPreparingGesture || isCountingDown}
-          className={`flex items-center justify-center w-full py-3 rounded-b-lg ${
-            !isPreparingGesture && !isCountingDown
-              ? 'bg-d-txt-50 text-black hover:bg-gray-300 cursor-pointer'
-              : 'bg-gray-300 text-black cursor-not-allowed'
-          }`}
+          disabled={isButtonDisabled}
+          className={`flex items-center justify-center w-full py-3 rounded-b-lg ${getButtonStyle()}`}
         >
           {getButtonContent()}
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default CameraDialogFooter;
