@@ -11,7 +11,6 @@ import CameraDialogFooter from './CameraDialogFooter';
 
 // 커스텀 훅
 import { useGestureEvents } from '@/hooks/useGestureEvents';
-import { useGestureTimer } from '@/hooks/useGestureTimer';
 import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 
 // 유틸리티
@@ -38,6 +37,7 @@ declare global {
       confidence: number;
     };
     stopGestureAPI?: () => void;
+    stopWebcam?: () => void;
   }
 }
 
@@ -55,12 +55,8 @@ function SearchCameraModal() {
   // 프레임 수집 상태 ref
   const isCollectingFramesRef = useRef(false);
   
-  // 디버깅용 ref
-  const debugRef = useRef({
-    lastGuideText: '',
-    stateChanges: 0,
-    handDetected: false
-  });
+  // Dialog 컴포넌트 강제 언마운트를 위한 키
+  const [dialogKey, setDialogKey] = useState(0);
 
   // 상태 관리
   const [apiActive, setApiActive] = useState(false);
@@ -84,20 +80,14 @@ function SearchCameraModal() {
 
   // 디버깅용 가이드 텍스트 로깅
   useEffect(() => {
-    console.log(`[🔤 가이드 텍스트 변경] ${debugRef.current.lastGuideText} -> ${guideText}`);
-    debugRef.current.lastGuideText = guideText;
-    debugRef.current.stateChanges++;
+    console.log(`[🔤 가이드 텍스트 변경] ${guideText}`);
   }, [guideText]);
 
   // 손 감지 상태 추적
   useEffect(() => {
     handDetectedRef.current = handDetected;
-    debugRef.current.handDetected = handDetected;
     console.log(`[🖐️ 손 감지 상태 변경] ${handDetected}`);
   }, [handDetected]);
-
-  // 타이머 관리 훅 사용
-  const { startTimer, clearTimer, cleanupTimers } = useGestureTimer();
 
   // 모든 타이머 정리 함수
   const clearAllTimers = useCallback(() => {
@@ -122,9 +112,26 @@ function SearchCameraModal() {
       clearTimeout(navigationTimerRef.current);
       navigationTimerRef.current = null;
     }
+  }, []);
 
-    clearTimer();
-  }, [clearTimer]);
+  // 웹캠 강제 종료 함수
+  const forceStopWebcam = useCallback(() => {
+    console.log('[🎥 웹캠 강제 종료 시도]');
+    
+    // 전역 함수로 설정된 웹캠 정지 함수 호출
+    if (window.stopWebcam) {
+      console.log('[🎥 전역 웹캠 종료 함수 호출]');
+      window.stopWebcam();
+    }
+    
+    // 다이얼로그 강제 재생성 트리거
+    setDialogKey(prev => prev + 1);
+    
+    // API 관련 작업 중지
+    if (window.stopGestureAPI) {
+      window.stopGestureAPI();
+    }
+  }, []);
 
   // 대기 타이머 (프레임 수집 후)
   const startWaitingTimer = useCallback(() => {
@@ -462,10 +469,14 @@ function SearchCameraModal() {
     setHandDetected(false); // 손 감지 상태 명시적 초기화
     setGuideText(GUIDE_TEXT.INITIAL);
     
+    handDetectedRef.current = false;
     isCollectingFramesRef.current = false;
 
     // 토스트 메시지 모두 제거
     toast.dismiss();
+
+    // 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
 
     // API 시퀀스도 초기화 (전역 함수 활용)
     if (window.resetGestureSequence) {
@@ -509,7 +520,9 @@ function SearchCameraModal() {
     // 손 감지 상태 명시적 초기화 (중요)
     setHandDetected(false);
     handDetectedRef.current = false;
-    debugRef.current.handDetected = false;
+    
+    // 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
 
     // API 시퀀스 초기화 (전역 함수 사용)
     if (window.resetGestureSequence) {
@@ -544,19 +557,42 @@ function SearchCameraModal() {
   const handleDialogOpenChange = useCallback(
     (isOpen: boolean) => {
       console.log(`[🔄 모달 상태 변경] ${open} -> ${isOpen}`);
-      // 항상 상태 업데이트 (중요)
+      
+      // 모달이 닫히는 경우, 즉시 리소스 정리 작업 수행
+      if (!isOpen && open) {
+        console.log('[🔄 모달 닫힘] 즉시 API 중지');
+        
+        // 즉시 API 비활성화
+        setApiActive(false);
+        
+        // 즉시 모든 타이머 정리
+        clearAllTimers();
+        
+        // 토스트 메시지 모두 제거
+        toast.dismiss();
+        
+        // 웹캠 강제 종료 시도
+        forceStopWebcam();
+        
+        // 상태 업데이트
+        setOpen(false);
+        
+        // 상태 초기화
+        resetAllState();
+        
+        return; // 중요: 여기서 종료하여 아래 setOpen이 다시 호출되지 않도록 함
+      }
+      
+      // 상태 업데이트 (닫기인 경우는 위에서 이미 처리했음)
       setOpen(isOpen);
       
-      // 상태에 따른 처리
-      if (!isOpen) {
-        console.log('[🔄 모달 닫힘] 모든 상태 초기화 및 API 중지');
-        resetAllState();
-      } else {
+      // 열림 상태인 경우 처리
+      if (isOpen) {
         console.log('[🔄 모달 열림]');
         resetAllState();
       }
     },
-    [resetAllState]
+    [resetAllState, clearAllTimers, open, forceStopWebcam]
   );
 
   // 컴포넌트 언마운트 시 정리
@@ -570,11 +606,17 @@ function SearchCameraModal() {
       if (window.stopGestureAPI) {
         window.stopGestureAPI();
       }
+      
+      // 웹캠 강제 종료
+      if (window.stopWebcam) {
+        window.stopWebcam();
+      }
 
       // 전역 함수 제거
       window.resetGestureSequence = undefined;
       window.startCollectingFrames = undefined;
       window.stopGestureAPI = undefined;
+      window.stopWebcam = undefined;
     };
   }, [clearAllTimers]);
 
@@ -596,10 +638,25 @@ function SearchCameraModal() {
         isCollectingFramesRef.current = true;
       };
     }
+    
+    // 모달이 처음 로드될 때 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
   }, []);
 
+  // 모달이 열릴 때마다 전역 저장된 제스처 결과 초기화
+  useEffect(() => {
+    if (open) {
+      console.log('[🔄 모달 열림] 이전 제스처 결과 초기화');
+      window.lastDetectedGesture = undefined;
+    }
+  }, [open]);
+
   return (
-    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+    <Dialog 
+      key={`dialog-${dialogKey}`}
+      open={open} 
+      onOpenChange={handleDialogOpenChange}
+    >
       <DialogTrigger asChild>
         <button
           onClick={() => setOpen(true)}
