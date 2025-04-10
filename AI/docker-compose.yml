@@ -1,15 +1,6 @@
 version: "3.8"
 
 services:
-  static-gesture:
-    image: sseon701/moyamo-ai-static-gesture:latest
-    container_name: static-gesture
-    ports:
-      - "8010:8000"
-    restart: always
-    networks:
-      - nginx_jenkins_network
-
   dynamic-gesture:
     image: sseon701/moyamo-ai-dynamic-gesture:latest
     container_name: dynamic-gesture

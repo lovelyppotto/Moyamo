@@ -17,11 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-dynamic_label_classes = np.load("models/label_classes_dynamic.npy")
+dynamic_label_classes = np.load("models/label_classes_dynamic_v2.npy")
 static_label_classes = np.load("models/label_classes_mk3.npy")
 
 # ✅ 변경: h5 모델 로드
-dynamic_model = load_model("models/dynamic_gesture_lstm_v1.h5")
+dynamic_model = load_model("models/dynamic_gesture_lstm_v3.h5")
 static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
 static_interpreter.allocate_tensors()
 
