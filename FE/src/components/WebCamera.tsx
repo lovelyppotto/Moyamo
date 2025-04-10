@@ -134,7 +134,48 @@ const WebCamera = ({
     };
   }, [isPaused, apiStatus, connectApi, disconnectApi, resetSequence, isCameraBlocked]);
   
+  // 화면 방향 제어를 위한 useEffect 추가
+  useEffect(() => {
+    // 현재 방향을 유지하는 함수
+    const maintainCurrentOrientation = async () => {
+      try {
+        // Screen Orientation API 타입 체크 및 적용
+        if (screen.orientation && 'lock' in screen.orientation) {
+          // 현재 방향 가져오기
+          const currentOrientation = screen.orientation.type;
+          console.log('[📱 현재 화면 방향]', currentOrientation);
+          
+          // lock 메서드가 있는지 확인 후 사용
+          const orientationLock = screen.orientation as any;
+          await orientationLock.lock(currentOrientation);
+          console.log('[📱 화면 방향] 현재 방향으로 고정됨:', currentOrientation);
+        } else {
+          console.log('[📱 화면 방향] Screen Orientation API가 지원되지 않습니다');
+        }
+      } catch (error) {
+        console.error('[📱 화면 방향 설정 실패]', error);
+      }
+    };
 
+    // 카메라가 차단되지 않았을 때만 화면 방향 설정 시도
+    if (!isCameraBlocked) {
+      maintainCurrentOrientation();
+    }
+
+    // 컴포넌트 언마운트 시 화면 방향 잠금 해제
+    return () => {
+      try {
+        if (screen.orientation && 'unlock' in screen.orientation) {
+          const orientationLock = screen.orientation as any;
+          orientationLock.unlock();
+          console.log('[📱 화면 방향] 잠금 해제됨');
+        }
+      } catch (error) {
+        console.error('[📱 화면 방향 잠금 해제 실패]', error);
+      }
+    };
+  }, [isCameraBlocked]);
+    
   useEffect(() => {
     if (onResetSequence) {
       onResetSequence(resetSequence);
