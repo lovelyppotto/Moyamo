@@ -21,11 +21,11 @@ function Quiz() {
     (selectedAnswer: boolean | null): void => {
       setUserAnswers((prevUserAnswers) => {
         const newAnswers = [...prevUserAnswers, selectedAnswer];
-        console.log('현재 답변 상태:', {
-          '전체 문제 수': quizData?.length,
-          '현재 답변 수': newAnswers.length,
-          '현재 답변들': newAnswers,
-        });
+        // console.log('현재 답변 상태:', {
+        //   '전체 문제 수': quizData?.length,
+        //   '현재 답변 수': newAnswers.length,
+        //   '현재 답변들': newAnswers,
+        // });
         return newAnswers;
       });
     },
@@ -33,11 +33,11 @@ function Quiz() {
   );
 
   // 디버깅을 위한 상태 출력
-  console.log('퀴즈 상태:', {
-    '전체 문제 수': quizData?.length,
-    '현재 문제 인덱스': activeQuestionIndex,
-    '퀴즈 완료 여부': quizIsComplete,
-  });
+  // console.log('퀴즈 상태:', {
+  //   '전체 문제 수': quizData?.length,
+  //   '현재 문제 인덱스': activeQuestionIndex,
+  //   '퀴즈 완료 여부': quizIsComplete,
+  // });
 
   if (isLoading) {
     return <div>로딩 중...</div>;

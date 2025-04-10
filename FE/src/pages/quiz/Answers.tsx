@@ -103,7 +103,6 @@ const Answers: React.FC<AnswersProps> = ({
         </p>
         {/* 문제 이미지 부분 */}
         <div className="bg-white w-[44%] h-full rounded-xl drop-shadow-quiz-box flex justify-center items-center">
-          {/* 추후, 백앤드에서 blender 애니메이션을 가져올 예정 */}
           {quizImage && <GlbViewer url={quizImage} />}
         </div>
         {/* 퀴즈 보기 */}
