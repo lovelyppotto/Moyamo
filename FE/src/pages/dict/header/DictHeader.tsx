@@ -95,7 +95,7 @@ const DictHeader = React.memo(function DictHeader({
       <div className="flex justify-center items-center col-span-1">
         {/* 제목 표시할 때 */}
         {!showCountrySelector && (
-          <div className="flex items-center w-full justify-center h-[40px] min-w-[210px] max-w-[250px] text-[18px] md:text-[24px] xl:text-[32px] ">
+          <div className="flex items-center w-full justify-center h-[40px] min-w-[210px] text-[18px] md:text-[24px] xl:text-[32px] ">
             {gestureCompareInfo && (
               <img
                 src={getFlagImage(countryCode)}
