@@ -14,7 +14,7 @@ function Dictionary() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // URL에서 country_id 파라미터 가져오기
+  // URL에서 country_id 파라미터만 가져오기
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
 
@@ -59,41 +59,46 @@ function Dictionary() {
   // 제스처 데이터 초기 선택 설정
   useEffect(() => {
     if (gestureData?.gestures && gestureData.gestures.length > 0) {
+      let gestureToSelect;
+
       // 세션 스토리지에서 이전에 선택된 제스처를 확인
       const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
       const storedSelectedGesture = sessionStorage.getItem(selectedGestureKey);
 
       if (storedSelectedGesture) {
         const parsedGestureId = parseInt(storedSelectedGesture);
-        // 해당 제스처가 현재 배열에 존재하는지 확인
         const gestureExists = gestureData.gestures.some(
           (g) => g && typeof g === 'object' && 'gestureId' in g && g.gestureId === parsedGestureId
         );
 
         if (gestureExists) {
-          setSelectedGesture(parsedGestureId);
-        } else {
-          // 존재하지 않으면 첫 번째 제스처 선택
-          setSelectedGesture(gestureData.gestures[0].gestureId);
+          gestureToSelect = parsedGestureId;
         }
-      } else {
-        // 저장된 선택 제스처가 없으면 첫 번째 제스처 선택
-        setSelectedGesture(gestureData.gestures[0].gestureId);
       }
+
+      // 세션 스토리지에 저장된 제스처가 없거나 유효하지 않은 경우, 첫 번째 제스처 선택
+      if (!gestureToSelect) {
+        gestureToSelect = gestureData.gestures[0].gestureId;
+      }
+
+      setSelectedGesture(gestureToSelect);
+
+      // 선택된 제스처를 세션 스토리지에 저장
+      sessionStorage.setItem(selectedGestureKey, gestureToSelect.toString());
     }
   }, [gestureData, selectedCountry.id]);
 
-  useEffect(() => {
-    const currentPath = location.pathname;
+  // 언마운트 시 세션 스토리지 정리 로직 제거 (선택한 제스처 유지를 위해)
+  // useEffect(() => {
+  //   const currentPath = location.pathname;
 
-    return () => {
-      // 현재 /dictionary 경로인지 확인하고, 컴포넌트 언마운트 시 다른 경로로 이동하는지 확인
-      if (currentPath.includes('/dictionary')) {
-        const key = `selectedGesture_${selectedCountry.id}`;
-        sessionStorage.removeItem(key);
-      }
-    };
-  }, [location.pathname, selectedCountry.id]);
+  //   return () => {
+  //     if (currentPath.includes('/dictionary')) {
+  //       const key = `selectedGesture_${selectedCountry.id}`;
+  //       sessionStorage.removeItem(key);
+  //     }
+  //   };
+  // }, [location.pathname, selectedCountry.id]);
 
   // 현재 제스처 목록
   const currentGestures = gestureData?.gestures || [];
@@ -109,6 +114,7 @@ function Dictionary() {
     // 선택한 제스처를 세션 스토리지에 저장
     const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
     sessionStorage.setItem(selectedGestureKey, gestureId.toString());
+    // URL에는 국가 ID만 포함 (제스처 ID는 포함하지 않음)
   };
 
   // 국가 선택 핸들러
@@ -126,8 +132,7 @@ function Dictionary() {
     }
 
     setSelectedCountry(country);
-    // 국가 변경 시 선택된 제스처는 초기화하지 않음
-    // 로컬 스토리지에서 해당 국가의 선택된 제스처가 있으면 자동으로 로드됨
+    // 국가 변경 시 URL 업데이트 (선택된 제스처는 초기화하지 않고 URL에서 제거)
     navigate(`/dictionary?country_id=${country.id}`);
   };
 
@@ -135,6 +140,7 @@ function Dictionary() {
   const handlePracticeButtonClick = () => {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
+    // 선택한 제스처 정보를 상태로 전달
     navigate('/dictionary/practice', {
       state: {
         gesture: currentGesture,
@@ -165,6 +171,7 @@ function Dictionary() {
       return;
     }
 
+    // 상세 페이지로 이동하면서 URL 파라미터로 제스처 ID와 국가 ID 전달
     navigate(`/dictionary/detail?gesture_id=${gestureId}&country_id=${selectedCountry.id}`);
   };
 
@@ -179,6 +186,7 @@ function Dictionary() {
       return;
     }
 
+    // 비교 가이드 페이지로 이동
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
   };
 

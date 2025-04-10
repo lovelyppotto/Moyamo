@@ -69,7 +69,7 @@ function GesturePractice() {
               <span>표시가 나타납니다.</span>
             </div>
             <div>
-              <span>손 전체가 화면에 잘 보이도록 해주세요.</span>
+              <span>정확한 인식을 위해 손 전체가 화면 안에 들어오도록 유지해주세요.</span>
             </div>
           </div>
         ) : (
