@@ -87,8 +87,11 @@ function GesturePractice() {
       <div className="flex flex-col md:flex-row w-full flex-1 justify-center items-center gap-4 md:gap-6 px-4 py-2">
         {/* 따라할 제스처 - 정사각형 및 동일 크기 (풀 화면에서 더 큰 크기) */}
         <div className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-112 lg:h-112 xl:w-120 xl:h-120 flex justify-center items-center mb-2 md:mb-0">
-          <div className="w-full h-full bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
+          <div className="w-full group relative h-full bg-white rounded-lg drop-shadow-basic flex justify-center items-center p-3">
             <GlbViewer url={getImageUrl()} />
+            <div className="absolute bottom-5 border p-2 rounded-xl border-gray-400 group-hover:bottom-2 transition-all duration-300 group-hover:opacity-0">
+              <p className="font-[NanumSquareRoundB] text-gray-500">3D 회전이 가능합니다.</p>
+            </div>
           </div>
         </div>
 
