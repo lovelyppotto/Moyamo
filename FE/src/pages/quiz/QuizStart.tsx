@@ -41,7 +41,7 @@ function Quiz() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        {/* DialogTrigger를 Dialog 내부로 이동 */}
+    
         <DialogTrigger asChild>
           <button
             className="select-none absolute bottom-40 left-1/2 transform -translate-x-1/2 text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-900 drop-shadow-quiz-box dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center align-center bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce cursor-pointer"
