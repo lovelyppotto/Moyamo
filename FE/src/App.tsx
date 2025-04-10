@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout';
 import Dictionary from './pages/dict/Dictionary';
 import Home from './pages/home/Home';
-import ModelTest from './pages/test/modeltest';
+// import ModelTest from './pages/test/modeltest';
 import Quiz from './pages/quiz/QuizStart';
 import QuizContent from './pages/quiz/Quiz';
 import Result from './pages/result/Result';
@@ -74,11 +74,11 @@ const router = createBrowserRouter([
         path: 'quizcontent',
         element: <QuizContent />,
       },
-      {
-        // 퀴즈 컨텐츠
-        path: 'modeltest',
-        element: <ModelTest />,
-      },
+      // {
+      //   // 퀴즈 컨텐츠
+      //   path: 'modeltest',
+      //   element: <ModelTest />,
+      // },
       // 에러페이지
       {
         path: 'url-error',

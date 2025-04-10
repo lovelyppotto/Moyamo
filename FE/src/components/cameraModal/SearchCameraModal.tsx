@@ -14,6 +14,9 @@ import { useGestureEvents } from '@/hooks/useGestureEvents';
 import { useGestureTimer } from '@/hooks/useGestureTimer';
 import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 
+// 유틸리티
+import { isSensitiveGesture, isSearchableGesture } from '@/utils/sensitiveGestureUtils';
+
 declare global {
   interface Window {
     resetGestureSequence?: () => void;
@@ -199,8 +202,8 @@ function SearchCameraModal() {
           return;
         }
 
-        // 3 & 4. 부적절한 제스처 처리
-        if (inappropriateGestures.includes(gestureToUse)) {
+        // 3. 민감한 제스처지만 검색 불가능한 경우 (middle_finger 등)
+        if (isSensitiveGesture(gestureToUse) && !isSearchableGesture(gestureToUse)) {
           toast.dismiss();
           toast.error('부적절한 제스처가 감지되었습니다', {
             description: '상대방을 존중하는 제스처를 사용해 주세요.',
@@ -211,35 +214,18 @@ function SearchCameraModal() {
 
           setGuideText('다른 제스처로 다시 시도해 주세요');
           setIsErrorToastShown(true);
-
-          // devil 제스처인 경우에만 검색으로 넘어감
-          if (gestureToUse === 'devil') {
-            const targetUrl = `/search/camera?gesture_label=${gestureToUse}`;
-            navigationTimerRef.current = setTimeout(() => {
-              if (!open) return;
-
-              try {
-                if (location.pathname.includes('/search')) {
-                  window.location.href = targetUrl;
-                } else {
-                  navigate(targetUrl);
-                }
-                setOpen(false);
-              } catch (error) {
-                console.error('[🔍 검색 이동 실패]', error);
-              }
-            }, 1000);
-          }
-
           return;
         }
 
-        // 일반 제스처 처리 (검색으로 이동)
+        // 4. 일반 제스처 또는 검색 가능한 민감한 제스처 (devil 등)
         console.log(`[🔍 검색 실행] 제스처: ${gestureToUse}`);
         setGuideText('인식 완료!');
 
+        // 민감한 제스처인지 확인하여 파라미터에 추가
+        const isSensitive = isSensitiveGesture(gestureToUse) ? '&sensitive=true' : '';
+        
         // 약간의 지연 후 페이지 이동
-        const targetUrl = `/search/camera?gesture_label=${gestureToUse}`;
+        const targetUrl = `/search/camera?gesture_label=${gestureToUse}${isSensitive}`;
         navigationTimerRef.current = setTimeout(() => {
           if (!open) return;
 
@@ -265,7 +251,8 @@ function SearchCameraModal() {
       clearInterval(waitInterval);
       window.removeEventListener('gesture-detected', gestureHandler);
     };
-  }, [detectedGesture, inappropriateGestures, location.pathname, navigate, open]);
+  }, [detectedGesture, location.pathname, navigate, open]);
+
 
   // 실제 카운트다운 타이머
   const startCountdownTimer = useCallback(() => {

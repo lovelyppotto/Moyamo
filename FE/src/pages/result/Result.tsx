@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderBar from '../home/HeaderBar';
 import { useTheme } from '@/components/theme-provider';
 import SearchResultsList from './SearchResultList';
+import SensitiveGestureWarning from '@/components/gestureSearch/SensitiveGestureWarning';
 import { useSearchStore } from '../../stores/useSearchStore';
 import '@/components/ui/scrollbar.css';
 import { useGestureSearch } from '@/hooks/apiHooks';
@@ -62,6 +63,7 @@ function Result() {
         backgroundPosition: 'center',
       }}
     >
+      <SensitiveGestureWarning />
       {/* 기존 HeaderBar는 유지 */}
       <HeaderBar />
 

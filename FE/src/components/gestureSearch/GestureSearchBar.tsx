@@ -10,12 +10,16 @@ interface SearchBarProps {
   searchInputRef: React.RefObject<HTMLDivElement | null>;
   isCameraSearch: boolean;
   onSearchTermChange: (newTerm: string) => void;
+  onCountryChange: (newCountryId: number) => void; // required로 변경
+  initialCountryId: number; // required로 변경
 }
 
 function GestureSearchBar({
   searchInputRef,
   isCameraSearch: propIsCameraSearch,
   onSearchTermChange,
+  onCountryChange,
+  initialCountryId,
 }: SearchBarProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,7 +28,7 @@ function GestureSearchBar({
   // 로컬 상태로 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountryName, setSelectedCountryName] = useState('전체');
-  const [countryId, setCountryId] = useState(0);
+  const [countryId, setCountryId] = useState(initialCountryId);
   const [isCameraSearch, setIsCameraSearch] = useState(propIsCameraSearch);
   const [hasShownToast, setHasShownToast] = useState(false); // 중복 알림 방지
 
@@ -45,7 +49,7 @@ function GestureSearchBar({
     }
 
     // 국가 ID 설정
-    const newCountryId = countryParam ? parseInt(countryParam, 10) : 0;
+    const newCountryId = countryParam ? parseInt(countryParam, 10) : initialCountryId;
     setCountryId(newCountryId);
     setSelectedCountryName(getCountryName(newCountryId));
 
@@ -65,7 +69,7 @@ function GestureSearchBar({
       // URL에 검색어가 없으면 빈 문자열로 설정
       setSearchTerm('');
     }
-  }, [location.pathname, location.search, navigate]);
+  }, [location.pathname, location.search, navigate, initialCountryId]);
 
   // 입력 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,6 +150,11 @@ function GestureSearchBar({
     const newCountryId = getCountryId(country);
     setCountryId(newCountryId);
     setSelectedCountryName(country);
+    
+    // 부모 컴포넌트에 국가 변경 알림
+    if (onCountryChange) {
+      onCountryChange(newCountryId);
+    }
 
     // 검색 페이지에서 URL 업데이트
     if (location.pathname.includes('/search')) {

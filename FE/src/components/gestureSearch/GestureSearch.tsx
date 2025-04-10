@@ -16,12 +16,14 @@ function GestureSearchInput() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isCameraSearch, setIsCameraSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState(''); // searchTerm을 상태로 관리
+  const [currentCountryId, setCurrentCountryId] = useState(0); // 현재 국가 ID 상태 추가
 
   // URL에서 검색어와 카메라 검색 여부 확인
   const params = new URLSearchParams(location.search);
   const gestureName = params.get('gesture_name') || '';
   const gestureLabel = params.get('gesture_label') || '';
-  const countryId = params.get('country_id') ? parseInt(params.get('country_id')!, 10) : 0;
+  const countryIdParam = params.get('country_id');
+  const countryId = countryIdParam ? parseInt(countryIdParam, 10) : 0;
 
   // 검색어 길이 확인 및 필요시 에러 페이지로 리다이렉트
   useEffect(() => {
@@ -34,7 +36,7 @@ function GestureSearchInput() {
   // 홈 페이지 여부 확인
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
-  // URL 파라미터 변경 시 검색어 상태 업데이트
+  // URL 파라미터 변경 시 검색어와 국가 ID 상태 업데이트
   useEffect(() => {
     if (gestureLabel) {
       setSearchTerm(gestureLabel);
@@ -43,12 +45,15 @@ function GestureSearchInput() {
     } else {
       setSearchTerm('');
     }
-  }, [gestureLabel, gestureName]);
+    
+    // 국가 ID 업데이트
+    setCurrentCountryId(countryId);
+  }, [gestureLabel, gestureName, countryId]);
 
-  // 검색 쿼리 실행
+  // 검색 쿼리 실행 - 국가 ID 포함
   const { data: searchResults, isLoading } = useGestureSearch(
     searchTerm || gestureLabel || gestureName,
-    countryId,
+    currentCountryId, // currentCountryId 사용
     {
       enabled: isHomePage && (searchTerm || gestureLabel || gestureName) !== '',
     }
@@ -102,7 +107,7 @@ function GestureSearchInput() {
     };
   }, [showResults]);
 
-  // 검색 결과 클릭 핸들러
+  // 검색 결과 클릭 핸들러 - 국가 ID 유지하도록 수정
   const handleResultClick = (result: GestureSearchResult) => {
     if (result.gestureName.length > 1000) {
       console.warn('검색어가 너무 깁니다.');
@@ -110,7 +115,16 @@ function GestureSearchInput() {
       return;
     }
     
-    window.location.href = `/search?gesture_name=${encodeURIComponent(result.gestureName)}`;
+    // URL 파라미터 구성 (국가 ID 포함)
+    const params = new URLSearchParams();
+    params.set('gesture_name', result.gestureName);
+    
+    // 현재 선택된 국가 ID가 있으면 유지
+    if (currentCountryId > 0) {
+      params.set('country_id', currentCountryId.toString());
+    }
+    
+    navigate(`/search?${params.toString()}`);
   };
 
   // 검색어 변경 핸들러
@@ -125,12 +139,19 @@ function GestureSearchInput() {
     setSearchTerm(newTerm);
   };
 
+  // 국가 ID 변경 핸들러 추가
+  const handleCountryChange = (newCountryId: number) => {
+    setCurrentCountryId(newCountryId);
+  };
+
   return (
     <div className="search-container relative" ref={searchContainerRef}>
       <GestureSearchBar
         searchInputRef={searchInputRef}
         isCameraSearch={isCameraSearch}
         onSearchTermChange={handleSearchTermChange}
+        onCountryChange={handleCountryChange} // 국가 변경 핸들러 전달
+        initialCountryId={currentCountryId} // 초기 국가 ID 전달
       />
 
       {showResults && (
@@ -139,6 +160,7 @@ function GestureSearchInput() {
           searchResults={searchResults}
           isSmallScreen={isSmallScreen}
           onResultClick={handleResultClick}
+          countryId={currentCountryId} // 현재 국가 ID 전달
         />
       )}
     </div>
