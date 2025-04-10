@@ -385,11 +385,11 @@ function CountryBubble() {
                       align={country.tooltipPosition.align}
                       sideOffset={country.tooltipPosition.sideOffset}
                       alignOffset={country.tooltipPosition.alignOffset}
-                      className={`${country.tooltipBackground} text-black p-6 rounded-lg shadow-lg max-w-xs`}
+                      className={`${country.tooltipBackground} text-black p-5 rounded-lg shadow-lg max-w-xs`}
                       style={{ zIndex: 20 }}
                     >
                       <div className="flex flex-col gap-2">
-                        <p className="font-[Galmuri11] font-bold text-sm">
+                        <p className="font-[Galmuri11] font-bold text-sm hyphens-auto break-keep tracking-tight text-pretty leading-normal">
                           {getTipContent(country.countryId)}
                         </p>
                       </div>
