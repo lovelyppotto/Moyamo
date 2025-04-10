@@ -187,16 +187,24 @@ function GestureDetail() {
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
                 <ul className="text-lg space-y-3 text-[16px]">
                   {parsedSitudationData.map((item, index) => (
-                    <li key={index}>• {item}</li>
+                    <li
+                      key={index}
+                      className="hyphens-auto break-keep tracking-tight text-pretty leading-normal"
+                    >
+                      • {item}
+                    </li>
                   ))}
                 </ul>
               </div>
 
               <h2 className="text-[20px] font-[NanumSquareRoundB] mb-2">다른 나라에서의 의미</h2>
               <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
-                <ul className="text-lg space-y-3 text-[16px]">
+                <ul className="text-lg space-y-3 text-[16px] hyphens-auto break-keep tracking-tight text-pretty leading-normal">
                   {otherMeanings.map((item, index) => (
-                    <li key={index}>
+                    <li
+                      key={index}
+                      className="hyphens-auto break-keep tracking-tight text-pretty leading-normal"
+                    >
                       • {item.countries.replace(/,/g, ', ')} : {item.meaning}
                     </li>
                   ))}
@@ -210,7 +218,12 @@ function GestureDetail() {
                   <div className="bg-white dark:bg-gray-500 rounded-lg p-5 drop-shadow-basic mb-8">
                     <ul className="text-lg space-y-3 text-[16px]">
                       {tmi.map((item, index) => (
-                        <li key={index}>• {item}</li>
+                        <li
+                          key={index}
+                          className="hyphens-auto break-keep tracking-tight text-pretty leading-normal"
+                        >
+                          • {item}
+                        </li>
                       ))}
                     </ul>
                   </div>
