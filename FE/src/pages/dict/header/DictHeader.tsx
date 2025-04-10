@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import DictCountrySelector from './DictCountrySelector';
 import { Country } from '@/types/dictionaryType';
@@ -95,7 +95,7 @@ const DictHeader = React.memo(function DictHeader({
       <div className="flex justify-center items-center col-span-1">
         {/* 제목 표시할 때 */}
         {!showCountrySelector && (
-          <div className="flex items-center w-full justify-center h-[40px]">
+          <div className="flex items-center w-full justify-center h-[40px] min-w-[210px] max-w-[250px] text-[18px] md:text-[24px] xl:text-[32px] ">
             {gestureCompareInfo && (
               <img
                 src={getFlagImage(countryCode)}
@@ -105,7 +105,7 @@ const DictHeader = React.memo(function DictHeader({
                 loading="eager"
               />
             )}
-            <h1 className="text-[20px] md:text-[24px] xl:text-[32px] font-[NanumSquareRoundEB] text-center">
+            <h1 className="text-[18px] md:text-[24px] xl:text-[32px] font-[NanumSquareRoundEB] text-center">
               {title}
             </h1>
           </div>
@@ -135,15 +135,16 @@ const DictHeader = React.memo(function DictHeader({
             <span className="hidden sm:inline font-[NanumSquareRound]">비교 가이드</span>
           </button>
         )}
-        <div className="w-[60px] sm:w-[80px] md:w-[90px] lg:w-[100px] h-[30px] sm:h-[35px] md:h-[38px] lg:h-[40px]">
-          <img
+        <div className="text-xl lg:text-2xl">
+          <FontAwesomeIcon icon={faHouse} onClick={handleLogoClick} />
+          {/* <img
             src={logoSrc}
             alt="MoyamoLogo"
             className="w-full h-full object-contain select-none cursor-pointer"
             onClick={handleLogoClick}
             draggable="false" // 드래그 방지
             loading="eager" // 로고는 빠르게 로드되어야 함
-          />
+          /> */}
         </div>
       </div>
     </header>
