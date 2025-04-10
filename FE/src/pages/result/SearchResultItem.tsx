@@ -75,8 +75,9 @@ function SearchResultItem({
                       ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                     onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
                   />
-                  {/* Tailwind 툴팁 */}
-                  <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
+                  {/* 수정된 툴팁: 오른쪽 1px, 아래로 2px 이동 */}
+                  <div className="absolute top-full mt-2 right-0 translate-x-1 opacity-0 group-hover:opacity-100 transition-opacity
+                    duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
                     {isAvailable
                       ? `${meaning.countryName}의 의미: ${meaning.meaning}`
                       : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`}
@@ -168,8 +169,9 @@ function SearchResultItem({
                           ${selectedCountryId === meaning.countryId ? 'ring-2 ring-blue-500 scale-110' : ''}`}
                         onClick={() => handleFlagClick(meaning.countryId, meaning.countryName)}
                       />
-                      {/* Tailwind 툴팁 */}
-                      <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
+                      {/* 수정된 툴팁: 오른쪽 1px, 아래로 2px 이동 */}
+                      <div className="absolute top-full mt-2 right-0 translate-x-1 opacity-0 group-hover:opacity-100
+                        transition-opacity duration-200 bg-gray-800 text-white text-xs p-1 rounded whitespace-nowrap z-50">
                         {isAvailable
                           ? `${meaning.countryName}의 의미: ${meaning.meaning}`
                           : `${meaning.countryName}의 상세 정보는 현재 제공되지 않습니다.`}
