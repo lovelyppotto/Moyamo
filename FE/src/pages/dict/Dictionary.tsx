@@ -1,73 +1,34 @@
 import { faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { faHands, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState } from 'react';
 import { DictListCarousel } from './DictListCarousel';
 import DictMainImage from './MainGestureImage';
 import IconButton from '@/components/IconButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DictHeader from './header/DictHeader';
-import { Country, GestureItem } from '@/types/dictionaryType';
+import { Country } from '@/types/dictionaryType';
 import { useGesturesByCountry } from '@/hooks/apiHooks';
-import LoadingPage from '@/components/LoadingPage';
+import LoadingPage from '../../components/LoadingPage';
 import { useQueryClient } from '@tanstack/react-query';
+import { prefetchGLBModels } from '@/hooks/useGLBModel';
 
-// 상수를 컴포넌트 외부로 이동
-const countryOptions: Country[] = [
-  { code: 'kr', name: '한국', id: 1 },
-  { code: 'us', name: '미국', id: 2 },
-  { code: 'jp', name: '일본', id: 3 },
-  { code: 'cn', name: '중국', id: 4 },
-  { code: 'it', name: '이탈리아', id: 5 },
-];
-
-// 메모이제이션된 IconButton 영역 컴포넌트
-const IconButtonGroup = memo(
-  ({
-    currentGesture,
-    selectedCountry,
-    onPractice,
-    onDetail,
-    onGuide,
-  }: {
-    currentGesture: GestureItem | null;
-    selectedCountry: string;
-    onPractice: () => void;
-    onDetail: () => void;
-    onGuide: () => void;
-  }) => (
-    <div className="flex flex-row sm:flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-0">
-      <IconButton
-        icon={faHands}
-        tooltipText="제스처 연습"
-        onClick={onPractice}
-        selectedCountry={selectedCountry}
-      />
-      <IconButton
-        icon={faMagnifyingGlassPlus}
-        tooltipText="자세히 보기"
-        onClick={onDetail}
-        selectedCountry={selectedCountry}
-      />
-      <IconButton
-        icon={faRectangleList}
-        tooltipText="나라별 비교 가이드"
-        onClick={onGuide}
-        selectedCountry={selectedCountry}
-        disabled={!currentGesture?.multipleGestures}
-      />
-    </div>
-  )
-);
-
-// 메인 컴포넌트
 function Dictionary() {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); // React Query 클라이언트
 
   // URL에서 country_id 파라미터 가져오기
   const queryParams = new URLSearchParams(location.search);
   const countryIdParam = queryParams.get('country_id');
+
+  // 국가 목록
+  const countryOptions: Country[] = [
+    { code: 'kr', name: '한국', id: 1 },
+    { code: 'us', name: '미국', id: 2 },
+    { code: 'jp', name: '일본', id: 3 },
+    { code: 'cn', name: '중국', id: 4 },
+    { code: 'it', name: '이탈리아', id: 5 },
+  ];
 
   // URL 파라미터에서 국가 ID 가져오기
   const initialCountry = countryIdParam
@@ -76,17 +37,10 @@ function Dictionary() {
 
   const [selectedGesture, setSelectedGesture] = useState<number>(0); // 제스처 선택 상태
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry); // 국가 선택 상태
+  const [loadingComplete, setLoadingComplete] = useState<boolean>(false); // 로딩 완료 상태
 
   // 리액트 쿼리를 사용하여 제스처 데이터 가져오기
   const { data: gestureData, isLoading, isError } = useGesturesByCountry(selectedCountry.id);
-
-  // 현재 제스처 목록
-  const currentGestures = gestureData?.gestures || [];
-
-  // 현재 선택된 제스처
-  const currentGesture =
-    currentGestures.find((gesture) => gesture.gestureId === selectedGesture) ||
-    (currentGestures.length > 0 ? currentGestures[0] : null);
 
   // 에러 상태를 useEffect에서 처리
   useEffect(() => {
@@ -94,6 +48,18 @@ function Dictionary() {
       navigate('/error');
     }
   }, [isError, gestureData, isLoading, navigate]);
+
+  // 로딩 타이머 설정 - 최소 4초 로딩 화면 표시
+  useEffect(() => {
+    if (!isLoading) {
+      // 로딩 완료 시 타이머 설정
+      const timer = setTimeout(() => {
+        setLoadingComplete(true);
+      }, 4000); // 4초 동안 로딩 화면 표시
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   // 유효성 검사
   useEffect(() => {
@@ -133,95 +99,83 @@ function Dictionary() {
     }
   }, [gestureData, selectedCountry.id]);
 
+  // GLB 모델 미리 로드 - 데이터가 로드되면 실행
+  useEffect(() => {
+    if (gestureData?.gestures && gestureData.gestures.length > 0 && selectedCountry) {
+      // 현재 선택된 제스처 및 다음 4개 제스처의 URL 준비
+      const modelUrls: string[] = [];
+
+      // 현재 선택된 제스처의 인덱스 찾기
+      const currentIndex = gestureData.gestures.findIndex((g) => g.gestureId === selectedGesture);
+      if (currentIndex === -1) return;
+
+      // 현재 제스처와 다음 4개 제스처 URL 수집
+      for (let i = currentIndex; i < currentIndex + 5 && i < gestureData.gestures.length; i++) {
+        if (i >= 0) {
+          const gestureId = gestureData.gestures[i].gestureId;
+          modelUrls.push(`/models/${selectedCountry.code}/${gestureId}.glb`);
+        }
+      }
+
+      // 백그라운드에서 모델 미리 로드
+      if (modelUrls.length > 0) {
+        prefetchGLBModels(queryClient, modelUrls);
+      }
+    }
+  }, [selectedGesture, gestureData, selectedCountry, queryClient]);
+
+  // 세션 스토리지 정리
   useEffect(() => {
     const currentPath = location.pathname;
 
     return () => {
-      // '/dictionary'에서 다른 경로로 완전히 벗어날 때만 세션 스토리지를 제거
-      // '/dictionary/detail', '/dictionary/practice', '/dictionary/compare' 등으로 이동할 때는 유지
-      if (currentPath === '/dictionary' && !location.pathname.includes('/dictionary')) {
+      // 현재 /dictionary 경로인지 확인하고, 컴포넌트 언마운트 시 다른 경로로 이동하는지 확인
+      if (currentPath.includes('/dictionary')) {
         const key = `selectedGesture_${selectedCountry.id}`;
         sessionStorage.removeItem(key);
       }
     };
   }, [location.pathname, selectedCountry.id]);
 
-  // 제스처 데이터 초기 선택 설정 useEffect 부분을 다음과 같이 수정
-  useEffect(() => {
-    if (gestureData?.gestures && gestureData.gestures.length > 0) {
-      // 세션 스토리지에서 이전에 선택된 제스처를 확인
-      const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
-      const storedSelectedGesture = sessionStorage.getItem(selectedGestureKey);
+  // 현재 제스처 목록
+  const currentGestures = gestureData?.gestures || [];
 
-      if (storedSelectedGesture) {
-        const parsedGestureId = parseInt(storedSelectedGesture);
-        // 해당 제스처가 현재 배열에 존재하는지 확인
-        const gestureExists = gestureData.gestures.some(
-          (g) => g && typeof g === 'object' && 'gestureId' in g && g.gestureId === parsedGestureId
-        );
-
-        if (gestureExists) {
-          setSelectedGesture(parsedGestureId);
-          // 콘솔에 로그를 추가하여 디버깅
-          console.log(`이전 선택된 제스처 ID: ${parsedGestureId} 적용됨`);
-        } else {
-          // 존재하지 않으면 첫 번째 제스처 선택
-          setSelectedGesture(gestureData.gestures[0].gestureId);
-          console.log(
-            `이전 선택된 제스처가 현재 목록에 없어서 첫 번째 제스처 선택됨: ${gestureData.gestures[0].gestureId}`
-          );
-        }
-      } else {
-        // 저장된 선택 제스처가 없으면 첫 번째 제스처 선택
-        setSelectedGesture(gestureData.gestures[0].gestureId);
-        console.log(
-          `저장된 선택 제스처 없음. 첫 번째 제스처 선택됨: ${gestureData.gestures[0].gestureId}`
-        );
-      }
-    }
-  }, [gestureData, selectedCountry.id]);
+  // 현재 선택된 제스처
+  const currentGesture =
+    currentGestures.find((gesture) => gesture.gestureId === selectedGesture) ||
+    (currentGestures.length > 0 ? currentGestures[0] : null);
 
   // 제스처 선택 핸들러
-  const handleSelectGesture = useCallback(
-    (gestureId: number) => {
-      setSelectedGesture(gestureId);
-      // 선택한 제스처를 세션 스토리지에 저장
-      const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
-      sessionStorage.setItem(selectedGestureKey, gestureId.toString());
-    },
-    [selectedCountry.id]
-  );
+  const handleSelectGesture = (gestureId: number) => {
+    setSelectedGesture(gestureId);
+    // 선택한 제스처를 세션 스토리지에 저장
+    const selectedGestureKey = `selectedGesture_${selectedCountry.id}`;
+    sessionStorage.setItem(selectedGestureKey, gestureId.toString());
+  };
 
   // 국가 선택 핸들러
-  const handleSelectCountry = useCallback(
-    (country: Country) => {
-      // ID 유효성 검사 (1~5 사이의 숫자인지 확인)
-      if (
-        !country ||
-        !country.id ||
-        isNaN(Number(country.id)) ||
-        Number(country.id) < 1 ||
-        Number(country.id) > 5
-      ) {
-        navigate('/');
-        return;
-      }
+  const handleSelectCountry = (country: Country) => {
+    // ID 유효성 검사 (1~5 사이의 숫자인지 확인)
+    if (
+      !country ||
+      !country.id ||
+      isNaN(Number(country.id)) ||
+      Number(country.id) < 1 ||
+      Number(country.id) > 5
+    ) {
+      navigate('/');
+      return;
+    }
 
-      // 이전 국가의 쿼리를 무효화 (새로운 국가가 선택되었을 때만)
-      if (selectedCountry && selectedCountry.id !== country.id) {
-        queryClient.invalidateQueries({
-          queryKey: ['gesturesByCountry', selectedCountry.id],
-        });
-      }
+    // 로딩 상태로 다시 변경 (국가 변경 시)
+    setLoadingComplete(false);
 
-      setSelectedCountry(country);
-      navigate(`/dictionary?country_id=${country.id}`);
-    },
-    [navigate, selectedCountry, queryClient]
-  );
+    setSelectedCountry(country);
+    navigate(`/dictionary?country_id=${country.id}`);
+  };
 
   // 제스처 연습으로 이동
-  const handlePracticeButtonClick = useCallback(() => {
+  const handlePracticeButtonClick = () => {
     if (!currentGesture) return; // 제스처가 없으면 이동 안함
 
     navigate('/dictionary/practice', {
@@ -229,10 +183,10 @@ function Dictionary() {
         gesture: currentGesture,
       },
     });
-  }, [currentGesture, navigate]);
+  };
 
   // 제스처 디테일로 이동
-  const handleDetailButtonClick = useCallback(() => {
+  const handleDetailButtonClick = () => {
     if (!currentGesture || !currentGesture.gestureId) return; // 제스처가 없으면 이동 안함
 
     // gesture_id 유효성 검사 (예: 숫자이고 특정 범위 내인지)
@@ -255,10 +209,10 @@ function Dictionary() {
     }
 
     navigate(`/dictionary/detail?gesture_id=${gestureId}&country_id=${selectedCountry.id}`);
-  }, [currentGesture, navigate, selectedCountry]);
+  };
 
   // 비교 가이드로 이동
-  const handleGuideButtonClick = useCallback(() => {
+  const handleGuideButtonClick = () => {
     if (!currentGesture || !currentGesture.gestureId) return;
 
     // gesture_id 유효성 검사
@@ -269,11 +223,16 @@ function Dictionary() {
     }
 
     navigate(`/dictionary/compare?gesture_id=${gestureId}`);
-  }, [currentGesture, navigate]);
+  };
 
   // 로딩 상태 체크
-  if (isLoading) {
-    return <LoadingPage minDuration={2000} />;
+  if (isLoading || !loadingComplete) {
+    return (
+      <LoadingPage
+        minDuration={4000} // 최소 4초 로딩 표시
+        onComplete={() => setLoadingComplete(true)}
+      />
+    );
   }
 
   return (
@@ -300,14 +259,28 @@ function Dictionary() {
             )}
           </div>
 
-          {/* 아이콘 버튼 영역 - 메모이제이션 컴포넌트 사용 */}
-          <IconButtonGroup
-            currentGesture={currentGesture}
-            selectedCountry={selectedCountry.code}
-            onPractice={handlePracticeButtonClick}
-            onDetail={handleDetailButtonClick}
-            onGuide={handleGuideButtonClick}
-          />
+          {/* 아이콘 버튼 영역 */}
+          <div className="flex flex-row sm:flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-0">
+            <IconButton
+              icon={faHands}
+              tooltipText="제스처 연습"
+              onClick={handlePracticeButtonClick}
+              selectedCountry={selectedCountry.code}
+            />
+            <IconButton
+              icon={faMagnifyingGlassPlus}
+              tooltipText="자세히 보기"
+              onClick={handleDetailButtonClick}
+              selectedCountry={selectedCountry.code}
+            />
+            <IconButton
+              icon={faRectangleList}
+              tooltipText="나라별 비교 가이드"
+              onClick={handleGuideButtonClick}
+              selectedCountry={selectedCountry.code}
+              disabled={!currentGesture?.multipleGestures}
+            />
+          </div>
         </div>
 
         {/* 캐러셀 영역 */}
