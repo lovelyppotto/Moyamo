@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { GestureItem } from '@/types/dictionaryType';
 import { cn } from '@/lib/utils';
-import { GlbViewer } from '@/components/GlbViewer';
+import { getCarouselGestureImage } from '@/utils/carouselImageUtils'; // 캐러셀 전용 이미지 유틸 임포트
 
 // 제스처 카드 컴포넌트 프롭 타입
 interface DictGestureCardProps {
@@ -23,6 +23,9 @@ export function DictGestureCard({
 }: DictGestureCardProps) {
   const [shouldLoad, setShouldLoad] = useState(isVisible);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // 주석: GlbViewer 대신 캐러셀 이미지 유틸을 사용하여 이미지 가져오기
+  const imageUrl = gesture.gestureLabel ? getCarouselGestureImage(gesture.gestureLabel) : '';
 
   useEffect(() => {
     // isVisible prop이 true로 변경되면 로딩 시작
@@ -72,17 +75,17 @@ export function DictGestureCard({
       <div className="h-full flex flex-col">
         {/* 이미지 영역 */}
         <div className="flex items-center justify-center sm:p-3 h-[75%]">
-          {gesture.imageUrl ? (
-            shouldLoad ? (
-              <GlbViewer url={gesture.imageUrl} />
+          {shouldLoad ? (
+            imageUrl ? (
+              <img src={imageUrl} alt={gesture.gestureTitle} className="h-80 w-80 object-contain" />
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-gray-400">
-                로딩 중...
+              <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
+                이미지 준비 중
               </div>
             )
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
-              이미지 준비 중
+            <div className="h-full w-full flex items-center justify-center text-gray-400">
+              로딩 중...
             </div>
           )}
         </div>
