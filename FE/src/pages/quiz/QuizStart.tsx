@@ -11,31 +11,29 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquareCheck } from '@fortawesome/free-solid-svg-icons';
+import { faSquareCheck, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/components/ui/button';
 
 function Quiz() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [showCameraOption, setShowCameraOption] = useState(false);
+  const [normalTooltip, setNormalTooltip] = useState(false);
+  const [aiTooltip, setAiTooltip] = useState(false);
 
   const handleButtonClick = (): void => {
     setOpen(true);
-    setShowCameraOption(false);
   };
 
   const handleStart = (useCamera: boolean) => {
     // useCamera 값에 따라 다른 URL로 이동
     if (useCamera !== undefined) {
-      // 다이얼로그에서 선택한 경우
       if (useCamera) {
         navigate('/quizcontent?useCamera=true');
       } else {
         navigate('/quizcontent?useCamera=false');
       }
     } else {
-      // 기존 동작 유지
       navigate('/ququizcontentiz');
     }
   };
@@ -65,20 +63,64 @@ function Quiz() {
               제스처 퀴즈 모드 선택
             </DialogTitle>
             <DialogDescription className="text-lg">
-              <p>카메라를 활용하는 퀴즈 유형을 포함하시겠습니까?</p>
-              <p>모든 데이터는 제스처 분석에만 이용되며 저장되지 않습니다.</p>
+              <p>총 다섯 문항을 진행하며 모드 선택이 가능합니다</p>
+              <p className='text-sm mt-1'>카메라 모드의 데이터는 퀴즈 진행에 이용되며 서버에 저장되지 않습니다.</p>
             </DialogDescription>
           </DialogHeader>
-          <div className="flex justify-end gap-4 mt-2">
-            <Button className="bg-slate-200 dark:bg-slate-600 cursor-pointer" onClick={() => handleStart(false)}>
-              제외하기
-            </Button>
-            <Button
-              className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer"
-              onClick={() => handleStart(true)}
-            >
-              포함하기
-            </Button>
+          <div className="flex justify-center gap-4 mt-3">
+            {/* 일반 모드 버튼 */}
+            <div className="relative">
+              <Button 
+                className="bg-kr-500 dark:bg-kr-400 text-white cursor-pointer min-w-[120px] w-32 h-10" 
+                onClick={() => handleStart(false)}
+                onMouseEnter={() => setNormalTooltip(true)}
+                onMouseLeave={() => setNormalTooltip(false)}
+              >
+                일반 모드
+              </Button>
+              
+              {/* 일반 모드 커스텀 말풍선 */}
+              {normalTooltip && (
+                <div className="absolute z-50 top-full mt-3 left-1/2 -translate-x-1/2 whitespace-normal">
+                  <div className="bg-white rounded-lg px-4 py-2 flex items-center shadow-md w-100 drop-shadow-basic">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform rotate-45 w-2 h-2 bg-white"></div>
+                    <div className="flex items-start">
+                      <div className="bg-white rounded-full w-4 h-4 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+                        <FontAwesomeIcon icon={faCircleInfo} className="text-black text-xs" />
+                      </div>
+                      <span className="text-sm text-gray-800">기본적인 4지선다형의 제스처 퀴즈 문항들이 주어집니다.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* AI 모드 버튼 */}
+            <div className="relative">
+              <Button 
+                className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer min-w-[120px] w-32 h-10" 
+                onClick={() => handleStart(true)}
+                onMouseEnter={() => setAiTooltip(true)}
+                onMouseLeave={() => setAiTooltip(false)}
+              >
+                AI 모드
+              </Button>
+              
+              {/* AI 모드 커스텀 말풍선 */}
+              {aiTooltip && (
+                <div className="absolute z-50 top-full mt-3 left-1/2 -translate-x-1/2 whitespace-normal">
+                  <div className="bg-white rounded-lg px-4 py-2 flex items-center shadow-md w-100 drop-shadow-basic">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform rotate-45 w-2 h-2 bg-white"></div>
+                    <div className="flex items-start">
+                      <div className="bg-white rounded-full w-4 h-4 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+                        <FontAwesomeIcon icon={faCircleInfo} className="text-black text-xs mt-1" />
+                      </div>
+                      <span className="text-sm text-gray-800">주어진 설명을 보고 카메라를 활용하여 제스처를 인식하며 퀴즈를 진행합니다.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
