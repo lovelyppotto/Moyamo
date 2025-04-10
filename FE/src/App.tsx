@@ -99,7 +99,35 @@ function App() {
     getHandLandmarker().then(() => {
       console.log("HandLandmarker 미리 로딩 완료");
     });
-  }, []);
+    
+    // 서비스 워커 정리 로직
+    async function cleanupServiceWorkers() {
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          
+          if (registrations.length > 1) {
+            console.log(`${registrations.length}개의 서비스 워커 발견, 정리 시작...`);
+            
+            // 첫 번째는 남기고 나머지 제거
+            const allRegistrations = [...registrations];
+            for (let i = 1; i < allRegistrations.length; i++) {
+              await allRegistrations[i].unregister();
+              console.log(`서비스 워커 정리됨: ${allRegistrations[i].scope}`);
+            }
+            
+            console.log('서비스 워커 정리 완료');
+          }
+        } catch (error) {
+          console.error('서비스 워커 정리 중 오류 발생:', error);
+        }
+      }
+    }
+    
+    // 서비스 워커 정리 함수 호출
+    cleanupServiceWorkers();
+    
+  }, []); // 빈 의존성 배열로 컴포넌트 마운트 시 한 번만 실행
 
   return (
     <div className="h-[100dvh] overflow-hidden relative">
