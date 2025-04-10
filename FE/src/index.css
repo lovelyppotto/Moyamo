@@ -159,6 +159,13 @@
   --drop-shadow-nation: 0 1px 1px rgba(0, 0, 0, 0.4);
   --drop-shadow-quiz: 5px 5px 1px rgba(255, 255, 255, 0.7);
   --drop-shadow-quiz-box: 5px 5px 1px rgba(0, 0, 0, 0.1);
+
+  /* 토스트 관련 스타일 */
+  --toast-width: 400px; /* 기본값보다 더 넓게 */
+  --toast-height: auto; /* 높이는 컨텐츠에 맞게 */
+  --toast-border-radius: 0.5rem;
+  --toast-padding: 1rem; /* 패딩 증가 */
+  --toast-font-size: 1rem; /* 폰트 크기 증가 */
 }
 
 /* 폰트 */
