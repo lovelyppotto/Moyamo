@@ -53,11 +53,11 @@ function QuizResult({ userAnswers }: QuizResultProps): JSX.Element {
         <div className="absolute top-0 left-0 w-full">
           <QuizTwinkleLottie height="20vh" />
         </div>
-        
-        <div className="text-xl font-bold font-[Galmuri11] p-[3vh] drop-shadow-quiz-box text-white animate-bounce font-[DNFBitBitv2] ">
-        <p>{startext}</p>
+
+        <div className="text-xl font-bold p-[3vh] drop-shadow-quiz-box text-white animate-bounce font-[DNFBitBitv2] ">
+          <p>{startext}</p>
         </div>
-        <div className="flex flex-col justify-evenly items-center bg-white border-5 border-yellow-400 rounded-xl w-1/2 lg:w-1/3 h-1/3  p-[5vh] py-[5vh] ">
+        <div className="flex flex-col justify-evenly items-center bg-white border-5 border-yellow-400 rounded-xl w-1/2 lg:w-1/3 h-1/3 lg:h-2/5  p-[5vh] py-[5vh] ">
           <h1 className="text-4xl xl:text-5xl font-bold font-[DNFBitBitv2] text-yellow-500 drop-shadow-quiz-box">
             SCORE
           </h1>
