@@ -12,17 +12,17 @@ import java.util.List;
 public interface GestureSearchRepository extends JpaRepository<CountryGesture, Integer> {
 
     @Query("""
-        SELECT cg FROM CountryGesture cg
-        JOIN FETCH cg.gesture g
-        JOIN FETCH cg.country c
-        JOIN FETCH cg.gestureInfo gi
-        WHERE (
-            gi.gestureTitle LIKE %:gestureName%
-            OR g.gestureLabel LIKE %:gestureName%
-        )
-        AND (:countryId = 0 OR c.countryId = :countryId)
-        AND gi.gestureTitle IS NOT NULL
-    """)
+                SELECT cg FROM CountryGesture cg
+                JOIN FETCH cg.gesture g
+                JOIN FETCH cg.country c
+                JOIN FETCH cg.gestureInfo gi
+                WHERE (
+                    gi.gestureTitle LIKE %:gestureName%
+                    OR g.gestureLabel LIKE %:gestureName%
+                )
+                AND (:countryId = 0 OR c.countryId = :countryId)
+                AND gi.gestureTitle IS NOT NULL
+            """)
     List<CountryGesture> findGesturesByTitleAndCountry(@Param("gestureName") String gestureName,
                                                        @Param("countryId") int countryId);
 
@@ -31,7 +31,8 @@ public interface GestureSearchRepository extends JpaRepository<CountryGesture, I
             "JOIN FETCH cg.country c " +
             "JOIN FETCH cg.gestureInfo gi " +
             "WHERE g.gestureLabel = :gestureLabel " +
-            "AND (:countryId = 0 OR c.countryId = :countryId)")
+            "AND (:countryId = 0 OR c.countryId = :countryId)" +
+            "AND gi.gestureTitle IS NOT NULL")
     List<CountryGesture> findGesturesByGestureLabelAndCountryId(@Param("gestureLabel") String gestureLabel,
-                                                        @Param("countryId") int countryId);
+                                                                @Param("countryId") int countryId);
 }
