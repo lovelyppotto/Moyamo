@@ -47,14 +47,21 @@ function CompareGuide() {
 
     // 상황이 하나만 있는 경우 그대로 표시
     if (situations.length <= 1) {
-      return <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">{situation}</p>;
+      return (
+        <p className="font-[NanumSquareRound] text-[17px] text-left ml-4 hyphens-auto break-keep tracking-tight text-pretty leading-normal">
+          {situation}
+        </p>
+      );
     }
 
     // 여러개 있는 경우
     return (
       <ul className="list-disc font-[NanumSquareRound] text-[17px] ml-4 pl-4">
         {situations.map((item, index) => (
-          <li key={index} className="mb-2">
+          <li
+            key={index}
+            className="mb-2 hyphens-auto break-keep tracking-tight text-pretty leading-normal"
+          >
             {item}
           </li>
         ))}
@@ -140,7 +147,7 @@ function CompareGuide() {
                       <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4 ">
                         의미
                       </p>
-                      <p className="font-[NanumSquareRound] text-[17px] text-left ml-4">
+                      <p className="font-[NanumSquareRound] text-[17px] text-left ml-4 hyphens-auto break-keep tracking-tight text-pretty leading-normal">
                         {meaning.gestureMeaning}
                       </p>
                     </div>
@@ -150,7 +157,7 @@ function CompareGuide() {
                       <p className="font-[NanumSquareRoundB] text-[20px] mb-2 text-left ml-4">
                         사용 상황
                       </p>
-                      <div className="font-[NanumSquareRound]">
+                      <div className="font-[NanumSquareRound] hyphens-auto break-keep tracking-tight text-pretty leading-normal">
                         {parseSituation(meaning.gestureSituation)}
                       </div>
                     </div>
