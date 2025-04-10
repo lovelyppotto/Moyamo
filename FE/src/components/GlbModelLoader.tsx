@@ -1,29 +1,45 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { useQueryClient } from '@tanstack/react-query';
+import { useGLBModel } from '@/hooks/useGLBModel';
 
 interface GlbModelLoaderProps {
   url: string;
   scene: THREE.Object3D;
   onLoad?: (model: THREE.Object3D) => void;
   animationIndex?: number;
+  onProgress?: (progress: number) => void; // 로딩 진행 상태 콜백 추가
 }
 
-export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbModelLoaderProps) {
+export function GlbModelLoader({
+  url,
+  scene,
+  onLoad,
+  animationIndex = 0,
+  onProgress,
+}: GlbModelLoaderProps) {
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const mixer2Ref = useRef<THREE.AnimationMixer | null>(null);
+  const queryClient = useQueryClient();
+
+  // React Query를 사용하여 GLB 모델 캐싱
+  const { data: cachedModelUrl, isLoading, isError } = useGLBModel(url);
 
   useEffect(() => {
+    // 캐시된 URL이 없으면 로딩 시작하지 않음
+    if (!cachedModelUrl) return;
+
     // GLB/GLTF 로더
     const loader = new GLTFLoader();
 
-    // 모델 타입을 THREE.Object3D로 지정 (Group에서 변경)
+    // 모델 타입을 THREE.Object3D로 지정
     let model: THREE.Object3D;
 
     loader.load(
-      url,
+      cachedModelUrl, // 캐시된 URL 사용
       (gltf) => {
-        console.log('Model loaded successfully:', gltf);
+        // console.log('Model loaded successfully:', gltf);
 
         // gltf.scene은 THREE.Object3D 타입
         model = gltf.scene;
@@ -37,11 +53,6 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
               child.material.metalness = 0.1; // 금속성 감소
               child.material.envMapIntensity = 0.6; // 환경 맵 강도 감소
             }
-          }
-
-          // 디버깅: 모든 객체와 본 계층 구조 출력
-          if (child.name.includes('Armature') || child.type === 'Bone') {
-            console.log(`Found object: "${child.name}" (Type: ${child.type})`);
           }
         });
 
@@ -71,26 +82,14 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
           }
         });
 
-        console.log(
-          'Armatures found:',
-          armature ? 'Armature OK' : 'No Armature',
-          armature001 ? 'Armature001 OK' : 'No Armature001'
-        );
-
         // 애니메이션 처리
         if (gltf.animations && gltf.animations.length > 0) {
-          console.log(
-            'All animations:',
-            gltf.animations.map((a) => a.name)
-          );
-
           // 첫 번째 애니메이션 적용 (index = 0)
           if (gltf.animations[0]) {
             mixerRef.current = new THREE.AnimationMixer(model);
             const action = mixerRef.current.clipAction(gltf.animations[0]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`First animation applied: ${gltf.animations[0].name}`);
           }
 
           // 두 번째 애니메이션이 있다면 적용 (index = 1)
@@ -99,7 +98,6 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
             const action = mixer2Ref.current.clipAction(gltf.animations[1]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`Second animation applied: ${gltf.animations[1].name}`);
           }
 
           // 선택된 인덱스의 애니메이션이 아직 적용되지 않았다면 적용
@@ -113,7 +111,6 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
             const action = mixerRef.current.clipAction(gltf.animations[animationIndex]);
             action.timeScale = 0.5;
             action.play();
-            console.log(`Selected animation applied: ${gltf.animations[animationIndex].name}`);
           }
         }
 
@@ -124,12 +121,46 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
       },
       (progress) => {
         const percentage = (progress.loaded / progress.total) * 100;
-        console.log('Loading progress:', percentage + '%');
+        // console.log('Loading progress:', percentage + '%');
+
+        // 진행 상태 콜백 실행
+        if (onProgress) {
+          onProgress(percentage);
+        }
       },
       (error) => {
         console.error('\n GLB/GLTF 로딩 에러:', error);
       }
     );
+
+    // 비슷한 모델 미리 로딩 (다음 모델들)
+    const prefetchNextModels = () => {
+      // URL 패턴 추출 (예: /models/kr/1.glb -> /models/kr/)
+      const urlPattern = url.match(/(.+?)\/[^\/]+\.glb$/);
+      if (urlPattern && urlPattern[1]) {
+        const baseUrl = urlPattern[1];
+
+        // 현재 ID에서 숫자 추출 (예: /models/kr/1.glb -> 1)
+        const currentIdMatch = url.match(/\/(\d+)\.glb$/);
+        if (currentIdMatch && currentIdMatch[1]) {
+          const currentId = parseInt(currentIdMatch[1]);
+
+          // 다음 3개 모델 미리 로드
+          const urlsToPreload: string[] = [];
+          for (let i = currentId + 1; i <= currentId + 3; i++) {
+            urlsToPreload.push(`${baseUrl}/${i}.glb`);
+          }
+
+          // 미리 로드 호출
+          import('@/hooks/useGLBModel').then(({ prefetchGLBModels }) => {
+            prefetchGLBModels(queryClient, urlsToPreload);
+          });
+        }
+      }
+    };
+
+    // 모델 로드 성공 후 다음 모델 미리 로드
+    prefetchNextModels();
 
     // 클린업
     return () => {
@@ -140,7 +171,7 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
         mixer2Ref.current.stopAllAction();
       }
     };
-  }, [url, scene, onLoad, animationIndex]);
+  }, [cachedModelUrl, scene, onLoad, animationIndex, queryClient, url, onProgress]);
 
   // 애니메이션 업데이트 함수를 반환 - 외부 렌더 루프에서 호출할 수 있게 함
   const updateAnimations = (delta: number) => {
@@ -152,5 +183,9 @@ export function GlbModelLoader({ url, scene, onLoad, animationIndex = 0 }: GlbMo
     }
   };
 
-  return { updateAnimations };
+  return {
+    updateAnimations,
+    isLoading,
+    isError,
+  };
 }
