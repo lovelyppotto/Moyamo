@@ -11,6 +11,10 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions
+        : {
+          enabled: true,
+        },
       includeAssets: ['favicon.ico'],
       filename: 'favicon/site.webmanifest',
       manifest: {
@@ -64,7 +68,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,json,woff,woff2}'],
 
         // 오프라인 페이지 설정
-        navigateFallback: '/offline.html',
+        // navigateFallback: '/offline.html',
         
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
 
@@ -99,6 +103,31 @@ export default defineConfig({
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'static-resources',
+            },
+          },
+          //미디어파이프 모델 파일 캐싱
+          {
+            urlPattern: new RegExp('https://cdn\\.jsdelivr\\.net/npm/@mediapipe/tasks-vision@latest/wasm/.*'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'mediapipe-wasm',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
+              },
+            },
+          },
+          
+          // 미디어파이프 모델 파일 캐싱 규칙 추가
+          {
+            urlPattern: new RegExp('https://storage\\.googleapis\\.com/mediapipe-.*'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'mediapipe-models',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
+              },
             },
           },
         ],

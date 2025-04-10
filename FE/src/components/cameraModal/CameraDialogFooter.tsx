@@ -46,11 +46,6 @@ function CameraDialogFooter({
       return (
         <span className="text-center font-[NanumSquareRoundB]">
           <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">잠시만 기다려주세요</span>
-          <span className="inline-block ml-1">
-            <span className="animate-pulse">.</span>
-            <span className="animate-pulse delay-150">.</span>
-            <span className="animate-pulse delay-300">.</span>
-          </span>
         </span>
       );
     }
@@ -65,7 +60,7 @@ function CameraDialogFooter({
     }
 
     return (
-      <span className="flex items-center">
+      <span className="flex items-center font-[NanumSquareRoundB]">
         <Camera size={20} className="mr-2" />
         {isErrorToastShown ? '다시 시도하기' : '검색하기'}
       </span>

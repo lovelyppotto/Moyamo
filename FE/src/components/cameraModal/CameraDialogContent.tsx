@@ -15,7 +15,7 @@ interface CameraDialogContentProps {
  */
 const CameraDialogContent: React.FC<CameraDialogContentProps> = ({
   open,
-  guideText = '제스처를 준비해주세요',
+  guideText = '손 전체가 화면에 보이도록 준비해 주세요',
   onConnectionStatus,
   isPaused,
   onHandDetected,

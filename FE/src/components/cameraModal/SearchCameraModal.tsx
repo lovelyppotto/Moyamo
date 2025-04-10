@@ -11,11 +11,22 @@ import CameraDialogFooter from './CameraDialogFooter';
 
 // 커스텀 훅
 import { useGestureEvents } from '@/hooks/useGestureEvents';
-import { useGestureTimer } from '@/hooks/useGestureTimer';
 import { useZoomPrevention } from '@/hooks/useZoomPrevention';
 
 // 유틸리티
 import { isSensitiveGesture, isSearchableGesture } from '@/utils/sensitiveGestureUtils';
+
+// 가이드 텍스트 상수 정의
+const GUIDE_TEXT = {
+  INITIAL: '버튼을 누른 뒤 검색할 제스처를 준비해 주세요',
+  PREPARE: '손 전체가 화면에 보이도록 준비해 주세요',
+  COUNTDOWN: '인식중입니다. 동일한 제스처를 계속 유지해 주세요',
+  WAITING: '잠시 기다려 주세요⋯⋯',
+  SUCCESS: '인식 완료!',
+  ERROR_HAND: '버튼을 눌러 다시 시도해 주세요',
+  ERROR_GESTURE: '버튼을 눌러 다시 시도해 주세요',
+  ERROR_INAPPROPRIATE: '다른 제스처로 다시 시도해 주세요'
+};
 
 declare global {
   interface Window {
@@ -26,6 +37,7 @@ declare global {
       confidence: number;
     };
     stopGestureAPI?: () => void;
+    stopWebcam?: () => void;
   }
 }
 
@@ -42,15 +54,18 @@ function SearchCameraModal() {
 
   // 프레임 수집 상태 ref
   const isCollectingFramesRef = useRef(false);
+  
+  // Dialog 컴포넌트 강제 언마운트를 위한 키
+  const [dialogKey, setDialogKey] = useState(0);
 
   // 상태 관리
   const [apiActive, setApiActive] = useState(false);
-  const [guideText, setGuideText] = useState('');
+  const [guideText, setGuideText] = useState(GUIDE_TEXT.INITIAL);
   const [isPreparingGesture, setIsPreparingGesture] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [isWaitingForProcessing, setIsWaitingForProcessing] = useState(false);
   const [preparationCountdown, setPreparationCountdown] = useState(2);
-  const [countdown, setCountdown] = useState(2);
+  const [countdown, setCountdown] = useState(3);
   const [waitingCountdown, setWaitingCountdown] = useState(1);
   const [isApiConnected, setIsApiConnected] = useState(true);
   const [isErrorToastShown, setIsErrorToastShown] = useState(false);
@@ -63,18 +78,21 @@ function SearchCameraModal() {
 
   useZoomPrevention();
 
+  // 디버깅용 가이드 텍스트 로깅
+  useEffect(() => {
+    console.log(`[🔤 가이드 텍스트 변경] ${guideText}`);
+  }, [guideText]);
+
+  // 손 감지 상태 추적
   useEffect(() => {
     handDetectedRef.current = handDetected;
+    console.log(`[🖐️ 손 감지 상태 변경] ${handDetected}`);
   }, [handDetected]);
-
-  // 타이머 관리 훅 사용
-  const { startTimer, clearTimer, cleanupTimers } = useGestureTimer();
-
-  // 부적절한 제스처 목록
-  const inappropriateGestures = ['middle_finger', 'devil'];
 
   // 모든 타이머 정리 함수
   const clearAllTimers = useCallback(() => {
+    console.log('[🧹 모든 타이머 정리]');
+    
     if (prepTimerRef.current) {
       clearInterval(prepTimerRef.current);
       prepTimerRef.current = null;
@@ -94,9 +112,26 @@ function SearchCameraModal() {
       clearTimeout(navigationTimerRef.current);
       navigationTimerRef.current = null;
     }
+  }, []);
 
-    clearTimer();
-  }, [clearTimer]);
+  // 웹캠 강제 종료 함수
+  const forceStopWebcam = useCallback(() => {
+    console.log('[🎥 웹캠 강제 종료 시도]');
+    
+    // 전역 함수로 설정된 웹캠 정지 함수 호출
+    if (window.stopWebcam) {
+      console.log('[🎥 전역 웹캠 종료 함수 호출]');
+      window.stopWebcam();
+    }
+    
+    // 다이얼로그 강제 재생성 트리거
+    setDialogKey(prev => prev + 1);
+    
+    // API 관련 작업 중지
+    if (window.stopGestureAPI) {
+      window.stopGestureAPI();
+    }
+  }, []);
 
   // 대기 타이머 (프레임 수집 후)
   const startWaitingTimer = useCallback(() => {
@@ -108,11 +143,20 @@ function SearchCameraModal() {
     setIsCountingDown(false);
     setIsWaitingForProcessing(true);
     setWaitingCountdown(1);
-    setGuideText('잠시 기다려 주세요...');
+    setGuideText(GUIDE_TEXT.WAITING);
 
+    // 손 감지 상태 변수 - 타이머 내에서 유지
+    let handDetectionOccurred = false;
+    
     // 최종 제스처를 저장할 변수
     let finalGesture: string | null = null;
-    let wasHandDetected = handDetectedRef.current;
+    
+    console.log(`[🖐️ 대기 타이머 시작 시 손 감지 상태] ${handDetectedRef.current}`);
+    
+    // 초기 상태가 true면 이미 손이 감지된 것
+    if (handDetectedRef.current) {
+      handDetectionOccurred = true;
+    }
 
     // 제스처 감지 이벤트 핸들러
     const gestureHandler = (event: Event) => {
@@ -120,7 +164,8 @@ function SearchCameraModal() {
       if (gestureEvent.detail && gestureEvent.detail.gesture) {
         finalGesture = gestureEvent.detail.gesture;
         console.log(`[🖐️ 대기 중 제스처 캡처] ${finalGesture}`);
-        wasHandDetected = true;
+        // 제스처가 감지되었다면 손도 감지된 것
+        handDetectionOccurred = true;
 
         // 실시간으로 상태 업데이트
         setDetectedGesture(finalGesture);
@@ -141,6 +186,12 @@ function SearchCameraModal() {
         return;
       }
 
+      // 현재 손 감지 상태 확인
+      if (handDetectedRef.current) {
+        handDetectionOccurred = true;
+        console.log('[🖐️ 손 감지 발생]');
+      }
+
       waitCount--;
       setWaitingCountdown(waitCount);
 
@@ -154,15 +205,25 @@ function SearchCameraModal() {
         // 대기 상태 종료
         setIsWaitingForProcessing(false);
 
+        // 마지막 손 감지 상태 확인
+        if (handDetectedRef.current) {
+          handDetectionOccurred = true;
+        }
+
         // 전역 변수에서 제스처 가져오기
         if (!finalGesture && window.lastDetectedGesture) {
           finalGesture = window.lastDetectedGesture.gesture;
           console.log(`[🖐️ 전역 변수에서 제스처 가져옴] ${finalGesture}`);
+          // 제스처가 있다면 손도 감지된 것
+          if (window.lastDetectedGesture.gesture) {
+            handDetectionOccurred = true;
+          }
         }
 
         // 최종 제스처 선택
         const gestureToUse = finalGesture || detectedGesture;
         console.log(`[🔍 사용할 최종 제스처] ${gestureToUse || '없음'}`);
+        console.log(`[🖐️ 최종 손 감지 상태] ${handDetectionOccurred}`);
 
         // API 비활성화
         setApiActive(false);
@@ -171,18 +232,25 @@ function SearchCameraModal() {
         // 모달이 여전히 열려있는지 확인 후 처리
         if (!open) return;
 
-        // 1. 손 감지가 일어나지 않았을 때
-        if (!wasHandDetected) {
+        // 1. 손 감지가 일어나지 않았을 때 - 강제 조건 추가
+        if (!handDetectionOccurred) {
+          console.log('[🚨 손 감지 실패] 토스트 표시');
+          
+          // 토스트를 강제로 모두 제거 후 새로 표시
           toast.dismiss();
-          toast.info('손 감지 경고', {
-            description:
-              '손이 카메라에 인식되지 않았습니다. 손을 화면 내에 전부 들어가게 해주세요.',
-            duration: 3000,
-            position: 'top-right',
-            icon: '👋',
-          });
+          
+          // 비동기적으로 토스트 표시 (다음 틱에)
+          setTimeout(() => {
+            toast.info('손 감지 경고', {
+              description:
+                '손이 카메라에 인식되지 않았습니다. 손을 화면 내에 전부 들어가게 해주세요.',
+              duration: 3000,
+              position: 'top-right',
+              icon: '👋',
+            });
+          }, 0);
 
-          setGuideText('버튼을 눌러 다시 시도해 주세요');
+          setGuideText(GUIDE_TEXT.ERROR_HAND);
           setIsErrorToastShown(true);
           return;
         }
@@ -190,14 +258,16 @@ function SearchCameraModal() {
         // 2. API 결과가 none인 경우 또는 제스처가 감지되지 않은 경우
         if (!gestureToUse || gestureToUse === '없음' || gestureToUse === 'none') {
           toast.dismiss();
-          toast.warning('제스처 인식 오류', {
-            description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
-            duration: 3000,
-            position: 'top-right',
-            icon: '⚠️',
-          });
+          setTimeout(() => {
+            toast.warning('제스처 인식 오류', {
+              description: '유효한 제스처가 감지되지 않았습니다. 다시 시도해 주세요.',
+              duration: 3000,
+              position: 'top-right',
+              icon: '⚠️',
+            });
+          }, 0);
 
-          setGuideText('버튼을 눌러 다시 시도해 주세요');
+          setGuideText(GUIDE_TEXT.ERROR_GESTURE);
           setIsErrorToastShown(true);
           return;
         }
@@ -205,21 +275,23 @@ function SearchCameraModal() {
         // 3. 민감한 제스처지만 검색 불가능한 경우 (middle_finger 등)
         if (isSensitiveGesture(gestureToUse) && !isSearchableGesture(gestureToUse)) {
           toast.dismiss();
-          toast.error('부적절한 제스처가 감지되었습니다', {
-            description: '상대방을 존중하는 제스처를 사용해 주세요.',
-            duration: 3000,
-            position: 'top-right',
-            icon: '🚫',
-          });
+          setTimeout(() => {
+            toast.error('부적절한 제스처가 감지되었습니다', {
+              description: '상대방을 존중하는 제스처를 사용해 주세요.',
+              duration: 3000,
+              position: 'top-right',
+              icon: '🚫',
+            });
+          }, 0);
 
-          setGuideText('다른 제스처로 다시 시도해 주세요');
+          setGuideText(GUIDE_TEXT.ERROR_INAPPROPRIATE);
           setIsErrorToastShown(true);
           return;
         }
 
         // 4. 일반 제스처 또는 검색 가능한 민감한 제스처 (devil 등)
         console.log(`[🔍 검색 실행] 제스처: ${gestureToUse}`);
-        setGuideText('인식 완료!');
+        setGuideText(GUIDE_TEXT.SUCCESS);
 
         // 민감한 제스처인지 확인하여 파라미터에 추가
         const isSensitive = isSensitiveGesture(gestureToUse) ? '&sensitive=true' : '';
@@ -264,7 +336,7 @@ function SearchCameraModal() {
     setIsPreparingGesture(false);
     setIsCountingDown(true);
     setCountdown(3);
-    setGuideText('3초 동안 동일한 제스처를 유지해 주세요');
+    setGuideText(GUIDE_TEXT.COUNTDOWN);
 
     // 이 시점에서 프레임 수집 시작
     if (window.startCollectingFrames && !isCollectingFramesRef.current) {
@@ -274,7 +346,7 @@ function SearchCameraModal() {
     }
 
     // 카운트다운
-    let count = 3; // 2초로 변경
+    let count = 3;
     const countInterval = setInterval(() => {
       // 모달이 닫혔으면 타이머 중지
       if (!open) {
@@ -290,7 +362,7 @@ function SearchCameraModal() {
         clearInterval(countInterval);
         countdownTimerRef.current = null;
 
-        // 대기 타이머 시작 (새로 추가)
+        // 대기 타이머 시작
         startWaitingTimer();
       }
     }, 1000);
@@ -311,18 +383,10 @@ function SearchCameraModal() {
 
     console.log('[⏱️ 준비 타이머] 시작');
 
-    // 기존 타이머 정리
-    clearAllTimers();
-
-    // 상태 초기화
-    setDetectedGesture(null);
-    setLastConfidence(0);
-    setIsErrorToastShown(false);
-
     // 준비 상태 설정
     setIsPreparingGesture(true);
     setPreparationCountdown(2);
-    setGuideText('제스처를 준비해주세요');
+    setGuideText(GUIDE_TEXT.PREPARE);
 
     // API 활성화
     setApiActive(true);
@@ -353,12 +417,20 @@ function SearchCameraModal() {
     isCountingDown,
     isWaitingForProcessing,
     open,
-    clearAllTimers,
     startCountdownTimer,
   ]);
 
-  // 손 감지 콜백
+  // 손 감지 콜백 - 메세지 줄이고 불필요한 업데이트 제한
   const handleHandDetected = useCallback((detected: boolean) => {
+    // 값이 변경될 때만 로그 출력 (줄이기 위해)
+    if (detected !== handDetectedRef.current) {
+      console.log(`[🖐️ 손 감지 상태 변경] ${detected}`);
+    }
+    
+    // ref는 항상 최신 상태 유지
+    handDetectedRef.current = detected;
+    
+    // 상태 업데이트 (UI 반영용)
     setHandDetected(detected);
   }, []);
 
@@ -378,27 +450,33 @@ function SearchCameraModal() {
 
   // 모든 상태 초기화
   const resetAllState = useCallback(() => {
-    console.log('[🔄 모든 상태 초기화 시작]');
+    console.log('[🔄 모든 상태 초기화]');
 
     // 모든 타이머 정리
     clearAllTimers();
 
-    // 상태 초기화
+    // 상태 초기화 (한 번에 모든 상태 초기화)
     setIsPreparingGesture(false);
     setIsCountingDown(false);
     setIsWaitingForProcessing(false);
     setPreparationCountdown(2);
     setCountdown(3);
     setWaitingCountdown(1);
-    setGuideText('버튼을 누른 뒤 손 전체가 화면에 나오게 준비해 주세요');
     setIsErrorToastShown(false);
     setDetectedGesture(null);
     setLastConfidence(0);
     setApiActive(false);
+    setHandDetected(false); // 손 감지 상태 명시적 초기화
+    setGuideText(GUIDE_TEXT.INITIAL);
+    
+    handDetectedRef.current = false;
     isCollectingFramesRef.current = false;
 
     // 토스트 메시지 모두 제거
     toast.dismiss();
+
+    // 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
 
     // API 시퀀스도 초기화 (전역 함수 활용)
     if (window.resetGestureSequence) {
@@ -411,8 +489,6 @@ function SearchCameraModal() {
       console.log('[🛑 API 강제 중지 요청]');
       window.stopGestureAPI();
     }
-
-    console.log('[🔄 상태 초기화] 완료');
   }, [clearAllTimers]);
 
   // 제스처 이벤트 훅 사용
@@ -422,7 +498,7 @@ function SearchCameraModal() {
     onGestureDetected: handleGestureDetected,
   });
 
-  // 캡처 버튼 클릭 핸들러
+  // 캡처 버튼 클릭 핸들러 - 간소화
   const handleCaptureClick = useCallback(() => {
     if (!open || isPreparingGesture || isCountingDown || isWaitingForProcessing) {
       return;
@@ -436,24 +512,24 @@ function SearchCameraModal() {
     // 타이머 정리
     clearAllTimers();
 
-    // 상태 초기화
-    setIsPreparingGesture(false);
-    setIsCountingDown(false);
-    setIsWaitingForProcessing(false);
-    setPreparationCountdown(2);
-    setCountdown(3);
-    setWaitingCountdown(1);
-    setGuideText('제스처를 준비해주세요');
+    // 상태 초기화 - 최소한의 필요한 상태만 재설정
     setIsErrorToastShown(false);
     setDetectedGesture(null);
     setLastConfidence(0);
+    
+    // 손 감지 상태 명시적 초기화 (중요)
+    setHandDetected(false);
+    handDetectedRef.current = false;
+    
+    // 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
 
     // API 시퀀스 초기화 (전역 함수 사용)
     if (window.resetGestureSequence) {
       window.resetGestureSequence();
     }
 
-    // API 비활성화 후 재활성화
+    // API 비활성화
     setApiActive(false);
 
     // 약간의 지연 후 타이머 시작
@@ -461,7 +537,7 @@ function SearchCameraModal() {
       if (!open) return;
 
       setApiActive(true);
-      startPreparationTimer();
+      startPreparationTimer(); // 준비 타이머에서 나머지 상태 설정
     }, 300);
   }, [
     isPreparingGesture,
@@ -480,26 +556,44 @@ function SearchCameraModal() {
   // 모달 열기/닫기 처리
   const handleDialogOpenChange = useCallback(
     (isOpen: boolean) => {
-      if (isOpen !== open) {
-        if (!isOpen) {
-          console.log('[🔄 모달 닫힘] 모든 상태 초기화 및 API 중지');
-          resetAllState();
-        } else {
-          console.log('[🔄 모달 열림]');
-        }
-        setOpen(isOpen);
+      console.log(`[🔄 모달 상태 변경] ${open} -> ${isOpen}`);
+      
+      // 모달이 닫히는 경우, 즉시 리소스 정리 작업 수행
+      if (!isOpen && open) {
+        console.log('[🔄 모달 닫힘] 즉시 API 중지');
+        
+        // 즉시 API 비활성화
+        setApiActive(false);
+        
+        // 즉시 모든 타이머 정리
+        clearAllTimers();
+        
+        // 토스트 메시지 모두 제거
+        toast.dismiss();
+        
+        // 웹캠 강제 종료 시도
+        forceStopWebcam();
+        
+        // 상태 업데이트
+        setOpen(false);
+        
+        // 상태 초기화
+        resetAllState();
+        
+        return; // 중요: 여기서 종료하여 아래 setOpen이 다시 호출되지 않도록 함
+      }
+      
+      // 상태 업데이트 (닫기인 경우는 위에서 이미 처리했음)
+      setOpen(isOpen);
+      
+      // 열림 상태인 경우 처리
+      if (isOpen) {
+        console.log('[🔄 모달 열림]');
+        resetAllState();
       }
     },
-    [resetAllState, open]
+    [resetAllState, clearAllTimers, open, forceStopWebcam]
   );
-
-  // 모달 열릴 때 상태 초기화
-  useEffect(() => {
-    if (open) {
-      resetAllState();
-      setGuideText('버튼을 누른 뒤 손 전체가 화면에 나오게 준비해 주세요');
-    }
-  }, [open, resetAllState]);
 
   // 컴포넌트 언마운트 시 정리
   useEffect(() => {
@@ -512,11 +606,17 @@ function SearchCameraModal() {
       if (window.stopGestureAPI) {
         window.stopGestureAPI();
       }
+      
+      // 웹캠 강제 종료
+      if (window.stopWebcam) {
+        window.stopWebcam();
+      }
 
       // 전역 함수 제거
       window.resetGestureSequence = undefined;
       window.startCollectingFrames = undefined;
       window.stopGestureAPI = undefined;
+      window.stopWebcam = undefined;
     };
   }, [clearAllTimers]);
 
@@ -538,10 +638,25 @@ function SearchCameraModal() {
         isCollectingFramesRef.current = true;
       };
     }
+    
+    // 모달이 처음 로드될 때 전역 저장된 이전 제스처 결과 초기화
+    window.lastDetectedGesture = undefined;
   }, []);
 
+  // 모달이 열릴 때마다 전역 저장된 제스처 결과 초기화
+  useEffect(() => {
+    if (open) {
+      console.log('[🔄 모달 열림] 이전 제스처 결과 초기화');
+      window.lastDetectedGesture = undefined;
+    }
+  }, [open]);
+
   return (
-    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+    <Dialog 
+      key={`dialog-${dialogKey}`}
+      open={open} 
+      onOpenChange={handleDialogOpenChange}
+    >
       <DialogTrigger asChild>
         <button
           onClick={() => setOpen(true)}
