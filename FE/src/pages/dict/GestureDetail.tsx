@@ -161,7 +161,9 @@ function GestureDetail() {
                 <>
                   <GlbViewer url={`${gestureData.gestureImage}`} />
                   <div className="absolute bottom-8 border p-2 rounded-xl border-gray-400 group-hover:bottom-2 transition-all duration-300 group-hover:opacity-0">
-                    <p className="font-[NanumSquareRoundB] text-gray-500">3D 회전이 가능합니다.</p>
+                    <p className="font-[NanumSquareRoundB] text-gray-500 dark:text-d-txt-50">
+                      3D 회전이 가능합니다.
+                    </p>
                   </div>
                 </>
               ) : (
