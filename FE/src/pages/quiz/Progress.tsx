@@ -7,6 +7,7 @@ interface QuizProgressProps {
   onTimeout?: () => void;
   className?: string;
   startProgress?: boolean;
+  isPaused?: boolean; // Add a new prop to pause the timer when an answer is selected
 }
 
 function QuizProgress({
@@ -14,42 +15,60 @@ function QuizProgress({
   onTimeout = () => {},
   className = '',
   startProgress = false,
+  isPaused = false,
 }: QuizProgressProps) {
   const [remainingTime, setRemainingTime] = useState<number>(timeout);
+  const [hasTimedOut, setHasTimedOut] = useState<boolean>(false);
 
+  // Reset timer when timeout changes
   useEffect(() => {
     setRemainingTime(timeout);
+    setHasTimedOut(false);
   }, [timeout]);
 
+  // Handle timeout effect
   useEffect(() => {
-    if (timeout <= 0) return;
-    const timer = setTimeout(onTimeout, timeout); // 모든 문제를 다 풀었을 때 타이머가 작동하지 않도록 함.
-    return () => clearTimeout(timer);
-  }, [timeout, onTimeout]);
+    if (timeout <= 0 || !startProgress || isPaused) return;
 
+    let timer: NodeJS.Timeout | null = null;
+
+    if (remainingTime <= 0 && !hasTimedOut) {
+      setHasTimedOut(true);
+      onTimeout();
+    } else if (remainingTime > 0) {
+      timer = setTimeout(() => {
+        onTimeout();
+        setHasTimedOut(true);
+      }, remainingTime);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timeout, onTimeout, remainingTime, startProgress, isPaused, hasTimedOut]);
+
+  // Countdown timer
   useEffect(() => {
-    if (timeout <= 0 || !startProgress) return; //  timeout이 0 이하 혹은 startProgress가 false이면 아무것도 하지 않음
+    if (timeout <= 0 || !startProgress || isPaused) return;
+
     const interval = setInterval(() => {
       setRemainingTime((prevRemainingTime) => {
-        return Math.max(0, prevRemainingTime - 1000); //1초에 한번 줄어든다.
+        return Math.max(0, prevRemainingTime - 1000);
       });
     }, 1000);
 
     return () => {
       clearInterval(interval);
-    }; // 클린업 함수: Effect함수 작동 전, 컴포넌트가 DOM으로부터 삭제될 때 실행
-  }, [timeout, startProgress]);
+    };
+  }, [timeout, startProgress, isPaused]);
 
   const progressPercent = timeout > 0 ? (remainingTime / timeout) * 100 : 0;
 
   return (
     <div className="flex justify-center">
       <Progress.Root
-        // 배경화면 지우고 className변수에, 각 나라 컬러를 가져오도록 해야 함!!
         className={`w-full relative h-3 overflow-hidden rounded-full bg-gray-200 m-10 shadow-9xl drop-shadow-quiz-box ${className}`}
         style={{
-          // Fix overflow clipping in Safari
-          // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
           transform: 'translateZ(0)',
         }}
         value={progressPercent}
