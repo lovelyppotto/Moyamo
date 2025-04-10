@@ -23,8 +23,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         className: 'rounded-lg shadow-lg',
         // 토스트 내부 요소별 클래스 지정
         classNames: {
-          title: 'ml-2 font-[NanumSquareRoundB] text-base font-bold', // 제목 크기 증가
-          description: 'ml-2 font-[NanumSquareRound] text-[13px] mt-1', // 설명 크기 증가
+          title: 'ml-2 font-[NanumSquareRoundB] text-base font-bold',
+          description: 'ml-2 font-[NanumSquareRound] text-[13px] mt-1 break-keep break-words whitespace-pre-wrap',
           toast: 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700',
           success: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
           error: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
