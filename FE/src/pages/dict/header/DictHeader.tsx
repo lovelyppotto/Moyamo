@@ -8,8 +8,6 @@ import { Country } from '@/types/dictionaryType';
 import { getFlagImage } from '@/utils/imageUtils';
 import { useCountryCode } from '@/hooks/useCountryCode';
 import { GestureDetail } from '@/types/dictDetailType';
-import { getLogoImage } from '@/utils/imageUtils';
-import { useTheme } from 'next-themes';
 
 // DictHeader 컴포넌트 prop 타입
 interface DictHeaderProps {
@@ -39,12 +37,6 @@ const DictHeader = React.memo(function DictHeader({
   const countryCode = useMemo(
     () => getCountryCode(gestureCompareInfo?.countryName),
     [getCountryCode, gestureCompareInfo?.countryName]
-  );
-
-  const { theme } = useTheme();
-  const logoSrc = useMemo(
-    () => (theme === 'dark' ? getLogoImage('logo-dark') : getLogoImage('logo')),
-    [theme]
   );
 
   // 국가 선택 핸들러 - useCallback으로 최적화
@@ -135,16 +127,8 @@ const DictHeader = React.memo(function DictHeader({
             <span className="hidden sm:inline font-[NanumSquareRound]">비교 가이드</span>
           </button>
         )}
-        <div className="text-xl lg:text-2xl">
+        <div className="text-xl md:text-2xl lg:text-3xl flex items-center">
           <FontAwesomeIcon icon={faHouse} onClick={handleLogoClick} />
-          {/* <img
-            src={logoSrc}
-            alt="MoyamoLogo"
-            className="w-full h-full object-contain select-none cursor-pointer"
-            onClick={handleLogoClick}
-            draggable="false" // 드래그 방지
-            loading="eager" // 로고는 빠르게 로드되어야 함
-          /> */}
         </div>
       </div>
     </header>

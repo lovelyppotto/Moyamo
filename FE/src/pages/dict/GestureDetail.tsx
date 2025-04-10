@@ -152,13 +152,18 @@ function GestureDetail() {
           overflow-y-auto customScrollbar ${countryCode} h-full`}
         >
           {/* 제스처 이미지 */}
-          <div className="w-full lg:w-1/2 p-6 flex justify-center items-center">
+          <div className="relative group w-full lg:w-1/2 p-6 flex justify-center items-center">
             <div
               className="w-full max-w-[600px] md:max-w-[500px] sm:max-w-[500px] lg:h-[90%] sm:h-[250px] min-h-[150px] 
               bg-white dark:bg-gray-500 rounded-lg drop-shadow-basic flex justify-center items-center"
             >
               {gestureData?.gestureImage ? (
-                <GlbViewer url={`${gestureData.gestureImage}`} />
+                <>
+                  <GlbViewer url={`${gestureData.gestureImage}`} />
+                  <div className="absolute bottom-8 border p-2 rounded-xl border-gray-400 group-hover:bottom-2 transition-all duration-300 group-hover:opacity-0">
+                    <p className="font-[NanumSquareRoundB] text-gray-500">3D 회전이 가능합니다.</p>
+                  </div>
+                </>
               ) : (
                 <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
                   이미지 준비 중
