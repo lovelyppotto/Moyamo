@@ -5,7 +5,7 @@ import Answers3 from './Answers3.tsx';
 import PbNumber from './PbNumber.tsx';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { FrontendQuestionData } from '@/types/quizTypes';
 import Animation from './Animation.tsx';
 
@@ -27,17 +27,36 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
   const [showWrongImage, setShowWrongImage] = useState<boolean>(false);
   const [timer, setTimer] = useState(questionData.type === 'CAMERA' ? 30000 : 10000);
   const [progressClass, setProgressClass] = useState('bg-[var(--color-kr-600)]');
-  const [startProgress, setStartProgress] = useState(true); // 모든 타입에서 바로 시작하도록 변경
+  const [startProgress, setStartProgress] = useState(true);
   const [isTimeOut, setIsTimedOut] = useState(false);
 
+  // 컴포넌트 마운트 추적
+  const isMountedRef = useRef(true);
+  // 답변 처리 완료 여부 추적
+  const answerProcessedRef = useRef(false);
+
+  // 컴포넌트 마운트/언마운트 처리
+  useEffect(() => {
+    console.log(`[Question] 컴포넌트 마운트됨, 문제 인덱스: ${Index}, 타입: ${questionData.type}`);
+    isMountedRef.current = true;
+    answerProcessedRef.current = false;
+
+    return () => {
+      console.log(`[Question] 컴포넌트 언마운트됨, 문제 인덱스: ${Index}`);
+      isMountedRef.current = false;
+    };
+  }, [Index, questionData.type]);
+
+  // 답변 선택 핸들러 - 안전하게 처리
   function handleSelectAnswer(isCorrect: boolean | null) {
-    // 이미 처리된 경우 중복 처리 방지
-    if (answer.isCorrect !== null) {
-      console.log('이미 답변이 처리되었습니다:', answer.isCorrect);
+    // 이미 처리되었거나 컴포넌트가 언마운트된 경우 무시
+    if (answerProcessedRef.current || !isMountedRef.current) {
+      console.log(`[Question] 답변 이미 처리됨 또는 언마운트됨, 무시: ${isCorrect}`);
       return;
     }
 
-    console.log('답변 처리:', isCorrect);
+    console.log(`[Question] 답변 처리 시작: ${isCorrect}`);
+    answerProcessedRef.current = true;
 
     // 모든 케이스(정답, 오답, 스킵)에 대해 처리
     setAnswer({
@@ -66,6 +85,12 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
 
     // 이미지 표시를 위한 타이머 (1초 후 이미지 숨김)
     setTimeout(() => {
+      // 컴포넌트가 언마운트되었는지 확인
+      if (!isMountedRef.current) {
+        console.log('[Question] 컴포넌트 언마운트됨, 상태 업데이트 무시');
+        return;
+      }
+
       setShowCorrectImage(false);
       setShowWrongImage(false);
 
@@ -74,13 +99,28 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
     }, 1000);
   }
 
+  // 타임아웃 또는 스킵 처리
   const handleSkipAnswer = useCallback((): void => {
-    console.log('Skip button clicked or timer expired');
+    // 이미 처리된 경우 중복 처리 방지
+    if (answerProcessedRef.current || !isMountedRef.current) {
+      console.log('[Question] 이미 답변이 처리되었거나 언마운트됨. 스킵 무시.');
+      return;
+    }
+
+    console.log('[Question] Skip button clicked or timer expired');
     setIsTimedOut(true);
-    
-    // handleSelectAnswer를 통해 스킵 처리
-    handleSelectAnswer(true);
+
+    // 스킵은 false(오답)로 처리
+    handleSelectAnswer(false);
   }, []);
+
+  // 타임아웃 설정
+  useEffect(() => {
+    // 카메라 타입일 경우 타이머 로그 추가
+    if (questionData.type === 'CAMERA') {
+      console.log(`[Question] 카메라 타입 문제, 타이머 설정: ${timer}ms`);
+    }
+  }, [questionData.type, timer]);
 
   return (
     <div className="h-screen mx-[2vh] xl:mx-[10vh] bg-transparent">
@@ -92,10 +132,9 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
           <div className="flex justfy-center items-center align-middle">
             <PbNumber Index={Index} />
           </div>
-          {/* 문제: 계속 이전의 progress값이 저장이 된다 */}
 
           <Progress
-            key={timer}
+            key={`${Index}-${timer}`}
             timeout={timer}
             startProgress={startProgress}
             onTimeout={handleSkipAnswer}
@@ -107,15 +146,16 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
               {`Q${Index + 1}. ${questionData?.text}`}
             </h1>
             <button
-              className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer dark:text-white"
+              className="flex justify-between items-center rounded-2xl py-1 px-3 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer dark:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
               onClick={handleSkipAnswer}
+              disabled={answer.isCorrect !== null || isTimeOut}
             >
               <p className="sm:text-xs md:text-xl 2xl:text-2xl font-[NanumSquareRoundB]">Skip</p>
               <FontAwesomeIcon icon={faArrowRight} className="m-3 sm:text-xs md:text-xl" />
             </button>
           </div>
           <div className="h-2/3 w-full overflow-x-visible mt-[3vh]">
-            {/* form 태그 제거하고 직접 컴포넌트들 렌더링 */}
+            {/* 문제 유형별 컴포넌트 렌더링 */}
             {questionData?.type === 'MEANING' && (
               <Answers
                 options={questionData.options}
@@ -135,6 +175,7 @@ function Question({ onSelectAnswer, Index, questionData }: ResultProps): JSX.Ele
             )}
             {questionData?.type === 'CAMERA' && (
               <Answers3
+                key={`camera-answer-${Index}`}
                 options={questionData.options}
                 answer={questionData.answer}
                 onSelect={handleSelectAnswer}
