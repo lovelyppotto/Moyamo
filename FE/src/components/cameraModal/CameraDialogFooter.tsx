@@ -3,8 +3,10 @@ import { Camera } from 'lucide-react';
 interface CameraDialogFooterProps {
   isPreparingGesture: boolean;
   isCountingDown: boolean;
+  isWaitingForProcessing: boolean;
   preparationCountdown: number;
   countdown: number;
+  waitingCountdown: number;
   isErrorToastShown: boolean;
   isWebSocketConnected: boolean;
   onCaptureClick: () => void;
@@ -13,8 +15,10 @@ interface CameraDialogFooterProps {
 function CameraDialogFooter({
   isPreparingGesture,
   isCountingDown,
+  isWaitingForProcessing,
   preparationCountdown,
   countdown,
+  waitingCountdown,
   isErrorToastShown,
   isWebSocketConnected,
   onCaptureClick,
@@ -24,8 +28,8 @@ function CameraDialogFooter({
     if (isPreparingGesture) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{preparationCountdown}</span>
-          초 후 인식 시작
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{preparationCountdown}</span>초 후 인식
+          시작
         </span>
       );
     }
@@ -33,16 +37,29 @@ function CameraDialogFooter({
     if (isCountingDown) {
       return (
         <span className="text-center font-[NanumSquareRoundB]">
-          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{countdown}</span>초 동안
-          유지
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">{countdown}</span>초 동안 유지
+        </span>
+      );
+    }
+
+    if (isWaitingForProcessing) {
+      return (
+        <span className="text-center font-[NanumSquareRoundB]">
+          <span className="font-[NanumSquareRoundEB] mr-1 text-cn-600">잠시만 기다려주세요</span>
+          <span className="inline-block ml-1">
+            <span className="animate-pulse">.</span>
+            <span className="animate-pulse delay-150">.</span>
+            <span className="animate-pulse delay-300">.</span>
+          </span>
         </span>
       );
     }
 
     if (!isWebSocketConnected) {
       return (
-        <span className="flex items-center font-[NanumSquareRoundB]">
-          웹캠 연결이 필요합니다...
+        <span className="flex items-center">
+          <Camera size={20} className="mr-2" />
+          웹캠 연결 중...
         </span>
       );
     }
@@ -55,8 +72,8 @@ function CameraDialogFooter({
     );
   };
 
-  // 버튼 비활성화 조건: 준비 중, 카운트다운 중, 또는 웹캠 연결 안 됨
-  const isButtonDisabled = isPreparingGesture || isCountingDown || !isWebSocketConnected;
+  // 버튼 비활성화 조건: 준비 중, 카운트다운 중, 대기 중, 또는 웹캠 연결 안 됨
+  const isButtonDisabled = isPreparingGesture || isCountingDown || isWaitingForProcessing || !isWebSocketConnected;
 
   // 버튼 스타일 결정
   const getButtonStyle = () => {
