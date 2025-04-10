@@ -18,10 +18,10 @@ app.add_middleware(
 )
 
 dynamic_label_classes = np.load("models/label_classes_dynamic_v2.npy")
-static_label_classes = np.load("models/label_classes_mk3.npy")
+static_label_classes = np.load("models/label_classes_mk4_v1.npy")
 
 dynamic_model = load_model("models/dynamic_gesture_lstm_v3.h5")
-static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk3_model.tflite")
+static_interpreter = tf.lite.Interpreter(model_path="models/static_gesture_mk4_v1_model_float16.tflite")
 static_interpreter.allocate_tensors()
 
 static_input = static_interpreter.get_input_details()
