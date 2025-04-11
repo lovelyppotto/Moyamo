@@ -37,7 +37,7 @@ function QuizResult({ userAnswers }: QuizResultProps): JSX.Element {
   if (isCorrectNumber === 1) {
     startext = 'Okay';
   } else if (isCorrectNumber === 2) {
-    startext = '/images/star2.png';
+    startext = 'Okay';
   } else if (isCorrectNumber === 3) {
     startext = 'Yay!';
   } else if (isCorrectNumber === 4) {

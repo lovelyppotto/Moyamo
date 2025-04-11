@@ -74,7 +74,7 @@ const Answers3: React.FC<Answers3Props> = ({ onSelect, answer, questionData, isT
         <div className="absolute inset-0">
           <GestureQuizCamera
             guidelineClassName="max-w-[500px] w-[40%] lg:w-[60%] top-16 lg:top-22"
-            guideText={isAnswered ? '정답입니다!' : '제스처를 유지해주세요.'}
+            guideText={isAnswered ? '' : '제스처를 유지해주세요.'}
             correctGestureName={answer?.correctGestureName}
             gestureType={questionData?.gestureType}
             isPaused={isAnswered || isTimeOut} // 정답 처리되면 카메라 일시 정지
