@@ -41,13 +41,13 @@ function Quiz() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        {/* DialogTrigger를 Dialog 내부로 이동 */}
+    
         <DialogTrigger asChild>
           <button
             className="select-none absolute bottom-40 left-1/2 transform -translate-x-1/2 text-4xl xl:text-6xl font-['DNFBitBitv2'] text-gray-900 drop-shadow-quiz-box dark:text-gray-200 px-[10vh] py-[1vh] rounded-xl flex justify-center items-center align-center bg-[var(--color-kr-400)] border-2 border-gray-200 dark:border-gray-400 dark:bg-[var(--color-kr-300)] dark:drop-shadow-quiz animate-bounce cursor-pointer"
             onClick={handleButtonClick}
           >
-            <p className="drop-shadow-basic py-[2vh]  md:text-4xl xl:text-6xl ">start</p>
+            <p className="drop-shadow-basic md:text-3xl xl:text-5xl py-1">start</p>
           </button>
         </DialogTrigger>
 
@@ -64,21 +64,23 @@ function Quiz() {
             </DialogTitle>
             <DialogDescription className="text-lg">
               <p>총 다섯 문항을 진행하며 모드 선택이 가능합니다</p>
-              <p className='text-sm mt-1'>카메라 모드의 데이터는 퀴즈 진행에 이용되며 서버에 저장되지 않습니다.</p>
+              <p className="text-sm mt-1">
+                카메라 모드의 데이터는 퀴즈 진행에 이용되며 서버에 저장되지 않습니다.
+              </p>
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center gap-4 mt-3">
             {/* 일반 모드 버튼 */}
             <div className="relative">
-              <Button 
-                className="bg-kr-500 dark:bg-kr-400 text-white cursor-pointer min-w-[120px] w-32 h-10" 
+              <Button
+                className="bg-kr-500 dark:bg-kr-400 text-white cursor-pointer min-w-[120px] w-32 h-10"
                 onClick={() => handleStart(false)}
                 onMouseEnter={() => setNormalTooltip(true)}
                 onMouseLeave={() => setNormalTooltip(false)}
               >
                 일반 모드
               </Button>
-              
+
               {/* 일반 모드 커스텀 말풍선 */}
               {normalTooltip && (
                 <div className="absolute z-50 top-full mt-3 left-1/2 -translate-x-1/2 whitespace-normal">
@@ -88,7 +90,9 @@ function Quiz() {
                       <div className="bg-white rounded-full w-4 h-4 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
                         <FontAwesomeIcon icon={faCircleInfo} className="text-black text-xs" />
                       </div>
-                      <span className="text-sm text-gray-800">기본적인 4지선다형의 제스처 퀴즈 문항들이 주어집니다.</span>
+                      <span className="text-sm text-gray-800">
+                        기본적인 4지선다형의 제스처 퀴즈 문항들이 주어집니다.
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -97,15 +101,15 @@ function Quiz() {
 
             {/* AI 모드 버튼 */}
             <div className="relative">
-              <Button 
-                className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer min-w-[120px] w-32 h-10" 
+              <Button
+                className="bg-kr-500 dark:bg-kr-450 text-white cursor-pointer min-w-[120px] w-32 h-10"
                 onClick={() => handleStart(true)}
                 onMouseEnter={() => setAiTooltip(true)}
                 onMouseLeave={() => setAiTooltip(false)}
               >
                 AI 모드
               </Button>
-              
+
               {/* AI 모드 커스텀 말풍선 */}
               {aiTooltip && (
                 <div className="absolute z-50 top-full mt-3 left-1/2 -translate-x-1/2 whitespace-normal">
@@ -115,7 +119,9 @@ function Quiz() {
                       <div className="bg-white rounded-full w-4 h-4 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
                         <FontAwesomeIcon icon={faCircleInfo} className="text-black text-xs mt-1" />
                       </div>
-                      <span className="text-sm text-gray-800">주어진 설명을 보고 카메라를 활용하여 제스처를 인식하며 퀴즈를 진행합니다.</span>
+                      <span className="text-sm text-gray-800">
+                        주어진 설명을 보고 카메라를 활용하여 제스처를 인식하며 퀴즈를 진행합니다.
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -133,7 +139,7 @@ function Quiz() {
             <div className="select-none mb-8 text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz pb-5">
               GESTURE
             </div>
-            <div className="select-none text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz">
+            <div className="select-none text-gray-900 dark:text-gray-200 text-4xl md:text-6xl xl:text-8xl drop-shadow-quiz-box dark:drop-shadow-quiz pb-10">
               QUIZ
             </div>
           </div>
