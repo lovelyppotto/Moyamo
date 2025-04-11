@@ -11,10 +11,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions
-        : {
-          enabled: true,
-        },
+      devOptions: {
+        enabled: true,
+      },
       includeAssets: ['favicon.ico'],
       filename: 'favicon/site.webmanifest',
       manifest: {
@@ -66,12 +65,12 @@ export default defineConfig({
       workbox: {
         // 모든 앱 자산 캐싱
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,json,woff,woff2}'],
-        clientsClaim: true, 
+        clientsClaim: true,
         skipWaiting: true,
         // 오프라인 페이지 설정
         // navigateFallback: '/offline.html',
-        
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
 
         // 런타임 캐싱 설정
         runtimeCaching: [
@@ -108,26 +107,34 @@ export default defineConfig({
           },
           //미디어파이프 모델 파일 캐싱
           {
-            urlPattern: new RegExp('https://cdn\\.jsdelivr\\.net/npm/@mediapipe/tasks-vision@latest/wasm/.*'),
+            urlPattern:
+              /^https:\/\/storage\.googleapis\.com\/mediapipe-models\/hand_landmarker\/hand_landmarker\/float16\/1\/hand_landmarker\.task$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'mediapipe-wasm',
+              cacheName: 'mediapipe-hand-model',
               expiration: {
-                maxEntries: 10,
+                maxEntries: 1,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
-          
-          // 미디어파이프 모델 파일 캐싱 규칙 추가
+
+          // 미디어파이프 WASM 파일 캐싱 - 더 명확한 URL 패턴 사용
           {
-            urlPattern: new RegExp('https://storage\\.googleapis\\.com/mediapipe-.*'),
+            urlPattern:
+              /^https:\/\/cdn\.jsdelivr\.net\/npm\/@mediapipe\/tasks-vision@latest\/wasm\/(vision_wasm_internal\.js|vision_wasm_internal\.wasm)$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'mediapipe-models',
+              cacheName: 'mediapipe-wasm-files',
               expiration: {
-                maxEntries: 10,
+                maxEntries: 5,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
