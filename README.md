@@ -26,25 +26,25 @@
 ## 💻 화면
 ### 1. 메인화면
 
-<img src="![image.png](./image.png)" width="600">
+<img src="" width="">
 
 ### 2. 제스처 검색
-<img src="" width="600">
+<img src="" width="">
 
 ### 3-1. 제스처 사전
 <img src="" width="600">
 
 ### 3-2. AI 연습
-<img src="" width="600">
+<img src="" width="">
 
 ### 4-1. 의미 맞추기 퀴즈 
-<img src="" width="600">
+<img src="" width="">
 
 ### 4-2. 제스처 맞추기 퀴즈 
-<img src="" width="600">
+<img src="" width="">
 
 ### 4-3. AI 인식 퀴즈
-<img src="" width="600">
+<img src="" width="">
 
 
 
@@ -137,14 +137,14 @@
       🔧 BE 
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/42d0efbb-d1dd-4aef-a4d1-9a3fcaa5b4d8" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>정주은</strong>
       <br />
       💻 FE
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/3f901364-23cb-44fd-9bf7-324cd7fadab8" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>조혜정</strong>
       <br />
