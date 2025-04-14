@@ -25,7 +25,8 @@
 
 ## 💻 화면
 ### 1. 메인화면
-<img src="" width="600">
+
+<img src="![image.png](./image.png)" width="600">
 
 ### 2. 제스처 검색
 <img src="" width="600">
@@ -115,7 +116,7 @@
 <table>
   <tr>
     <td align="center">
-      <img src="https://www.notion.so/1a4cd4e44ff78178aaeef8b456e395b7?pvs=4#1adcd4e44ff780caa927fef7004b77efhttps://github.com/user-attachments/assets/b905b75a-ea9d-4823-ae99-86b371a4277d" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>김선주</strong>
       <br />
@@ -129,7 +130,7 @@
       🔧 BE 
     </td>
     <td align="center">
-      <img src="https://www.notion.so/1a4cd4e44ff781809b69d6e4ee88b6ee?pvs=4#1a4cd4e44ff78107b10dc7beac60eac4" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="100" height="100" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>전용현</strong>
       <br />
