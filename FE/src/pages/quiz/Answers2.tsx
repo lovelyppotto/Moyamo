@@ -158,7 +158,7 @@ const Answers2: React.FC<Answers2Props> = ({
                     option.gestureImage ? (
                       <div className="h-full w-full flex items-center justify-center">
                         <GlbViewer url={option.gestureImage} />
-                        <div className="absolute inset-0 bg-transparent z-10"></div>
+                        {/* <div className="absolute inset-0 bg-transparent z-10"></div> //클릭에러*/}
                       </div>
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-gray-400 font-[NanumSquareRoundB]">
