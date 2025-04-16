@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# FE 파일이 변경된 경우에만 실행
+if git diff --cached --name-only | grep "^FE/" > /dev/null; then
+  cd FE && pnpm lint-staged
+fi
