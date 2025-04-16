@@ -163,35 +163,35 @@
       🔧 BE | 🛠 Infra
     </td>
     <td align="center">
-      <img src="" width="50" height="50" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>김민재</strong>
       <br />
       🔧 BE 
     </td>
     <td align="center">
-      <img src="" width="50" height="50" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>전용현</strong>
       <br />
       🔧 BE 
     </td>
     <td align="center">
-      <img src="" width="50" height="50" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>정주은</strong>
       <br />
       💻 FE
     </td>
     <td align="center">
-      <img src="" width="50" height="50" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>조혜정</strong>
       <br />
       💻 FE
     </td>
     <td align="center">
-      <img src="" width="50" height="50" style="object-fit: cover; border-radius: 10px;" />
+      <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>윤지원</strong>
       <br />
@@ -241,13 +241,19 @@
 
 - 조혜정
 ```
-7주간 모야모 프로젝트의 팀장으로서 Jira와 Notion을 활용해 체계적인 프로젝트 관리를 진행했습니다. 팀원 모두가 Jira 이슈 관리에 적극 참여하여 구미 이슈 수 1등을 기록할 정도로 협업 도구를 효과적으로 활용했습니다. 이 과정에서 팀원들과 원활한 소통을 통해 협업의 중요성을 깊이 이해할 수 있었습니다.
+7주간 모야모 프로젝트의 팀장으로서 Jira와 Notion을 활용해 체계적인 프로젝트 관리를 진행했습니다. 
+팀원 모두가 Jira 이슈 관리에 적극 참여하여 구미 이슈 수 1등을 기록할 정도로 협업 도구를 효과적으로 활용했습니다. 
+이 과정에서 팀원들과 원활한 소통을 통해 협업의 중요성을 깊이 이해할 수 있었습니다.
 
-프론트엔드 개발에서는 TypeScript, Zustand, PWA, Shadcn 등 다양한 기술을 적용했습니다. React 기반에 TypeScript를 도입해 코드 안정성을 확보했으며, PWA로 사용자 접근성을 높이고 Shadcn과 Lottie로 UI 품질을 향상시켰습니다. 특히 Blender 디자인을 Three.js 환경에 가져와 웹에서 구현하는 과정에서 새로운 기술 습득의 기회를 얻었습니다.
+프론트엔드 개발에서는 TypeScript, Zustand, PWA, Shadcn 등 다양한 기술을 적용했습니다. 
+React 기반에 TypeScript를 도입해 코드 안정성을 확보했으며, PWA로 사용자 접근성을 높이고 Shadcn과 Lottie로 UI 품질을 향상시켰습니다. 
+특히 Blender 디자인을 Three.js 환경에 가져와 웹에서 구현하는 과정에서 새로운 기술 습득의 기회를 얻었습니다.
 
-퀴즈 페이지 개발에서는 useEffect를 통한 상태관리와 setTimeout을 활용한 타이밍 제어로 복잡한 동시성 문제를 해결했습니다. 하나의 동작이 여러 상태값에 영향을 주는 상황에서 최적의 사용자 경험을 제공하기 위해 관련 기술을 연구하고 적용하며 프론트엔드 개발자로서 역량을 키울 수 있었습니다. 
+퀴즈 페이지 개발에서는 useEffect를 통한 상태관리와 setTimeout을 활용한 타이밍 제어로 복잡한 동시성 문제를 해결했습니다. 
+하나의 동작이 여러 상태값에 영향을 주는 상황에서 최적의 사용자 경험을 제공하기 위해 관련 기술을 연구하고 적용하며 프론트엔드 개발자로서 역량을 키울 수 있었습니다. 
 
-앞으로는 기능 구현을 넘어 웹 성능 최적화에 더 집중하고 싶습니다. 로딩 속도 개선과 리소스 효율화를 통해 사용자 경험을 한 단계 더 향상시킬 수 있도록 노력하겠습니다. 
+앞으로는 기능 구현을 넘어 웹 성능 최적화에 더 집중하고 싶습니다. 
+로딩 속도 개선과 리소스 효율화를 통해 사용자 경험을 한 단계 더 향상시킬 수 있도록 노력하겠습니다. 
 ```
 > 
 
