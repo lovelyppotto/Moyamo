@@ -1,0 +1,6 @@
+
+fastapi==0.110.0
+uvicorn[standard]
+
+numpy==1.26.4
+tensorflow==2.19.0

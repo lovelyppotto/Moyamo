@@ -1,0 +1,137 @@
+def shouldBuild = false
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USER = "sseon701"
+        DOCKER_REPO = "moyamo-ai"
+        DOCKER_TAG = "latest"
+
+        SSH_USER = "ubuntu"
+        SSH_CREDENTIAL = 'ec2'
+
+        LOCAL_COMPOSE_PATH = "docker-compose.yml"
+        REMOTE_DIR = "/home/ubuntu/gesture-inference/AI"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'be/develop',
+                    url: 'https://lab.ssafy.com/s12-ai-image-sub1/S12P21D203.git',
+                    credentialsId: 'gitlab-credential-id'
+            }
+        }
+
+        stage('Check AI Directory Changes') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (changes.readLines().any { it.startsWith("AI/") }) {
+                        echo "AI 디렉토리 변경 감지됨!"
+                        shouldBuild = true
+                    } else {
+                        echo "AI 디렉토리 변경 없음! 이후 단계 스킵"
+                        shouldBuild = false
+                    }
+                }
+            }
+        }
+
+        stage('Build & Push All Services') {
+            when {
+                expression { return shouldBuild }
+            }
+            steps {
+                script {
+                    def services = ['dynamic-gesture']
+
+                    for (service in services) {
+                        dir("AI/${service}") { 
+                            def image = "${DOCKERHUB_USER}/${DOCKER_REPO}-${service}:${DOCKER_TAG}"
+                            sh """
+                                echo "Building ${image}..."
+                                docker build -t ${image} .
+                            """
+                            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
+                                docker.image(image).push()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EC2 with Docker Compose') {
+            when {
+                expression { return shouldBuild }
+            }
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
+                    ]) {
+                        sshagent(credentials: [SSH_CREDENTIAL]) {
+                            sh """
+                                echo "docker-compose.yml 복사 중..."
+                                scp -o StrictHostKeyChecking=no AI/${LOCAL_COMPOSE_PATH} ${SSH_USER}@${EC2_IP}:${REMOTE_DIR}/docker-compose.yml
+
+                                echo "EC2에서 서비스 재배포 중..."
+                                ssh -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} '
+                                    cd ${REMOTE_DIR}
+                                    docker compose pull
+                                    docker compose down
+                                    docker compose up -d --remove-orphans
+                                '
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Notify Success') {
+            when {
+                expression { return shouldBuild }
+            }
+            steps {
+                script {
+                    def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
+                    def commitAuthor = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+
+                    withCredentials([
+                        string(credentialsId: 'MATTERMOST_WEBHOOK_URL_BE', variable: 'WEBHOOK_BE')
+                    ]) {
+                        def payload = """
+                        {
+                            "text": ":rocket: **AI 서비스 배포 완료!**\\n\\n:label: 브랜치: be/develop\\n:package: 이미지: ${DOCKERHUB_USER}/${DOCKER_REPO}-*:${DOCKER_TAG}\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: <${BUILD_URL}|빌드 상세 보기>"
+                        }
+                        """
+                        sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' \"$WEBHOOK_BE\""
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                def commitMessage = sh(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
+                def commitAuthor = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+
+                withCredentials([
+                    string(credentialsId: 'MATTERMOST_WEBHOOK_URL_BE', variable: 'WEBHOOK_BE')
+                ]) {
+                    def payload = """
+                    {
+                        "text": ":x: **AI 서비스 배포 실패!**\\n\\n:bust_in_silhouette: 작성자: ${commitAuthor}\\n:page_facing_up: 커밋 메시지: ${commitMessage}\\n:link: <${BUILD_URL}|빌드 상세 보기>\\n@sunju701"
+                    }
+                    """
+                    sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' \"$WEBHOOK_BE\""
+                }
+            }
+        }
+    }
+}
