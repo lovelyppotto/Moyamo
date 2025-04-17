@@ -130,17 +130,56 @@
 ```
 
 ### 🖥️ 백엔드
-1. Spring Boot
+```
+📦 BE
+├── 📁 src
+│   └── 📁 main
+│       ├── 📁 java
+│       │   └── 📁 com.moyamo.be
+│       │       ├── 📁 common
+│       │       │   └── 📄 ApiResponse.java
+│       │       ├── 📁 config
+│       │       │   ├── 📄 ElasticSearchConfig.java
+│       │       │   ├── 📄 S3Config.java
+│       │       │   └── 📄 WebConfig.java
+│       │       ├── 📁 dictionary
+│       │       │   ├── 📁 controller
+│       │       │   ├── 📁 dto
+│       │       │   ├── 📁 entity
+│       │       │   ├── 📁 repository
+│       │       │   └── 📁 service
+│       │       ├── 📁 quiz
+│       │       │   ├── 📁 controller
+│       │       │   ├── 📁 dto
+│       │       │   ├── 📁 entity
+│       │       │   ├── 📁 repository
+│       │       │   └── 📁 service
+│       │       ├── 📁 s3
+│       │       │   ├── 📁 controller
+│       │       │   ├── 📁 dto
+│       │       │   └── 📁 service
+│       │       ├── 📁 search
+│       │       │   ├── 📁 controller
+│       │       │   ├── 📁 dto
+│       │       │   ├── 📁 repository
+│       │       │   └── 📁 service
+│       │       ├── 📁 tip
+│       │       │   ├── 📁 controller
+│       │       │   ├── 📁 dto
+│       │       │   ├── 📁 entity
+│       │       │   ├── 📁 repository
+│       │       │   └── 📁 service
+│       │       └── 📄 BeApplication.java
+│       └── 📁 resources
+│           ├── 📄 application.yaml
+│           ├── 📄 application-dev.yaml
+│           └── 📄 application-prod.yaml
+├── 📁 test
 
-
-2. AI
-
-
-### 🏗️ 아키텍처
-![아키텍처 다이어그램]()
+```
 
 ### 📚 ERD
-![ERD 다이어그램](https://www.erdcloud.com/d/QTphkKog5Pwc4XsFi)
+![image](/uploads/2b4e562662dd91b9f08e8858166d9623/image.png){width=966 height=423}
 
 ### ⚙️ 설치 및 실행 방법
 ```bash
@@ -160,21 +199,21 @@
       <br />
       <strong>김선주</strong>
       <br />
-      🔧 BE | 🛠 Infra
+      🔧 BE | 🛠 Infra | 🤖 AI
     </td>
     <td align="center">
       <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>김민재</strong>
       <br />
-      🔧 BE 
+      🔧 BE | 🤖 AI
     </td>
     <td align="center">
       <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
       <br />
       <strong>전용현</strong>
       <br />
-      🔧 BE 
+      🔧 BE | 🤖 AI
     </td>
     <td align="center">
       <img src="" width="30" height="50" style="object-fit: cover; border-radius: 10px;" />
