@@ -1,0 +1,5 @@
+# 캐시 폴더 무시
+__pycache__/
+
+# files 폴더 무시
+files/
