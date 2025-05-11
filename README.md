@@ -51,13 +51,14 @@
 ![연습3__1_](/uploads/9c43e5b5fe74144be0331cac0479ece4/연습3__1_.gif)
 
 ### 4-1. 의미 맞추기 퀴즈 
-<img src="" width="">
+![의미맞추기퀴즈](/uploads/b4fd7e3c60b2d85eefbc299e6ae06932/의미맞추기퀴즈.gif)
 
 ### 4-2. 제스처 맞추기 퀴즈 
-<img src="" width="">
+![제스처맞추기퀴즈](/uploads/18c9590167f19d8af849fb4c65c957fc/제스처맞추기퀴즈.gif)
+
 
 ### 4-3. AI 인식 퀴즈
-<img src="" width="">
+![ai퀴즈](/uploads/3dd5f1a0d317c0f9f44344793b02c215/ai퀴즈.gif)
 
 
 
